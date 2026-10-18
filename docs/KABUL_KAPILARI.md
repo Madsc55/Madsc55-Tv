@@ -38,3 +38,8 @@ Bu sürüm yalnız izole ve salt-okunur iskelet oluşturur. Beş kategori rapor 
 - K3 için kaynak notunda üç aşama, 5 dakikalık süreklilik, 7/30 gün kararlılık, kimlik, EPG/logo ve IBO cihaz onayı ayrı alanlardır. IBO'da çalışan kanal otomatik teknik test nedeniyle silinmez.
 - K4 için Git HEAD'den geri yükleme harici yedek sayılmaz; SHA256 manifest, bağımsız kopya ve izole restore kanıtı gerekir.
 - Bir GitHub commit'i veya yeşil test, 26/26 güvenlik ve 92/92 davranışsal kabulün yerine geçmez.
+
+ 
+## Not kapsamı — tek dosyayla sınırlama yok
+Ana giriş `DEVAM_NOTU.md` (yaklaşık 691 bin karakter) ve `810 dosya notu.md` (yaklaşık 741 bin karakter) olup **tamamı** tek kısa özet sayılmaz. İlgili görev için bağlantılı tüm notlar ve kaynak kanıtlar ayrıca okunur: `AGENTS.md`, `OZELLIK_ENVANTERI.md`, `IPTV_PROJE_HAFIZASI.md`, `BES_SISTEM_TOPLU_IS_DEFTERI.md`, `GUVENLIK_KURALLARI.md`, `TOPLU_DURUM_RAPORU.md`, `SEKIZ_GOREV_TOPLU_DENETIM.md`, `BES_SISTEM_GECIS_KONTROL.md`, `BES_SISTEM_92_WORKFLOW_TETIK_ENVANTERI.md`, `MADSC-IKI-TOPLU-KABUL-PLANI.md`, `MADSC-TAM-DURUM-VE-YOL-HARITASI-2026-10-14.md`, `YENI_KANAL_ARAMA_TALEPLERI.md` ve başka atıf yapılan kayıtlar. Liste kapalı değildir; dosyaların mevcut dalda varlığı ve en güncel sürümü ayrıca kontrol edilir.
+Öncelik: en güncel açık kullanıcı kararı > doğrulanmış güncel kaynak/test > eski tarihli tarihsel not. Kaynakların tamamen birleştirilmiş olduğu varsayılmaz; okunmayan notlar okunmuş gibi gösterilmez.

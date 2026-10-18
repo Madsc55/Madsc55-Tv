@@ -1,0 +1,29 @@
+name: MADSC K4 — Yedek
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: madsc-k4-isolated
+  cancel-in-progress: false
+jobs:
+  isolated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Isolated report
+        run: python -m madsc.core --category k4 --output reports/k4.json
+      - name: Upload isolated evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k4-isolated-evidence
+          path: reports/k4.json
+          retention-days: 14

@@ -11,6 +11,7 @@ from madsc.channel_test import evaluate_probe
 from madsc.discovery import classify_candidates
 from madsc.maintenance import aggregate, retry_decision
 from madsc.playlist import compare_snapshots, inspect_playlist
+from madsc.source_import import extract_candidates
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -27,14 +28,22 @@ def execute(category: str) -> dict:
                         "no_playlist_mutation": original == p.read_bytes(),
                         "integrity_comparison": compare_snapshots(before, after)["identical"]}
     elif category == "k2":
-        result = classify_candidates([
-            {"name": "Sample", "url": "https://example.org/live"},
-            {"name": "Duplicate", "url": "https://example.org/live"},
-            {"name": "Invalid", "url": "file:///invalid"},
-        ])
-        evidence = {"unique_candidates": len(result["candidates"]) == 1,
-                    "duplicates_separated": len(result["duplicates"]) == 1,
-                    "invalid_rejected": len(result["rejected"]) == 1}
+        with TemporaryDirectory() as d:
+            results = []
+            for suffix in (".m3u", ".m3u8"):
+                p = Path(d) / ("sample" + suffix)
+                p.write_text("#EXTM3U\\n#EXTINF:-1,Sample\\nhttps://example.org/live.m3u8\\n#EXTINF:-1,Duplicate\\nhttps://example.org/live.m3u8\\n#EXTINF:-1,Invalid\\nfile:///invalid\\n".replace("\\n", "\n"), encoding="utf-8")
+                before = p.read_bytes()
+                result = extract_candidates(p)
+                results.append((result, before == p.read_bytes()))
+            evidence = {
+                "both_m3u_and_m3u8": {r["source_format"] for r, _ in results} == {".m3u", ".m3u8"},
+                "unique_candidates": all(len(r["candidates"]) == 1 for r, _ in results),
+                "duplicates_separated": all(len(r["duplicates"]) == 1 for r, _ in results),
+                "invalid_rejected": all(len(r["rejected"]) == 1 for r, _ in results),
+                "sources_unchanged": all(ok for _, ok in results),
+                "no_production_mutation": all(not r["production_playlist_modified"] for r, _ in results),
+            }
     elif category == "k3":
         result = evaluate_probe({"url_sha256": "a" * 64, "http_status": 200,
                                  "video": True, "audio": True, "duration_seconds": 40})

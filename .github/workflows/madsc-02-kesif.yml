@@ -1,0 +1,29 @@
+name: MADSC K2 — Kesif
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: madsc-k2-isolated
+  cancel-in-progress: false
+jobs:
+  isolated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Isolated report
+        run: python -m madsc.core --category k2 --output reports/k2.json
+      - name: Upload isolated evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k2-isolated-evidence
+          path: reports/k2.json
+          retention-days: 14

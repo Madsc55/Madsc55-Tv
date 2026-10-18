@@ -12,6 +12,7 @@ from madsc.discovery import classify_candidates
 from madsc.maintenance import aggregate, retry_decision
 from madsc.playlist import compare_snapshots, inspect_playlist
 from madsc.source_import import extract_candidates
+from madsc.handoff import assess_candidates
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -50,6 +51,18 @@ def execute(category: str) -> dict:
         evidence = {"preliminary_classification": result["technical_status"] == "PRELIMINARY_PASS",
                     "no_device_approval": not result["ibo_device_verified"],
                     "no_production_approval": not result["production_change_allowed"]}
+        with TemporaryDirectory() as d:
+            p = Path(d) / "sample.m3u8"
+            p.write_text("#EXTM3U\n#EXTINF:-1,Sample\nhttps://example.org/live.m3u8\n", encoding="utf-8")
+            original = p.read_bytes()
+            discovery = extract_candidates(p)
+            digest = discovery["candidates"][0]["url_sha256"]
+            handoff = assess_candidates(discovery, {digest: {"url_sha256": digest, "http_status": 200,
+                                   "video": True, "audio": True, "duration_seconds": 40}})
+            evidence["k2_to_k3_handoff"] = handoff["candidate_count"] == 1
+            evidence["preliminary_not_approved"] = (handoff["assessed"][0]["technical_status"] == "PRELIMINARY_PASS"
+                and not handoff["assessed"][0]["production_change_allowed"])
+            evidence["handoff_read_only"] = original == p.read_bytes() and not handoff["production_playlist_modified"]
     elif category == "k4":
         with TemporaryDirectory() as d:
             p = Path(d) / "sample.txt"

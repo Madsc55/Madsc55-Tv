@@ -1,0 +1,29 @@
+name: MADSC K5 — Bakim
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: madsc-k5-isolated
+  cancel-in-progress: false
+jobs:
+  isolated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Isolated report
+        run: python -m madsc.core --category k5 --output reports/k5.json
+      - name: Upload isolated evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k5-isolated-evidence
+          path: reports/k5.json
+          retention-days: 14

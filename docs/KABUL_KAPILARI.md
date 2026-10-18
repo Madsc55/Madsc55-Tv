@@ -28,3 +28,13 @@ Bu sürüm yalnız izole ve salt-okunur iskelet oluşturur. Beş kategori rapor 
 4. K4 bağımsız yedek/geri yükleme tatbikatını izole ortamda doğrula.
 5. K5 üzerinden beş workflow'un Actions koşu kanıtını, hata senaryolarını ve kabul matrisini tamamla.
 6. Yalnız açık üretim geçiş onayı sonrası canlı yazma/yayınlama değerlendir.
+
+
+## Görev öncesi zorunlu kaynak notu kontrolü (19 Ekim 2026)
+- Kaynak hafıza: eski depodaki `DEVAM_NOTU.md`, `810 dosya notu.md`, `AGENTS.md`, 9 ek inceleme notu, yedek/raporlar ve ilgili kaynak dosyaları. Bu dosyaların tek yerde eksiksiz birleştiği henüz kanıtlanmış değildir.
+- **Her kod değişikliğinden önce** o göreve ait not, ilgili ek not ve önceki test/rapor okunur. Bulgular YAPILACAK / YAPILMAYACAK / KANIT BEKLEYEN olarak ayrılır; zaten yapılmış işler tekrarlanmaz.
+- İnceleme sayaçları farklı tarihlerden: ana `810 dosya notu.md` 361/810 diyor; daha sonraki ek notlarda 823 toplam ve 450 görsel olmayan dosya incelendiği bildirildi. Kaynak ağaç ve benzersiz yollar uzlaştırılmadan kesin toplam ilan edilmez; görsellerin 373'ü ayrı doğrulama bekliyor.
+- Eski depodaki notlara yalnız salt-okunur erişim; yeni depoda görev bazlı uygulanabilir kontrol/test ve kanıt matrisi oluşturulur.
+- K3 için kaynak notunda üç aşama, 5 dakikalık süreklilik, 7/30 gün kararlılık, kimlik, EPG/logo ve IBO cihaz onayı ayrı alanlardır. IBO'da çalışan kanal otomatik teknik test nedeniyle silinmez.
+- K4 için Git HEAD'den geri yükleme harici yedek sayılmaz; SHA256 manifest, bağımsız kopya ve izole restore kanıtı gerekir.
+- Bir GitHub commit'i veya yeşil test, 26/26 güvenlik ve 92/92 davranışsal kabulün yerine geçmez.

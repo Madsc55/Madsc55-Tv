@@ -275,3 +275,15 @@ Eski salt-okunur dalda **12 YAML** ve bu işlerin kullandığı **13 Python beti
 **Bulgular:** Bazı işlerin davranışı yalnız YAML adından anlaşılmıyor: `birlesik-aday-raporu` ve `madsc-birlesik-kesif` birden çok K kategorisine bağımlı; `kanal-kararlilik` cache restore/save kullanırken `aday-bekletme` için aynı kalıcılık ayrı doğrulanmalı. `vod-guncelle` ve `madsc-birlesik-kesif` gerçek yazma/yayımlama yolları içeriyor; yeni salt-okunur K1–K5'e otomatik taşınmaları güvenli değil. Bu kaynak taramasında hiçbir script çalıştırılmadı; üretim dosyası, eski repo, cron ve Pages yayını değiştirilmedi.
 
 **Kapsam:** 99 YAML ilk inceleme tamam; bu turda **12 YAML** kaynak + **13 betik** derin incelendi, önceki turdaki 1 YAML/8 betikten ayrı. Dolayısıyla toplam **13 benzersiz YAML derin çözümleme**, **21 betik kaynak incelemesi**; **86 YAML** henüz aynı derinlikte çözülmedi. 92 eski kapsamın kaçının bu 13 içinde olduğu ayrı sayılmalı (beşli kategori koordinatörü kapsam dışıdır). **92/92 parity onayı hâlâ 0**.
+
+
+## Kritik derin kaynak bulgusu — `automatic-png-logos.yml` (19 Ekim 2026)
+
+Eski salt-okunur YAML ve `scripts/automatic_png_logos.py`, `scripts/logo_visual_evidence.py`, `logo_deneme/audit.py` gerçek kaynakları açıldı. Workflow `contents:read` ve artefakt yükleme kullanıyor, ancak **betiklerin yerel dosya yazma etkisi GitHub token yetkisinden bağımsız**.
+
+- `automatic_png_logos.py` içindeki `main()`, `CALISANLAR.m3u` okur; eksik `tvg-logo` alanlarını IPTV-org channel/logo API kaynaklarıyla eşlemeye çalışır; yalnız önceden saklanmış görsel doğrulama (`visual_match=True`), kaynak URL ve PNG SHA256 eşleşmesi varsa logo ekler. `approved_repairs.json` ile mevcut logo URL'si onarımı için ayrıca hash/önceki kaynak kontrolü uygular.
+- `convert()`, `logos/auto/*.png` altına **`write_bytes`** yapabilir; 4 MB indirme, 16 milyon piksel ve 640×640 küçültme sınırları, SVG dış kaynak reddi var.
+- `main()` **koşulsuz `playlist.write_text(updated)`** çağırır. `updated == raw` olsa bile çalışma ağacındaki korunan `CALISANLAR.m3u` dosyasını yeniden yazar. Ayrıca `logo_deneme/png_automation.json` üretir. `assert strip(updated)==strip(raw)` yalnız logo dışı metni karşılaştırır; **logo alanı değişimine izin verir**.
+- `logo_visual_evidence.py` görsel inceleme raporu `logo_deneme/visual_review.json` yazar; `logo_deneme/audit.py` `rapor.json` ve `ozet.json` üretir.
+
+**Sonuç:** `contents:read` olması, eski betiğin korunan listeyi çalışma ağacında değiştirmeyeceği anlamına **gelmez**. Yeni sistemde bu scriptin `main()` fonksiyonunu üretim ana listesi üzerinde çalıştırmak **BLOCKED**. Yalnız korunan dosyalara yazmayan izole fixture, hash karşılaştırması ve onaylı görsel kanıtla test edilmeli. Bu statik kod bulgusu geçmiş GitHub push veya fiili korunan liste değişikliği kanıtı değildir. K1/K3/K5 güvenlik ve logo kanıt eşlemesi henüz onaylanmadı.

@@ -1,4 +1,4 @@
-name: MADSC K5 — Genel Bakım ve Beşli Toplu Kabul
+name: Madsc55-Tv - Besli Toplu Guvenlik ve Kabul
 on:
   workflow_dispatch:
 permissions:

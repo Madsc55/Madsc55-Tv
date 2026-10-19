@@ -37,7 +37,11 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
             if not name:
                 raise ValueError("Empty name")
             key = sha256(url.encode("utf-8")).hexdigest()
-            entry = {"name": name, "url_sha256": key, "source_index": index, "status": "candidate_only"}
+            tvg_id = item.get("tvg_id", "")
+            if not isinstance(tvg_id, str):
+                raise ValueError("Invalid tvg-id")
+            entry = {"name": name, "tvg_id": tvg_id.strip(), "url_sha256": key,
+                     "source_index": index, "status": "candidate_only"}
             if url in seen or url in known:
                 duplicates.append(entry)
             else:

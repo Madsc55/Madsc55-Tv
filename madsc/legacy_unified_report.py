@@ -5,6 +5,7 @@ Input rows are already-parsed CSV dictionaries. No URLs are fetched or written.
 from __future__ import annotations
 from madsc.legacy_scoring import legacy_approval_decision
 from madsc.legacy_stability import evaluate_legacy_stability
+from datetime import datetime, timezone
 
 FIELDS = ("KANAL", "PUAN", "TEKNIK_DURUM", "24_SAAT_KARARLI", "DURUM",
           "IBO_ONAYI", "KULLANICI_ONAYI", "ANA_LISTEYE_EKLE", "YAYIN_URL", "KAYNAK")
@@ -19,9 +20,13 @@ def legacy_unified_rows(scores: list[dict], stability: list[dict], *,
     if history is not None and (not isinstance(history, dict) or now is None):
         raise ValueError("Historical evidence requires a mapping and current time")
     if history is not None:
+        if not isinstance(now, datetime) or now.tzinfo is None:
+            raise ValueError("Historical evidence requires timezone-aware time")
         for url, observations in history.items():
             if not isinstance(url, str) or not url or not isinstance(observations, list):
                 raise ValueError("Invalid historical URL mapping")
+            # Validate every restored entry, including noncandidate URLs, before trusting the file.
+            evaluate_legacy_stability(observations, now)
     stable_by_url = {}
     for row in stability:
         url = row.get("YAYIN_URL")

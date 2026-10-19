@@ -12,7 +12,7 @@ class BatchAcceptanceTests(unittest.TestCase):
                 "production_writes": False, "legacy_workflows_executed": False,
                 "status": "isolated_fixture_checks_passed_not_production_verified",
                 "fixture_checks": {"sample": True},
-                "checks": {"runtime_rule_evidence": False,
+                "checks": {"isolation": True, "runtime_rule_evidence": False,
                            "legacy_behavioral_equivalence": False}}
         path.write_text(json.dumps(data), encoding="utf-8")
         return path

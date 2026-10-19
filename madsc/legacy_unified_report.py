@@ -18,6 +18,10 @@ def legacy_unified_rows(scores: list[dict], stability: list[dict], *,
         raise ValueError("Invalid legacy CSV row")
     if history is not None and (not isinstance(history, dict) or now is None):
         raise ValueError("Historical evidence requires a mapping and current time")
+    if history is not None:
+        for url, observations in history.items():
+            if not isinstance(url, str) or not url or not isinstance(observations, list):
+                raise ValueError("Invalid historical URL mapping")
     stable_by_url = {}
     for row in stability:
         url = row.get("YAYIN_URL")
@@ -25,6 +29,8 @@ def legacy_unified_rows(scores: list[dict], stability: list[dict], *,
             raise ValueError("Invalid stability URL")
         if url in stable_by_url:
             raise ValueError("Duplicate stability URL")
+        if row.get("24_SAAT_KARARLI") not in ("EVET", "HAYIR"):
+            raise ValueError("Invalid stability claim")
         stable_by_url[url] = row
     results = []
     seen_candidates = set()

@@ -5,6 +5,8 @@ from pathlib import Path
 from madsc.maintenance import verify_fixture_evidence
 
 CATEGORIES = ("k1", "k2", "k3", "k4", "k5")
+MODULES = {"k1": "security", "k2": "discovery", "k3": "channel_testing",
+           "k4": "backup", "k5": "maintenance"}
 
 def collect(root: Path) -> dict:
     root = Path(root)
@@ -38,6 +40,7 @@ def collect(root: Path) -> dict:
         if not isinstance(data, dict):
             raise ValueError(f"Invalid report object: {key}")
         if (data.get("category") != key
+            or data.get("module") != MODULES[key]
             or data.get("mode") != "isolated_read_only"
             or data.get("production_writes") is not False
             or data.get("legacy_workflows_executed") is not False
@@ -54,7 +57,9 @@ def collect(root: Path) -> dict:
         evidence_reports.append({"category": key, "status": "success",
                                  "production_writes": data["production_writes"],
                                  "fixture_checks": data["fixture_checks"]})
-        reports[key] = {"status": data["status"], "fixture_checks": len(data["fixture_checks"])}
+        reports[key] = {"status": data["status"], "module": MODULES[key],
+                        "fixture_checks": len(data["fixture_checks"]),
+                        "fixture_check_names": sorted(data["fixture_checks"])}
     verification = verify_fixture_evidence(evidence_reports)
     if not verification["fixture_evidence_verified"]:
         raise ValueError("K1-K5 fixture evidence verification failed")

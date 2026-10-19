@@ -111,3 +111,42 @@ Bu 27 dosyanın her birinin eski YAML kaynağı açılarak tetik, `permissions` 
 | `test-39-protected-playlist.yml` | push/dispatch; contents:read | korunan liste bütünlüğü | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
 
 **Toplam:** 67/99 kaynak YAML ilk eşleme, **32 dosya** açık. Numaralı test workflow'ları da gerçek YAML dosyasıdır; 92/99 farkını çözmek için bunları gerekçesiz kapsam dışına atmayacağız. 92/92 davranışsal kabul hâlâ yok.
+
+
+## Altıncı grup — 29 yeni kaynak YAML incelemesi
+
+Tetikler, izinler ve yürütülen ana komutlar salt-okunur eski YAML dosyalarından alındı. Aşağıdaki `read` / `write` değerleri yalnız GitHub `contents` iznidir; gerçek script yan etkilerinin tam denetimi değildir.
+
+| Workflow | contents izni | Komut/çıktı | Hedef/risk |
+|---|---|---|---|
+| `390-aday-tekrar-test.yml` | read | yedekler/tekrar_test_390.py; artifact | K2/K3 |
+| `altinci-aday-tekrar-test.yml` | read | altinci_aday_tekrar_test.py; syntax/fixture + artifact | K2/K3 |
+| `besinci-zaman-asimi-test.yml` | read | inline zaman aşımı denetimi | K2/K5 |
+| `birlesik-durum-raporu.yml` | read | birleşik durum artifact | K5 |
+| `dokuzuncu-akilli-tekrar-test.yml` | read | akıllı tekrar test takvimi unittest | K2/K5 |
+| `genis-kanal-tarama.yml` | read | genis_kanal_tara.py; artifact | K2 |
+| `iptv-test.yml` | read | iptv_test.py, aday M3U; cron | K3 |
+| `kaynak-puanlama-kontrol.yml` | read | kaynak güven puanı syntax/unittest | K2 |
+| `madsc-11599-yedek-geri-yukle.yml` | read | diagnose_11599_backups.py | K4 |
+| `madsc-son-kontrol-kurtarma-teshis.yml` | read, actions:read | final_validation regresyon ve kurtarma teşhisi | K1/K4/K5 |
+| `madsc-tum-sistem-yedek.yml` | read | repository_settings_inventory.py → full_system_backup.py; artifact, cron | K4 |
+| `madsc-turk-kanal-geri-sec.yml` | **write** | recover_turkish_backups.py; git add CALISANLAR.m3u, gate, git push main | K1/K4 HIGH |
+| `madsc-uc-asama.yml` | **write, actions:write** | verification_pipeline.py; git add madsc_dogrulama/, gate, push main | K1/K3/K5 HIGH |
+| `madsc-yedek-turk-ayir.yml` | **write** | keep_turkish_backups.py; git add CALISANLAR.m3u, gate, push main | K1/K4 HIGH |
+| `madsc-yedekler-aktarim-test.yml` | read | teknik aktarım unittest | K2/K4 |
+| `madsc-yedekler-sayi-duzelt.yml` | **write** | sync_yedekler_category_count.py; git add CALISANLAR.m3u, gate, push main | K1/K4 HIGH |
+| `oncelikli-kanal-dogrulama.yml` | read | oncelikli_kanal_dogrula.py; artifact | K3 |
+| `onikinci-hata-siniflandirma-test.yml` | read | inline hata sınıflandırma testi | K5 |
+| `sozcu-akit-ozel-test.yml` | read | yedekler/sozcu_akit_ozel_test.py; artifact | K3 |
+| `toplu-sistem-kontrol.yml` | read | salt-okunur tüm workflow git push uyarı envanteri; artifact | K1/K5 |
+| `vod-guncelle.yml` | **write** | VOD JSON stage, protected gate, git push | K1/K5 HIGH |
+| `yedek-geri-yukleme-tatbikat.yml` | read | restore_dry_run.py; artifact | K4 |
+| `yedekler-yeniler-medya-kontrol.yml` | read | yedekler_yeniler_medya_kontrol.py; artifact | K3/K4 |
+| `yeni-aday-on-test.yml` | read | yeni_aday_on_test.py; artifact | K2/K3 |
+| `yeni-kanal-arama-2026.yml` | read | yeni_kanal_tara.py; artifact | K2 |
+| `yeniler-guvenli-arama.yml` | read | kaynak_kesfet.py → yeni_kanal_tara.py; artifact | K2 |
+| `automatic-png-logos.yml` | read | PNG logo artifact üretimi; publish değil | K3/K5 |
+| `publish-iptv-png-logos.yml` | **write** | logos/duzeltilmis-*.png stage, protected gate, git push | K1/K3 HIGH |
+| `k1-protected-write-tests.yml` | read | protected_write_gate regresyon ve artifact | K1 |
+
+**Kaynak dosya kapsamı:** Önceki 67 + 29 benzersiz YAML = **96/99**. `madsc-yedekler-aktarim-test`, `madsc-ibo-3-5281`, `madsc-son-kontrol-kurtarma-teshis` bu turda yeniden açıldı ancak **tekrar sayılmadı**. Açık kalan 3 YAML: `madsc-yedekler-aktarim-test` değil; kesin fark tam 99 dosya envanteriyle karşılaştırılarak bulunacak. **Yüksek riskli ek yazma yolları** `madsc-turk-kanal-geri-sec`, `madsc-uc-asama`, `madsc-yedek-turk-ayir`, `madsc-yedekler-sayi-duzelt`, `vod-guncelle`, `publish-iptv-png-logos`. Korunan dosyaları veya logoları değiştiren hiçbir yeni işlem yetkilendirilmedi.

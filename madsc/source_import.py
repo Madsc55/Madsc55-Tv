@@ -10,6 +10,7 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
     if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Invalid playlist header")
     rows = []
+    channel_groups = []
     pending = None
     for line in lines[1:]:
         if line.startswith("#EXTINF:"):

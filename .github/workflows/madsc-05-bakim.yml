@@ -53,6 +53,18 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: K2 izole aday kanıtını üret
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.artifact_transport produce --path reports/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+      - name: K2 aday kanıtını sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k2-candidate-handoff
+          path: reports/k2-candidates.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K2 salt okunur kanıt raporunu oluştur
         run: python -m madsc.core --category k2 --output reports/k2.json
       - name: K2 kanıtını sakla
@@ -76,6 +88,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: K2 aday kanıtını indir
+        uses: actions/download-artifact@v4
+        with:
+          name: madsc-k2-candidate-handoff
+          path: reports/k2-handoff
+      - name: K2 kanıtını K3'te doğrula
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
       - name: K3 salt okunur kanıt raporunu oluştur
         run: python -m madsc.core --category k3 --output reports/k3.json
       - name: K3 kanıtını sakla

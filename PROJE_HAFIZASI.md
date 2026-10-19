@@ -521,3 +521,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `tests/test_candidate_coordination.py` içine iki fixture testi eklendi: IBO WORKING + K3 başarısız + tam metadata halinde koruma/hold; IBO WORKING + eksik probe halinde koruma/hold. Commit `00370bc07f90ae8f369d56448a83cadb6962b5e8`.
 - Actions #199 (run `39307239343`) `completed/success`; altı işin tamamı `completed/success`, failed step yok.
 - Yalnızca sağlanan IBO sonuçları üzerinden fixture testi; gerçek IBO cihazı kullanıcı tarafından test edilecek. YEDEKLER'e otomatik yazılmadı, korunan listeler ve eski repo değişmedi. 92 workflow parity, canlı ağ ffprobe ve offsite restore henüz kanıtlanmadı.
+
+
+## 19 Ekim 2026 — Birleşik rapor regresyonu ve Actions #200
+- `tests/test_legacy_unified_report.py` içine 2 fixture regresyonu eklendi: yüksek puan ve CSV 24 saat kararlı iddiası dahi IBO/kullanıcı onayı olmadan ana listeye ekleme vermez; tekrar eden kararlılık URL kaydı fail-closed reddedilir. Commit `eebec564079d00dcc6105ccafaaef113d95a7eb4`.
+- GitHub Actions #200 (run `39307617098`) `completed/success`, K1–K5 ve beşli toplu doğrulama dahil 6/6 job `completed/success`, başarısız step yok.
+- Bu yalnızca salt-okunur fixture davranış testi; 92 legacy workflow parity, gerçek canlı yayın ölçümü, IBO cihaz onayı ve offsite restore henüz kanıtlanmadı. Korunan listeler, eski repo, main merge ve PR #71 değişmedi.

@@ -20,6 +20,8 @@ def load(path):
     path = Path(path)
     if path.is_symlink() or not path.is_file():
         raise ValueError("Invalid evidence path")
+    if path.stat().st_size > 16 * 1024 * 1024:
+        raise ValueError("Evidence exceeds 16 MiB safety limit")
     return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
 
 def main():

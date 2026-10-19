@@ -41,3 +41,7 @@ class LegacyStabilityTests(unittest.TestCase):
         for observations in bad:
             with self.subTest(observations=observations), self.assertRaises(ValueError):
                 evaluate_legacy_stability(observations, self.now)
+
+    def test_untested_state_cannot_be_recorded_as_measurement(self):
+        with self.assertRaises(ValueError):
+            evaluate_legacy_stability([self.observation(1, "TEST_EDILMEDI")], self.now)

@@ -74,3 +74,19 @@ class SourceImportTests(unittest.TestCase):
                 item = extract_candidates(p)["candidates"][0]
                 self.assertEqual(item["tvg_logo"], "https://example.org/logo.png")
                 self.assertEqual(item["group_title"], "Haber")
+    def test_channel_name_with_commas_survives_full_handoff(self):
+        from madsc.handoff import assess_candidates
+        for suffix in (".m3u", ".m3u8"):
+            with self.subTest(suffix=suffix), tempfile.TemporaryDirectory() as d:
+                p = Path(d) / ("source" + suffix)
+                p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1" tvg-logo="https://example.org/logo.png" group-title="News, TR",TRT 1, HD\nhttps://example.org/live\n', encoding="utf-8")
+                original = p.read_bytes()
+                discovery = extract_candidates(p)
+                assessed = assess_candidates(discovery, {})["assessed"][0]
+                self.assertEqual(assessed["name"], "TRT 1, HD")
+                self.assertEqual(assessed["tvg_id"], "trt1")
+                self.assertEqual(assessed["tvg_logo"], "https://example.org/logo.png")
+                self.assertEqual(assessed["group_title"], "News, TR")
+                self.assertEqual(assessed["technical_status"], "UNTESTED")
+                self.assertFalse(assessed["ibo_device_verified"])
+                self.assertEqual(p.read_bytes(), original)

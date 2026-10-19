@@ -81,3 +81,6 @@ K1 salt-okunur playlist butunluk denetimine UTF-8 BOM iceren M3U regresyon testi
 
 ## 19 Ekim 2026 - K3 devir
 K3 sure olcum kontrolu commit 91d4236. Actions #12 son kontrolde devam ediyordu. K3 regresyon testi yazma denemesi engellendi; uygulanmadi. Sonraki is Actions #12 sonucunu kontrol etmek, testi eklemek ve besli sistem kurulumuna devam etmek. Eski depo degismedi.
+
+## K3 regresyon devri - 19 Ekim 2026
+Actions 12 basarili. K3 regresyon testi d4c8f8d commitinde eklendi. Actions 13 beklemede. Eski depo degismedi.

@@ -323,3 +323,10 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `madsc/legacy_scoring.py` içinde eski `scripts/birlesik_aday_raporu.py` kararının ayrı saf fonksiyonu eklendi: 24 saat kararlıysa +30, toplam 100 üst sınırı; teknik+kararlı `IBO_VE_KIMLIK_ONAYI_BEKLIYOR`, yalnız teknik `KARARLILIK_BEKLIYOR`, diğer `TEKNIK_DOGRULAMA_BEKLIYOR`; IBO/kullanıcı onayı YOK ve ana listeye ekleme HAYIR. Commit `0afe11a2`.
 - `tests/test_legacy_scoring.py` durum/eşik/yanlış kanıt testleri eklendi; commit `2e6fd368`. Kontrol anında #166 queued, #167 pending, #168 queued: **test başarı sonucu henüz doğrulanmadı**.
 - **AÇIK:** Gerçek 24 saat geçmiş verisini okuma ve bağımsız doğrulama, CSV `YAYIN_URL` join, rapor çıktısı şeması, gerçek ffprobe ve arşiv persistency. Saf fonksiyon yalnız verilen `stable_24h` kanıtını yorumlar; 24 saat izlendi iddiası yok. Korunan listeler/production/cron/PR #71/main merge değişmedi.
+
+
+## 19 Ekim 2026 — Eski birleşik aday raporu CSV sözleşmesi (salt-okunur)
+- Actions #166 / 39268413739 SUCCESS, #168 / 39268672688 SUCCESS; #167 CANCELLED (başarılı sayılmadı).
+- Yeni `madsc/legacy_unified_report.py` eski `scripts/birlesik_aday_raporu.py` 10 alanlı çıktı CSV şemasını, `YAYIN_URL` eşleşmesini, kararlılık `EVET` yorumunu, puana göre azalan/kanala göre artan sıralamayı ve IBO/kullanıcı/ana liste onayını `YOK`/`HAYIR` olarak tutan **saf salt-okunur** görünüm olarak taşır (commit `3e964318`). `tests/test_legacy_unified_report.py` URL join, sıralama, boş rapor ve geçersiz kayıt regresyonlarını içerir (commit `c8f61448`).
+- Kontrol anında Actions #169 / 39268992498 queued ve #170 / 39269024472 queued; yeni modül CI başarısı **henüz doğrulanmadı**.
+- Bu kod CSV dosyalarını okumaz/yazmaz, gerçek 24 saat ölçümü veya cihaz onayı yapmaz; yalnız çağıranın verdiği satırları değerlendirir. **AÇIK:** dosya IO/artefakt paritesi, cache geçmişi güvenilirliği, gerçek ffprobe ve eski URL arşiv kimliği, bütün 99 workflow davranış eşdeğerliği. Korunan listeler ve eski repo değişmedi.

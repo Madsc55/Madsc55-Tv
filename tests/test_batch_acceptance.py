@@ -120,3 +120,20 @@ class BatchAcceptanceTests(unittest.TestCase):
             paths["k1"].rename(Path(d) / "k1.json")
             with self.assertRaises(ValueError):
                 collect(Path(d))
+    def test_extra_non_json_artifact_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            for key in CATEGORIES:
+                self.make_report(d, key)
+            (Path(d) / "madsc-batch-k1" / "notes.txt").write_text("unexpected", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(Path(d))
+
+    def test_nested_evidence_directory_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            for key in CATEGORIES:
+                self.make_report(d, key)
+            nested = Path(d) / "madsc-batch-k2" / "nested"
+            nested.mkdir()
+            (nested / "extra.txt").write_text("unexpected", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(Path(d))

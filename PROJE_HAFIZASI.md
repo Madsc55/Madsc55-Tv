@@ -132,3 +132,6 @@ Actions #34 success; #35 cancelled; #36 son kontrolde in_progress. K2 M3U kaynak
 
 ## 19 Ekim 2026 - K4 manifest regresyonu
 Actions #39 success. K4 manifest yapisi ba05849, kayit bicimi d9d46a1 ve gecersiz manifest regresyonu df42919 eklendi. Yalnizca izole dosya dogrulamasi; harici yedek ve geri yukleme onayi yok. Yeni Actions sonucunu dogrula. Eski depo degismedi.
+
+## 19 Ekim 2026 - K4 sandbox kopya kontrolu
+Actions #42 success. K4 iki bagimsiz gecici dizindeki dosya kopyalarini SHA256 manifesti ile karsilastiriyor: 89bcd71. Bozulma testi 0addf94; besli toplu fixture kontrolune baglanti 6c1418a. Gercek dis yedek veya uretim geri yukleme yapilmadi. Son Actions kontrol edilmeli.

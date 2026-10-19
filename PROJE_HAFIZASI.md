@@ -280,3 +280,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `madsc/candidate_coordination.py` içinde K2 aday URL SHA-256 parmak izleri artık 64 küçük harf hex olarak denetleniyor; K3 probe, tekrar sayısı ve kullanıcıdan sağlanan IBO kanıtı anahtarlarının yalnız keşifteki adaylara ait olması zorunlu. Yanlış/bağlantısız kanıt ValueError ile fail-closed; korunan listelere yazma yok. Commit `1d8220b1`.
 - `tests/test_candidate_coordination.py` içine yanlış probe/tekrar/IBO kanıtı için negatif regresyon eklendi. Commit `3d442281`.
 - GitHub Actions #160 (39265872644) queued, #161 (39265896149) pending kontrol anında; **başarı doğrulanmadı**. Kapanış şartı: #161 gerçek sonuç SUCCESS ve K2/K3/K5 ilgili fixture regresyonları geçmeli. IBO cihaz/gerçek yayın/production kanıtı değildir.
+
+
+## 19 Ekim 2026 — K2/K3 kanıt zinciri #161 SUCCESS, K3 handoff yeni test bekliyor
+- Actions #160 (39265872644) SUCCESS, #161 (39265896149) SUCCESS: K2 koordinasyonda yabancı probe/retry/IBO parmak izi reddi CI doğrulandı. Bu fixture düzeyi kanıt, gerçek cihaz/yayın kanıtı değil.
+- `madsc/handoff.py` K2->K3 aktarımında aday listesinde olmayan probe veya IBO sonucu anahtarını artık reddeder (commit `be8675d2`). `tests/test_handoff.py` iki negatif regresyon ekler (commit `572518e6`). Korunan playlist ve production yazması yok.
+- Kontrol anında #162 (39266283851) in_progress, #163 (39266301605) queued. **Yeni değişikliğin başarılı olduğu henüz doğrulanmadı.** Kapanış: #163 başarı sonucu ve ilgili testler. Eski 810 dosya incelemesi kurulum sonu kontrol listesinde bekliyor.

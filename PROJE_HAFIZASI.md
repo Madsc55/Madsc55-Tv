@@ -75,3 +75,6 @@ Gercek Actions #6 39182087053 ve #7 39182095159 completed/success dogrulandi. K4
 
 ## 19 Ekim 2026 - K2 kaynak testi ve Actions #10
 GitHub Actions #8, #9 ve #10 basarili olarak dogrulandi. K2 UTF-8 BOM iceren M3U okuma regresyon testi d6f90cb1 commitinde eklendi. Onceki hafiza kaydi denemeleri engellenmisti; bu kayitla devir tamamlandi. Eski depo ve canli dosyalar degismedi. Sonraki adim K1-K5 gercek islev ve kanit kapsamini artirmak.
+
+## 19 Ekim 2026 - K1 BOM butunluk regresyonu
+K1 salt-okunur playlist butunluk denetimine UTF-8 BOM iceren M3U regresyon testi eklendi: 10151c3632fa3f3d0dff0a3d31786ce69bda1c9f. Dosyanin degismedigi ve kanal sayisinin dogru oldugu test ediliyor. Yeni Actions sonucu bekleniyor. Gercek 26 kural runtime onayi yok; eski depo degismedi.

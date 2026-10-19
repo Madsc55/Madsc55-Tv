@@ -10,6 +10,13 @@ def normalize_url(value: str) -> str:
     parts = urlsplit(value)
     if parts.scheme.lower() not in ("http", "https") or not parts.netloc or parts.username or parts.password:
         raise ValueError("Candidate must use HTTP(S) without embedded credentials")
+    try:
+        host = parts.hostname
+        port = parts.port
+    except ValueError as exc:
+        raise ValueError("Invalid candidate host or port") from exc
+    if not host or any(ch.isspace() for ch in parts.netloc) or port == 0:
+        raise ValueError("Invalid candidate host or port")
     if parts.fragment:
         raise ValueError("URL fragments are not accepted")
     return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path or "/", parts.query, ""))

@@ -24,6 +24,8 @@ def collect(root: Path) -> dict:
         matches = list(root.rglob(key + ".json"))
         if len(matches) != 1:
             raise ValueError(f"Expected exactly one report for {key}; got {len(matches)}")
+        if matches[0].is_symlink() or not matches[0].is_file():
+            raise ValueError(f"Invalid evidence file: {key}")
         data = json.loads(matches[0].read_text(encoding="utf-8"))
         if not isinstance(data, dict):
             raise ValueError(f"Invalid report object: {key}")
@@ -34,7 +36,8 @@ def collect(root: Path) -> dict:
             or data.get("status") != "isolated_fixture_checks_passed_not_production_verified"
             or not isinstance(data.get("fixture_checks"), dict)
             or not data["fixture_checks"]
-            or not all(v is True for v in data["fixture_checks"].values())
+            or not all(isinstance(k, str) and k and v is True
+                       for k, v in data["fixture_checks"].items())
             or not isinstance(data.get("checks"), dict)
             or data["checks"].get("isolation") is not True
             or data["checks"].get("runtime_rule_evidence") is not False

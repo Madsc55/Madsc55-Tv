@@ -15,6 +15,14 @@ class SourceImportTests(unittest.TestCase):
                 self.assertEqual(result["source_format"], suffix)
                 self.assertFalse(result["production_playlist_modified"])
                 self.assertEqual(before, p.read_bytes())
+    def test_header_with_utf8_bom(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u"
+            p.write_text("\ufeff#EXTM3U\n#EXTINF:-1,One\nhttps://example.org/one\n", encoding="utf-8")
+            result = extract_candidates(p)
+            self.assertEqual(len(result["candidates"]), 1)
+            self.assertFalse(result["production_playlist_modified"])
+
     def test_missing_url_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"

@@ -57,6 +57,16 @@ class CandidateCoordinationTests(unittest.TestCase):
         self.assertFalse(report["candidates"][0]["production_change_allowed"])
         self.assertFalse(report["production_ready"])
 
+    def test_malformed_probe_rejected(self):
+        for bad in ("invalid", [], 42):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                coordinate(self.rows, {self.digest: bad}, {})
+
+    def test_invalid_retry_counts_rejected(self):
+        for bad in (-1, 1.5, True, "3"):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                coordinate(self.rows, {}, {self.digest: bad})
+
     def test_duplicate(self):
         result = coordinate(self.rows + self.rows, {}, {})
         self.assertEqual(len(result["candidates"]), 1)

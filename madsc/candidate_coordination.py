@@ -28,7 +28,7 @@ def coordinate(rows: list[dict], probes: dict, attempts: dict,
             raise ValueError("Invalid probe evidence")
         if probe is not None and probe.get("url_sha256") != digest:
             raise ValueError("Probe fingerprint mismatch")
-        status = evaluate_probe(probe)["technical_status"] if probe else "UNTESTED"
+        status = evaluate_probe(probe)["technical_status"] if probe is not None else "UNTESTED"
         failures = attempts.get(digest, 0)
         if type(failures) is not int or failures < 0:
             raise ValueError("Invalid retry count")
@@ -40,14 +40,18 @@ def coordinate(rows: list[dict], probes: dict, attempts: dict,
         logo_match = channel_id in logo_ids if logo_ids is not None and channel_id else False
         ibo = classify_channel(status, (ibo_results or {}).get(digest, "UNKNOWN"))
         metadata_hold = (epg_ids is not None and not epg_match) or (logo_ids is not None and not logo_match)
+        ibo_review = ibo["ibo_result"] != "WORKING"
         score = max(0, (50 if status == "PRELIMINARY_PASS" else 0) + (20 if epg_match else 0)
                     + (10 if logo_match else 0) - 5 * failures)
         result.append({"url_sha256": digest, "technical_status": status,
                        "tvg_id": channel_id, "epg_match": epg_match, "logo_match": logo_match,
                        "ibo_result": ibo["ibo_result"], "protected_working": ibo["protected_working"],
                        "score": score,
-                       "hold": status != "PRELIMINARY_PASS" or retry["blocked"] or metadata_hold,
-                       "next_action": "MANUAL_METADATA_REVIEW" if metadata_hold else retry["next_action"],
+                       "hold": status != "PRELIMINARY_PASS" or retry["blocked"] or metadata_hold or ibo_review,
+                       "ibo_review_required": ibo_review,
+                       "next_action": ("HALT_AND_REPORT" if retry["blocked"] else
+                                       "MANUAL_METADATA_REVIEW" if metadata_hold else
+                                       "MANUAL_IBO_REVIEW" if ibo_review else retry["next_action"]),
                        "production_change_allowed": False, "delete_allowed": False})
     return {"candidates": sorted(result, key=lambda x: (-x["score"], x["url_sha256"])),
             "duplicates": discovery["duplicates"], "rejected": discovery["rejected"],

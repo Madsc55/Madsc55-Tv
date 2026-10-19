@@ -1,5 +1,5 @@
 import unittest
-from madsc.maintenance import retry_decision, aggregate, summarize_batch
+from madsc.maintenance import retry_decision, aggregate, summarize_batch, verify_fixture_evidence
 
 class MaintenanceTests(unittest.TestCase):
     def test_bounded_retry(self):
@@ -66,6 +66,18 @@ class MaintenanceTests(unittest.TestCase):
         self.assertEqual(summary["unsafe_or_unverified_write_categories"], ["k2", "k4"])
         self.assertFalse(summary["all_five_successful"])
         self.assertTrue(summary["requires_review"])
+
+    def test_fixture_evidence_requires_explicit_true_checks(self):
+        reports = [{"category": k, "production_writes": False, "status": "success",
+                    "fixture_checks": {"isolated": True}} for k in ("k1", "k2", "k3", "k4", "k5")]
+        self.assertTrue(verify_fixture_evidence(reports)["fixture_evidence_verified"])
+        reports[0].pop("fixture_checks")
+        reports[1]["fixture_checks"]["isolated"] = False
+        result = verify_fixture_evidence(reports)
+        self.assertFalse(result["fixture_evidence_verified"])
+        self.assertEqual(result["missing_fixture_evidence"], ["k1"])
+        self.assertEqual(result["failed_fixture_checks"], ["k2"])
+        self.assertFalse(result["production_ready"])
 
     def test_missing_categories_never_ready(self):
         self.assertFalse(aggregate([{"category":"k1","production_writes":False}])["all_five_present"])

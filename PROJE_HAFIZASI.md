@@ -545,3 +545,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `tests/test_handoff.py` içine iki fixture regresyonu eklendi: iki adayın IBO ve probe kanıtları URL SHA256 ile ayrılır, birinin WORKING sonucu diğerine taşınmaz; boş keşifte bağlantısız IBO kanıtı reddedilir. Commit `b2ee7c51ad69ce35c9a67d972f422fbeb536add4`.
 - GitHub Actions #203 (run `39309574845`) `completed/success`; K1–K5 ve beşli toplu kanıt doğrulama dahil 6/6 iş `completed/success`, başarısız step yok.
 - Yalnızca fixture kanıtı; gerçek IBO cihazı, canlı ffprobe, offsite restore ve 92 workflow parity kanıtlanmadı. Korunan listeler, eski depo, main merge ve PR #71 değiştirilmedi.
+
+
+## 19 Ekim 2026 — 99/92 kapsam uzlaştırması belge güncellemesi
+- `docs/ESKI_WORKFLOW_99_ENVANTER.md` içine güncel kapsam notu eklendi, commit `4954f1ea51d79e7dda1f1a14b85c448d65e84d1e`.
+- Eski salt-okunur audit tanımı 99 YAML içinden beş `madsc-01..05` koordinatörünü ve `k1-protected-write-tests.yml`, `madsc-hizli-on-kontrol.yml` dosyalarını hariç tutuyor: 99−7=92. 99/99 ilk kaynak incelemesi tamam; 92/92 gerçek davranışsal eşdeğerlik halen `BLOCKED_NEEDS_BEHAVIOR_EVIDENCE`.
+- Bu yalnızca belge uzlaştırmasıdır; yeni Actions test koşusu tetiklendiği iddia edilmiyor. Korunan listeler, eski depo, cron/push, main merge ve PR #71 değiştirilmedi.

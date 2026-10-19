@@ -13,6 +13,7 @@ class EpgInventoryTests(unittest.TestCase):
             self.assertEqual(report["matched_playlist_ids"], 1)
             self.assertEqual(report["unmatched_playlist_ids"], ["tr.two"])
             self.assertEqual(report["orphaned_programmes"], 1)
+            self.assertEqual(report["programmes_without_time"], 2)
             self.assertFalse(report["device_verified"])
             self.assertEqual(before, p.read_bytes())
 

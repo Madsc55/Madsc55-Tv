@@ -15,7 +15,7 @@ class CandidateCoordinationTests(unittest.TestCase):
     def test_pass_not_approved(self):
         probe = {"url_sha256": self.digest, "http_status": 200, "video": True, "audio": True, "duration_seconds": 40}
         result = coordinate(self.rows, {self.digest: probe}, {})
-        self.assertFalse(result["candidates"][0]["hold"])
+        self.assertTrue(result["candidates"][0]["hold"])
         self.assertEqual(result["candidates"][0]["score"], 50)
         self.assertFalse(result["candidates"][0]["production_change_allowed"])
 
@@ -53,7 +53,7 @@ class CandidateCoordinationTests(unittest.TestCase):
         rows = [{"name": "Sample", "url": "https://example.org/live.m3u8", "tvg_id": "sample.tv"}]
         report = coordinate(rows, {self.digest: probe}, {}, {"sample.tv"}, {"sample.tv"})
         self.assertEqual(report["candidates"][0]["score"], 80)
-        self.assertFalse(report["candidates"][0]["hold"])
+        self.assertTrue(report["candidates"][0]["hold"])
         self.assertFalse(report["candidates"][0]["production_change_allowed"])
         self.assertFalse(report["production_ready"])
 
@@ -66,6 +66,12 @@ class CandidateCoordinationTests(unittest.TestCase):
         for bad in (-1, 1.5, True, "3"):
             with self.subTest(bad=bad), self.assertRaises(ValueError):
                 coordinate(self.rows, {}, {self.digest: bad})
+
+    def test_explicit_ibo_working_still_never_allows_writes(self):
+        probe = {"url_sha256": self.digest, "http_status": 200, "video": True, "audio": True, "duration_seconds": 40}
+        report = coordinate(self.rows, {self.digest: probe}, {}, ibo_results={self.digest: "WORKING"})
+        self.assertFalse(report["candidates"][0]["hold"])
+        self.assertFalse(report["candidates"][0]["production_change_allowed"])
 
     def test_duplicate(self):
         result = coordinate(self.rows + self.rows, {}, {})

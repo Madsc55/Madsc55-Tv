@@ -1,29 +1,156 @@
-name: MADSC K5 — Bakim
+name: MADSC K5 — Genel Bakım ve Beşli Toplu Kabul
 on:
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: madsc-k5-isolated
+  group: madsc-five-system-batch
   cancel-in-progress: false
 jobs:
-  isolated:
+  k1:
+    name: Güvenlik
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Kaynak kodunu al
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - name: Python ortamını hazırla
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Unit tests
+      - name: Tüm regresyon testlerini çalıştır
         run: python -m unittest discover -s tests -v
-      - name: Isolated report
-        run: python -m madsc.core --category k5 --output reports/k5.json
-      - name: Upload isolated evidence
+      - name: K1 salt okunur kanıt raporunu oluştur
+        run: python -m madsc.core --category k1 --output reports/k1.json
+      - name: K1 kanıtını sakla
         uses: actions/upload-artifact@v4
         with:
-          name: madsc-k5-isolated-evidence
+          name: madsc-batch-k1
+          path: reports/k1.json
+          retention-days: 14
+  k2:
+    name: Keşif
+    needs: k1
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Kaynak kodunu al
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python ortamını hazırla
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tüm regresyon testlerini çalıştır
+        run: python -m unittest discover -s tests -v
+      - name: K2 salt okunur kanıt raporunu oluştur
+        run: python -m madsc.core --category k2 --output reports/k2.json
+      - name: K2 kanıtını sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-batch-k2
+          path: reports/k2.json
+          retention-days: 14
+  k3:
+    name: Kanal Testleri
+    needs: k2
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Kaynak kodunu al
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python ortamını hazırla
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tüm regresyon testlerini çalıştır
+        run: python -m unittest discover -s tests -v
+      - name: K3 salt okunur kanıt raporunu oluştur
+        run: python -m madsc.core --category k3 --output reports/k3.json
+      - name: K3 kanıtını sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-batch-k3
+          path: reports/k3.json
+          retention-days: 14
+  k4:
+    name: Arşiv ve Yedek
+    needs: k3
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Kaynak kodunu al
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python ortamını hazırla
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tüm regresyon testlerini çalıştır
+        run: python -m unittest discover -s tests -v
+      - name: K4 salt okunur kanıt raporunu oluştur
+        run: python -m madsc.core --category k4 --output reports/k4.json
+      - name: K4 kanıtını sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-batch-k4
+          path: reports/k4.json
+          retention-days: 14
+  k5:
+    name: Genel Bakım
+    needs: k4
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Kaynak kodunu al
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python ortamını hazırla
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tüm regresyon testlerini çalıştır
+        run: python -m unittest discover -s tests -v
+      - name: K5 salt okunur kanıt raporunu oluştur
+        run: python -m madsc.core --category k5 --output reports/k5.json
+      - name: K5 kanıtını sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-batch-k5
           path: reports/k5.json
+          retention-days: 14
+  toplu-kabul:
+    name: Beşli toplu kanıt doğrulama
+    needs: [k1, k2, k3, k4, k5]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Kaynak kodunu al
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python ortamını hazırla
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Beş kategori kanıtını indir
+        uses: actions/download-artifact@v4
+        with:
+          pattern: madsc-batch-k*
+          path: reports/collected
+          merge-multiple: false
+      - name: Kanıtları doğrula ve tek rapor oluştur
+        run: python -m madsc.batch_acceptance --reports reports/collected --output reports/toplu-kabul.json
+      - name: Toplu raporu sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-five-system-acceptance
+          path: reports/toplu-kabul.json
           retention-days: 14

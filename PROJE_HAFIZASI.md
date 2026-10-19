@@ -72,3 +72,6 @@ Gercek GitHub Actions #5 run 39181924806, commit 29fa222, completed/success olar
 
 ## 19 Ekim 2026 - K4 ara dizin sembolik baglanti korumasi
 Gercek Actions #6 39182087053 ve #7 39182095159 completed/success dogrulandi. K4 snapshot_manifest kaynak yolunun ara dizinlerindeki sembolik baglantilar da reddedilecek sekilde guclendirildi: ffc17d45caa593afa6992d8352480fc90211e5bb. tests/test_backup.py ara dizin symlink regresyonu eklendi: d8194e3021e2eaf9c98054e6938001e21520823b. Actions #8 39182332177 in_progress, #9 39182338181 queued; basari henuz dogrulanmadi. K4 halen izole manifest denetimi, harici yedek/restore degil. Eski repo ve canli veriler degismedi. Sonraki is #8/#9 testlerini kontrol etmek ve K1-K5 gercek kanit kapsamini gelistirmek.
+
+## 19 Ekim 2026 - K2 kaynak testi ve Actions #10
+GitHub Actions #8, #9 ve #10 basarili olarak dogrulandi. K2 UTF-8 BOM iceren M3U okuma regresyon testi d6f90cb1 commitinde eklendi. Onceki hafiza kaydi denemeleri engellenmisti; bu kayitla devir tamamlandi. Eski depo ve canli dosyalar degismedi. Sonraki adim K1-K5 gercek islev ve kanit kapsamini artirmak.

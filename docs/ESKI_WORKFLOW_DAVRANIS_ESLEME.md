@@ -213,3 +213,17 @@ Eski dalda salt-okunur kaynak satırları:
 `tools/protected_write_gate.py` kaynağı ayrıca tam okundu: `CALISANLAR.m3u`, `YENILER.m3u`, `YABANCI_KANALLAR.m3u`, `AGENTS.md` gibi adları; `yedekler/`, `FAVORILER/`, `EPG/`, `logolar/`, `logos/`, `arsiv/` öneklerini ve genel `.m3u/.m3u8` uzantılarını reddeder. Git `base..HEAD`, staged, unstaged, untracked ve ignored yollarını denetler; Git komutu başarısızsa **fail-closed** kod 2, korunan değişiklikte kod 1 döner. Bu kaynak davranışı **koruma tasarımı kanıtıdır**, GitHub branch ruleset veya üretimde çalışmış olduğu kanıtı değildir. `git add CALISANLAR.m3u` yapan eski workflow'ların koruma kapısından geçmesi beklenmez; geçmiş koşu sonucu ayrıca incelenmeden gerçek push iddia edilmez.
 
 Bu 3 ek korunan liste yazarı da K1 güvenlik gereği yeni sisteme taşınmayacak. Yeni repo/korunan dosyalar değiştirilmedi.
+
+
+## EPG, VOD, PNG yayımlama ve birleşik keşif — kod/iş akışı güvenlik karşılaştırması
+
+Eski dalda YAML ve çağrılan betikler salt-okunur incelendi:
+
+| İş akışı | Gerçek çalışma ve çıktı | GitHub yayımlama ve koruma kararı |
+|---|---|---|
+| `vod-guncelle.yml` | `scripts/vod_guncelle.py` `vod/guncel-bolumler.json` dosyasını yazar (satır 21); `CALISANLAR.m3u` değiştirme komutu bulunmadı | `contents:write`, cron 07:17 UTC, `git add vod/guncel-bolumler.json`, gate+commit+push. Korunan liste dışı VOD JSON yazma **var**; cron/push yeni sisteme aktarılmayacak |
+| `publish-iptv-png-logos.yml` | `cairosvg.svg2png` ile `logos/duzeltilmis-*.png` üretir | `contents:write`, main üzerinde git add+gate+push. Gate `logos/` önekini reddettiğinden bu yol **tasarım gereği bloke** olmalı; eski Actions gerçek sonucu bilinmiyor. Yeni sistemde logo değişikliği yok |
+| `epg-gunluk.yml` | `scripts/build_epg.py` bağımsız XMLTV/rapor, `scripts/build_ibo_epg_test.py` IBO test EPG, `scripts/epg_tv_readiness.py` JSON (satır 64) | `contents:write`, cron 03:25 UTC, `git add epg/*`, gate+commit+push. Gate `epg/` önekini reddeder: **tasarım gereği bloke**; IBO EPG cihaz kabulü yok |
+| `madsc-birlesik-kesif.yml` | `madsc_akilli_kesif.py` ffprobe çağrısı (satır 54), `madsc_kesif/` CSV/JSON/logo adayları ve state; `scripts/discovery_archive.py` history/registry; `CALISANLAR.m3u` ve `YENILER.m3u` okuma | `contents:write`, `actions:write`, cron 06:00/18:00 UTC, `git reset --hard` yalnız runner checkout, raporları `madsc_kesif/` altında 10 denemeli `git push origin HEAD:main`; gate `madsc_kesif/` için genel koruma öneki içermiyor. **Rapor push yolu mevcut**, ama gerçek push başarısı doğrulanmadı. Yeni cron/push kapalı kalmalı |
+
+**Önemli ayrım:** Gate çalışma ağacı/commit değişikliklerini reddeder; bu, yazıcı betiğin runner üzerinde dosya üretmediği anlamına gelmez. PNG ve EPG gate çağrılarının korunan dizinlere göre bloke edilmesi beklenir; bu **statik kaynak değerlendirmesi**, geçmiş koşu kanıtı değildir. VOD JSON ve `madsc_kesif/` rapor yolları gate kapsamındaki korunan dizinler arasında doğrudan yer almaz; bunların da otomatik `main` push'u yeni sistemde yetkisizdir. Korunan listelere, logolara, EPG'ye, VOD'a veya eski depoya yazılmadı.

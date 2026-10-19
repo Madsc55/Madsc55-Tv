@@ -27,3 +27,16 @@ class WritePathAuditTests(unittest.TestCase):
         report = audit_write_paths(["YEDEKLER/a.txt", "LoGoS/a.png",
                                     "ArSiV/sample.txt", "EPG/data.xml"])
         self.assertEqual(len(report["rejected"]), 4)
+    def test_ambiguous_and_control_character_paths_blocked(self):
+        paths = ["reports/a\x00.json", "reports/a\n.json", "reports/a\t.json",
+                 "reports/file:stream", "reports/file. ", "reports/file.",
+                 "~/reports.json", "reports/dir /file.json"]
+        result = audit_write_paths(paths)
+        self.assertTrue(result["blocked"])
+        self.assertEqual(result["rejected"], paths)
+        self.assertFalse(result["runtime_gate_enforced"])
+
+    def test_mixed_safe_and_unsafe_paths_do_not_clear_block(self):
+        result = audit_write_paths(["reports/safe.json", "EPG/guide.xml"])
+        self.assertTrue(result["blocked"])
+        self.assertEqual(result["rejected"], ["EPG/guide.xml"])

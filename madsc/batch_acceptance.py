@@ -17,9 +17,16 @@ def collect(root: Path) -> dict:
                              if path.name not in expected_names)
     if unexpected_json:
         raise ValueError(f"Unexpected JSON evidence: {unexpected_json}")
+    allowed_dirs = {f"madsc-batch-{key}" for key in CATEGORIES}
     for path in root.rglob("*"):
         if path.is_symlink():
             raise ValueError(f"Symlink evidence is forbidden: {path}")
+        relative = path.relative_to(root)
+        if (len(relative.parts) > 2 or relative.parts[0] not in allowed_dirs
+                or (len(relative.parts) == 1 and not path.is_dir())
+                or (len(relative.parts) == 2 and
+                    (path.is_dir() or relative.name != relative.parts[0].removeprefix("madsc-batch-") + ".json"))):
+            raise ValueError(f"Unexpected evidence package entry: {relative}")
     for key in CATEGORIES:
         matches = list(root.rglob(key + ".json"))
         if len(matches) != 1:

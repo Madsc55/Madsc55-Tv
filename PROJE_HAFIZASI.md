@@ -286,3 +286,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Actions #160 (39265872644) SUCCESS, #161 (39265896149) SUCCESS: K2 koordinasyonda yabancı probe/retry/IBO parmak izi reddi CI doğrulandı. Bu fixture düzeyi kanıt, gerçek cihaz/yayın kanıtı değil.
 - `madsc/handoff.py` K2->K3 aktarımında aday listesinde olmayan probe veya IBO sonucu anahtarını artık reddeder (commit `be8675d2`). `tests/test_handoff.py` iki negatif regresyon ekler (commit `572518e6`). Korunan playlist ve production yazması yok.
 - Kontrol anında #162 (39266283851) in_progress, #163 (39266301605) queued. **Yeni değişikliğin başarılı olduğu henüz doğrulanmadı.** Kapanış: #163 başarı sonucu ve ilgili testler. Eski 810 dosya incelemesi kurulum sonu kontrol listesinde bekliyor.
+
+
+## 19 Ekim 2026 — K2-K3-K5 ortak kabul kanıtı
+- #162 (39266283851) ve #163 (39266301605) SUCCESS: K2->K3 yabancı probe/IBO kanıtı reddi regresyonu geçti.
+- `madsc/core.py` K5 fixture kabulüne K2 keşif -> K3 `assess_candidates` -> K5 `coordinate` aynı aday parmak izi, teknik statü, tvg-id ve salt-okunur karar tutarlılığı eklendi; commit `ba9ff6a6`. Bu ayrı sistemlerin gerçek production orkestrasyonu değildir, yalnız fixture çapraz kontrolüdür.
+- Actions #164 (39267419274) kontrol anında queued. Sonucu doğrulanmadan tamamlandı denmeyecek. Korunan listeler, eski repo, PR #71 ve cron değiştirilmedi. Kapanış: #164 SUCCESS ve ardından eski 99 workflow davranışsal harita/gerçek kabul ayrı ilerlemeli.

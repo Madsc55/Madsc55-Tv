@@ -11,8 +11,9 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
         if requested.is_absolute() or ".." in requested.parts:
             raise ValueError("Unsafe backup source path")
         candidate = base / requested
-        if candidate.is_symlink():
-            raise ValueError("Symlink backup source is not permitted")
+        for parent in (base, *(base / Path(*requested.parts[:i]) for i in range(1, len(requested.parts) + 1))):
+            if parent.is_symlink():
+                raise ValueError("Symlink in backup source path is not permitted")
         candidate = candidate.resolve(strict=True)
         if not candidate.is_relative_to(base) or not candidate.is_file():
             raise ValueError("Backup source must be a regular file within root")

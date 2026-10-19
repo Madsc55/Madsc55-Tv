@@ -497,3 +497,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 ## 19 Ekim 2026 — K2→K3→K5 gerçek kod seviyesinde çapraz regresyon eklendi
 - `tests/test_integration.py` dosyasına 2 yeni fixture-only unittest eklendi, commit `88e196b4`: (1) iki adayda K2 discovery SHA256→K3 assess→K5 coordinate kimlik/teknik durum tutarlılığı, IBO WORKING fakat teknik başarısız adayın korunması, diğer adayda EPG/logo puanı 80 ama manuel IBO onayı olmadan hold, hiç production write olmaması; (2) K2 adayları dışında orphan probe kanıtının hem K3 hem K5'te fail-closed ValueError olması.
 - Bu **gerçek kod test kapsamı artışı** fakat network ffprobe/IBO cihaz/üretim 92 davranış kabulü değildir. GitHub Actions bu commit için henüz başarıyla doğrulanmadı; çalıştırıldı veya geçti denmeyecek. Korunan listeler, eski repo, main merge ve PR #71 değiştirilmedi.
+
+
+## 19 Ekim 2026 — Actions #196 doğrulanmış sonuç
+- GitHub Actions koşu #196, run id `39280750923`, HEAD `88e196b4`, run API sonucu `completed/success`. K1 Güvenlik, K2 Keşif, K3 Kanal Testleri, K5 Genel Bakım, Beşli toplu kanıt doğrulama job API `completed/success`. K1 `Tüm regresyon testlerini çalıştır` adımı `success` (iki yeni K2→K3→K5 testi bu commit'te).
+- K4 Arşiv ve Yedek job API hâlâ `queued/null` döndürüyor, fakat `madsc-batch-k4` artifact mevcut (551 bayt) ve beşli toplu doğrulama `success`. Bu **API tutarsızlığı** sebebiyle K4 bireysel job başarı iddiası yok. Toplam 7 artifact mevcut.
+- Bunlar fixture-only ve read-only testler; gerçek ffprobe yayın ağı, IBO cihaz onayı, 92 eski workflow davranışsal parity veya offsite production restore kanıtı değildir. Korunan listeler, eski repo, main merge, PR #71 değişmedi.

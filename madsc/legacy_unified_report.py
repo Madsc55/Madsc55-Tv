@@ -4,16 +4,20 @@ Input rows are already-parsed CSV dictionaries. No URLs are fetched or written.
 """
 from __future__ import annotations
 from madsc.legacy_scoring import legacy_approval_decision
+from madsc.legacy_stability import evaluate_legacy_stability
 
 FIELDS = ("KANAL", "PUAN", "TEKNIK_DURUM", "24_SAAT_KARARLI", "DURUM",
           "IBO_ONAYI", "KULLANICI_ONAYI", "ANA_LISTEYE_EKLE", "YAYIN_URL", "KAYNAK")
 
 
-def legacy_unified_rows(scores: list[dict], stability: list[dict]) -> dict:
+def legacy_unified_rows(scores: list[dict], stability: list[dict], *,
+                        history: dict | None = None, now=None) -> dict:
     if not isinstance(scores, list) or not isinstance(stability, list):
         raise ValueError("Invalid legacy CSV rows")
     if any(not isinstance(r, dict) for r in scores + stability):
         raise ValueError("Invalid legacy CSV row")
+    if history is not None and (not isinstance(history, dict) or now is None):
+        raise ValueError("Historical evidence requires a mapping and current time")
     stable_by_url = {}
     for row in stability:
         url = row.get("YAYIN_URL")
@@ -33,7 +37,13 @@ def legacy_unified_rows(scores: list[dict], stability: list[dict]) -> dict:
             raise ValueError("Invalid legacy candidate score") from exc
         if str(score) != str(row.get("PUAN") or "0") or score < 0:
             raise ValueError("Invalid legacy candidate score")
-        stable = stable_by_url.get(url, {}).get("24_SAAT_KARARLI") == "EVET"
+        csv_stable = stable_by_url.get(url, {}).get("24_SAAT_KARARLI") == "EVET"
+        if history is None:
+            stable = csv_stable
+        else:
+            observations = history.get(url, [])
+            evidence = evaluate_legacy_stability(observations, now)
+            stable = csv_stable and evidence["24_SAAT_KARARLI"] == "EVET"
         technical = row.get("TEKNIK_KANIT", "")
         if not isinstance(technical, str):
             raise ValueError("Invalid technical evidence")
@@ -46,4 +56,6 @@ def legacy_unified_rows(scores: list[dict], stability: list[dict]) -> dict:
                         "YAYIN_URL": url, "KAYNAK": row.get("KAYNAK", "")})
     results.sort(key=lambda row: (-row["PUAN"], row["KANAL"]))
     return {"fields": list(FIELDS), "rows": results, "production_writes": False,
-            "historical_stability_verified": False, "ibo_device_verified": False}
+            "historical_stability_verified": history is not None,
+            "historical_evidence_source": "supplied_history_only" if history is not None else "csv_only",
+            "ibo_device_verified": False}

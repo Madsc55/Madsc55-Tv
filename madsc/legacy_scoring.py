@@ -25,3 +25,20 @@ def legacy_technical_score(technical: str = "", audio: str = "",
             "status": "TEKNIK_ADAY" if video and sound else "EK_DOGRULAMA_GEREKLI",
             "identity_verified": False, "ibo_device_verified": False,
             "production_change_allowed": False, "legacy_scoring_contract_only": True}
+
+
+def legacy_approval_decision(base_score: int, technical: str,
+                             stable_24h: bool) -> dict:
+    """Preserve legacy unified-report decision; never approve playlist writes."""
+    if type(base_score) is not int or base_score < 0 or type(technical) is not str or type(stable_24h) is not bool:
+        raise ValueError("Invalid legacy approval evidence")
+    score = min(100, base_score + (30 if stable_24h else 0))
+    if stable_24h and technical == "VIDEO_SES_VAR":
+        status = "IBO_VE_KIMLIK_ONAYI_BEKLIYOR"
+    elif technical == "VIDEO_SES_VAR":
+        status = "KARARLILIK_BEKLIYOR"
+    else:
+        status = "TEKNIK_DOGRULAMA_BEKLIYOR"
+    return {"score": score, "status": status, "ibo_approval": "YOK",
+            "user_approval": "YOK", "add_to_main_playlist": "HAYIR",
+            "production_change_allowed": False, "stability_evidence_supplied_only": True}

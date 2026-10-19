@@ -41,3 +41,22 @@ def summarize_batch(reports: list[dict]) -> dict:
             "unsafe_or_unverified_write_categories": unsafe,
             "requires_review": bool(failures) or bool(missing) or bool(duplicates) or bool(unexpected) or not base["all_read_only"],
             "production_writes": False}
+
+
+def verify_fixture_evidence(reports: list[dict]) -> dict:
+    """Require explicit, true fixture checks without claiming production validation."""
+    summary = summarize_batch(reports)
+    missing_evidence = []
+    failed_checks = []
+    for report in reports:
+        category = str(report.get("category", "unknown"))
+        checks = report.get("fixture_checks")
+        if not isinstance(checks, dict) or not checks:
+            missing_evidence.append(category)
+        elif any(value is not True for value in checks.values()):
+            failed_checks.append(category)
+    return {**summary, "missing_fixture_evidence": sorted(missing_evidence),
+            "failed_fixture_checks": sorted(failed_checks),
+            "fixture_evidence_verified": not summary["requires_review"]
+            and not missing_evidence and not failed_checks,
+            "production_ready": False, "runtime_evidence_verified": False}

@@ -138,3 +138,8 @@ class BackupTests(unittest.TestCase):
             alias.symlink_to(trees[1], target_is_directory=True)
             with self.assertRaises(ValueError):
                 verify_independent_restore(trees[0], alias, trees[2], ["sample.txt"])
+    def test_empty_sandbox_restore_cannot_claim_success(self):
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
+            for invalid in ([], None, "sample.txt"):
+                with self.subTest(names=invalid), self.assertRaises(ValueError):
+                    verify_sandbox_restore(Path(a), Path(b), invalid)

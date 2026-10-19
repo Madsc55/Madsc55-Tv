@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from madsc.backup import snapshot_manifest, verify_manifest, compare_copy
+from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verify_sandbox_restore
 from madsc.channel_test import evaluate_probe
 from madsc.discovery import classify_candidates
 from madsc.dependencies import validate_batch, plan_task
@@ -86,7 +86,9 @@ def execute(category: str) -> dict:
             with TemporaryDirectory() as copy_dir:
                 (Path(copy_dir) / "sample.txt").write_bytes(p.read_bytes())
                 copy_ok = compare_copy(Path(d), Path(copy_dir), ["sample.txt"])
-            evidence = {"sandbox_copy_integrity": copy_ok,
+                restore_audit = verify_sandbox_restore(Path(d), Path(copy_dir), ["sample.txt"])
+            evidence = {"sandbox_restore_audit": restore_audit["sandbox_restore_matches"] and not restore_audit["production_restore_verified"],
+                        "sandbox_copy_integrity": copy_ok,
                         "manifest_integrity": verify_manifest(Path(d), manifest),
                         "external_backup_not_claimed": not manifest["external_backup_verified"],
                         "restore_not_claimed": not manifest["restore_verified"]}

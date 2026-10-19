@@ -17,8 +17,10 @@ def inspect_xmltv(path: Path, playlist_ids: set[str]) -> dict:
     channels = set(ids)
     programmes = root.findall("programme")
     orphaned = sum(1 for item in programmes if item.get("channel") not in channels)
+    programmes_without_time = sum(1 for item in programmes if not item.get("start") or not item.get("stop"))
     return {"xmltv_channels": len(channels), "programmes": len(programmes),
             "matched_playlist_ids": len(channels & playlist_ids),
             "unmatched_playlist_ids": sorted(playlist_ids - channels),
-            "orphaned_programmes": orphaned, "device_verified": False,
+            "orphaned_programmes": orphaned,
+            "programmes_without_time": programmes_without_time, "device_verified": False,
             "production_writes": False}

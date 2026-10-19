@@ -23,7 +23,10 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
     for index, item in enumerate(rows):
         try:
             url = normalize_url(item["url"])
-            name = str(item["name"]).strip()
+            name = item["name"]
+            if not isinstance(name, str):
+                raise ValueError("Candidate name must be text")
+            name = name.strip()
             if not name:
                 raise ValueError("Empty name")
             key = sha256(url.encode("utf-8")).hexdigest()

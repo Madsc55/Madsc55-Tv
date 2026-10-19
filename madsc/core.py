@@ -15,6 +15,7 @@ from madsc.playlist import compare_snapshots, inspect_playlist
 from madsc.source_import import extract_candidates
 from madsc.handoff import assess_candidates
 from madsc.epg_inventory import inspect_xmltv
+from madsc.candidate_coordination import coordinate
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -102,7 +103,19 @@ def execute(category: str) -> dict:
         result = aggregate(reports)
         summary = summarize_batch([{**r, "status": "success"} for r in reports])
         coordination = validate_batch(["candidate_discovery", "channel_assessment", "backup_restore", "schedule_collision"])
-        evidence = {"batch_failure_summary": not summary["requires_review"] and not summary["failed_categories"],
+        fixture_rows = [{"name": "Fixture", "url": "https://example.org/fixture.m3u8",
+                         "tvg_id": "fixture.tv"}]
+        fixture_digest = classify_candidates(fixture_rows)["candidates"][0]["url_sha256"]
+        candidate_report = coordinate(
+            fixture_rows,
+            {fixture_digest: {"url_sha256": fixture_digest, "http_status": 200,
+                              "video": True, "audio": True, "duration_seconds": 40}},
+            {}, {"fixture.tv"}, {"fixture.tv"})
+        candidate_item = candidate_report["candidates"][0]
+        evidence = {"candidate_k2_k3_k5_join": candidate_item["score"] == 80 and not candidate_item["hold"],
+                    "candidate_metadata_counts": candidate_report["epg_matched"] == 1 and candidate_report["logo_matched"] == 1,
+                    "candidate_report_read_only": candidate_report["production_writes"] is False and candidate_report["production_ready"] is False,
+                    "batch_failure_summary": not summary["requires_review"] and not summary["failed_categories"],
                     "five_categories": result["all_five_present"],
                     "read_only": result["all_read_only"],
                     "failure_limit": retry_decision(3)["blocked"],

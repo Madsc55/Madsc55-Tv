@@ -172,10 +172,36 @@ jobs:
           K5: ${{ needs.k5.result }}
           KABUL: ${{ steps.kabul.outcome }}
         run: |
-          echo "K1=$K1 K2=$K2 K3=$K3 K4=$K4 K5=$K5 KABUL=$KABUL"
-          for durum in "$K1" "$K2" "$K3" "$K4" "$K5" "$KABUL"; do
-            if [ "$durum" != success ]; then
-              echo 'En az bir kontrol basarisiz: uretim onayi yok.'
-              exit 1
-            fi
+          mkdir -p reports
+          echo '## Madsc55-Tv - Besli Test Sonuclari' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          echo '| Kontrol | Sonuc |' >> "$GITHUB_STEP_SUMMARY"
+          echo '| --- | --- |' >> "$GITHUB_STEP_SUMMARY"
+          hata=0
+          for ad in K1 K2 K3 K4 K5 KABUL; do
+            case "$ad" in
+              K1) durum="$K1"; etiket="K1 Guvenlik";;
+              K2) durum="$K2"; etiket="K2 Kesif";;
+              K3) durum="$K3"; etiket="K3 Kanal";;
+              K4) durum="$K4"; etiket="K4 Yedek";;
+              K5) durum="$K5"; etiket="K5 Bakim";;
+              KABUL) durum="$KABUL"; etiket="Toplu kabul";;
+            esac
+            echo "| $etiket | $durum |" >> "$GITHUB_STEP_SUMMARY"
+            if [ "$durum" != success ]; then hata=1; fi
           done
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          if [ "$hata" -eq 0 ]; then
+            echo '**Genel sonuc: BASARILI (yalniz izole testler).**' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '**Genel sonuc: BASARISIZ - uretim onayi yok.**' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          printf 'K1=%s\nK2=%s\nK3=%s\nK4=%s\nK5=%s\nKABUL=%s\nGENEL=%s\n' "$K1" "$K2" "$K3" "$K4" "$K5" "$KABUL" "$hata" > reports/test-sonuclari.txt
+          exit "$hata"
+      - name: Test sonucunu sakla
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-test-sonuclari
+          path: reports/test-sonuclari.txt
+          retention-days: 14

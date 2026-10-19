@@ -26,5 +26,7 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
 def verify_manifest(root: Path, manifest: dict) -> bool:
     if not isinstance(manifest, dict) or not isinstance(manifest.get("entries"), list):
         raise ValueError("Invalid backup manifest")
+    if any(not isinstance(entry, dict) or not isinstance(entry.get("path"), str) for entry in manifest["entries"]):
+        raise ValueError("Invalid backup manifest entry")
     current = snapshot_manifest(root, [entry["path"] for entry in manifest["entries"]])
     return current["entries"] == manifest["entries"]

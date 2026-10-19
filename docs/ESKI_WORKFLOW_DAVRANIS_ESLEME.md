@@ -52,3 +52,25 @@ Kaynak salt-okunur dal: `Madsc55/madsc-tv@madsc/bes-sistem-toplu-birlestirme`. B
 | `madsc-toplu-butunluk.yml` | dispatch, push; contents:read | bulk_integrity_gate.py ve JSON artifact | K1+K5 | gerçek bütünlük kabulü |
 
 **Toplam:** 28/99 kaynak YAML gözden geçirildi, 71 dosya açık. Bu üçüncü grup komut/izin odaklı ilk taramadır; özellikle `madsc-genis-kaynak-kontrol` ve `madsc-son-kontrol` içindeki tüm shell yazma yollarının satır satır denetimi ayrıca gereklidir. Yüksek izinli eski workflow'lar yeni sisteme taşınmadı.
+
+
+## Dördüncü grup — 12 IBO workflow, kaynak YAML incelemesi
+
+| Workflow | Tetik/izin | Gözlenen gerçek adım | K hedefi / risk |
+|---|---|---|---|
+| `madsc-ibo-3-5281.yml` | push + dispatch, contents:read | yalnız korunan liste mutasyonunun onaysız kapalı olduğunu bildirir | K1+K5 |
+| `madsc-ibo-354-classify.yml` | push, contents:write, main | archive_backups_354_classified.py; git add CALISANLAR.m3u ve IBO arşivleri; gate ardından git push | K1+K4, YÜKSEK |
+| `madsc-ibo-364-355-364.yml` | push, contents:write, main | archive_backups_355_364.py; CALISANLAR.m3u stage, gate, git push | K1+K4, YÜKSEK |
+| `madsc-ibo-398-16-49.yml` | push, contents:write, main | archive_backups_16_49.py; CALISANLAR.m3u stage, gate, git push | K1+K4, YÜKSEK |
+| `madsc-ibo-530-archive.yml` | push, contents:write, main | archive_backups_399_onward.py; CALISANLAR.m3u stage, gate, git push | K1+K4, YÜKSEK |
+| `madsc-ibo-6115-second.yml` | push + dispatch, contents:write, main | apply_ibo_6115_second.py; CALISANLAR.m3u stage, gate, git push | K1+K4, YÜKSEK |
+| `madsc-ibo-ilk-239.yml` | push, contents:write, main | apply_ibo_first_239_decisions.py; CALISANLAR.m3u stage, gate, git push | K1+K4, YÜKSEK |
+| `madsc-ibo-kararlar-grup1.yml` | push, contents:write, main | apply_ibo_decisions_group1.py; CALISANLAR.m3u stage, gate, git push | K1+K4, YÜKSEK |
+| `madsc-ibo-second-voice.yml` | push + dispatch, contents:write, main | apply_ibo_second_voice.py; CALISANLAR.m3u stage, gate, git push | K1+K4, YÜKSEK |
+| `ibo-bagimsiz-test-listesi.yml` | push + dispatch, contents:read | aday keşfi → gerçek medya testi → ibo_bagimsiz_test_listesi.py; artifact | K2+K3 |
+| `ibo-epg-kimlik-denetimi.yml` | push + dispatch, contents:read | ibo_epg_kimlik_denetimi.py; JSON rapor, artifact | K1+K3 |
+| `ibo-yedek-kalite.yml` | push + dispatch, contents:read | ffmpeg → ibo_yedek_kalite_tespit.py; CSV artifact | K3+K4 |
+
+**Kritik:** 8 IBO YAML'ında `contents:write`, `CALISANLAR.m3u` git staging, `protected_write_gate.py` ve `git push origin HEAD:main` vardır. Gate'in varlığı **gerçek güvenlik ihlali kanıtı da güvenli yazma onayı da değildir**; scriptlerin tüm dolaylı yazma yolları ve gate enforcement ayrıca incelenecek. Kullanıcının korunan liste değişmezliği kuralı nedeniyle yeni K1–K5'e bu yazma davranışları taşınamaz. IBO cihaz testi kullanıcı tarafından yapılacak.
+
+**Toplam:** 40/99 YAML ilk davranış/izin incelemesi; 59 dosya açık. 92/99 farkı çözülmedi, 92/92 kabul verilmedi.

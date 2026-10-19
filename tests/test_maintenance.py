@@ -26,5 +26,19 @@ class MaintenanceTests(unittest.TestCase):
         self.assertTrue(summary["requires_review"])
         self.assertFalse(summary["production_writes"])
 
+    def test_missing_category_requires_review(self):
+        reports = [{"category": "k1", "production_writes": False, "status": "success"}]
+        summary = summarize_batch(reports)
+        self.assertTrue(summary["requires_review"])
+        self.assertEqual(summary["missing_categories"], ["k2", "k3", "k4", "k5"])
+
+    def test_unknown_status_and_missing_status_fail_closed(self):
+        reports = [{"category": k, "production_writes": False, "status": "success"} for k in ("k1", "k2", "k3", "k4", "k5")]
+        reports[0]["status"] = "pending"
+        reports[1].pop("status")
+        summary = summarize_batch(reports)
+        self.assertEqual(summary["failed_categories"], ["k1", "k2"])
+        self.assertTrue(summary["requires_review"])
+
     def test_missing_categories_never_ready(self):
         self.assertFalse(aggregate([{"category":"k1","production_writes":False}])["all_five_present"])

@@ -162,3 +162,6 @@ Actions #59 completed/success (728aa4b). 12 ek YAML dogrudan tetik/komut/artefak
 
 ## 19 Ekim 2026 - Workflow envanteri dorduncu dalga
 Actions #60 completed/success. 16 ek eski YAML dogrudan tetik, izin, komut ve rapor adimlari icin incelendi; matris 619d7a3. Toplam 38/99, 61 ayrintili inceleme kaldi. `madsc-birlesik-kesif.yml` contents:write ve kesif arsivi adimlari risk incelemesi gerektiriyor; izinsiz korunan dosya yazimi yapilmadi. Eski repo salt okunur; cron acilmadi, workflow kapatilmadi.
+
+## 19 Ekim 2026 - Workflow envanteri besinci dalga
+Actions #61 completed/success. 20 ek YAML tetik, izin ve temel komut icin incelendi: 88f5106. Toplam 58/99 ayrintili incelendi, 41 kaldi. IBO karar workflow'lari ve son-kontrol workflow'u contents:write tasiyor; gercek yazma yolu ve onay denetimi acik. Eski depo salt okunur; cron acilmadi, workflow kapatilmadi.

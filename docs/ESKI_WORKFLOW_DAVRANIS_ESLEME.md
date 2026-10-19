@@ -161,3 +161,20 @@ Tetikler, izinler ve yürütülen ana komutlar salt-okunur eski YAML dosyaların
 | `test-kanal-adaylari.yml` | main paths push+dispatch; contents:read | `scripts/test_kanal_adaylari.py` gerçek aday yanıt testi; `yedekler/TARAMA-TEST-SONUCLARI.m3u` ve JSON yalnız artifact/manual approval | K2/K3/K4; korunan YEDEKLER'e otomatik yazma onayı değil |
 
 **Envanter uzlaştırması:** `docs/ESKI_WORKFLOW_99_ENVANTER.md` içindeki **99/99 benzersiz YAML adı** ile bu haritadaki kod biçiminde yazılmış dosya adları karşılaştırıldı; eksik 3 dosya tespit edilip kaynağından incelendi. Böylece **99/99 YAML dosyasının ilk tetik/izin/komut incelemesi tamamlandı**. Bu **92/92 gerçek davranışsal entegrasyon, 26/26 gerçek güvenlik kuralı, canlı yayın testi veya offsite restore kabulü değildir**. 92 sayısının eski 99 YAML içindeki tam tanımı hâlâ kaynak `five_category_92_workflow_audit.py` üzerinden çözülmelidir. Yüksek izinli eski workflow'ların yazma yolları için satır satır güvenlik incelemesi de açık.
+
+
+## 92–99 farkı çözüldü — kaynak kod kanıtı
+
+Eski salt-okunur `scripts/five_category_92_workflow_audit.py` içindeki `inspect()` fonksiyonu `.github/workflows/*.y*ml` dosyalarını sayarken **tam 7 YAML'ı kapsam dışında bırakıyor**:
+
+1. `madsc-01-guvenlik.yml`
+2. `madsc-02-kesif.yml`
+3. `madsc-03-kanal-test.yml`
+4. `madsc-04-arsiv-yedek.yml`
+5. `madsc-05-genel-bakim.yml`
+6. `k1-protected-write-tests.yml`
+7. `madsc-hizli-on-kontrol.yml`
+
+İlk beşi `new_category_files = {f"madsc-0{n}-" for n in range(1, 6)}` önekiyle, son ikisi `if path.name in (...) : continue` kuralıyla atlanır. Ardından `if len(items) != 92: raise SystemExit(...)` kabul kapısı bulunur. **99 kaynak YAML − 7 hariç tutulan = 92 eski kapsam YAML**. Bu fark artık belirsiz değildir; ancak kapsamın kendisi scriptteki **tarihsel statik tanım**dır, üretim davranışsal kabul değildir.
+
+Aynı script her 92 iş akışında `behavioral_parity_verified=False`, `migration_decision=BLOCKED_NEEDS_BEHAVIOR_EVIDENCE` üretir; script adı eşleşmelerinin yeterli olmadığını açıkça yazar. Dolayısıyla **92/92 gerçek entegrasyon henüz kanıtlanmamıştır**. Eski dalda hiçbir dosya değiştirilmedi.

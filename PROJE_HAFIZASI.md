@@ -852,3 +852,7 @@ Yeni repo main toplu paket: madsc/source_import.py salt okunur M3U/M3U8 kaynagi 
 
 ## 19 Ekim 2026 - K2-K3-K5 M3U kaynak ayrisma toplu paketi
 K2 workflow'unda izole reports/k2-input.m3u ornek dosyasi uretilip artifact_transport --source ile gercek source_import.extract_candidates ayrismasindan geciriliyor (workflow commit 5b434ab). tests/test_artifact_source_pipeline.py hem .m3u hem .m3u8 dosyalarinin K2 pack -> K3 unpack/assess -> K5 verify akislarini, kaynak dosyanin degismemesini ve tahrif edilmis kanitin reddini kapsar (f38f6c9). Bu is GERCEK URETIM LISTESI veya CANLI YAYIN TESTI degil: guvenli ornek dosya kullaniliyor. Actions #39328784193 ilk sorguda PENDING; PASS denemez. Onceki #39328620609 kontrol edildiginde IN_PROGRESS idi. Toplu test prensibi devam. Eski depo, PR71, listeler korunur.
+
+
+## 19 Ekim 2026 - K2 M3U hata cozum ve kabul
+Actions #39328784193 FAILURE: K2 aday kaniti uretilemedi; K3/K5/toplu kabul artifact yoklugundan zincirleme hata verdi. Workflow ornek M3U printf satir sonu kacislari duzeltildi (80106c3 ve ad0354e). Actions #39329101065 COMPLETED SUCCESS (SHA 80106c3): K1-K5 ve toplu kabul ornek M3U ile gecti. Sonraki madsc/artifact_transport.py CLI ciktisi fixture_only yanilticiligi yerine source_mode ve production_ready=false alanlariyla netlestirildi (5f9dd02); bu ek degisiklik icin test sonucu henuz dogrulanmadi. Uretim M3U, canli ffprobe, 92/92, 26/26, IBO cihaz kabul iddiasi YOK. Eski depo ve korunan listeler degismedi.

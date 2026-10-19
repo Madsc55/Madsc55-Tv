@@ -14,6 +14,7 @@ from madsc.maintenance import aggregate, retry_decision, summarize_batch
 from madsc.playlist import compare_snapshots, inspect_playlist
 from madsc.source_import import extract_candidates
 from madsc.handoff import assess_candidates
+from madsc.epg_inventory import inspect_xmltv
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -75,6 +76,10 @@ def execute(category: str) -> dict:
                 and decision["protected_working"]
                 and not decision["delete_allowed"]
                 and not decision["production_change_allowed"])
+            xml = Path(d) / "epg.xml"
+            xml.write_text('<tv><channel id="sample.tv"/><programme channel="sample.tv"/></tv>', encoding="utf-8")
+            epg = inspect_xmltv(xml, {"sample.tv"})
+            evidence["xmltv_id_matching"] = epg["matched_playlist_ids"] == 1 and epg["orphaned_programmes"] == 0 and not epg["device_verified"]
             evidence["ibo_fixture_not_live_device_evidence"] = (
                 not protected["network_probed"] and not protected["production_playlist_modified"])
 

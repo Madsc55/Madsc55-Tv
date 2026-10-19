@@ -7,5 +7,10 @@ class MaintenanceTests(unittest.TestCase):
         self.assertFalse(retry_decision(2)["blocked"])
         with self.assertRaises(ValueError):
             retry_decision(-1)
+    def test_limit_boundary(self):
+        self.assertFalse(retry_decision(2, 3)["blocked"])
+        self.assertTrue(retry_decision(3, 3)["blocked"])
+        self.assertTrue(retry_decision(4, 3)["blocked"])
+
     def test_missing_categories_never_ready(self):
         self.assertFalse(aggregate([{"category":"k1","production_writes":False}])["all_five_present"])

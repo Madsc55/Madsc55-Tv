@@ -21,3 +21,8 @@ Kullanici karari: K1-K5'ten herhangi bir is yapilirken yalniz kendi notlari degi
 Kaynaklar: BES_SISTEM_GECIS_KONTROL.md, BES_SISTEM_92_WORKFLOW_TETIK_ENVANTERI.md, BES_SISTEM_TOPLU_IS_DEFTERI.md, docs/MADSC-IKI-TOPLU-KABUL-PLANI.md ve ana notlar.
 Uygulama: madsc/dependencies.py gorev-kategori bagimlilik sozlesmesi ve tests/test_dependencies.py negatif/regresyon testleri. Commitler 62fc849d1874b3ef9d758617d90f0fb1696f7929, f7fbd5ba697651a466d60511be093727febe8254.
 Sinir: Bu moduller henuz GitHub Actions gercek orkestrasyonu veya 92/92 esdegerlik degildir; cronlar acilmadi, eski workflowlar kapatilmadi, CI sonucu dogrulanmadi. Sonraki is: kategori raporlarina bagimlilik kanitini baglamak, besli tek toplu kabul ve 92 davranis matrisini gelistirmek.
+
+## 19 Ekim 2026 - K5 bagimlilik denetimi
+Kaynaklar: DEVAM_NOTU.md, 810 dosya notu.md, AGENTS.md, BES_SISTEM_TOPLU_IS_DEFTERI.md, BES_SISTEM_GECIS_KONTROL.md, BES_SISTEM_92_WORKFLOW_TETIK_ENVANTERI.md, docs/MADSC-IKI-TOPLU-KABUL-PLANI.md ve yeni sistem dosyalari.
+Yapilan: madsc/core.py K5 izole raporuna K2-K3-K4-K5 baglanti kaniti, tek toplu plan, sifir ek bagimsiz tetik, zamanlayici ve eski workflow kapatma yasaklari eklendi. tests/test_core.py regresyon kontrolu eklendi. Commitler 1b8ecb13dcd730edeb4178f66fb42ff5d0bf8334 ve 7de9537a8687b3686fb536aeb09f03fab19a1e41.
+Bekleyen: gercek Actions run kaniti, canli orkestrasyon, 92 islevin davranissal esdegerligi, 26 kural, K3 canli kanit ve K4 bagimsiz restore. Uretim degisikligi yok.

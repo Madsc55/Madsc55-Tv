@@ -121,3 +121,26 @@ class CandidateCoordinationTests(unittest.TestCase):
             with self.subTest(probes=probes, attempts=attempts, ibo=ibo):
                 with self.assertRaises(ValueError):
                     coordinate(self.rows, probes, attempts, ibo_results=ibo)
+
+
+    def test_failed_probe_with_ibo_working_and_metadata_match_is_preserved(self):
+        rows = [{"name": "Sample", "url": "https://example.org/live.m3u8", "tvg_id": "sample.tv"}]
+        failed = {"url_sha256": self.digest, "http_status": 503,
+                  "video": False, "audio": False, "duration_seconds": 0}
+        report = coordinate(rows, {self.digest: failed}, {self.digest: 0},
+                            {"sample.tv"}, {"sample.tv"},
+                            {self.digest: "WORKING"})
+        item = report["candidates"][0]
+        self.assertTrue(item["protected_working"])
+        self.assertTrue(item["hold"])
+        self.assertEqual(item["next_action"], "PRESERVE_IBO_WORKING_AND_REVIEW")
+        self.assertFalse(item["delete_allowed"])
+        self.assertFalse(report["production_writes"])
+
+    def test_missing_probe_with_ibo_working_stays_protected(self):
+        report = coordinate(self.rows, {}, {}, ibo_results={self.digest: "WORKING"})
+        item = report["candidates"][0]
+        self.assertEqual(item["technical_status"], "UNTESTED")
+        self.assertTrue(item["protected_working"])
+        self.assertTrue(item["hold"])
+        self.assertFalse(item["production_change_allowed"])

@@ -6,7 +6,7 @@ from madsc.batch_acceptance import collect, CATEGORIES
 
 class BatchAcceptanceTests(unittest.TestCase):
     def make_report(self, directory, key):
-        path = Path(directory) / key / (key + ".json")
+        path = Path(directory) / ("madsc-batch-" + key) / (key + ".json")
         path.parent.mkdir(parents=True, exist_ok=True)
         data = {"category": key, "mode": "isolated_read_only",
                 "production_writes": False, "legacy_workflows_executed": False,
@@ -104,5 +104,19 @@ class BatchAcceptanceTests(unittest.TestCase):
             paths = {key: self.make_report(d, key) for key in CATEGORIES}
             paths["k4"].unlink()
             paths["k4"].mkdir()
+            with self.assertRaises(ValueError):
+                collect(Path(d))
+    def test_report_in_wrong_artifact_directory_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            paths = {key: self.make_report(d, key) for key in CATEGORIES}
+            wrong = Path(d) / "madsc-batch-k3" / "k2.json"
+            paths["k2"].rename(wrong)
+            with self.assertRaises(ValueError):
+                collect(Path(d))
+
+    def test_report_outside_artifact_directory_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            paths = {key: self.make_report(d, key) for key in CATEGORIES}
+            paths["k1"].rename(Path(d) / "k1.json")
             with self.assertRaises(ValueError):
                 collect(Path(d))

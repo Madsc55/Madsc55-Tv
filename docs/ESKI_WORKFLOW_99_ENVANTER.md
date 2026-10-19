@@ -105,3 +105,15 @@ Kaynak: `Madsc55/madsc-tv`, dal `madsc/bes-sistem-toplu-birlestirme`, commit `ca
 | `yeni-aday-on-test.yml` | diger | inceleme_bekliyor |
 | `yeni-kanal-arama-2026.yml` | diger | inceleme_bekliyor |
 | `yeniler-guvenli-arama.yml` | diger | inceleme_bekliyor |
+
+
+## Güncel kapsam uzlaştırması — 19 Ekim 2026
+
+**Bu bölüm üstteki ilk envanter notunu günceller.** Eski dalda salt-okunur incelenen `scripts/five_category_92_workflow_audit.py` kapsam kuralı, 99 YAML içinden şu yedi dosyayı hariç tutar:
+
+- Beş kategori koordinatörü: `madsc-01-guvenlik.yml`, `madsc-02-kesif.yml`, `madsc-03-kanal-test.yml`, `madsc-04-arsiv-yedek.yml`, `madsc-05-genel-bakim.yml`.
+- İki özel denetim: `k1-protected-write-tests.yml` ve `madsc-hizli-on-kontrol.yml`.
+
+Böylece **99 kaynak YAML − 7 hariç tutulan = 92 eski kapsam workflow**. İlk kaynak tetik/izin/komut incelemesi **99/99** olarak tamamlandı; ayrıntılar `docs/ESKI_WORKFLOW_DAVRANIS_ESLEME.md` içindedir. Üstteki `inceleme_bekliyor` sütunu ilk envanterin tarihsel durumudur; artık “kaynak YAML hiç okunmadı” anlamına gelmez. Buna karşılık **92/92 davranışsal eşdeğerlik doğrulanmadı**: kaynak audit 92 satırın tümünü `BLOCKED_NEEDS_BEHAVIOR_EVIDENCE` ve `behavioral_parity_verified=False` olarak üretir. Envanter kapsamı, gerçek entegrasyon onayı değildir.
+
+Özellikle korunan `CALISANLAR.m3u`, YEDEKLER, YENİLER, FAVORİLER, EPG ve logo yollarına yazan eski scriptler yeni sisteme taşınmadı. Gerçek canlı ffprobe, IBO cihaz kabulü, offsite restore ve 26 güvenlik kuralının tamamının gerçek uygulama kanıtı açık. Üretim cron/push, main merge ve PR #71 için yetki verilmedi.

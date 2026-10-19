@@ -117,3 +117,6 @@ Actions 25 success. K2 K3 girdi bicimi dogrulamalari 83f0cf6, d2a7c48 ve 15b70ef
 
 ## 19 Ekim 2026 - K2 K3 Actions kontrolu
 Actions 26 success; 27 ve 28 cancelled; 29 son kontrolde in_progress. K3 probe kaydi tur kontrolu yazma denemesi engellendi, uygulanmadi. Sonraki is 29 sonucunu kontrol edip K1-K5 gercek islev paketlerini topluca gelistirmek. Eski depo degismedi.
+
+## 19 Ekim 2026 - K3 hata cozumu
+Actions #29 failure: 53 testten 1'i, test_invalid_handoff_shapes_fail_closed (ibo=None) yanlis beklenti. None IBO verisi UNKNOWN olarak izinli; test df77ed4 ile duzeltildi. K3 probe kaydi bicim kontrolu a35793d ve regresyonu f03da40 eklendi. Yeni Actions sonucunu dogrula. Eski depo degismedi.

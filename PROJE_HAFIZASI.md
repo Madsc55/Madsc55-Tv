@@ -26,3 +26,9 @@ Sinir: Bu moduller henuz GitHub Actions gercek orkestrasyonu veya 92/92 esdegerl
 Kaynaklar: DEVAM_NOTU.md, 810 dosya notu.md, AGENTS.md, BES_SISTEM_TOPLU_IS_DEFTERI.md, BES_SISTEM_GECIS_KONTROL.md, BES_SISTEM_92_WORKFLOW_TETIK_ENVANTERI.md, docs/MADSC-IKI-TOPLU-KABUL-PLANI.md ve yeni sistem dosyalari.
 Yapilan: madsc/core.py K5 izole raporuna K2-K3-K4-K5 baglanti kaniti, tek toplu plan, sifir ek bagimsiz tetik, zamanlayici ve eski workflow kapatma yasaklari eklendi. tests/test_core.py regresyon kontrolu eklendi. Commitler 1b8ecb13dcd730edeb4178f66fb42ff5d0bf8334 ve 7de9537a8687b3686fb536aeb09f03fab19a1e41.
 Bekleyen: gercek Actions run kaniti, canli orkestrasyon, 92 islevin davranissal esdegerligi, 26 kural, K3 canli kanit ve K4 bagimsiz restore. Uretim degisikligi yok.
+
+## 19 Ekim 2026 - Besli gercek Actions toplu zincir taslagi
+Kaynaklar: DEVAM_NOTU.md, 810 dosya notu.md, AGENTS.md, BES_SISTEM_TOPLU_IS_DEFTERI.md, BES_SISTEM_GECIS_KONTROL.md, docs/MADSC-IKI-TOPLU-KABUL-PLANI.md ve yeni workflow dosyalari.
+Yapilan: Var olan .github/workflows/madsc-05-bakim.yml manuel tetik ile K1>K2>K3>K4>K5 sirali needs baglantili islere ve son toplu-kabul isine donusturuldu. Her kategori salt-okunur fixture raporu artifact olarak saklanir. madsc/batch_acceptance.py bes kaniti eksik/tekrar/yanlis veya yazma iddiasi varsa reddeder. tests/test_batch_acceptance.py negatif testleri eklendi.
+Commitler: 0acb780eec9e7441a7fbab91d969869dc6141bb3, 7b328951ca5dbebb1161467f538c5428347b5354, 4c3982c69e1733515ce6082277abe97ef381479e.
+Sinir: Henuz gercek Actions run/job/artifact sonucu dogrulanmadi. Besli fixture basarisi 92/92 esdegerlik, 26/26 runtime kural, gercek yayin, IBO cihazi veya harici restore kaniti degildir. Cron acilmadi, eski 92 workflow kapatilmadi, uretim listeleri degismedi. Siradaki: gercek manuel toplu run kaniti ve eksik davranislarin kaynak notlara gore uygulanmasi.

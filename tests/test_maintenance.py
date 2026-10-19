@@ -40,5 +40,14 @@ class MaintenanceTests(unittest.TestCase):
         self.assertEqual(summary["failed_categories"], ["k1", "k2"])
         self.assertTrue(summary["requires_review"])
 
+    def test_duplicate_and_unexpected_categories_flagged(self):
+        reports = [{"category": k, "production_writes": False, "status": "success"} for k in ("k1", "k2", "k3", "k4", "k5")]
+        reports.append({"category": "k1", "production_writes": False, "status": "success"})
+        reports.append({"category": "unknown", "production_writes": False, "status": "success"})
+        summary = summarize_batch(reports)
+        self.assertEqual(summary["duplicate_categories"], ["k1"])
+        self.assertEqual(summary["unexpected_category_count"], 1)
+        self.assertTrue(summary["requires_review"])
+
     def test_missing_categories_never_ready(self):
         self.assertFalse(aggregate([{"category":"k1","production_writes":False}])["all_five_present"])

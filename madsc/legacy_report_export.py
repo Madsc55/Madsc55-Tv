@@ -49,7 +49,7 @@ def export_legacy_report(scores_csv: str, stability_csv: str, output_dir: str, *
             if not reader.fieldnames or "YAYIN_URL" not in reader.fieldnames:
                 raise ValueError("Missing YAYIN_URL header")
             return list(reader)
-    scores, stability = [load(path) for path in sources]
+    scores, stability = [load(path) for path in sources[:2]]
     report = legacy_unified_rows(scores, stability, history=history, now=now)
     summary = {"toplam_aday": len(report["rows"]),
                "durumlar": dict(Counter(row["DURUM"] for row in report["rows"])),

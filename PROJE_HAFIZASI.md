@@ -168,3 +168,6 @@ Actions #61 completed/success. 20 ek YAML tetik, izin ve temel komut icin incele
 
 ## 19 Ekim 2026 - Workflow envanteri altinci dalga
 Actions #62 completed/success. 20 ek eski YAML tetik/izin/temel adimlari incelendi; matris 19a0163. Toplam 78/99 ayrintili incelendi, 21 kaldi. Uc asama, yedek, logo yayin workflow'larinda write izinleri goruldu; gercek yazma guvenligi acik. Yeni depoda cron ve uretim yazimi etkinlestirilmedi.
+
+## 19 Ekim 2026 - Yazma yollari somut denetimi
+Actions #63 completed/success. 6 kritik eski YAML'nin tam run/staging/push yolu okundu, rapor f7f04c3. Birlesik kesif sadece `madsc_kesif/` stage ediyor; EPG/logo join `if: false` ile kapali. Genis kaynak kontrolu sadece `madsc_genis_tarama/` stage edip basarida `madsc-uc-asama.yml` tetikliyor. Buna karsin 4 IBO karari workflow'u `CALISANLAR.m3u` dosyasini acikca git add edip protected_write_gate sonrasi main'e push etmeye calisiyor. Gate/script kodu ve kullanici onayi henuz tam dogrulanmadi, korunan liste yazmasi YASAK/etkinlestirilmedi. K2-K3-K5 ortak isleyis ve K3 gercek ffmpeg/canli stream esdegerligi ACIK. 78/99 workflow tetik/komut incelemesi, 21 kaldi. Eski repo salt okunur.

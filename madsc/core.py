@@ -20,6 +20,8 @@ from madsc.legacy_retest_390 import evaluate_entries, parse_entries
 from madsc.candidate_coordination import coordinate
 from madsc.write_path_audit import audit_write_paths
 from madsc.fixture_report_writer import write_fixture_report
+from madsc.history_pair_bridge import bridge_legacy_pair, merge_into_envelope
+from madsc.history_pair_store import decode_pair
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -57,7 +59,25 @@ def execute(category: str) -> dict:
                 before = p.read_bytes()
                 result = extract_candidates(p)
                 results.append((result, before == p.read_bytes()))
+            legacy = Path(d) / "legacy_history"
+            legacy.mkdir()
+            first = {"gecmis.json": {"history": {"fixture": {"last_test": "2026-10-19T12:00:00Z", "runs": 1, "last_result": "PASS", "decision": "MANUAL_ONLY"}}},
+                     "ana_liste_test_gecmisi.json": {"channels": {"fixture": {"last_test": "2026-10-19T12:00:00Z", "runs": 1, "last_result": "PASS", "decision": "MANUAL_ONLY"}}}}
+            for name, doc in first.items():
+                (legacy / name).write_text(json.dumps(doc), encoding="utf-8")
+            original_history = {name: (legacy / name).read_bytes() for name in first}
+            envelope = Path(d) / "history-pair.json"
+            bridge_legacy_pair(legacy, envelope)
+            incoming = {name: {key: {"fixture": {"last_test": "2026-10-20T12:00:00Z", "runs": 2, "last_result": "FAIL"}}}
+                        for name, key in (("gecmis.json", "history"), ("ana_liste_test_gecmisi.json", "channels"))}
+            merge_into_envelope(envelope, incoming)
+            stored = decode_pair(envelope.read_text(encoding="utf-8"))
+            history_bridge_ok = all(stored[name][key]["fixture"]["last_result"] == "FAIL"
+                                    and stored[name][key]["fixture"]["decision"] == "MANUAL_ONLY"
+                                    and (legacy / name).read_bytes() == original_history[name]
+                                    for name, key in (("gecmis.json", "history"), ("ana_liste_test_gecmisi.json", "channels")))
             evidence = {
+                "legacy_history_bridge_isolated": history_bridge_ok,
                 "both_m3u_and_m3u8": {r["source_format"] for r, _ in results} == {".m3u", ".m3u8"},
                 "unique_candidates": all(len(r["candidates"]) == 1 for r, _ in results),
                 "source_inventory_reconciled": all(r["source_channel_count"] == r["accepted_channel_count"] + r["duplicate_channel_count"] + r["rejected_channel_count"] for r, _ in results),

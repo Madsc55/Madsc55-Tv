@@ -154,3 +154,26 @@ Toplam **10 dosya** (ilk dalga 4 + bu dalga 6) icerik/tetik bakimindan incelendi
 | `dokuzuncu-akilli-tekrar-test.yml` | dispatch, push | akilli tekrar takvimi unit test | K3 + K5 |
 
 Bu dalgada 12 dosyanin YAML tetikleri ve temel run/uses adimlari okundu. **Toplam 22/99** ayrintili inceleme; **77 dosya** kaldi. Coklu kategori eslesmesi gerektiren isler tespit edildi. Gercek gorev tasima/cron devreye alma yapilmadi.
+
+## Dorduncu dalga: 16 YAML dosyasi dogrudan incelendi
+
+| Dosya | Tetik | Dogrulanan temel is / risk |
+|---|---|---|
+| `felaket-kurtarma-tatbikati.yml` | dispatch, push | `scripts/disaster_recovery_dry_run.py`, artifact; K4 |
+| `genel-aday-medya-test.yml` | dispatch, push | ffmpeg, tarama ve medya test raporu; K2+K3 |
+| `genis-kanal-tarama.yml` | dispatch, push | `genis_kanal_tara.py`; K2 |
+| `ibo-bagimsiz-test-listesi.yml` | dispatch, push | ffmpeg, aday medya ve bagimsiz IBO test listesi; K3 |
+| `ibo-epg-kimlik-denetimi.yml` | dispatch, push | IBO EPG kimlik raporu, artifact; K3 |
+| `ibo-yedek-kalite.yml` | dispatch, push | ffmpeg, yedek kanal kalite testi, artifact; K3+K4 |
+| `iptv-test.yml` | dispatch, schedule, push | `iptv_test.py` ile aday playlist testi, artifact; K3 |
+| `k1-protected-write-tests.yml` | dispatch, push | K1 korunan SHA256, `acceptance_26_92.py`, artifact; K1+K5 |
+| `kanal-kararlilik.yml` | dispatch, push | kanal teknik dogrulama, kararlilik gecmisi cache/artifact; K3+K5 |
+| `kaynak-puanlama-kontrol.yml` | dispatch, push | kaynak guven puani unittest; K2 |
+| `madsc-11599-yedek-geri-yukle.yml` | dispatch | `diagnose_11599_backups.py`; K4 |
+| `madsc-ana-liste-saglik.yml` | dispatch, schedule | ffmpeg, 50 kanal saglik partisi, artifact; K1+K3 |
+| `madsc-arsiv-yedek-aktarim.yml` | dispatch | korunan playlist mutasyonu engeli mesajli; K4 |
+| `madsc-aylik-merkezi-denetim.yml` | dispatch, schedule, push | merkezi envanter, logo, EPG, IBO, izole restore denetimleri; K1-K5 |
+| `madsc-birlesik-kesif.yml` | dispatch, schedule | **contents: write**; ffmpeg, Pillow, kesif arsivi once/sonra, `madsc_akilli_kesif.py`; K1+K2+K4 |
+| `madsc-cuma-ana-liste-denetimi.yml` | dispatch | haftalik ana liste ve uyari raporu, artifact; K1+K5 |
+
+Bu dalgada 16 dosyanin gercek YAML tetik, izin ve temel komutlari okundu. **Toplam 38/99** ayrintili inceleme, **61 dosya** bekliyor. `madsc-birlesik-kesif.yml` yazma izni tasiyor; korunan listeye yazma yapildigi bu bilgiyle kanitlanmaz. Gercek calisma ve esdegerlik incelemesi gereklidir.

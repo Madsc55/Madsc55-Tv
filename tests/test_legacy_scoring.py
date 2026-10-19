@@ -1,5 +1,5 @@
 import unittest
-from madsc.legacy_scoring import legacy_technical_score
+from madsc.legacy_scoring import legacy_technical_score, legacy_approval_decision
 
 
 class LegacyScoringTests(unittest.TestCase):
@@ -23,3 +23,19 @@ class LegacyScoringTests(unittest.TestCase):
         for bad in (None, 42, [], {}):
             with self.subTest(bad=bad), self.assertRaises(ValueError):
                 legacy_technical_score(technical=bad)
+
+    def test_unified_approval_status_and_score_cap(self):
+        stable = legacy_approval_decision(80, "VIDEO_SES_VAR", True)
+        self.assertEqual(stable["score"], 100)
+        self.assertEqual(stable["status"], "IBO_VE_KIMLIK_ONAYI_BEKLIYOR")
+        self.assertEqual(stable["add_to_main_playlist"], "HAYIR")
+        self.assertFalse(stable["production_change_allowed"])
+        self.assertEqual(legacy_approval_decision(35, "VIDEO_SES_VAR", False)["status"], "KARARLILIK_BEKLIYOR")
+        self.assertEqual(legacy_approval_decision(20, "YALNIZ_VIDEO", True)["status"], "TEKNIK_DOGRULAMA_BEKLIYOR")
+
+    def test_unified_approval_rejects_untrusted_evidence(self):
+        for bad in (-1, True, "40", None):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                legacy_approval_decision(bad, "VIDEO_SES_VAR", True)
+        with self.assertRaises(ValueError):
+            legacy_approval_decision(20, "VIDEO_SES_VAR", "EVET")

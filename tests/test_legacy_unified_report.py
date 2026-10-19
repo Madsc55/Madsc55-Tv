@@ -73,3 +73,15 @@ class LegacyUnifiedReportTests(unittest.TestCase):
         for history in ({url: "not-a-list"}, {"": []}, {12: []}):
             with self.subTest(history=history), self.assertRaises(ValueError):
                 legacy_unified_rows(scores, [], history=history, now=now)
+
+    def test_unrelated_corrupt_restored_history_fails_closed(self):
+        now = datetime(2026, 10, 19, 12, tzinfo=timezone.utc)
+        url = "https://example.org/live"
+        scores = [{"KANAL": "A", "PUAN": "35", "TEKNIK_KANIT": "VIDEO_SES_VAR", "YAYIN_URL": url}]
+        good = [{"at": (now - timedelta(hours=25)).isoformat(), "state": "VIDEO_SES_VAR"},
+                {"at": (now - timedelta(hours=1)).isoformat(), "state": "VIDEO_SES_VAR"}]
+        bad = [{"at": (now - timedelta(hours=2)).isoformat(), "state": "VIDEO_SES_VAR"},
+               {"at": (now - timedelta(hours=2)).isoformat(), "state": "TEST_EDILMEDI"}]
+        with self.assertRaises(ValueError):
+            legacy_unified_rows(scores, [{"YAYIN_URL": url, "24_SAAT_KARARLI": "EVET"}],
+                                history={url: good, "https://example.org/other": bad}, now=now)

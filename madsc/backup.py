@@ -37,3 +37,10 @@ def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
     first = snapshot_manifest(source, names)
     second = snapshot_manifest(destination, names)
     return first["entries"] == second["entries"]
+
+
+def verify_sandbox_restore(source: Path, restored: Path, names: list[str]) -> dict:
+    """Audit an already restored sandbox tree; never write to either tree."""
+    valid = compare_copy(source, restored, names)
+    return {"sandbox_restore_matches": valid, "files_checked": len(set(names)),
+            "production_restore_verified": False, "production_writes": False}

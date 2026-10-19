@@ -557,3 +557,10 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `docs/KABUL_KAPILARI.md` güncellendi; K1–K5 için mevcut fixture/CI kanıtları ile eksik canlı/bağımsız kanıtlar ayrıldı. Commit `1bd769962ec3f12af78cfac5cdf85d15a1ba2d28`.
 - 99/99 ilk YAML incelemesi ve 99−7=92 kapsam tanımı doğrulandı; 92 davranışsal parity onayı hâlâ 0/92. Her iş için tetik/izin, script ve yazma riski, artefakt şeması, K hedefi, negatif/pozitif test, canlı/bağımsız koşu ve kullanıcı onayı zinciri olmadan `BLOCKED_NEEDS_BEHAVIOR_EVIDENCE` kaldırılmayacak.
 - Yalnızca belge değişikliği; yeni CI koşusunun çalıştığı/başarılı olduğu iddia edilmez. Korunan listeler, eski depo, cron/push, main merge ve PR #71 değiştirilmedi.
+
+
+## 19 Ekim 2026 — 92 eski workflow için derin betik çözümlemesi başladı
+- Kullanıcı 92 eski otomasyonun gerçek görevlerini ve ilişkilerini çözme yetkisi verdi; bu genel yetki korunan üretim dosyalarını otomatik değiştirme izni olarak yorumlanmadı.
+- İlk kaynak zinciri `aday-bekletme.yml`: YAML ve çağrılan 8 gerçek Python dosyası eski `Madsc55/madsc-tv@madsc/bes-sistem-toplu-birlestirme` dalında salt-okunur açıldı. Dış keşif → tekrar raporu → medya testi → `gecmis.json` aday durumu → tekrar takvimi → RETEST_LIMIT=5 → kaynak güveni → öncelik raporu haritalandı.
+- Ayrıntılı girdi/çıktı ve K2/K3/K5 eşlemesi `docs/ESKI_WORKFLOW_DAVRANIS_ESLEME.md` içine işlendi, commit `964125e6e2a933558927080edd84a429533c8f25`. Runner koşuları arasında geçmiş kalıcılığı ve 10 artefaktın gerçek şema/sonuç parity'si kanıt bekliyor. 92/92 parity onayı hâlâ 0/92.
+- Yalnız belge güncellemesi; scriptler çalıştırılmadı, korunan listeler, eski depo, cron/push, main merge ve PR #71 değiştirilmedi.

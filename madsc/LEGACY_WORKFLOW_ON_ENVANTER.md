@@ -231,3 +231,11 @@ Bu dalgada 16 dosyanin gercek YAML tetik, izin ve temel komutlari okundu. **Topl
 | `test-23-live-stream.yml` | push,dispatch/read | canli stream test adimlari; K3 |
 
 Bu 20 YAML'in tetik/izin/temel adimlari okundu. **Toplam 78/99** ayrintili inceleme, **21 dosya** kaldi. Gercek stream testinin varligi yeni depoda canli stream esdegerligini kanitlamaz. Eski depo salt okunur.
+
+## Guvenlik derin incelemesi: gercek yazma yollarinin YAML kaniti
+
+- `madsc-birlesik-kesif.yml`: `contents: write`, `actions: write`; `main` dalinda ve dispatch/cron ile calisabilir. `madsc_akilli_kesif.py` ve kesif arsivi scriptlerinden sonra **yalniz `madsc_kesif/`** dizinini `git add` eder; `tools/protected_write_gate.py --base origin/main` komutu `git commit` ve `git push origin HEAD:main` arasindadir. Rapor klasorunde eszamanli degisiklik varsa yazma yerine artifact ile cikar. Ancak scriptlerin baska dosyalari yerelde degistirmedigi veya gate'in tum durumlarda dogru oldugu bu YAML ile ispatlanmaz. `candidate_epg_logo_join.py` adimi `if: false` nedeniyle **calismaz**.
+- `madsc-genis-kaynak-kontrol.yml`: `contents: write`, `actions: write`; **manuel dispatch**. Haftalik/aylik kaynak tarama raporlarini `madsc_genis_tarama/` dizininde stage eder; koruma kapisini commit oncesi ve sonrasi calistirir, `main` dalina push eder. Basarili olunca `madsc-uc-asama.yml` workflow'unu API ile tetikler; K2-K3-K5 zincir bagimliligi.
+- `madsc-ibo-6115-second.yml`, `madsc-ibo-ilk-239.yml`, `madsc-ibo-kararlar-grup1.yml`, `madsc-ibo-second-voice.yml`: hepsi **`CALISANLAR.m3u` dosyasini acikca `git add` eder** ve `main` dalina push etmeyi dener. `YABANCI_KANALLAR.m3u` icin `git diff --exit-code` ile degisiklik engeli var. `tools/protected_write_gate.py --base origin/main` commit/push oncesinde calisir; script ve gate kaynak kodu/izin kararlari incelenmeden **korunan playlist yazmasi guvenli denemez**. IBO `WORKING` kaniti bu YAML'larda cihazdan dogrulanmiyor.
+
+**Risk ayrimi:** Birlesik kesifin gorunen Git staging alani rapor klasoru ile sinirli; IBO kararlarinin gorunen staging alani ise korunan `CALISANLAR.m3u` dosyasini iceriyor. Bu, salt `contents: write` izinlerine bakmaktan daha somut bir yazma-yolu bulgusudur. Yeni depoda bu workflow'lar etkinlestirilmedi, hicbir korunan playlist degistirilmedi. 

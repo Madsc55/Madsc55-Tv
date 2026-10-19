@@ -20,7 +20,9 @@ def collect(root: Path) -> dict:
             or not isinstance(data.get("fixture_checks"), dict)
             or not data["fixture_checks"]
             or not all(v is True for v in data["fixture_checks"].values())
-            or data.get("checks", {}).get("runtime_rule_evidence") is not False
+            or not isinstance(data.get("checks"), dict)
+            or data["checks"].get("isolation") is not True
+            or data["checks"].get("runtime_rule_evidence") is not False
             or data.get("checks", {}).get("legacy_behavioral_equivalence") is not False):
             raise ValueError(f"Invalid or unverified evidence: {key}")
         reports[key] = {"status": data["status"], "fixture_checks": len(data["fixture_checks"])}

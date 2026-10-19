@@ -28,6 +28,35 @@ class CandidateCoordinationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             coordinate(self.rows, {self.digest: {"url_sha256": "a" * 64}}, {})
 
+
+    def test_epg_logo_scoring_and_hold(self):
+        probe = {"url_sha256": self.digest, "http_status": 200,
+                 "video": True, "audio": True, "duration_seconds": 40}
+        rows = [{"name": "Sample", "url": "https://example.org/live.m3u8", "tvg_id": "sample.tv"}]
+        report = coordinate(rows, {self.digest: probe}, {}, {"sample.tv"}, set())
+        item = report["candidates"][0]
+        self.assertTrue(item["epg_match"])
+        self.assertFalse(item["logo_match"])
+        self.assertTrue(item["hold"])
+        self.assertEqual(item["score"], 70)
+        self.assertEqual(item["next_action"], "MANUAL_METADATA_REVIEW")
+
+    def test_ibo_working_cannot_be_deleted(self):
+        report = coordinate(self.rows, {}, {}, ibo_results={self.digest: "WORKING"})
+        self.assertTrue(report["candidates"][0]["protected_working"])
+        self.assertFalse(report["candidates"][0]["delete_allowed"])
+        self.assertFalse(report["ibo_device_verified"])
+
+    def test_full_metadata_is_not_production_approval(self):
+        probe = {"url_sha256": self.digest, "http_status": 200,
+                 "video": True, "audio": True, "duration_seconds": 40}
+        rows = [{"name": "Sample", "url": "https://example.org/live.m3u8", "tvg_id": "sample.tv"}]
+        report = coordinate(rows, {self.digest: probe}, {}, {"sample.tv"}, {"sample.tv"})
+        self.assertEqual(report["candidates"][0]["score"], 80)
+        self.assertFalse(report["candidates"][0]["hold"])
+        self.assertFalse(report["candidates"][0]["production_change_allowed"])
+        self.assertFalse(report["production_ready"])
+
     def test_duplicate(self):
         result = coordinate(self.rows + self.rows, {}, {})
         self.assertEqual(len(result["candidates"]), 1)

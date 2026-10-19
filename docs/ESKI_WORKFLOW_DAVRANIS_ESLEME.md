@@ -249,3 +249,29 @@ Eski dalda YAML ve çağrılan betikler salt-okunur incelendi:
 **Kritik bulgu:** Workflow GitHub deposuna push yapmasa bile betikler runner çalışma ağacında `aday_bekletme/gecmis.json` gibi **kalıcı olması amaçlanan durum dosyalarını yeniden yazar**. Bu, eski koşular arasında durumun gerçekten saklandığı anlamına gelmez; artifact/cache/commit üzerinden devamlılık ayrıca kanıtlanmalı. Yeni K2/K3 salt-okunur fixture testleri bu sekiz adımlı davranışın tamamını henüz karşılamıyor.
 
 **Gerekli parity testleri:** kaynak/aday tekilleştirme; tarama CSV şeması; teknik sonuç ve IBO cihaz sonucunun ayrımı; geçmiş dosyasının önce/sonra kimliği; `RETEST_LIMIT=5` ve yeniden deneme takvimi; kaynak güven puanı ve öncelik sıralaması; eksik/bozuk geçmişte fail-closed; 10 artefaktın şema ve içerik eşlemesi; runner koşuları arasında gerçekten kalıcı durum kanıtı. Korunan ana liste, YEDEKLER, YENİLER, EPG, logo ve favorilere yazma **yasak**. **Karar: `BLOCKED_NEEDS_BEHAVIOR_EVIDENCE`.**
+
+
+## Derin kaynak incelemesi 2 — 12 YAML ve 13 çağrılan betik (19 Ekim 2026)
+
+Eski salt-okunur dalda **12 YAML** ve bu işlerin kullandığı **13 Python betiği** ayrı ayrı açıldı; adım sırası, tetikler, girdi/çıktı dosyaları ve yazma sinyalleri kaynaklardan çıkarıldı. Önceki derin inceleme `aday-bekletme.yml` idi. Bu bölüm **kaynak işlev çözümlemesidir**, yeni sistemde davranışsal parity onayı değildir.
+
+| Kaynak YAML | Gerçek işlev / girdi → çıktı | Risk / K1–K5 hedefi |
+|---|---|---|
+| `390-aday-tekrar-test.yml` | `yedekler/tekrar_test_390.py`: `CALISANLAR.m3u` ve 390 aday M3U kaynağı; ffmpeg tabanlı paralel 20 saniye video/ses testi → `TEKRAR_TEST_2026-10-09.csv` + `TEKNIK_DOGRULANANLAR_2026-10-09.m3u` | K3/K4; çıktı M3U **runner üzerinde üretilir**, korunan listeye yazma yetkisi değildir |
+| `akilli-aday-puanlama.yml` | `scripts/akilli_aday_puanla.py`: teknik kanıt puanı → `AKILLI_ADAY_PUANLARI.csv`, `AKILLI_ADAY_OZET.json` | K2→K3→K5; puan eşikleri ve şema parity eksik |
+| `birlesik-aday-raporu.yml` | gerçek aday keşfi + ffprobe → puanlama + `kanal_kararlilik_takip.py` + `birlesik_aday_raporu.py` → `BIRLESIK_ADAY_ONAY_RAPORU.csv`, `BIRLESIK_ADAY_OZET.json` | K2→K3→K5; **birleşik rapor onay vermekle eş anlamlı değildir** |
+| `kanal-kararlilik.yml` | önceki `KARARLILIK_GECMISI.json` cache restore → gerçek ffprobe → `kanal_kararlilik_takip.py` → `KARARLILIK_RAPORU.csv`, `KARARLILIK_OZET.json` ve sonraki koşu için cache save | K3→K5; bu workflow'da cache mekanizması YAML'da açık, gerçek süreklilik koşu kanıtı eksik |
+| `genel-aday-medya-test.yml` | keşif + ilk aday grubunda gerçek video/ses ffprobe → ayrı rapor artefaktı | K2→K3; canlı ölçüm parity eksik |
+| `aday-logo-epg-test.yml` | `candidate_epg_logo_join.py`: aday logo JSON + `epg/ibo-test-epg.xml` okuma → `candidate_epg_logo_join.json` | K2/K3/K5; EPG/IBO kimlik eşleşmesi ve cihaz kabulü eksik |
+| `aday-yedekleme.yml` | `yedekler/teknik_adaylari_aktar.py`: ana liste/aday CSV ve M3U referansları → teknik aday taslak M3U | K4; salt rapor/artifact, **YEDEKLER'e otomatik aktarım izni yok** |
+| `felaket-kurtarma-tatbikati.yml` | `disaster_recovery_dry_run.py`: Git kaynaklı `CALISANLAR.m3u` / `YENILER.m3u` byte kopyası ve checksum → `DISASTER-RECOVERY-REPORT.json` | K4; geçici git restore, **offsite yedek kanıtı değil** |
+| `epg-pages.yml` | EPG XML doğrulama → Pages yayını hazırlama; `workflow_run` tetik bağımlılığı, Pages dağıtım yetkisi | K3/K5; gerçek yayın/deploy davranışı yeni sistemde yetkisiz |
+| `vod-guncelle.yml` | `vod_guncelle.py` dış veri `urlopen` → `vod/guncel-bolumler.json` → gate ve `git push`; cron + `contents:write` | K1/K5 **YÜKSEK**; yeni cron/push açılmayacak |
+| `madsc-birlesik-kesif.yml` | `discovery_archive.py` geçmiş + aday CSV → `madsc_akilli_kesif.py` dış kaynak/ffprobe → logo/EPG join → `four_stage_discovery_report.py` birleşik JSON; gate + `git push` | K1/K2/K3/K5 **YÜKSEK**; rapor state'i ve çoklu push yolu ayrıca denetlenecek |
+| `madsc-01-guvenlik.yml` | `k1_protected_integrity.py` Git/çalışma ağacı korunan dosya snapshot'ı ve değişmezlik kontrolü; `k1_24_rule_evidence.py` güvenlik belgesi/kanıt taraması; regresyon ve hata kapısı | K1/K5; **26/26 gerçek enforcement kanıtı değil** |
+
+**Kaynak seviyesinde eklenen 13 betik:** `yedekler/tekrar_test_390.py`, `scripts/akilli_aday_puanla.py`, `scripts/kanal_kararlilik_takip.py`, `scripts/birlesik_aday_raporu.py`, `scripts/candidate_epg_logo_join.py`, `yedekler/teknik_adaylari_aktar.py`, `scripts/disaster_recovery_dry_run.py`, `scripts/vod_guncelle.py`, `scripts/discovery_archive.py`, `madsc_akilli_kesif.py`, `scripts/four_stage_discovery_report.py`, `scripts/k1_protected_integrity.py`, `scripts/k1_24_rule_evidence.py`.
+
+**Bulgular:** Bazı işlerin davranışı yalnız YAML adından anlaşılmıyor: `birlesik-aday-raporu` ve `madsc-birlesik-kesif` birden çok K kategorisine bağımlı; `kanal-kararlilik` cache restore/save kullanırken `aday-bekletme` için aynı kalıcılık ayrı doğrulanmalı. `vod-guncelle` ve `madsc-birlesik-kesif` gerçek yazma/yayımlama yolları içeriyor; yeni salt-okunur K1–K5'e otomatik taşınmaları güvenli değil. Bu kaynak taramasında hiçbir script çalıştırılmadı; üretim dosyası, eski repo, cron ve Pages yayını değiştirilmedi.
+
+**Kapsam:** 99 YAML ilk inceleme tamam; bu turda **12 YAML** kaynak + **13 betik** derin incelendi, önceki turdaki 1 YAML/8 betikten ayrı. Dolayısıyla toplam **13 benzersiz YAML derin çözümleme**, **21 betik kaynak incelemesi**; **86 YAML** henüz aynı derinlikte çözülmedi. 92 eski kapsamın kaçının bu 13 içinde olduğu ayrı sayılmalı (beşli kategori koordinatörü kapsam dışıdır). **92/92 parity onayı hâlâ 0**.

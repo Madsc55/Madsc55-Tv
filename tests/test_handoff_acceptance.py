@@ -44,3 +44,16 @@ class HandoffAcceptanceTests(unittest.TestCase):
     def test_mismatched_k3_commit_rejected(self):
         with self.assertRaises(ValueError):
             verify(self.k2, {**self.report, "commit_sha": "b" * 40}, self.report, "123", "a" * 40)
+
+    def test_symlink_evidence_file_rejected(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        from madsc.handoff_acceptance import load
+        with tempfile.TemporaryDirectory() as d:
+            target = Path(d) / "report.json"
+            target.write_text(json.dumps(self.report), encoding="utf-8")
+            link = Path(d) / "link.json"
+            link.symlink_to(target)
+            with self.assertRaises(ValueError):
+                load(link)

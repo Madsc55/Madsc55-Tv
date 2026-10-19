@@ -66,3 +66,6 @@ GitHub baglantisinin mcp GitHub fetch GET yolu ile https://api.github.com/repos/
 
 ## 19 Ekim 2026 - K4 manifest regresyonu
 Yeni tests/test_backup.py icinde bos manifestin external_backup_verified ve restore_verified alanlarini false tutmasini denetleyen regresyon testi eklendi. Commit 29fa2225e08bb35d7904d0f7f46d320bb0d19b25. K4 canli yedek veya gercek restore olarak iddia edilmiyor. madsc/backup.py icin daha kati yol/symlink dogrulama degisikligi denendi fakat GitHub yazma araci guvenlik denetimi tarafindan engellendi; bu degisiklik UYGULANMADI. Yeni Actions kosusu sonucu henuz dogrulanmadi. Eski repo degismedi.
+
+## 19 Ekim 2026 - K4 yol denetimi ve gercek Actions kontrolu
+Gercek GitHub Actions #5 run 39181924806, commit 29fa222, completed/success olarak API uzerinden dogrulandi. K4 manifest kaynak dogrulamasina mutlak yol ve dogrudan sembolik baglanti reddi eklendi: aaf213b1c99dab2960617781899cd39a854d7ce8. tests/test_backup.py icine bunlarin regresyon testleri eklendi: 52ae1ddb1630dd2ea2b7f2a8b779eb6f415af875. Bu denetim ara dizin sembolik baglantilarini ayrica reddettigini iddia etmez; ek sertlestirme gerekir. GitHub Actions #6 39182087053 queued ve #7 39182095159 pending olarak goruldu; tamamlanmis basari kaniti yok. Eski depo ve canli veriler degismedi; gercek harici backup/restore kanitlanmadi.

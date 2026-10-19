@@ -268,3 +268,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `DEVAM_NOTU.md`, `AGENTS.md` ve `OZELLIK_ENVANTERI.md` ilgili kaynakları da doğrulandı. Tekrar inceleme yapmamak ve korunan listeleri değiştirmemek esastır.
 - **YAPILACAK / ŞİMDİLİK ERTELENDİ:** Önceden mevcut 437 D2 metin/kod/veri kaydını kullanarak her dosyanın görevi, çağrı/bağımlılık zinciri, bulgusu, güvenlik etkisi, kanıt düzeyi ve açık işi için dosya bazlı nihai rapor hazırlamak; yalnız eksik kanıt gerektiğinde hedefli kaynak incelemek. 373 görseli açma/indirme/yeniden denetleme. 26 güvenlik kuralının gerçek uygulanması, 92 eski işlevin K1–K5 davranışsal eşdeğerliği, IBO cihaz, EPG ve harici restore kanıtları ayrı açık işlerdir; bunlar tamamlandı sayılmaz.
 - **KULLANICI KARARI:** Bu aşamada yalnız notlara kaydet, raporu/incelemeyi şimdi sürdürme. Eski repo, PR #71, main merge, cron/production yazma ve korunan kanal listeleri değiştirilmeyecek. `Notlara kaydet` yalnız yeni deponun merkezi `PROJE_HAFIZASI.md` dosyasına yazılacak.
+
+
+## 19 Ekim 2026 — KULLANICI KARARI: ESKİ DOSYA BULGULARI KURULUM SONU KONTROL LİSTESİ
+- Kullanıcı eski 810 dosyanın işlevsel inceleme kayıtlarının korunmasını ve eksiklerin kurulum sonunda bu notlardan bulunmasını istiyor. Önceden yapılmış D2 ilk içerik incelemeleri tekrar sayılmayacak; ihtiyaç halinde eksik kanıt için hedefli inceleme yapılacak.
+- Her somut bulgu merkezi hafızada dosya yolu, ilgili eski workflow/çağrı zinciri, K1–K5 karşılığı, eksik veya risk, kanıt/Actions run, durum (açık/doğrulandı/kapandı) ve kapanış şartıyla izlenecek. Kanıtsız tamamlandı işareti verilmeyecek.
+- Kurulum sonunda bu kayıtlar üzerinden toplu eksik kontrolü ve kapanış raporu hazırlanacak. Mevcut 437 metin/kod/veri dosyası inceleme kaydı başlangıç kaynağı; görseller kullanıcı kararıyla kapsam dışı. Eski repo ve korunan listeler salt okunur; PR #71, main merge, üretim yazması veya eski workflow kapatma için izin yok.

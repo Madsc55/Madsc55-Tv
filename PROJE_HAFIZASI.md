@@ -358,3 +358,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `madsc/legacy_report_export.py` artık isteğe bağlı `history_json` ve `now` kabul eder; `KARARLILIK_GECMISI.json` biçimindeki URL->gözlem listesi verildiğinde birleşik CSV'deki 24 saat kararlılık kararı gerçek zaman damgalı gözlemlerle çapraz kontrol edilir. Geçmiş yoksa eski CSV-only uyumluluk yolu sürer, JSON özetinde `historical_evidence_source=csv_only` olarak açıkça etiketlenir. Geçmiş JSON hatalıysa çıktı klasörü oluşturulmadan fail-closed. Commit `5bb03d3e`.
 - `tests/test_legacy_report_export.py` geçerli geçmiş, eksik geçmişin +30 puan vermemesi ve hatalı geçmişte çıktı oluşturmama senaryolarını kapsar. Commit `c32cbe79`. Actions #177 / 39271468192 in_progress, #178 / 39271507933 pending; henüz başarı kanıtı yok.
 - **AÇIK:** üretim pipeline'ında tarihsel JSON girdisinin zorunlu kılınması, güvenilir restore/persist, gerçek ffprobe ve 24 saat boyunca medya ölçümü; IBO cihaz testi kullanıcıda. Korunan listeler, eski depo, cron, PR #71 ve main merge değiştirilmedi.
+
+
+## 19 Ekim 2026 — #178 hata düzeltmesi ve zorunlu geçmiş modu
+- Actions #177 SUCCESS, #178 FAILURE; #178 için yeni eklenen CSV fixture'larında satır sonlarının yanlışlıkla `\\n` olarak kodlandığı görüldü. Test verisi gerçek `\n` satır sonuna düzeltildi (commit `dbbc7f27`). #179 CANCELLED.
+- `madsc/legacy_report_export.py` `require_history=True` fail-closed seçeneği eklendi: JSON geçmişi olmadan rapor üretimini reddeder (commit `97d258f5`). Mevcut CSV-only geriye uyum modu varsayılan olarak sürer; güvenilir üretim pipeline'ında `require_history=True` kullanılmalıdır. Regresyon testi commit `d07720f8`.
+- Actions #180 / 39271773115 queued, #181 / 39271798065 pending; başarı henüz doğrulanmadı. **AÇIK:** üretim pipeline'ına güvenli entegrasyon, kalıcı tarihsel kanıt ve gerçek medya testleri. Korunan listeler, eski repo, cron, main ve PR #71 değişmedi.

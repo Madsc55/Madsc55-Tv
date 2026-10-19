@@ -150,3 +150,14 @@ Tetikler, izinler ve yürütülen ana komutlar salt-okunur eski YAML dosyaların
 | `k1-protected-write-tests.yml` | read | protected_write_gate regresyon ve artifact | K1 |
 
 **Kaynak dosya kapsamı:** Önceki 67 + 29 benzersiz YAML = **96/99**. `madsc-yedekler-aktarim-test`, `madsc-ibo-3-5281`, `madsc-son-kontrol-kurtarma-teshis` bu turda yeniden açıldı ancak **tekrar sayılmadı**. Açık kalan 3 YAML: `madsc-yedekler-aktarim-test` değil; kesin fark tam 99 dosya envanteriyle karşılaştırılarak bulunacak. **Yüksek riskli ek yazma yolları** `madsc-turk-kanal-geri-sec`, `madsc-uc-asama`, `madsc-yedek-turk-ayir`, `madsc-yedekler-sayi-duzelt`, `vod-guncelle`, `publish-iptv-png-logos`. Korunan dosyaları veya logoları değiştiren hiçbir yeni işlem yetkilendirilmedi.
+
+
+## Son üç YAML — 99/99 kaynak ilk incelemesi tamamlandı
+
+| Workflow | Tetik/izin | Gerçek davranış | K hedefi ve sınır |
+|---|---|---|---|
+| `aday-oncelik-kontrol.yml` | dispatch+paths push; contents:read | `aday_oncelik_raporu.py` syntax; geçici örnek CSV'de güçlü aday ONCELIK=1, zayıf aday ONCELIK=5 | K2/K5; fixture sıralama, üretim eşdeğerliği değil |
+| `sekizinci-tekrar-raporu-test.yml` | dispatch+paths push; contents:read | `aday_tekrar_raporu.py` iki kaynak ve aynı kaynak URL tekrarını geçici dizinde CSV ile doğrular | K2; tekrar kanıtı fixture |
+| `test-kanal-adaylari.yml` | main paths push+dispatch; contents:read | `scripts/test_kanal_adaylari.py` gerçek aday yanıt testi; `yedekler/TARAMA-TEST-SONUCLARI.m3u` ve JSON yalnız artifact/manual approval | K2/K3/K4; korunan YEDEKLER'e otomatik yazma onayı değil |
+
+**Envanter uzlaştırması:** `docs/ESKI_WORKFLOW_99_ENVANTER.md` içindeki **99/99 benzersiz YAML adı** ile bu haritadaki kod biçiminde yazılmış dosya adları karşılaştırıldı; eksik 3 dosya tespit edilip kaynağından incelendi. Böylece **99/99 YAML dosyasının ilk tetik/izin/komut incelemesi tamamlandı**. Bu **92/92 gerçek davranışsal entegrasyon, 26/26 gerçek güvenlik kuralı, canlı yayın testi veya offsite restore kabulü değildir**. 92 sayısının eski 99 YAML içindeki tam tanımı hâlâ kaynak `five_category_92_workflow_audit.py` üzerinden çözülmelidir. Yüksek izinli eski workflow'ların yazma yolları için satır satır güvenlik incelemesi de açık.

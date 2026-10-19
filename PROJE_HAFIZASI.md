@@ -429,3 +429,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 **En son CI kanıtı:** Actions #194 (39277187458) **SUCCESS**, #195 (39277204007) **SUCCESS**. #192 CANCELLED, başarı sayılmadı. En son yeni değişiklikler için başarılı fixture CI var; 26/26, 92/92, gerçek ffprobe, IBO, K4 bağımsız üretim restore kanıtı yok.
 
 **Sıradaki iş sırası:** (1) 92 vs 99 workflow kapsam/harita farkını gerçek kaynaklarla kapat; (2) K2–K3–K5 aday keşfi → gerçek ölçüm zamanlı test → kararlılık → rapor zincirini gerçek eski veri şemalarıyla uçtan uca ve fail-closed doğrula; (3) K1 26 güvenlik kuralının workflow/izin/yazma kapısı gerçek uygulama kanıtı; (4) K4 bağımsız yedek/restore; (5) tüm testlerin tamamlandığı birleşik kabul raporu. Üretime geçiş veya korunan dosyalara yazma için ayrı açık onay gereklidir.
+
+
+## 19 Ekim 2026 — 99 eski workflow tam dosya envanteri
+- Eski salt-okunur `Madsc55/madsc-tv` dalı `madsc/bes-sistem-toplu-birlestirme`, commit `ca374df3b9585c0d76a078db9536150ebbc260f7`, tree `a88dfa874b6964dcaa4de7a8f9075af2f146acd8` REST üzerinden recursive ve `truncated=false` olarak tarandı. Toplam 849 tree girdisi içinde `.github/workflows/*.yml|yaml` sayısı **99**.
+- Yeni depoda `docs/ESKI_WORKFLOW_99_ENVANTER.md` dosyasında **99/99 dosya adı** tek tek kaydedildi (commit `6df94d10`). Dosya adına göre gruplar: eski `madsc-01`..`madsc-05` = 5; `test-13`..`test-39` = 27; kalan = 67. Bu gruplama davranışsal inceleme değildir; eski 92 workflow iddiasıyla 99 YAML farkı **henüz çözülmedi**. Hiçbir eski workflow kapatılmadı.
+- Son doğrulanmış yeni depo CI: #194 ve #195 SUCCESS. Envanter dokümantasyon commitinin CI sonucu ayrıca kontrol edilmeli. Sonraki iş: 99 dosyayı tetik, izin, çalıştırdığı script, okuma/yazma yolları ve K1–K5 bağımlılıklarına göre **davranışsal** sınıflandır; 92 kapsamını somut kanıtla belirle. Korunan listeler, eski depo, main merge, cron ve PR #71 değişmedi.

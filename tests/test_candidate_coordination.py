@@ -114,3 +114,10 @@ class CandidateCoordinationTests(unittest.TestCase):
         self.assertEqual(item["tvg_id"], "sample.tv")
         self.assertTrue(item["epg_match"])
         self.assertTrue(item["logo_match"])
+
+    def test_unlinked_evidence_rejected(self):
+        other = 'f' * 64
+        for probes, attempts, ibo in (({other: {}}, {}, None), ({}, {other: 1}, None), ({}, {}, {other: 'WORKING'})):
+            with self.subTest(probes=probes, attempts=attempts, ibo=ibo):
+                with self.assertRaises(ValueError):
+                    coordinate(self.rows, probes, attempts, ibo_results=ibo)

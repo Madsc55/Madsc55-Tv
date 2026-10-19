@@ -31,6 +31,14 @@ class SourceImportTests(unittest.TestCase):
             self.assertEqual(len(result["candidates"]), 0)
             self.assertEqual(len(result["rejected"]), 1)
 
+    def test_invalid_extinf_metadata_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u"
+            for metadata in ("#EXTINF:-1", "#EXTINF:-1,"):
+                p.write_text("#EXTM3U\n" + metadata + "\nhttps://example.org/one\n", encoding="utf-8")
+                with self.subTest(metadata=metadata), self.assertRaises(ValueError):
+                    extract_candidates(p)
+
     def test_missing_url_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"

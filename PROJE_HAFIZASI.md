@@ -219,3 +219,8 @@ Actions #66 (c550aa7) ve #67 (6ed2ed9) completed/success. `madsc/candidate_coord
 ## 19 Ekim 2026 - K5 rapor entegrasyonu
 
 K5 core.py icinde aday puanlama ve EPG/logo kanit sayaclari eklendi. Commit a4f5834. Uc yeni salt-okunur fixture kontrolu: candidate_k2_k3_k5_join, candidate_metadata_counts, candidate_report_read_only. Actions #68 success; #69 queued; #70 pending (sorgu aninda). Gercek yayin, cihaz IBO, K1 26 runtime kural, K4 harici restore ve uretim onayi halen acik. Eski depo ve korunan listeler degistirilmedi.
+
+
+## 19 Ekim 2026 - K3 tekrarlanan kanit ve K4 bagimsiz restore fixture
+
+Actions #69 ve #70 completed/success. `madsc/channel_test.py` tekrar olcumlerini ayni URL SHA256 ile kontrol eden evaluate_repeated_probes fonksiyonuyla genisletildi (cdabe5c); gercek ag olcumu iddiasi yok. `madsc/backup.py` uc ayri kaynak/yedek/restore klasorunun SHA256 manifestini karsilastiran verify_independent_restore fonksiyonuyla genisletildi (341d67e); gercek harici depolama kaniti yok. `tests/test_channel_test.py` (0ed9de8), `tests/test_backup.py` (3813cdf) dorder yeni regresyon senaryosu eklendi. `madsc/core.py` K3 ve K4 kategori fixture kabul kontrollerine baglandi (ab62827). Actions #75 sorgu aninda pending, #71 in_progress; ara commit run #72-74 cancelled gorundu, bu basari degildir. Eski depo, production listeler, cron degismedi. K1 26 runtime kural, gercek K3 ffprobe/IBO, K4 harici restore ve production kabul acik.

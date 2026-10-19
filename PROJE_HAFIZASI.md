@@ -330,3 +330,10 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Yeni `madsc/legacy_unified_report.py` eski `scripts/birlesik_aday_raporu.py` 10 alanlı çıktı CSV şemasını, `YAYIN_URL` eşleşmesini, kararlılık `EVET` yorumunu, puana göre azalan/kanala göre artan sıralamayı ve IBO/kullanıcı/ana liste onayını `YOK`/`HAYIR` olarak tutan **saf salt-okunur** görünüm olarak taşır (commit `3e964318`). `tests/test_legacy_unified_report.py` URL join, sıralama, boş rapor ve geçersiz kayıt regresyonlarını içerir (commit `c8f61448`).
 - Kontrol anında Actions #169 / 39268992498 queued ve #170 / 39269024472 queued; yeni modül CI başarısı **henüz doğrulanmadı**.
 - Bu kod CSV dosyalarını okumaz/yazmaz, gerçek 24 saat ölçümü veya cihaz onayı yapmaz; yalnız çağıranın verdiği satırları değerlendirir. **AÇIK:** dosya IO/artefakt paritesi, cache geçmişi güvenilirliği, gerçek ffprobe ve eski URL arşiv kimliği, bütün 99 workflow davranış eşdeğerliği. Korunan listeler ve eski repo değişmedi.
+
+
+## 19 Ekim 2026 — Eski birleşik aday raporu CSV/JSON artefakt dışa aktarımı
+- Actions #169 / 39268992498 SUCCESS, #170 / 39269024472 SUCCESS.
+- `madsc/legacy_report_export.py` açıkça verilen iki CSV girdisini okuyup eski `BIRLESIK_ADAY_ONAY_RAPORU.csv` (UTF-8 BOM, 10 alan) ve `BIRLESIK_ADAY_OZET.json` raporlarını yalnız yeni ve boş **depo dışındaki** çıktı dizinine yazar; mevcut dizin üzerine yazmayı, repo içine yazmayı, eksik CSV başlığını reddeder. Commit `6eab20bd`. `tests/test_legacy_report_export.py` çıktı ve fail-closed durumlarını sınar; commit `f5365fc3`.
+- Actions #171 / 39269514254 queued, #172 / 39269544435 pending; bu yeni değişikliklerin CI başarısı henüz doğrulanmadı.
+- **AÇIK:** 24 saat kararlılık ölçümü yalnız CSV'de gelen `EVET` değerini yorumlar; bağımsız geçmiş doğrulaması, gerçek ffprobe, gerçek üretim iş akışı/artefakt yükleme ve 99 eski workflow eşdeğerliği kanıtlanmadı. Korunan listeler, eski depo, cron, PR #71 ve main merge değişmedi.

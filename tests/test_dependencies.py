@@ -20,3 +20,8 @@ class DependencyTests(unittest.TestCase):
         result = validate_batch(["candidate_discovery", "backup_restore"])
         self.assertFalse(result["ready_for_production"])
         self.assertEqual(result["independent_extra_triggers"], 0)
+
+    def test_invalid_batch_inputs(self):
+        for value in ([], [None], [123], ["candidate_discovery", None]):
+            with self.assertRaises(ValueError):
+                validate_batch(value)

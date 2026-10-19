@@ -387,3 +387,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Actions #185 / 39273845451 SUCCESS ve #186 / 39273862210 SUCCESS.
 - Eski `scripts/kanal_kararlilik_takip.py` tekrar okundu: `KARARLILIK_GECMISI.json` URL->`[{at,state}]` biçimi ve bütün geçmişin doğrulanması teyit edildi. Yeni `madsc/legacy_unified_report.py` artık geçmiş JSON verildiğinde sadece rapordaki adayların değil, dosyadaki **tüm** URL gözlemlerinin zaman damgalarını ve çelişkilerini doğrular; alakasız URL'de bozuk kayıt varsa fail-closed. Commit `62f431d9`, test `3bfe3959`.
 - Actions #187 / 39275828816 in_progress ve #188 / 39275852182 queued; sonuç henüz doğrulanmadı. Gerçek 24 saat ölçüm, kalıcı geçmiş ve IBO cihaz doğrulaması yapılmadı. Korunan listeler, eski repo, cron, main merge ve PR #71 değişmedi.
+
+
+## 19 Ekim 2026 — #187/#188 başarılı; test edilmemiş geçmiş reddi
+- Actions #187 / 39275828816 SUCCESS ve #188 / 39275852182 SUCCESS.
+- Eski `scripts/kanal_kararlilik_takip.py` ölçüm oluştururken `TEST_EDILMEDI` durumunu reddeder. Yeni `madsc/legacy_stability.py` artık geçmiş JSON'da da bu değeri geçerli ölçüm saymaz, fail-closed hata verir (commit `f395017b`), regresyon testi `a764119a`. Böylece bozuk geçmişin rapor üretiminde sessizce kabulü önlenir.
+- Actions #189 / 39276340033 in_progress; son commit testi henüz doğrulanmadı. Gerçek yayın testi, geçmiş kalıcı saklama ve IBO cihaz onayı hâlâ açık. Korunan listeler, eski repo, cron, main merge ve PR #71 değişmedi.

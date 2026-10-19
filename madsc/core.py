@@ -16,6 +16,7 @@ from madsc.source_import import extract_candidates
 from madsc.handoff import assess_candidates
 from madsc.epg_inventory import inspect_xmltv
 from madsc.candidate_coordination import coordinate
+from madsc.write_path_audit import audit_write_paths
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -28,7 +29,10 @@ def execute(category: str) -> dict:
             original = p.read_bytes()
             before = inspect_playlist(p)
             after = inspect_playlist(p)
-            evidence = {"valid_playlist": before["channel_count"] == 1,
+            audit = audit_write_paths(["CALISANLAR.m3u", "epg/sample.xml", "reports/fixture.json"])
+            evidence = {"protected_write_paths_identified": audit["blocked"] and len(audit["rejected"]) == 2,
+                        "audit_does_not_claim_runtime_gate": not audit["runtime_gate_enforced"],
+                        "valid_playlist": before["channel_count"] == 1,
                         "no_playlist_mutation": original == p.read_bytes(),
                         "integrity_comparison": compare_snapshots(before, after)["identical"]}
     elif category == "k2":

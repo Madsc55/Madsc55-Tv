@@ -29,14 +29,17 @@ jobs:
       - name: Tüm regresyon testlerini çalıştır
         run: python -m unittest discover -s tests -v
       - name: K1 salt okunur kanıt raporunu oluştur
+        if: ${{ always() && !cancelled() }}
         run: python -m madsc.core --category k1 --output reports/k1.json
       - name: K1 kanıtını sakla
+        if: ${{ always() && !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: madsc-batch-k1
           path: reports/k1.json
           retention-days: 14
   k2:
+    if: ${{ always() && !cancelled() }}
     name: Keşif
     needs: k1
     runs-on: ubuntu-latest
@@ -59,6 +62,7 @@ jobs:
           path: reports/k2.json
           retention-days: 14
   k3:
+    if: ${{ always() && !cancelled() }}
     name: Kanal Testleri
     needs: k2
     runs-on: ubuntu-latest
@@ -81,6 +85,7 @@ jobs:
           path: reports/k3.json
           retention-days: 14
   k4:
+    if: ${{ always() && !cancelled() }}
     name: Arşiv ve Yedek
     needs: k3
     runs-on: ubuntu-latest
@@ -103,6 +108,7 @@ jobs:
           path: reports/k4.json
           retention-days: 14
   k5:
+    if: ${{ always() && !cancelled() }}
     name: Genel Bakım
     needs: k4
     runs-on: ubuntu-latest
@@ -125,6 +131,7 @@ jobs:
           path: reports/k5.json
           retention-days: 14
   toplu-kabul:
+    if: ${{ always() && !cancelled() }}
     name: Beşli toplu kanıt doğrulama
     needs: [k1, k2, k3, k4, k5]
     runs-on: ubuntu-latest
@@ -145,10 +152,30 @@ jobs:
           path: reports/collected
           merge-multiple: false
       - name: Kanıtları doğrula ve tek rapor oluştur
+        id: kabul
+        continue-on-error: true
         run: python -m madsc.batch_acceptance --reports reports/collected --output reports/toplu-kabul.json
       - name: Toplu raporu sakla
+        if: ${{ always() && !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: madsc-five-system-acceptance
           path: reports/toplu-kabul.json
           retention-days: 14
+      - name: Tüm kategori sonuçlarını değerlendir
+        if: ${{ always() && !cancelled() }}
+        env:
+          K1: ${{ needs.k1.result }}
+          K2: ${{ needs.k2.result }}
+          K3: ${{ needs.k3.result }}
+          K4: ${{ needs.k4.result }}
+          K5: ${{ needs.k5.result }}
+          KABUL: ${{ steps.kabul.outcome }}
+        run: |
+          echo "K1=$K1 K2=$K2 K3=$K3 K4=$K4 K5=$K5 KABUL=$KABUL"
+          for durum in "$K1" "$K2" "$K3" "$K4" "$K5" "$KABUL"; do
+            if [ "$durum" != success ]; then
+              echo 'En az bir kontrol basarisiz: uretim onayi yok.'
+              exit 1
+            fi
+          done

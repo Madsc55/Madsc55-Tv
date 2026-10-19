@@ -45,3 +45,6 @@ Kaniti bekleyen: GitHub Actions gercek run/job/artifact sonucu; 26/26 runtime ku
 
 ## 19 Ekim 2026 - Madsc55-Tv adlandirma ve gorev test kaydi
 Yeni ozel deponun resmi adi Madsc55-Tv; eski madsc-tv yalniz salt okunur referanstir. Kullanici gorunen yeni sistem adlari Madsc55-Tv olacak, mevcut teknik dosya yollarina salt ad icin dokunulmayacak. Kod commit ed75d86847dbc3e510f87057b1ee14ee22504ba6 bos ve gecersiz toplu gorevleri reddeder; regresyon test commit 3398e089463b76dbd7364dff0f14db320692ba4a. Eski DEVAM_NOTU.md, 810 dosya notu.md, AGENTS.md, BES_SISTEM_TOPLU_IS_DEFTERI.md, BES_SISTEM_92_WORKFLOW_TETIK_ENVANTERI.md ve OZELLIK_ENVANTERI.md ilgili bolumleri kontrol edildi. Gercek yeni Actions run henuz dogrulanmadi; 26 kural ve 92 davranis kabul edilmis sayilmaz. Eski repo ve korunan listeler degismedi.
+
+## 19 Ekim 2026 - Madsc55-Tv GitHub Actions gorunen adi
+Yeni ozel repo .github/workflows/madsc-05-bakim.yml dosyasinin yalniz name basligi Madsc55-Tv - Besli Toplu Guvenlik ve Kabul olarak degistirildi. Commit efbca192608746f2524da8591740dc9956414579. Manuel workflow_dispatch, salt-okunur izinler, K1-K5 sirasi ve artifactler degismedi. Gercek Actions run sonucu henuz dogrulanmadi. Eski repo ve korunan listeler degismedi.

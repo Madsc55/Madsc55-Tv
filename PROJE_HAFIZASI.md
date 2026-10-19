@@ -400,3 +400,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `legacy_stability.py` açık ölçüm zamanı yoksa reddi daha görünür kılındı (`ffcb4891`); `_time` zaten reddettiği için bu esasen ek koruyucu açıklıktır.
 - Önemli: Python `json.load` tekrarlanan URL anahtarını sessizce son değerle değiştirir; `legacy_report_export.py` geçmiş JSON okurken `object_pairs_hook` ile tekrarlı anahtarı artık fail-closed reddeder (`4e007ce6`). Regresyon testi (`23bd96df`) rapor klasörü yaratılmadan reddi doğrular.
 - Actions #191 / 39276798815 queued, #192 / 39276825565 cancelled, #193 / 39276846308 pending; yeni kod için henüz başarı teyidi yok. Korunan listeler, eski repo, cron, main merge ve PR #71 değişmedi. Gerçek medya/IBO testi yapılmadı.
+
+
+## 19 Ekim 2026 — #191/#193 başarılı; CSV başlık çakışması
+- Actions #191 / 39276798815 SUCCESS, #192 / 39276825565 CANCELLED, #193 / 39276846308 SUCCESS. İptal koşusu başarı sayılmadı.
+- `legacy_report_export.py` CSV DictReader tekrarlanan sütun adlarında önceki değeri sessizce ezebildiği için skor veya kararlılık dosyasındaki tekrar eden CSV başlıklarını fail-closed reddeder (`c8330876`). Regresyon testi `3b4d1fde`; hatalı dosyada rapor klasörü açılmaz.
+- Actions #194 / 39277187458 in_progress, #195 / 39277204007 pending; yeni değişikliklerin CI sonucu henüz doğrulanmadı. Korunan listeler, eski repo, cron, main merge ve PR #71 değişmedi. Gerçek medya/IBO cihaz testi yapılmadı.

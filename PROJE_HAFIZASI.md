@@ -144,3 +144,6 @@ Actions #48 completed/success (9e99b98): Guvenlik, Kesif, Kanal Testleri, Arsiv 
 
 ## 19 Ekim 2026 - K5 toplu hata raporu
 Actions #48 6/6 success. K5 besli kategori hata ozeti b493951, regresyon f9f80aa, toplu fixture baglantisi 201c1cf. Sonraki is yeni Actions run bitince alt isleri kontrol etmek. Uretim yazimi ve eski depoda degisiklik yok.
+
+## 19 Ekim 2026 - K3 XMLTV islev paketi
+Actions #51 completed/success; 6/6 job success. Eski AGENTS, BES_SISTEM_TOPLU_IS_DEFTERI ve BES_SISTEM_GECIS_KONTROL tekrar incelendi. Yeni XMLTV salt okunur kanal/program envanteri ve tvg-id eslestirme 6e802eb; regresyon 3df6cff; K3 fixture entegrasyonu 5190659. IBO cihaz EPG kabul edilmis sayilmaz. Yeni Actions tamamlaninca alt isler kontrol edilmeli. Eski depo degismedi.

@@ -6,8 +6,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verify_sandbox_restore
-from madsc.channel_test import evaluate_probe
+from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verify_sandbox_restore, verify_independent_restore
+from madsc.channel_test import evaluate_probe, evaluate_repeated_probes
 from madsc.discovery import classify_candidates
 from madsc.dependencies import validate_batch, plan_task
 from madsc.maintenance import aggregate, retry_decision, summarize_batch
@@ -52,7 +52,10 @@ def execute(category: str) -> dict:
     elif category == "k3":
         result = evaluate_probe({"url_sha256": "a" * 64, "http_status": 200,
                                  "video": True, "audio": True, "duration_seconds": 40})
-        evidence = {"preliminary_classification": result["technical_status"] == "PRELIMINARY_PASS",
+        repeated = evaluate_repeated_probes([{"url_sha256": "a" * 64, "http_status": 200,
+                 "video": True, "audio": True, "duration_seconds": 40}] * 2)
+        evidence = {"repeated_measurements_fixture_only": repeated["stable_preliminary"] and not repeated["actual_network_measurements_verified"],
+                    "preliminary_classification": result["technical_status"] == "PRELIMINARY_PASS",
                     "no_device_approval": not result["ibo_device_verified"],
                     "no_production_approval": not result["production_change_allowed"]}
         with TemporaryDirectory() as d:
@@ -93,7 +96,11 @@ def execute(category: str) -> dict:
                 (Path(copy_dir) / "sample.txt").write_bytes(p.read_bytes())
                 copy_ok = compare_copy(Path(d), Path(copy_dir), ["sample.txt"])
                 restore_audit = verify_sandbox_restore(Path(d), Path(copy_dir), ["sample.txt"])
-            evidence = {"sandbox_restore_audit": restore_audit["sandbox_restore_matches"] and not restore_audit["production_restore_verified"],
+                with TemporaryDirectory() as third_dir:
+                    (Path(third_dir) / "sample.txt").write_bytes(p.read_bytes())
+                    independent = verify_independent_restore(Path(d), Path(copy_dir), Path(third_dir), ["sample.txt"])
+            evidence = {"three_tree_restore_fixture": independent["independent_sandbox_restore_matches"] and not independent["external_storage_proven"],
+                        "sandbox_restore_audit": restore_audit["sandbox_restore_matches"] and not restore_audit["production_restore_verified"],
                         "sandbox_copy_integrity": copy_ok,
                         "manifest_integrity": verify_manifest(Path(d), manifest),
                         "external_backup_not_claimed": not manifest["external_backup_verified"],

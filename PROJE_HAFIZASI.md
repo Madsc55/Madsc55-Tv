@@ -576,3 +576,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Kullanıcı 99 YAML'ın görev, derin betik, kaynak kodu ve 92 eski davranış eşdeğerliği incelemesinin tamamını istedi. Eski kaynak ağaç commit `ca374df3` recursive GitHub tree ile doğrulandı: 849 toplam tree girdisi, 99 YAML, 198 Python. Bu 198 dosyanın hepsinin workflow giriş noktası olduğu iddia edilmiyor.
 - İlk sekiz alfabetik YAML yeniden okundu. `automatic-png-logos.yml` için 3 gerçek betik kaynak incelemesi yapıldı. `scripts/automatic_png_logos.py` `CALISANLAR.m3u` üzerine `playlist.write_text(updated)` ile koşulsuz yerel yazma ve `logos/auto/*.png` dosyalarına yazma yapabiliyor; `contents:read` bunu engellemez. Ayrıntı `docs/ESKI_WORKFLOW_DAVRANIS_ESLEME.md` commit `6f4b9867585d4b64ccdd9a5e394c8ddd70b11b28`.
 - Bu kaynak bulgusu üretimde çalıştırma veya başarılı push kanıtı değildir. Eski depo ve korunan listeler değiştirilmedi. 99/99 ilk YAML taraması tamam, derin inceleme sürüyor, parity 0/92.
+
+
+## 19 Ekim 2026 — 10 ek eski YAML / 11 Python derin çözümlemesi
+- `docs/ESKI_WORKFLOW_DAVRANIS_ESLEME.md` içine 10 YAML'ın gerçek adım, betik, girdi/çıktı ve risk haritası eklendi; commit `bf7e514270837f988e1e2f227b750f39f2c1e63c`.
+- Özellikle `iptv-test.yml` → `iptv_test.py` kaynak kodunda `CALISANLAR.m3u` doğrudan `write_text` ile yeniden yazılıyor; `CALISMAYANLAR.txt` ve `TEST_RAPORU.csv` da üretiliyor. Salt-okunur GitHub token runner üzerindeki mutasyonu engellemez. Betik yeni sistemde korunan liste üzerinde çalıştırılmayacak.
+- Derin kaynak çözümleme toplamı 23/99 YAML, 32 benzersiz Python betik; 76 YAML kaldı. 92 eski kapsamda 22/92 derin incelendi; parity 0/92. Eski repo ve korunan listeler değiştirilmedi; yeni CI koşusu iddia edilmiyor.

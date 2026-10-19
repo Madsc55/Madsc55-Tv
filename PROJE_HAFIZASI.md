@@ -214,3 +214,8 @@ Actions #67 SHA 6ed2ed9 sorgu aninda pending; #66 SHA c550aa7 queued; #65 dd7417
 ## 19 Ekim 2026 – Aday puanlama + EPG/logo + IBO kanit birlestirme
 
 Actions #66 (c550aa7) ve #67 (6ed2ed9) completed/success. `madsc/candidate_coordination.py` (e4d893f) genisletildi: opsiyonel XMLTV `tvg_id`/logo ID setleri, eslesme puanlari (+20 EPG, +10 logo), metadata eksiginde aday bekletme, saglanan IBO WORKING bilgisini silme yasağıyla koruma, toplam held_count ve metadata eslesme sayaclari. Yalniz saglanan veriler degerlendirilir; gercek EPG indirme/IBO cihaz sorgusu yok. `tests/test_candidate_coordination.py` (6689b8c) uc yeni regresyon testi eklendi: metadata puani ve bekletme, IBO WORKING korunmasi, tam metadata halinde bile production onayi olmamasi. Yeni Actions #68 ve #69 sorgu aninda in_progress/pending, sonuc teyidi bekleniyor. K5 rapor artefakt entegrasyonu, K3 gercek stream, K4 harici restore, K1 runtime kural kaniti halen acik. Eski depo ve korunan listeler degistirilmedi.
+
+
+## 19 Ekim 2026 - K5 rapor entegrasyonu
+
+K5 core.py icinde aday puanlama ve EPG/logo kanit sayaclari eklendi. Commit a4f5834. Uc yeni salt-okunur fixture kontrolu: candidate_k2_k3_k5_join, candidate_metadata_counts, candidate_report_read_only. Actions #68 success; #69 queued; #70 pending (sorgu aninda). Gercek yayin, cihaz IBO, K1 26 runtime kural, K4 harici restore ve uretim onayi halen acik. Eski depo ve korunan listeler degistirilmedi.

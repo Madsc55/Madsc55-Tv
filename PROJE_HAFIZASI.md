@@ -393,3 +393,10 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Actions #187 / 39275828816 SUCCESS ve #188 / 39275852182 SUCCESS.
 - Eski `scripts/kanal_kararlilik_takip.py` ölçüm oluştururken `TEST_EDILMEDI` durumunu reddeder. Yeni `madsc/legacy_stability.py` artık geçmiş JSON'da da bu değeri geçerli ölçüm saymaz, fail-closed hata verir (commit `f395017b`), regresyon testi `a764119a`. Böylece bozuk geçmişin rapor üretiminde sessizce kabulü önlenir.
 - Actions #189 / 39276340033 in_progress; son commit testi henüz doğrulanmadı. Gerçek yayın testi, geçmiş kalıcı saklama ve IBO cihaz onayı hâlâ açık. Korunan listeler, eski repo, cron, main merge ve PR #71 değişmedi.
+
+
+## 19 Ekim 2026 — #189/#190 başarılı; JSON tekrarlı anahtar engeli
+- Actions #189 / 39276340033 SUCCESS ve #190 / 39276356175 SUCCESS.
+- `legacy_stability.py` açık ölçüm zamanı yoksa reddi daha görünür kılındı (`ffcb4891`); `_time` zaten reddettiği için bu esasen ek koruyucu açıklıktır.
+- Önemli: Python `json.load` tekrarlanan URL anahtarını sessizce son değerle değiştirir; `legacy_report_export.py` geçmiş JSON okurken `object_pairs_hook` ile tekrarlı anahtarı artık fail-closed reddeder (`4e007ce6`). Regresyon testi (`23bd96df`) rapor klasörü yaratılmadan reddi doğrular.
+- Actions #191 / 39276798815 queued, #192 / 39276825565 cancelled, #193 / 39276846308 pending; yeni kod için henüz başarı teyidi yok. Korunan listeler, eski repo, cron, main merge ve PR #71 değişmedi. Gerçek medya/IBO testi yapılmadı.

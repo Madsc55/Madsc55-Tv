@@ -856,3 +856,7 @@ K2 workflow'unda izole reports/k2-input.m3u ornek dosyasi uretilip artifact_tran
 
 ## 19 Ekim 2026 - K2 M3U hata cozum ve kabul
 Actions #39328784193 FAILURE: K2 aday kaniti uretilemedi; K3/K5/toplu kabul artifact yoklugundan zincirleme hata verdi. Workflow ornek M3U printf satir sonu kacislari duzeltildi (80106c3 ve ad0354e). Actions #39329101065 COMPLETED SUCCESS (SHA 80106c3): K1-K5 ve toplu kabul ornek M3U ile gecti. Sonraki madsc/artifact_transport.py CLI ciktisi fixture_only yanilticiligi yerine source_mode ve production_ready=false alanlariyla netlestirildi (5f9dd02); bu ek degisiklik icin test sonucu henuz dogrulanmadi. Uretim M3U, canli ffprobe, 92/92, 26/26, IBO cihaz kabul iddiasi YOK. Eski depo ve korunan listeler degismedi.
+
+
+## 19 Ekim 2026 - Son test PASS ve K3 offline ffprobe kanit ozeti
+Actions #39329346429 COMPLETED SUCCESS (SHA 5f9dd02); K2 kaynak modu ciktisi degisikligi toplu fixture testlerinden gecti. K3 icin madsc/channel_test.py summarize_offline_probe_evidence fonksiyonu eklendi (8922246): disaridan saglanan ffprobe JSON kayitlarini salt okunur olarak PRELIMINARY_PASS/NEEDS_REVIEW sayar, ayni fingerprint tekrarini reddeder; network_probed=false, production_ready=false, ibo_device_verified=false. tests/test_channel_test.py karma sonuclar ve duplicate negatif testleri (1f2792c). Bu gercek ag taramasi veya canli stream suresi kaniti degildir. Yeni degisikliklerin Actions sonucu henuz kontrol edilmedi. Eski depo, korunan listeler, PR71 korunur.

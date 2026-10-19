@@ -3,7 +3,6 @@
 No network, protected playlist, or production input is used.
 """
 import csv
-import io
 import json
 import subprocess
 import sys
@@ -58,7 +57,7 @@ class DifferentialCandidateTests(unittest.TestCase):
                 self.assertEqual(run.returncode, 0, run.stderr)
                 new = merge_legacy_candidate_rows(inputs)
                 raw = (root / "output.csv").read_bytes()
-                self.assertTrue(raw.startswith(b"\\xef\\xbb\\xbf"))
+                self.assertTrue(raw.startswith(bytes.fromhex("efbbbf")))
                 with (root / "output.csv").open(encoding="utf-8-sig", newline="") as handle:
                     reader = csv.DictReader(handle)
                     self.assertEqual(reader.fieldnames, new["fields"])

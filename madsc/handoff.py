@@ -4,6 +4,8 @@ from madsc.channel_test import evaluate_probe
 from madsc.ibo_policy import classify_channel
 
 def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dict[str, str] | None = None) -> dict:
+    if not isinstance(probes, dict):
+        raise ValueError("Probe evidence must be a dictionary")
     assessed = []
     ibo_results = ibo_results or {}
     for candidate in discovery["candidates"]:

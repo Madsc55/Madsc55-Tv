@@ -126,3 +126,6 @@ Actions #30 success; #31 cancelled; #32 son kontrolde in_progress. K3 SHA256 kim
 
 ## 19 Ekim 2026 - K3 SHA256 tamamlama
 Actions #33 success; #34 son kontrolde queued. K3 64 karakter kucuk harf hex dogrulamasi d2a41b8 commitinde tamamlandi. Gecersiz hex regresyonu ec329a3 eklendi. Yeni Actions sonucunu dogrula. Eski depo degismedi, uretim yazimi yok.
+
+## 19 Ekim 2026 - K2 kaynak envanteri
+Actions #34 success; #35 cancelled; #36 son kontrolde in_progress. K2 M3U kaynak kanal sayisi, kabul, tekrar ve ret sayimlari 382b036 ile eklendi; K2 toplu mutabakat kaniti 49cb5c0 ile eklendi. #36 ve yeni Actions kontrol edilmeli. Eski depo degismedi, uretim yazimi yok.

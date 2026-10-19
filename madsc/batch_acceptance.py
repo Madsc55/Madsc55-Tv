@@ -8,6 +8,15 @@ CATEGORIES = ("k1", "k2", "k3", "k4", "k5")
 MODULES = {"k1": "security", "k2": "discovery", "k3": "channel_testing",
            "k4": "backup", "k5": "maintenance"}
 
+def _unique_json_pairs(pairs: list[tuple[str, object]]) -> dict:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"Duplicate JSON evidence key: {key}")
+        result[key] = value
+    return result
+
+
 def collect(root: Path) -> dict:
     root = Path(root)
     if not root.is_dir() or root.is_symlink():
@@ -36,7 +45,8 @@ def collect(root: Path) -> dict:
         if (matches[0].parent.name != f"madsc-batch-{key}"
                 or matches[0].is_symlink() or not matches[0].is_file()):
             raise ValueError(f"Invalid evidence file: {key}")
-        data = json.loads(matches[0].read_text(encoding="utf-8"))
+        data = json.loads(matches[0].read_text(encoding="utf-8"),
+                          object_pairs_hook=_unique_json_pairs)
         if not isinstance(data, dict):
             raise ValueError(f"Invalid report object: {key}")
         if (data.get("category") != key

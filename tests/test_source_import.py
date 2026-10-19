@@ -90,3 +90,17 @@ class SourceImportTests(unittest.TestCase):
                 self.assertEqual(assessed["technical_status"], "UNTESTED")
                 self.assertFalse(assessed["ibo_device_verified"])
                 self.assertEqual(p.read_bytes(), original)
+
+    def test_symlink_source_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            original = Path(d) / "original.m3u"
+            original.write_text("#EXTM3U\n", encoding="utf-8")
+            link = Path(d) / "linked.m3u"
+            link.symlink_to(original)
+            with self.assertRaises(ValueError):
+                extract_candidates(link)
+
+    def test_missing_source_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(ValueError):
+                extract_candidates(Path(d) / "missing.m3u8")

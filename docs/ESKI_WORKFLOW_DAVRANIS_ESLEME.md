@@ -16,3 +16,19 @@ Kaynak salt-okunur dal: `Madsc55/madsc-tv@madsc/bes-sistem-toplu-birlestirme`. B
 **Dikkat:** K5 eski workflow'u 92 satırın tamamının `BLOCKED_NEEDS_BEHAVIOR_EVIDENCE` olmasını şart koşuyor. Dolayısıyla 92 satırın varlığı **92 davranışın kabul edildiği** anlamına gelmiyor. Bu sekiz kaynak arasında gerçek çapraz bağımlılıklar var; tek tek fixture geçmesi yeterli değil.
 
 **Sıradaki:** 99 dosyanın kalan 91'i için tetik/izin/çalışan script/çıktı sınıflandırmasını tamamla, 92 kapsam farkını kanıtla. Korunan listelere dokunma, üretim cron/yazma açma.
+
+
+## İkinci grup — 8 eski YAML (salt-okunur gerçek kaynak incelemesi)
+
+| Workflow | Tetik ve izin | Script / davranış | Hedef ve açık kanıt |
+|---|---|---|---|
+| `kanal-kararlilik.yml` | dispatch + paths push; contents:read | cache/restore `KARARLILIK_GECMISI.json` → ffprobe `oncelikli_kanal_dogrula.py` → `kanal_kararlilik_takip.py` → cache/save ve artifact | K3→K5; gerçek zamanlı kalıcı geçmiş zinciri eksik |
+| `genel-aday-medya-test.yml` | dispatch + paths push; contents:read | `SCAN_BATCH=-1` aday keşfi, ffprobe, `ADAY_TEST_GRUBU=0` gerçek video/ses testi, CSV+JSON artifact | K2→K3; canlı ffprobe kanıtı eksik |
+| `aday-logo-epg-test.yml` | dispatch + paths push; contents:read | `candidate_epg_logo_join.py`, `CALISANLAR.m3u` SHA256 önce/sonra; 5 pilot EPG, playlist onaysız; artifact | K2→K3/K5, K1; kimlik/EPG canlı uyum kabulü eksik |
+| `aday-yedekleme.yml` | dispatch + main push (command file); contents:read | `yedekler/teknik_adaylari_aktar.py` teknik aday yedek **taslak** M3U artifact, listeye push yok | K4 + K2; YEDEKLER'e yazma yetkisi çıkarılamaz |
+| `felaket-kurtarma-tatbikati.yml` | dispatch + paths push; contents:read | `scripts/disaster_recovery_dry_run.py`, geçici restore raporu artifact | K4; offsite/tarihsel bağımsız geri yükleme kanıtı değil |
+| `madsc-birlesik-kesif.yml` | dispatch + 06/18 UTC cron; **contents:write, actions:write**; main koşulu | failure gate → discovery archive before/after → `madsc_akilli_kesif.py` → logo/EPG join → dört aşama → `protected_write_gate.py` → `git push origin HEAD:main` | K1+K2+K5 **yüksek yazma riski**; eski izinleri yeniye taşımak yasak, gerçek yazma yolları denetlenecek |
+| `epg-gunluk.yml` | dispatch + 03:25 UTC cron; **contents:write**; main koşulu | `build_epg.py`, `build_ibo_epg_test.py`, `epg_tv_readiness.py`; belirli EPG çıktıları `git add`, protected write gate ve `git push` | K1+K3+K5; korunan EPG değişikliği yasak, üretim yayını yeni sisteme otomatik aktarılmaz |
+| `epg-pages.yml` | dispatch + başarılı `EPG Günlük Güncelleme` workflow_run(main); contents:read, **pages:write, id-token:write** | EPG XML doğrula, `_site` hazırla, Pages dağıtımı; başarılı eski workflow sonucuna bağlı | K3+K5; yeni Pages dağıtımı yetkilendirilmedi, IBO EPG cihaz uyumu kanıtlanmadı |
+
+**İkinci grup sonucu:** 16/99 eski YAML dosyasının kaynak içeriği ayrıntılı incelendi; **83 dosya** ayrıntılı inceleme bekliyor. Bu bir davranış eşdeğerliği onayı değil. İzinli eski cron, push ve Pages işlemleri **yeni depoda açılmadı**. Eski workflow'lar kapatılmadı.

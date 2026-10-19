@@ -174,7 +174,7 @@ class BackupTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 verify_manifest(root, manifest)
 
-    def test_manifest_detects_missing_or_extra_entries(self):
+    def test_manifest_verifies_only_declared_entries_and_canonical_order(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             (root / "a.txt").write_text("fixture")

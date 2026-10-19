@@ -364,3 +364,8 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Actions #177 SUCCESS, #178 FAILURE; #178 için yeni eklenen CSV fixture'larında satır sonlarının yanlışlıkla `\\n` olarak kodlandığı görüldü. Test verisi gerçek `\n` satır sonuna düzeltildi (commit `dbbc7f27`). #179 CANCELLED.
 - `madsc/legacy_report_export.py` `require_history=True` fail-closed seçeneği eklendi: JSON geçmişi olmadan rapor üretimini reddeder (commit `97d258f5`). Mevcut CSV-only geriye uyum modu varsayılan olarak sürer; güvenilir üretim pipeline'ında `require_history=True` kullanılmalıdır. Regresyon testi commit `d07720f8`.
 - Actions #180 / 39271773115 queued, #181 / 39271798065 pending; başarı henüz doğrulanmadı. **AÇIK:** üretim pipeline'ına güvenli entegrasyon, kalıcı tarihsel kanıt ve gerçek medya testleri. Korunan listeler, eski repo, cron, main ve PR #71 değişmedi.
+
+
+## 19 Ekim 2026 — #180/#181 gerçek log kök neden düzeltmesi
+- Actions #180 ve #181 FAILURE. #181 job logu incelendi: K1 Güvenlik `test_export_history_corroborates_csv_claim` testinde `Missing YAYIN_URL header` hatası, diğer K2/K3/K4/K5 ve kabul jobları SUCCESS. Kök neden: `legacy_report_export.py` history JSON yolunu `sources` listesine ekleyip CSV okuyucusuyla **tüm** kaynakları okuması. `scores, stability = [load(path) for path in sources[:2]]` düzeltildi; history JSON ayrı `json.load` ile okunmaya devam eder, yol izolasyonu için `sources` listesinde kalır. Commit `a0e4a9d3`.
+- Yeni commit sonrası Actions sonucu henüz doğrulanmadı. Korunan listeler, eski repo, PR #71, cron ve main merge değişmedi.

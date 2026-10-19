@@ -71,3 +71,26 @@ def evaluate_ffprobe_json(payload: dict, url_sha256: str, http_status: int = 200
     return {**report, "ffprobe_json_parsed": True,
             "live_probe_executed_by_this_function": False,
             "single_sample_only": True}
+
+
+def summarize_offline_probe_evidence(records: list[dict]) -> dict:
+    """Summarize supplied ffprobe-style measurements without probing any URLs."""
+    if not isinstance(records, list):
+        raise ValueError("Probe records must be a list")
+    results = []
+    seen = set()
+    for record in records:
+        if not isinstance(record, dict):
+            raise ValueError("Invalid probe record")
+        result = evaluate_ffprobe_json(record.get("ffprobe"), record.get("url_sha256"),
+                                       record.get("http_status", 200))
+        digest = result["url_sha256"]
+        if digest in seen:
+            raise ValueError("Duplicate channel evidence")
+        seen.add(digest)
+        results.append(result)
+    return {"schema": "madsc-offline-probe-summary-v1", "channel_count": len(results),
+            "preliminary_passes": sum(x["technical_status"] == "PRELIMINARY_PASS" for x in results),
+            "needs_review": sum(x["technical_status"] == "NEEDS_REVIEW" for x in results),
+            "network_probed": False, "ibo_device_verified": False,
+            "production_ready": False, "results": results}

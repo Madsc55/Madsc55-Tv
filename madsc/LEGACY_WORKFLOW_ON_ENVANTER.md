@@ -177,3 +177,30 @@ Bu dalgada 12 dosyanin YAML tetikleri ve temel run/uses adimlari okundu. **Topla
 | `madsc-cuma-ana-liste-denetimi.yml` | dispatch | haftalik ana liste ve uyari raporu, artifact; K1+K5 |
 
 Bu dalgada 16 dosyanin gercek YAML tetik, izin ve temel komutlari okundu. **Toplam 38/99** ayrintili inceleme, **61 dosya** bekliyor. `madsc-birlesik-kesif.yml` yazma izni tasiyor; korunan listeye yazma yapildigi bu bilgiyle kanitlanmaz. Gercek calisma ve esdegerlik incelemesi gereklidir.
+
+## Besinci dalga: 20 YAML dosyasi dogrudan incelendi
+
+| Dosya | Tetik / izin | Temel is veya gecis riski |
+|---|---|---|
+| `madsc-documentation-check.yml` | dispatch/read | belge kontrolu |
+| `madsc-genis-kaynak-kontrol.yml` | dispatch/**write** | genis kaynak taramasi, rapor/yazma yolu denetimi gerekli |
+| `madsc-hizli-on-kontrol.yml` | dispatch,push/read | gecis hazirlik, 92 workflow denetim scriptleri |
+| `madsc-ibo-3-5281.yml` | dispatch,push/read | korunan playlist otomatik mutasyonu engeli |
+| `madsc-ibo-354-classify.yml` | push/**write** | 354 IBO yedek siniflama |
+| `madsc-ibo-364-355-364.yml` | push/**write** | IBO karari, komut adimlari ayrintili denetlenecek |
+| `madsc-ibo-398-16-49.yml` | push/**write** | IBO karari, komut adimlari ayrintili denetlenecek |
+| `madsc-ibo-530-archive.yml` | push/**write** | IBO arsiv karari, komut adimlari ayrintili denetlenecek |
+| `madsc-ibo-6115-second.yml` | push,dispatch/**write** | `apply_ibo_6115_second.py` |
+| `madsc-ibo-ilk-239.yml` | push/**write** | `apply_ibo_first_239_decisions.py` |
+| `madsc-ibo-kararlar-grup1.yml` | push/**write** | `apply_ibo_decisions_group1.py` |
+| `madsc-ibo-second-voice.yml` | push,dispatch/**write** | `apply_ibo_second_voice.py` |
+| `madsc-otomatik-devam.yml` | dispatch/read | otomatik devam mantigi kontrolu |
+| `madsc-rule24-test.yml` | push,dispatch/read | `test_workflow_failure_gate` |
+| `madsc-sistem-saglik-denetimi.yml` | dispatch,schedule/read | sistem saglik raporu, artifact |
+| `madsc-son-kontrol-kurtarma-teshis.yml` | dispatch,push/read | final validation unit test ve kurtarma teshisi |
+| `madsc-son-kontrol.yml` | dispatch,schedule,workflow_run/**write** | final validation, ffmpeg, tetik bagimliligi; yazma yolu denetimi gerekli |
+| `madsc-toplu-butunluk.yml` | dispatch,push/read | `bulk_integrity_gate.py`, artifact |
+| `madsc-tum-sistem-yedek.yml` | dispatch,schedule/read | repository ayarlari envanteri, `full_system_backup.py`, artifact |
+| `madsc-turk-kanal-geri-sec.yml` | push/**write** | `recover_turkish_backups.py`; korunan yazma onayi gerekiyor |
+
+20 YAML'in tetik/izin/temel komutlari dogrudan okundu. **Toplam 58/99**, **41 ayrintili inceleme kaldi**. Write izni tasiyan IBO ve son-kontrol workflow'lari canli yazma kaniti olmadan guvenli ilan edilemez. Eski repo salt okunur; cron veya korunan liste mutasyonu yapilmadi.

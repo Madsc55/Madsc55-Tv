@@ -204,3 +204,30 @@ Bu dalgada 16 dosyanin gercek YAML tetik, izin ve temel komutlari okundu. **Topl
 | `madsc-turk-kanal-geri-sec.yml` | push/**write** | `recover_turkish_backups.py`; korunan yazma onayi gerekiyor |
 
 20 YAML'in tetik/izin/temel komutlari dogrudan okundu. **Toplam 58/99**, **41 ayrintili inceleme kaldi**. Write izni tasiyan IBO ve son-kontrol workflow'lari canli yazma kaniti olmadan guvenli ilan edilemez. Eski repo salt okunur; cron veya korunan liste mutasyonu yapilmadi.
+
+## Altinci dalga: 20 YAML dosyasi dogrudan incelendi
+
+| Dosya | Tetik / izin | Temel is veya risk |
+|---|---|---|
+| `madsc-uc-asama.yml` | push,dispatch/**write** | 3 asamali verification pipeline, ffmpeg, failure gate; K1+K3+K5 |
+| `madsc-yedek-turk-ayir.yml` | push/**write** | `keep_turkish_backups.py`; K4, yazma onayi |
+| `madsc-yedekler-aktarim-test.yml` | push,dispatch/read | yedek teknik aktarim unittest; K4 |
+| `madsc-yedekler-sayi-duzelt.yml` | push,dispatch/**write** | yedek sayi duzeltme; komut ayrintisi acik; K4 |
+| `oncelikli-kanal-dogrulama.yml` | push,dispatch/read | ffmpeg, oncelikli kanal dogrulama, artifact; K3 |
+| `onikinci-hata-siniflandirma-test.yml` | push,dispatch/read | hata siniflandirma fixture; K5 |
+| `publish-iptv-png-logos.yml` | push,dispatch/**job write** | PNG logo yayin isleri, yazma denetimi; K3+K5 |
+| `sekizinci-tekrar-raporu-test.yml` | push,dispatch/read | tarama/tekrar rapor derleme ve fixture; K3 |
+| `sozcu-akit-ozel-test.yml` | push,dispatch/read | ffmpeg, ozel yedek medya testi, artifact; K3+K4 |
+| `test-13-kaynak-degisiklik.yml` | push,dispatch/read | kaynak degisiklik regresyonu; K2 |
+| `test-14-istikrar.yml` | push,dispatch/read | kanal istikrar regresyonu; K3 |
+| `test-15-logo-epg.yml` | push,dispatch/read | `logo_epg_audit.py` ve fixture; K3 |
+| `test-16-workflow-safety.yml` | push,dispatch/read | workflow guvenlik regresyonu; K1 |
+| `test-17-candidate-summary.yml` | push,dispatch/read | aday ozet regresyonu; K2+K5 |
+| `test-18-change-simulation.yml` | push,dispatch/read | korunan M3U degisiklik olmamasi denetimi; K1 |
+| `test-19-integration.yml` | push,dispatch/read | entegrasyon fixture; K5 |
+| `test-20-full-integration.yml` | push,dispatch/read | tam entegrasyon fixture; K5 |
+| `test-21-functional-e2e.yml` | push,dispatch/read | islevsel E2E fixture; K5 |
+| `test-22-real-playlist.yml` | push,dispatch/read | gercek playlist tabanli test adimlari; K3 |
+| `test-23-live-stream.yml` | push,dispatch/read | canli stream test adimlari; K3 |
+
+Bu 20 YAML'in tetik/izin/temel adimlari okundu. **Toplam 78/99** ayrintili inceleme, **21 dosya** kaldi. Gercek stream testinin varligi yeni depoda canli stream esdegerligini kanitlamaz. Eski depo salt okunur.

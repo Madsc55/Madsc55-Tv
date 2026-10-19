@@ -18,6 +18,8 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
     known = {normalize_url(x) for x in (known_urls or set())}
     seen = set()
     accepted, duplicates, rejected = [], [], []
+    if not isinstance(rows, list):
+        raise ValueError("Candidate rows must be a list")
     for index, item in enumerate(rows):
         try:
             url = normalize_url(item["url"])

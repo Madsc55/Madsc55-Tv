@@ -274,3 +274,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Kullanıcı eski 810 dosyanın işlevsel inceleme kayıtlarının korunmasını ve eksiklerin kurulum sonunda bu notlardan bulunmasını istiyor. Önceden yapılmış D2 ilk içerik incelemeleri tekrar sayılmayacak; ihtiyaç halinde eksik kanıt için hedefli inceleme yapılacak.
 - Her somut bulgu merkezi hafızada dosya yolu, ilgili eski workflow/çağrı zinciri, K1–K5 karşılığı, eksik veya risk, kanıt/Actions run, durum (açık/doğrulandı/kapandı) ve kapanış şartıyla izlenecek. Kanıtsız tamamlandı işareti verilmeyecek.
 - Kurulum sonunda bu kayıtlar üzerinden toplu eksik kontrolü ve kapanış raporu hazırlanacak. Mevcut 437 metin/kod/veri dosyası inceleme kaydı başlangıç kaynağı; görseller kullanıcı kararıyla kapsam dışı. Eski repo ve korunan listeler salt okunur; PR #71, main merge, üretim yazması veya eski workflow kapatma için izin yok.
+
+
+## 19 Ekim 2026 — K2/K3 aday kanıt bağı doğrulaması (Actions sonucu bekleniyor)
+- `madsc/candidate_coordination.py` içinde K2 aday URL SHA-256 parmak izleri artık 64 küçük harf hex olarak denetleniyor; K3 probe, tekrar sayısı ve kullanıcıdan sağlanan IBO kanıtı anahtarlarının yalnız keşifteki adaylara ait olması zorunlu. Yanlış/bağlantısız kanıt ValueError ile fail-closed; korunan listelere yazma yok. Commit `1d8220b1`.
+- `tests/test_candidate_coordination.py` içine yanlış probe/tekrar/IBO kanıtı için negatif regresyon eklendi. Commit `3d442281`.
+- GitHub Actions #160 (39265872644) queued, #161 (39265896149) pending kontrol anında; **başarı doğrulanmadı**. Kapanış şartı: #161 gerçek sonuç SUCCESS ve K2/K3/K5 ilgili fixture regresyonları geçmeli. IBO cihaz/gerçek yayın/production kanıtı değildir.

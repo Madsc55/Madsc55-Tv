@@ -4,10 +4,21 @@ from __future__ import annotations
 from madsc.discovery import classify_candidates
 from madsc.channel_test import evaluate_probe
 from madsc.maintenance import retry_decision
+from madsc.ibo_policy import classify_channel
 
 
-def coordinate(rows: list[dict], probes: dict, attempts: dict) -> dict:
+def coordinate(rows: list[dict], probes: dict, attempts: dict,
+               epg_ids: set[str] | None = None, logo_ids: set[str] | None = None,
+               ibo_results: dict | None = None) -> dict:
     """Classify supplied evidence by URL fingerprint; never mutate playlists."""
+    if not isinstance(probes, dict) or not isinstance(attempts, dict):
+        raise ValueError("Invalid evidence mapping")
+    if epg_ids is not None and (not isinstance(epg_ids, set) or any(not isinstance(x, str) for x in epg_ids)):
+        raise ValueError("Invalid EPG identifiers")
+    if logo_ids is not None and (not isinstance(logo_ids, set) or any(not isinstance(x, str) for x in logo_ids)):
+        raise ValueError("Invalid logo identifiers")
+    if ibo_results is not None and not isinstance(ibo_results, dict):
+        raise ValueError("Invalid IBO evidence")
     discovery = classify_candidates(rows)
     result = []
     for candidate in discovery["candidates"]:
@@ -18,10 +29,26 @@ def coordinate(rows: list[dict], probes: dict, attempts: dict) -> dict:
         status = evaluate_probe(probe)["technical_status"] if probe else "UNTESTED"
         failures = attempts.get(digest, 0)
         retry = retry_decision(failures)
+        channel_id = rows[candidate["source_index"]].get("tvg_id", "")
+        if not isinstance(channel_id, str):
+            raise ValueError("Invalid tvg_id")
+        epg_match = channel_id in epg_ids if epg_ids is not None and channel_id else False
+        logo_match = channel_id in logo_ids if logo_ids is not None and channel_id else False
+        ibo = classify_channel(status, (ibo_results or {}).get(digest, "UNKNOWN"))
+        metadata_hold = (epg_ids is not None and not epg_match) or (logo_ids is not None and not logo_match)
+        score = max(0, (50 if status == "PRELIMINARY_PASS" else 0) + (20 if epg_match else 0)
+                    + (10 if logo_match else 0) - 5 * failures)
         result.append({"url_sha256": digest, "technical_status": status,
-                       "score": max(0, (50 if status == "PRELIMINARY_PASS" else 0) - 5 * failures),
-                       "hold": status != "PRELIMINARY_PASS" or retry["blocked"],
-                       "next_action": retry["next_action"], "production_change_allowed": False})
+                       "tvg_id": channel_id, "epg_match": epg_match, "logo_match": logo_match,
+                       "ibo_result": ibo["ibo_result"], "protected_working": ibo["protected_working"],
+                       "score": score,
+                       "hold": status != "PRELIMINARY_PASS" or retry["blocked"] or metadata_hold,
+                       "next_action": "MANUAL_METADATA_REVIEW" if metadata_hold else retry["next_action"],
+                       "production_change_allowed": False, "delete_allowed": False})
     return {"candidates": sorted(result, key=lambda x: (-x["score"], x["url_sha256"])),
             "duplicates": discovery["duplicates"], "rejected": discovery["rejected"],
-            "production_writes": False, "production_ready": False}
+            "held_count": sum(x["hold"] for x in result),
+            "epg_matched": sum(x["epg_match"] for x in result),
+            "logo_matched": sum(x["logo_match"] for x in result),
+            "report_type": "supplied_evidence_only", "ibo_device_verified": False,
+            "network_probed": False, "production_writes": False, "production_ready": False}

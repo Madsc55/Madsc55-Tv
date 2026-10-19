@@ -39,6 +39,14 @@ class SourceImportTests(unittest.TestCase):
                 with self.subTest(metadata=metadata), self.assertRaises(ValueError):
                     extract_candidates(p)
 
+    def test_tvg_id_preserved_for_epg_handoff(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u8"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tv",TRT 1\nhttps://example.org/live\n', encoding="utf-8")
+            result = extract_candidates(p)
+            self.assertEqual(result["candidates"][0]["tvg_id"], "trt1.tv")
+            self.assertEqual(result["candidates"][0]["name"], "TRT 1")
+
     def test_missing_url_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"

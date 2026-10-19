@@ -9,6 +9,11 @@ CATEGORIES = ("k1", "k2", "k3", "k4", "k5")
 def collect(root: Path) -> dict:
     reports = {}
     evidence_reports = []
+    expected_names = {key + ".json" for key in CATEGORIES}
+    unexpected_json = sorted(str(path.relative_to(root)) for path in root.rglob("*.json")
+                             if path.name not in expected_names)
+    if unexpected_json:
+        raise ValueError(f"Unexpected JSON evidence: {unexpected_json}")
     for key in CATEGORIES:
         matches = list(root.rglob(key + ".json"))
         if len(matches) != 1:

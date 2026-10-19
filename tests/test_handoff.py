@@ -35,6 +35,17 @@ class HandoffTests(unittest.TestCase):
         self.assertTrue(entry["protected_working"])
         self.assertFalse(entry["delete_allowed"])
         self.assertFalse(entry["production_change_allowed"])
+    def test_invalid_handoff_shapes_fail_closed(self):
+        discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
+        for invalid in (None, [], "bad"):
+            with self.subTest(probes=invalid), self.assertRaises(ValueError):
+                assess_candidates(discovery, invalid)
+            with self.subTest(ibo=invalid), self.assertRaises(ValueError):
+                assess_candidates(discovery, {}, invalid)
+        for invalid in (None, [], {"candidates": None}, {"candidates": [None]}):
+            with self.subTest(discovery=invalid), self.assertRaises(ValueError):
+                assess_candidates(invalid, {})
+
     def test_invalid_ibo_evidence_fails_closed(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         digest = discovery["candidates"][0]["url_sha256"]

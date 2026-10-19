@@ -287,3 +287,27 @@ Eski salt-okunur YAML ve `scripts/automatic_png_logos.py`, `scripts/logo_visual_
 - `logo_visual_evidence.py` görsel inceleme raporu `logo_deneme/visual_review.json` yazar; `logo_deneme/audit.py` `rapor.json` ve `ozet.json` üretir.
 
 **Sonuç:** `contents:read` olması, eski betiğin korunan listeyi çalışma ağacında değiştirmeyeceği anlamına **gelmez**. Yeni sistemde bu scriptin `main()` fonksiyonunu üretim ana listesi üzerinde çalıştırmak **BLOCKED**. Yalnız korunan dosyalara yazmayan izole fixture, hash karşılaştırması ve onaylı görsel kanıtla test edilmeli. Bu statik kod bulgusu geçmiş GitHub push veya fiili korunan liste değişikliği kanıtı değildir. K1/K3/K5 güvenlik ve logo kanıt eşlemesi henüz onaylanmadı.
+
+
+## Derin kaynak incelemesi 3 — 10 YAML ve 11 Python betiği (19 Ekim 2026)
+
+Eski salt-okunur daldan bu 10 YAML ve 11 Python betiği açıldı. Adım isimleri, tetikler, script girişleri ve kodun okuduğu/yazdığı dosyalar karşılaştırıldı. Bu **statik davranış çözümlemesidir**; betikler çalıştırılmadı ve üretim parity onayı verilmedi.
+
+| YAML | Gerçek görev zinciri ve somut çıktı | K hedefi / risk |
+|---|---|---|
+| `besinci-zaman-asimi-test.yml` | YAML içi zaman aşımı davranışı doğrulaması; harici Python girişi yok | K1/K5; inline testin beklenen sonuçları ayrıca karşılaştırılmalı |
+| `birlesik-durum-raporu.yml` | `guncel_test_durum_ozeti.py` önceki doğrulama özetlerini okur; `eksik_turk_kanal_takibi.py` ana liste/geçmişi inceler; `kaynak_kapsam_denetimi.py` kaynak erişim raporunu okur; `genel_sistem_bakimi.py` sistem özetleri ve notlardan `weekly_health.json` üretir | K1/K5; yeni test başlatmadan durum raporlama |
+| `dokuzuncu-akilli-tekrar-test.yml` | YAML içi akıllı tekrar zamanlama doğrulaması, harici script yok | K3/K5; inline kural testi |
+| `epg-gunluk.yml` | `build_epg.py` ana liste ve dış EPG XML kaynaklarını okuyup `epg/madsc-epg.xml` ve rapor üretir; `build_ibo_epg_test.py` 5 kanallık pilotu hazırlar; `epg_tv_readiness.py` cihaz bekleme raporu üretir; gate ardından `git push` | K1/K3/K5 **YÜKSEK**: `contents:write`, cron ve EPG yayımlama; IBO gerçek cihaz kabulü yok |
+| `genis-kanal-tarama.yml` | `genis_kanal_tara.py` çoklu dış M3U kaynaklarını indirir, parse/normalize eder, yayınları probe eder → `GENIS_KANAL_TARAMA_RAPORU.csv` | K2/K3; canlı keşif ve medya kanıtı |
+| `ibo-bagimsiz-test-listesi.yml` | Gerçek video/ses test raporu `GENEL_ADAY_GERCEK_MEDYA_RAPORU.csv` → `ibo_bagimsiz_test_listesi.py` ile `IBO_BAGIMSIZ_TEST_ADAYLARI.m3u`, `IBO_TEST_ADAYLARI.csv`, `IBO_TEST_OZET.json` | K2/K3/K5; izole cihaz deneme listesi, ana liste değişikliği değil |
+| `ibo-epg-kimlik-denetimi.yml` | `ibo_epg_kimlik_denetimi.py` ana liste ile `epg/madsc-epg.xml` pilotunun kanal kimlik eşleşmesini inceler, rapor yazar | K1/K3; XMLTV kimlik uyumu cihazda ayrıca sınanmalı |
+| `ibo-yedek-kalite.yml` | YAML inline ffprobe yedek yayın ölçümü ve kalite raporu | K3/K4; gerçek yedek akış ölçümü eksik |
+| `iptv-test.yml` | `iptv_test.py` ana liste ve dış medya/IBO denemeleri yapar, ardından **`Path('CALISANLAR.m3u').write_text(...)`**, `CALISMAYANLAR.txt` yazımı ve `TEST_RAPORU.csv` oluşturur | **K1/K3/K5 KRİTİK:** ana listeyi yeniden yazar, favori/kategori/sıra davranışını etkileyebilir; yeni sistemde doğrudan çalıştırılması **BLOCKED** |
+| `kaynak-puanlama-kontrol.yml` | `kaynak_guven_puani.py` syntax ve kaynak güven puanı testleri | K2/K5; fixture/test sonucu gerçek kaynak güveni parity değildir |
+
+**İncelenen 11 betik:** `tools/guncel_test_durum_ozeti.py`, `tools/eksik_turk_kanal_takibi.py`, `tools/kaynak_kapsam_denetimi.py`, `tools/genel_sistem_bakimi.py`, `scripts/build_epg.py`, `scripts/build_ibo_epg_test.py`, `scripts/epg_tv_readiness.py`, `genis_kanal_tara.py`, `scripts/ibo_bagimsiz_test_listesi.py`, `scripts/ibo_epg_kimlik_denetimi.py`, `iptv_test.py`.
+
+**Güvenlik ayrımı:** YAML'da `contents:read` olsa da `iptv_test.py` runner çalışma ağacında korunan listeyi değiştirebilir. GitHub'a başarılı push yaptığı **kanıtlanmadı**; yerel dosya mutasyonu doğrudan koddan doğrulandı. EPG üretim cron/push davranışı ve cihaz onayı yeni sisteme taşınmadı.
+
+**Kapsam:** Önceki 13 benzersiz YAML + bu 10 = **23/99 derin YAML incelemesi**; önceki 21 betik + bu 11 = **32 betik kaynak incelemesi** (bu turlarda benzersiz yollar). Kalan **76 YAML** aynı derinlikte bekliyor. 92 eski kapsam içinde bu 23'ten `madsc-01-guvenlik.yml` kapsam dışı, dolayısıyla **22/92** derin incelendi. **Davranışsal parity onayı 0/92**.

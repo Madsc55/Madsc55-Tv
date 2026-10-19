@@ -375,3 +375,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Actions #182 / 39272207360 SUCCESS: JSON'un CSV okuyucusuna gitmesi hatası düzeltmesi CI ile doğrulandı.
 - Eski depodaki `scripts/birlesik_aday_raporu.py` ve `scripts/akilli_aday_puanla.py` kaynakları tekrar okundu. Birleşik çıktıdaki 10 alan ve `AKILLI_ADAY_PUANLARI.csv` 13 alan şeması doğrulandı; `TEKNIK_KANIT`, `PUAN`, `YAYIN_URL`, `KAYNAK` alanları gerçek eski kaynaktan teyit edildi. Yeni raporun 10 alanlı sıralaması ve durum kararları kaynakla uyumlu. Eski skor scripti adayları URL'ye göre tekilleştirirken yeni birleşik görünüm aynı URL'yi iki kez raporlayabiliyordu; artık duplicate URL fail-closed reddediliyor (commit `05fba911`, test `35ad11b0`).
 - Actions #183 / 39273289239 in_progress, #184 / 39273307180 pending; yeni commitlerin CI sonucu henüz doğrulanmadı. Bu kontrol gerçek saha ffprobe veya IBO cihaz testi değildir. Korunan listeler, cron, eski repo, main merge ve PR #71 değişmedi.
+
+
+## 19 Ekim 2026 — #183/#184 geçti; geçmiş eşleştirme doğrulaması
+- Actions #183 / 39273289239 SUCCESS ve #184 / 39273307180 SUCCESS.
+- `madsc/legacy_unified_report.py` CSV kararlılık alanında yalnız `EVET`/`HAYIR` kabul eder; eksik/bilinmeyen değer fail-closed reddedilir. Sağlanan tarihsel URL->gözlem eşlemesinin URL anahtarları boş olmayan metin, değerleri liste olmalıdır. Commit `93c384af`. Regresyon testleri `de3e2c8f`.
+- Actions #185 / 39273845451 queued ve #186 / 39273862210 queued; sonuç henüz doğrulanmadı. Gerçek medya testleri, kalıcı tarihsel kanıt, IBO cihaz onayı hâlâ açık. Korunan listeler, eski repo, cron, main merge ve PR #71 değişmedi.

@@ -7,6 +7,9 @@ from madsc.maintenance import verify_fixture_evidence
 CATEGORIES = ("k1", "k2", "k3", "k4", "k5")
 
 def collect(root: Path) -> dict:
+    root = Path(root)
+    if not root.is_dir() or root.is_symlink():
+        raise ValueError("Evidence root must be a real directory")
     reports = {}
     evidence_reports = []
     expected_names = {key + ".json" for key in CATEGORIES}
@@ -14,6 +17,9 @@ def collect(root: Path) -> dict:
                              if path.name not in expected_names)
     if unexpected_json:
         raise ValueError(f"Unexpected JSON evidence: {unexpected_json}")
+    for path in root.rglob("*"):
+        if path.is_symlink():
+            raise ValueError(f"Symlink evidence is forbidden: {path}")
     for key in CATEGORIES:
         matches = list(root.rglob(key + ".json"))
         if len(matches) != 1:

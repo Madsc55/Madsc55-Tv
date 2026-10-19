@@ -81,3 +81,7 @@ Yeni kodlar:
 Son kod commitleri: 783a6da6, 48035507, d5a49cee, 824b2ce8, baab856a, ed75b154, 164bced5, e157fb66. Bunlarin CI basarilari yukarida. Uretim esdegerlik 0/92, runtime guvenlik kabul 0/26; tam M3U8 canli akim/ses/video ve EPG/logo dogrulamasi YAPILACAK.
 
 ONEMLI ACIK IS: Gercek history source artifact'i henuz yok/entegre degil. Manifest hashleri manifestten geldiginden bagimsiz yayinci imzasi sayilmaz. GitHub workflow gercek artifact kaydini dogrulayabilmek icin once guvenilir source artifact uretimi, GitHub API metadata semasinin gercek cevapla entegrasyon testi, ZIP indirimi ve kaynak kaydi tasarlanacak. Gercek artifact olmadan workflow'u basarili ilan etme. K2 izinli acik M3U/M3U8 ve resmi yayin kesfi, K3 ffprobe/ffmpeg gercek medya, K5 tekrar kontrolu backlogu korunur. Sonraki sohbet once bu notu ve PROJE_HAFIZASI.md'yi okusun; onceki isleri yeniden yapmasin.
+
+
+## 20 Ekim 2026 — Eski sistem tum metin notlari yeni sisteme aktarildi
+Eski Madsc55/madsc-tv dalindaki tum 45 Markdown/TXT belge docs/eski_depo_not_arsivi/ altina ayni dosya yollariyla alindi; kaynak/hedef Git blob SHA 45/45 eslesti. AGENTS.md, 810 dosya notu.md, DEVAM_NOTU.md, GUVENLIK_KURALLARI.md, OZELLIK_ENVANTERI.md ve tum alt metin notlari var. Arsiv rehberi docs/eski_depo_not_arsivi/ARSIV_REHBERI.md. 810 inceleme sayaci veya 92 esdegerlik kabulu degismedi. Eski depo salt okunur.

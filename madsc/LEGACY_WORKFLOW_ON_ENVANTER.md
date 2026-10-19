@@ -122,3 +122,16 @@ Kaynak: `Madsc55/madsc-tv` dal `madsc/bes-sistem-toplu-birlestirme`, GitHub Cont
 | `madsc-05-genel-bakim.yml` | `schedule 30 1 * * *`, `workflow_dispatch`, secili `push` | Genis kaynak tarama girdisi ve eski besli kategori bagimliliklari | Yeni besli salt okunur workflow zamanlamasiz; canli esdegerlik yok |
 
 Bu dort dosyanin tetik ve komutlari **dogrudan YAML iceriginden** okundu; diger satirlarin tam incelemesi bekliyor. Eski workflow'lar devre disi birakilmadi.
+
+## Ikinci dalga: dogrudan incelenen alti YAML
+
+| Dosya | Gercek tetik | Dogrulanan temel is / gecis acigi |
+|---|---|---|
+| `madsc-01-guvenlik.yml` | dispatch, workflow_call | K1 korunan SHA256, izin/kural testleri ve artifact; yeni K1 bu kapsamla henuz esdeger degil |
+| `madsc-02-kesif.yml` | cron `17 5,17 * * *`, `0 6,18 * * *`; dispatch, workflow_call | kaynak tarama, Pillow/CairoSVG, aday medya, genis tarama, artefakt; yeni K2 sadece dosya fixture |
+| `madsc-03-kanal-test.yml` | cron `40 6 * * *`; secili push; dispatch, workflow_call | ffmpeg, 50 IBO aday denemesi, 100 kanal saglik partisi, logo/EPG/kalite; yeni K3 gercek ag testini yapmiyor |
+| `madsc-04-arsiv-yedek.yml` | dispatch, workflow_call | korunan SHA256, izole Git restore, yedek ve arsiv regresyonlari, artifact; yeni K4 dis restore degil |
+| `yeni-kanal-arama-2026.yml` | dispatch, secili push | ffmpeg ve `yeni_kanal_tara.py`; CSV ve kaynak hata artefaktlari; yeni K2 esdeger degil |
+| `yedek-geri-yukleme-tatbikat.yml` | dispatch, secili push | `scripts/restore_dry_run.py`, JSON artifact; yeni K4 tatbikat kapsami esdegerligi bekliyor |
+
+Toplam **10 dosya** (ilk dalga 4 + bu dalga 6) icerik/tetik bakimindan incelendi; 89 dosyanin ayrintili incelemesi bekliyor. Siniflandirma ve sayim dosya temellidir; gercek calisma kaniti degildir.

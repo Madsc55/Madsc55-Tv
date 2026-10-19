@@ -123,3 +123,6 @@ Actions #29 failure: 53 testten 1'i, test_invalid_handoff_shapes_fail_closed (ib
 
 ## 19 Ekim 2026 - K3 Actions kontrolu
 Actions #30 success; #31 cancelled; #32 son kontrolde in_progress. K3 SHA256 kimlik bicimi kontrolu yazma denemesi guvenlik engeline takildi, uygulanmadi. Sonraki is #32 sonucunu dogrulamak ve buyuk islev paketlerine odaklanmak. Eski depo degismedi.
+
+## 19 Ekim 2026 - K3 SHA256 tamamlama
+Actions #33 success; #34 son kontrolde queued. K3 64 karakter kucuk harf hex dogrulamasi d2a41b8 commitinde tamamlandi. Gecersiz hex regresyonu ec329a3 eklendi. Yeni Actions sonucunu dogrula. Eski depo degismedi, uretim yazimi yok.

@@ -22,7 +22,7 @@ def audit_write_paths(paths: list[str]) -> dict:
         name = raw.replace(chr(92), "/")
         parts = name.split("/")
         folded = name.casefold()
-        if (not name or name.startswith("/")
+        if (chr(92) in raw or not name or name.startswith("/")
             or any(part in ("", ".", "..") for part in parts)
             or folded in {item.casefold() for item in PROTECTED_EXACT}
             or any(folded.startswith(prefix.casefold()) for prefix in PROTECTED_PREFIXES)

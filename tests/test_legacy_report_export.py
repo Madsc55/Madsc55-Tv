@@ -103,3 +103,14 @@ class LegacyReportExportTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 export_legacy_report(str(scores), str(stable), str(dest), history_json=str(history))
             self.assertFalse(dest.exists())
+
+    def test_duplicate_csv_header_rejected_before_output(self):
+        with tempfile.TemporaryDirectory() as root:
+            base = Path(root)
+            scores, stable = base / "scores.csv", base / "stable.csv"
+            scores.write_text("YAYIN_URL,PUAN,YAYIN_URL\nhttps://example.org/live,35,https://example.org/other\n", encoding="utf-8")
+            stable.write_text("YAYIN_URL,24_SAAT_KARARLI\n", encoding="utf-8")
+            dest = base / "reports"
+            with self.assertRaises(ValueError):
+                export_legacy_report(str(scores), str(stable), str(dest))
+            self.assertFalse(dest.exists())

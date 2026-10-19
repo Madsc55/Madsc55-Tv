@@ -36,6 +36,7 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
             status = evaluate_probe(probe)["technical_status"]
         decision = classify_channel(status, ibo_results.get(digest, "UNKNOWN"))
         assessed.append({"url_sha256": digest, "tvg_id": tvg_id, **decision,
-                         "ibo_device_verified": decision["ibo_result"] != "UNKNOWN"})
+                         "ibo_device_verified": False,
+                         "ibo_result_supplied": decision["ibo_result"] != "UNKNOWN"})
     return {"assessed": assessed, "candidate_count": len(assessed),
             "production_playlist_modified": False, "network_probed": False}

@@ -30,6 +30,8 @@ def main():
     p.add_argument("--commit-sha", required=True)
     a = p.parse_args()
     result = verify(load(a.k2), load(a.k3), load(a.k5), a.run_id, a.commit_sha)
+    if a.output.is_symlink():
+        raise ValueError("Invalid acceptance output path")
     a.output.parent.mkdir(parents=True, exist_ok=True)
     a.output.write_text(json.dumps(result, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(result))

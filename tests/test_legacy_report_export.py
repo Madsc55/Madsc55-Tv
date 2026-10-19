@@ -48,8 +48,8 @@ class LegacyReportExportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)
             scores, stable, history = (base / "scores.csv", base / "stable.csv", base / "history.json")
-            scores.write_text("KANAL,PUAN,TEKNIK_KANIT,YAYIN_URL\\nA,35,VIDEO_SES_VAR,https://example.org/live\\n", encoding="utf-8")
-            stable.write_text("YAYIN_URL,24_SAAT_KARARLI\\nhttps://example.org/live,EVET\\n", encoding="utf-8")
+            scores.write_text("KANAL,PUAN,TEKNIK_KANIT,YAYIN_URL\nA,35,VIDEO_SES_VAR,https://example.org/live\n", encoding="utf-8")
+            stable.write_text("YAYIN_URL,24_SAAT_KARARLI\nhttps://example.org/live,EVET\n", encoding="utf-8")
             now = datetime(2026, 10, 19, 12, tzinfo=timezone.utc)
             url = "https://example.org/live"
             history.write_text(json.dumps({url: [{"at": (now - timedelta(hours=25)).isoformat(), "state": "VIDEO_SES_VAR"},
@@ -73,8 +73,8 @@ class LegacyReportExportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)
             scores, stable, history = (base / "scores.csv", base / "stable.csv", base / "history.json")
-            scores.write_text("YAYIN_URL,PUAN\\nhttps://example.org/live,10\\n", encoding="utf-8")
-            stable.write_text("YAYIN_URL,24_SAAT_KARARLI\\n", encoding="utf-8")
+            scores.write_text("YAYIN_URL,PUAN\nhttps://example.org/live,10\n", encoding="utf-8")
+            stable.write_text("YAYIN_URL,24_SAAT_KARARLI\n", encoding="utf-8")
             history.write_text("[]", encoding="utf-8")
             dest = base / "reports"
             with self.assertRaises(ValueError):

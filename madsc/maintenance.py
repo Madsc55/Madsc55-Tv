@@ -28,6 +28,10 @@ def summarize_batch(reports: list[dict]) -> dict:
     failures = sorted(str(r.get("category", "unknown")) for r in reports
                       if r.get("status") != "success" or r.get("category") not in expected)
     missing = sorted(expected - {r.get("category") for r in reports if isinstance(r.get("category"), str)})
+    counts = {category: sum(r.get("category") == category for r in reports) for category in expected}
+    duplicates = sorted(category for category, count in counts.items() if count > 1)
+    unexpected = sum(r.get("category") not in expected for r in reports)
     return {**base, "failed_categories": failures, "missing_categories": missing,
-            "requires_review": bool(failures) or bool(missing) or not base["all_read_only"],
+            "duplicate_categories": duplicates, "unexpected_category_count": unexpected,
+            "requires_review": bool(failures) or bool(missing) or bool(duplicates) or bool(unexpected) or not base["all_read_only"],
             "production_writes": False}

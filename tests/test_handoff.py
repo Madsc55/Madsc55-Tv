@@ -110,3 +110,32 @@ class HandoffTests(unittest.TestCase):
             assess_candidates(discovery, {orphan: {"url_sha256": orphan}})
         with self.assertRaises(ValueError):
             assess_candidates(discovery, {}, {orphan: "WORKING"})
+
+
+    def test_mixed_candidates_keep_ibo_evidence_isolated_by_fingerprint(self):
+        discovery = classify_candidates([
+            {"name": "A", "url": "https://example.org/a.m3u8"},
+            {"name": "B", "url": "https://example.org/b.m3u8"},
+        ])
+        a, b = (entry["url_sha256"] for entry in discovery["candidates"])
+        probes = {
+            a: {"url_sha256": a, "http_status": 503, "video": False,
+                "audio": False, "duration_seconds": 0},
+            b: {"url_sha256": b, "http_status": 200, "video": True,
+                "audio": True, "duration_seconds": 40},
+        }
+        report = assess_candidates(discovery, probes, {a: "WORKING"})
+        by_digest = {item["url_sha256"]: item for item in report["assessed"]}
+        self.assertEqual(by_digest[a]["technical_status"], "NEEDS_REVIEW")
+        self.assertTrue(by_digest[a]["protected_working"])
+        self.assertFalse(by_digest[a]["delete_allowed"])
+        self.assertEqual(by_digest[b]["technical_status"], "PRELIMINARY_PASS")
+        self.assertFalse(by_digest[b]["ibo_result_supplied"])
+        self.assertFalse(by_digest[b]["production_change_allowed"])
+        self.assertFalse(report["production_playlist_modified"])
+        self.assertFalse(report["network_probed"])
+
+    def test_empty_discovery_rejects_unlinked_ibo_evidence(self):
+        orphan = "f" * 64
+        with self.assertRaises(ValueError):
+            assess_candidates({"candidates": []}, {}, {orphan: "WORKING"})

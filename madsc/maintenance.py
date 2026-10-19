@@ -9,6 +9,8 @@ def retry_decision(consecutive_failures: int, limit: int = 3) -> dict:
             "production_writes": False, "state_persisted": False}
 
 def aggregate(reports: list[dict]) -> dict:
+    if not isinstance(reports, list) or any(not isinstance(r, dict) for r in reports):
+        raise ValueError("Invalid batch reports")
     categories = {report.get("category") for report in reports}
     expected = {"k1", "k2", "k3", "k4", "k5"}
     complete = categories == expected and len(reports) == 5
@@ -22,6 +24,10 @@ def summarize_batch(reports: list[dict]) -> dict:
     if not isinstance(reports, list) or any(not isinstance(r, dict) for r in reports):
         raise ValueError("Invalid batch reports")
     base = aggregate(reports)
-    failures = sorted(r.get("category", "unknown") for r in reports if r.get("status") == "failure")
-    return {**base, "failed_categories": failures, "requires_review": bool(failures) or not base["all_read_only"],
+    expected = {"k1", "k2", "k3", "k4", "k5"}
+    failures = sorted(str(r.get("category", "unknown")) for r in reports
+                      if r.get("status") != "success" or r.get("category") not in expected)
+    missing = sorted(expected - {r.get("category") for r in reports if isinstance(r.get("category"), str)})
+    return {**base, "failed_categories": failures, "missing_categories": missing,
+            "requires_review": bool(failures) or bool(missing) or not base["all_read_only"],
             "production_writes": False}

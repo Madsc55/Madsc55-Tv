@@ -97,7 +97,14 @@ jobs:
         env:
           RUN_ID: ${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
-        run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+        run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA" --output reports/k3-handoff.json
+      - name: K3 aktarim kanitini sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k3-handoff
+          path: reports/k3-handoff.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K3 salt okunur kanıt raporunu oluştur
         run: python -m madsc.core --category k3 --output reports/k3.json
       - name: K3 kanıtını sakla
@@ -153,7 +160,14 @@ jobs:
         env:
           RUN_ID: ${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
-        run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+        run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA" --output reports/k5-handoff.json
+      - name: K5 aktarim kanitini sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k5-handoff
+          path: reports/k5-handoff.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K5 salt okunur kanıt raporunu oluştur
         run: python -m madsc.core --category k5 --output reports/k5.json
       - name: K5 kanıtını sakla
@@ -195,6 +209,25 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
         run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+      - name: K3 ve K5 aktarim kanitlarini indir
+        uses: actions/download-artifact@v4
+        with:
+          pattern: madsc-k*-handoff
+          path: reports/handoffs
+      - name: K2 K3 K5 kanitlarini topluca dogrula
+        id: cross-handoff
+        continue-on-error: true
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.handoff_acceptance --k2 reports/k2-handoff/k2-candidates.json --k3 reports/handoffs/madsc-k3-handoff/k3-handoff.json --k5 reports/handoffs/madsc-k5-handoff/k5-handoff.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA" --output reports/k2-k3-k5-kabul.json
+      - name: Capraz aktarim raporunu sakla
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-cross-handoff-acceptance
+          path: reports/k2-k3-k5-kabul.json
+          retention-days: 14
       - name: Kanıtları doğrula ve tek rapor oluştur
         id: kabul
         continue-on-error: true
@@ -216,6 +249,7 @@ jobs:
           K5: ${{ needs.k5.result }}
           KABUL: ${{ steps.kabul.outcome }}
           K2_HANDOFF: ${{ steps.k2-handoff.outcome }}
+          CROSS_HANDOFF: ${{ steps.cross-handoff.outcome }}
         run: |
           mkdir -p reports
           echo '## Madsc55-Tv - Besli Test Sonuclari' >> "$GITHUB_STEP_SUMMARY"
@@ -223,7 +257,7 @@ jobs:
           echo '| Kontrol | Sonuc |' >> "$GITHUB_STEP_SUMMARY"
           echo '| --- | --- |' >> "$GITHUB_STEP_SUMMARY"
           hata=0
-          for ad in K1 K2 K3 K4 K5 KABUL K2_HANDOFF; do
+          for ad in K1 K2 K3 K4 K5 KABUL K2_HANDOFF CROSS_HANDOFF; do
             case "$ad" in
               K1) durum="$K1"; etiket="K1 Guvenlik";;
               K2) durum="$K2"; etiket="K2 Kesif";;
@@ -232,6 +266,7 @@ jobs:
               K5) durum="$K5"; etiket="K5 Bakim";;
               KABUL) durum="$KABUL"; etiket="Toplu kabul";;
               K2_HANDOFF) durum="$K2_HANDOFF"; etiket="K2-K3-K5 kanit aktarimi";;
+              CROSS_HANDOFF) durum="$CROSS_HANDOFF"; etiket="K2-K3-K5 capraz kanit kabul";;
             esac
             echo "| $etiket | $durum |" >> "$GITHUB_STEP_SUMMARY"
             if [ "$durum" != success ]; then hata=1; fi

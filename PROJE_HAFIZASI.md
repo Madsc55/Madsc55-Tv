@@ -890,3 +890,6 @@ madsc/core.py K1 execute, madsc/fixture_report_writer.py ile yalnizca gecici diz
 
 ## 20 Ekim 2026 — K2 K3 K5 aktarim negatif test paketi
 K3 negatif senaryolar (logo SHA eslesmesi, ffmpeg decode hatasi, ffprobe exception) Actions #39336625839 SUCCESS. Yeni tests/test_handoff_acceptance.py paketi K2 veri degistirme, K3/K5 run_id ve commit_sha farki, salt-okunur/ag/uretim iddiasi ve JSON tekrarli anahtar reddini denetler. Bu testler gercek 92/92 davranissal esdegerlik veya 26/26 runtime guvenlik kabulu degildir. Son yeni CI sonucu ayrica dogrulanacak.
+
+## 20 Ekim 2026 — K4 yeni negatif restore testleri
+K2-K3-K5 handoff testi Actions #39336859638 SUCCESS. K4 icin ayni uzunlukta ama farkli SHA256 icerikli backup ve iki dosyadan yalnizca EPG restore bozulmasi senaryolari tests/test_backup.py dosyasina eklendi. Gercek offsite yedek veya uretim restore onayi DEGIL. Yeni CI sonucu ayrica dogrulanacak.

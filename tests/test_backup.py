@@ -240,3 +240,36 @@ class BackupTests(unittest.TestCase):
             target.symlink_to(roots[0] / "nested" / "channel.txt")
             with self.assertRaises(ValueError):
                 verify_independent_restore(*roots, ["nested/channel.txt"])
+
+
+    def test_three_tree_detects_same_length_content_corruption(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "channel.txt").write_bytes(b"ABCD")
+            (roots[1] / "channel.txt").write_bytes(b"WXYZ")
+            report = verify_independent_restore(*roots, ["channel.txt"])
+            self.assertFalse(report["backup_verified_against_source"])
+            self.assertFalse(report["restore_verified_against_backup"])
+            self.assertFalse(report["independent_sandbox_restore_matches"])
+            self.assertFalse(report["external_storage_proven"])
+
+    def test_three_tree_multiple_files_detects_one_changed_restore(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "channels.txt").write_text("channels", encoding="utf-8")
+                (root / "epg.xml").write_text("<tv/>", encoding="utf-8")
+            names = ["channels.txt", "epg.xml"]
+            self.assertTrue(verify_independent_restore(*roots, names)["independent_sandbox_restore_matches"])
+            (roots[2] / "epg.xml").write_text("<tv>bad</tv>", encoding="utf-8")
+            result = verify_independent_restore(*roots, names)
+            self.assertTrue(result["backup_verified_against_source"])
+            self.assertFalse(result["restore_verified_against_backup"])
+            self.assertEqual(result["files_checked"], 2)
+            self.assertFalse(result["production_restore_verified"])
+

@@ -31,6 +31,8 @@ def evaluate_legacy_stability(observations: list[dict], now: datetime) -> dict:
     for row in observations:
         if not isinstance(row, dict) or not isinstance(row.get("state"), str) or not row["state"]:
             raise ValueError("Invalid historical observation")
+        if row["state"] == "TEST_EDILMEDI":
+            raise ValueError("Untested media state is not a measurement")
         stamp = _time(row.get("at"), now)
         if stamp in by_time and by_time[stamp] != row["state"]:
             raise ValueError("Conflicting measurements at the same time")

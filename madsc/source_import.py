@@ -17,15 +17,17 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
                 raise ValueError("Unpaired channel metadata")
             if "," not in line:
                 raise ValueError("Invalid EXTINF metadata")
-            pending = line.rsplit(",", 1)[-1].strip()
-            if not pending:
+            channel_name = line.rsplit(",", 1)[-1].strip()
+            match = re.search(r'(?:^|\s)tvg-id="([^"]*)"', line.split(",", 1)[0])
+            pending = {"name": channel_name, "tvg_id": match.group(1) if match else ""}
+            if not channel_name:
                 raise ValueError("Empty channel name")
         elif line.startswith("#"):
             continue
         else:
             if pending is None:
                 raise ValueError("Channel URL without metadata")
-            rows.append({"name": pending, "url": line})
+            rows.append({**pending, "url": line})
             pending = None
     if pending is not None:
         raise ValueError("Missing channel URL")

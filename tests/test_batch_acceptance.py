@@ -73,3 +73,19 @@ class BatchAcceptanceTests(unittest.TestCase):
             self.make_report(Path(d) / "extra", "k1")
             with self.assertRaises(ValueError):
                 collect(Path(d))
+    def test_symlinked_evidence_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d, tempfile.TemporaryDirectory() as outside:
+            for key in CATEGORIES:
+                self.make_report(d, key)
+            external = Path(outside) / "external.json"
+            external.write_text("{}", encoding="utf-8")
+            (Path(d) / "external.json").symlink_to(external)
+            with self.assertRaises(ValueError):
+                collect(Path(d))
+
+    def test_non_directory_evidence_root_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            file = Path(d) / "evidence.txt"
+            file.write_text("invalid", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(file)

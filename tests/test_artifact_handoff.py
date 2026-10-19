@@ -30,3 +30,17 @@ class ArtifactHandoffTests(unittest.TestCase):
         discovery["candidates"] = self.discovery["candidates"] * 2
         with self.assertRaises(ValueError):
             pack(discovery, "123", "a" * 40)
+
+    def test_unicode_run_id_rejected(self):
+        with self.assertRaises(ValueError):
+            pack(self.discovery, "１２３", "a" * 40)
+
+    def test_malformed_discovery_rejected(self):
+        with self.assertRaises(ValueError):
+            pack({"candidates": None}, "123", "a" * 40)
+
+    def test_invalid_digest_type_rejected(self):
+        envelope = dict(self.envelope)
+        envelope["digest"] = []
+        with self.assertRaises(ValueError):
+            unpack(envelope, "123", "a" * 40)

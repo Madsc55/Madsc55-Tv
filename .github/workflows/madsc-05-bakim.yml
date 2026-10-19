@@ -84,6 +84,23 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
         run: python -m madsc.artifact_transport produce --path reports/k2-candidates.json --source reports/k2-input.m3u --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+      - name: K2 fixture history input
+        run: |
+          mkdir -p reports/history-input
+          printf '%s\n' '{"history":{"fixture":{"runs":2,"last_result":"FAIL"}}}' > reports/history-input/gecmis.json
+          printf '%s\n' '{"channels":{"fixture":{"runs":2,"last_result":"FAIL"}}}' > reports/history-input/ana_liste_test_gecmisi.json
+      - name: K2 history handoff produce
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.history_transport produce --legacy-folder reports/history-input --output reports/k2-history.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+      - name: Upload K2 history handoff
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k2-history-handoff
+          path: reports/k2-history.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K2 aday kanıtını sakla
         uses: actions/upload-artifact@v4
         with:
@@ -124,6 +141,23 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
         run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA" --output reports/k3-handoff.json
+      - name: Download K2 history evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: madsc-k2-history-handoff
+          path: reports/history-source
+      - name: Verify history evidence in k3
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.history_transport consume --path reports/history-source/k2-history.json --output reports/k3-history.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+      - name: Upload k3 history receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k3-history-receipt
+          path: reports/k3-history.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K3 aktarim kanitini sakla
         uses: actions/upload-artifact@v4
         with:
@@ -187,6 +221,23 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
         run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA" --output reports/k5-handoff.json
+      - name: Download K2 history evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: madsc-k2-history-handoff
+          path: reports/history-source
+      - name: Verify history evidence in k5
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.history_transport consume --path reports/history-source/k2-history.json --output reports/k5-history.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+      - name: Upload k5 history receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k5-history-receipt
+          path: reports/k5-history.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K5 aktarim kanitini sakla
         uses: actions/upload-artifact@v4
         with:
@@ -228,6 +279,18 @@ jobs:
         with:
           name: madsc-k2-candidate-handoff
           path: reports/k2-handoff
+      - name: Download history chain
+        uses: actions/download-artifact@v4
+        with:
+          pattern: madsc-*-history-*
+          path: reports/history-chain
+      - name: Verify K2 K3 K5 history chain
+        id: history-chain
+        continue-on-error: true
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.history_transport verify --k2 reports/history-chain/madsc-k2-history-handoff/k2-history.json --k3 reports/history-chain/madsc-k3-history-receipt/k3-history.json --k5 reports/history-chain/madsc-k5-history-receipt/k5-history.json --output reports/history-chain-acceptance.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
       - name: K2 aday kanıtının koşu bütünlüğünü denetle
         id: k2-handoff
         continue-on-error: true
@@ -276,6 +339,7 @@ jobs:
           KABUL: ${{ steps.kabul.outcome }}
           K2_HANDOFF: ${{ steps.k2-handoff.outcome }}
           CROSS_HANDOFF: ${{ steps.cross-handoff.outcome }}
+          HISTORY_CHAIN: ${{ steps.history-chain.outcome }}
         run: |
           mkdir -p reports
           echo '## Madsc55-Tv - Besli Test Sonuclari' >> "$GITHUB_STEP_SUMMARY"
@@ -283,7 +347,7 @@ jobs:
           echo '| Kontrol | Sonuc |' >> "$GITHUB_STEP_SUMMARY"
           echo '| --- | --- |' >> "$GITHUB_STEP_SUMMARY"
           hata=0
-          for ad in K1 K2 K3 K4 K5 KABUL K2_HANDOFF CROSS_HANDOFF; do
+          for ad in K1 K2 K3 K4 K5 KABUL K2_HANDOFF CROSS_HANDOFF HISTORY_CHAIN; do
             case "$ad" in
               K1) durum="$K1"; etiket="K1 Guvenlik";;
               K2) durum="$K2"; etiket="K2 Kesif";;
@@ -293,6 +357,7 @@ jobs:
               KABUL) durum="$KABUL"; etiket="Toplu kabul";;
               K2_HANDOFF) durum="$K2_HANDOFF"; etiket="K2-K3-K5 kanit aktarimi";;
               CROSS_HANDOFF) durum="$CROSS_HANDOFF"; etiket="K2-K3-K5 capraz kanit kabul";;
+              HISTORY_CHAIN) durum="$HISTORY_CHAIN"; etiket="K2-K3-K5 history zinciri";;
             esac
             echo "| $etiket | $durum |" >> "$GITHUB_STEP_SUMMARY"
             if [ "$durum" != success ]; then hata=1; fi

@@ -7,6 +7,11 @@ from madsc.discovery import classify_candidates
 def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict:
     if source.suffix.lower() not in (".m3u", ".m3u8"):
         raise ValueError("Only M3U and M3U8 playlists are supported")
+    source = Path(source)
+    if source.is_symlink() or not source.is_file():
+        raise ValueError("Invalid source file")
+    if source.stat().st_size > 16 * 1024 * 1024:
+        raise ValueError("Source exceeds 16 MiB safety limit")
     lines = [x.strip() for x in source.read_text(encoding="utf-8-sig").splitlines() if x.strip()]
     if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Invalid playlist header")

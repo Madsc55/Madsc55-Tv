@@ -39,3 +39,16 @@ Yeni Madsc55/Madsc55-Tv main dalında `tests/test_k1_runtime_workflow_guard.py`,
 
 ## Geçiş güvenliği
 26/26 runtime güvenlik kuralı, 92/92 eşdeğerlik, offsite restore, IBO cihaz onayı ve açık kullanıcı kararı olmadan cutover yok. Üretim M3U, EPG, logo, favori, arşiv ve backup dosyalarına yazma yok.
+
+
+## Kaynak betik düzeyinde somut kabul farkları — 19 Ekim ek denetimi
+
+Bu bölüm eski depoda salt-okunur açılan üç YAML ve bunların çağırdığı üç gerçek Python betiğine dayanır. Önceki YAML envanterindeki aynı dosyalar yeniden "yeni incelenen workflow" sayılmamıştır. Hiçbir satır davranışsal parity onayı değildir.
+
+| Eski iş | Kaynaktan doğrulanan gerçek davranış | Yeni K1–K5 için henüz kanıtlanmayan koşul |
+|---|---|---|
+| `390-aday-tekrar-test.yml` | `yedekler/tekrar_test_390.py` sabit tarihli kaynak M3U okur; en çok 12 worker (varsayılan 10), ffprobe 22 sn timeout, ffmpeg ile 20 sn video+ses çözümleme (45 sn timeout), sonuç CSV ve teknik doğrulanan M3U üretir. Workflow 90 dk sınır ve `if:always()` artifact kullanır. | K3'te yalnız ffprobe JSON ayrıştırılması **20 sn ffmpeg decode**, 10 paralel iş, çıktı M3U/CSV şeması, timeout, başarısız adayların raporu ve `if:always()` davranışı ile eşdeğer değildir. Üretim listesine yazma yok; `yedekler/` altına dosya yazımı var. |
+| `aday-logo-epg-test.yml` | `candidate_epg_logo_join.py` pilot XMLTV kanal kimliği/program sayısı, logo SHA eşleşmesi, kimlik onaysızlığı ve cihaz doğrulanmamış durumunu ayrı raporlar; `CALISANLAR.m3u` hashini önce/sonra denetler. Pilot 5 kanal bekler. | Yeni K3'ün logo/EPG kimlik ve program ayrımı, pilot kapsamı ve ana liste hash koruması aynı girdilerle karşılaştırılmadı. Pilot 5 kanal tam EPG değildir. |
+| `akilli-aday-puanlama.yml` | `SCAN_BATCH=-1` keşif, gerçek öncelikli ffprobe, `akilli_aday_puanla.py` CSV birleştirme; video 20, ses 15, çözünürlük 3/7/10, HTTPS logo 5 puan; URL'ye göre en yüksek skor seçimi ve CSV/JSON artifact. | Yeni K2/K3/K5 zinciri ile skor, deduplikasyon, çıktı kolonları ve `ANA_LISTEYE_EKLENEBILIR=HAYIR` birebir karşılaştırılmadı. Ağ ölçümü ve otomatik ekleme onayı yok. |
+
+**Bir sonraki toplu kod kabulü:** Bu üç davranışın sentetik girdilerini, eski betiklerin salt-okunur izole kopyalarını ve yeni modülleri karşılaştıran negatif/pozitif regresyon paketi oluştur; üretim dosyalarına veya gerçek cihaz kararına dokunma. Bu dokümantasyon değişikliği tek başına yeni Actions çalıştırılmasını gerektirmez; sonraki kod paketi için tek toplu CI koşusu kullanılacak.

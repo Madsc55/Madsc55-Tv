@@ -49,5 +49,14 @@ class MaintenanceTests(unittest.TestCase):
         self.assertEqual(summary["unexpected_category_count"], 1)
         self.assertTrue(summary["requires_review"])
 
+    def test_all_five_successful_requires_explicit_status(self):
+        reports = [{"category": k, "production_writes": False, "status": "success"} for k in ("k1", "k2", "k3", "k4", "k5")]
+        self.assertTrue(aggregate(reports)["all_five_successful"])
+        reports[0]["status"] = "pending"
+        self.assertTrue(aggregate(reports)["all_five_present"])
+        self.assertFalse(aggregate(reports)["all_five_successful"])
+        reports[0].pop("status")
+        self.assertFalse(aggregate(reports)["all_five_successful"])
+
     def test_missing_categories_never_ready(self):
         self.assertFalse(aggregate([{"category":"k1","production_writes":False}])["all_five_present"])

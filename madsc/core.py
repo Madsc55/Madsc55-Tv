@@ -41,6 +41,7 @@ def execute(category: str) -> dict:
             evidence = {
                 "both_m3u_and_m3u8": {r["source_format"] for r, _ in results} == {".m3u", ".m3u8"},
                 "unique_candidates": all(len(r["candidates"]) == 1 for r, _ in results),
+                "source_inventory_reconciled": all(r["source_channel_count"] == r["accepted_channel_count"] + r["duplicate_channel_count"] + r["rejected_channel_count"] for r, _ in results),
                 "duplicates_separated": all(len(r["duplicates"]) == 1 for r, _ in results),
                 "invalid_rejected": all(len(r["rejected"]) == 1 for r, _ in results),
                 "sources_unchanged": all(ok for _, ok in results),

@@ -58,5 +58,14 @@ class MaintenanceTests(unittest.TestCase):
         reports[0].pop("status")
         self.assertFalse(aggregate(reports)["all_five_successful"])
 
+    def test_unverified_or_true_production_writes_require_review(self):
+        reports = [{"category": k, "production_writes": False, "status": "success"} for k in ("k1", "k2", "k3", "k4", "k5")]
+        reports[1].pop("production_writes")
+        reports[3]["production_writes"] = True
+        summary = summarize_batch(reports)
+        self.assertEqual(summary["unsafe_or_unverified_write_categories"], ["k2", "k4"])
+        self.assertFalse(summary["all_five_successful"])
+        self.assertTrue(summary["requires_review"])
+
     def test_missing_categories_never_ready(self):
         self.assertFalse(aggregate([{"category":"k1","production_writes":False}])["all_five_present"])

@@ -52,3 +52,8 @@ Bu bölüm eski depoda salt-okunur açılan üç YAML ve bunların çağırdığ
 | `akilli-aday-puanlama.yml` | `SCAN_BATCH=-1` keşif, gerçek öncelikli ffprobe, `akilli_aday_puanla.py` CSV birleştirme; video 20, ses 15, çözünürlük 3/7/10, HTTPS logo 5 puan; URL'ye göre en yüksek skor seçimi ve CSV/JSON artifact. | Yeni K2/K3/K5 zinciri ile skor, deduplikasyon, çıktı kolonları ve `ANA_LISTEYE_EKLENEBILIR=HAYIR` birebir karşılaştırılmadı. Ağ ölçümü ve otomatik ekleme onayı yok. |
 
 **Bir sonraki toplu kod kabulü:** Bu üç davranışın sentetik girdilerini, eski betiklerin salt-okunur izole kopyalarını ve yeni modülleri karşılaştıran negatif/pozitif regresyon paketi oluştur; üretim dosyalarına veya gerçek cihaz kararına dokunma. Bu dokümantasyon değişikliği tek başına yeni Actions çalıştırılmasını gerektirmez; sonraki kod paketi için tek toplu CI koşusu kullanılacak.
+
+
+## 19 Ekim 2026 — kaynak puanlama ve onay regresyonu
+
+`tests/test_legacy_source_score_vectors.py` eski `akilli_aday_puanla.py` kaynak incelemesinden çıkarılmış 10 puan/status vektörü ile ayrıca 4 puan × 3 teknik durum × 2 kararlılık = 24 otomatik listeye yazmama kombinasyonunu kapsar. Yanlış veri türlerinin reddi de test edilir. İlk 10 vektörün CI koşusu #39330966958 **SUCCESS**. Onay matrisi genişletmesi commit `29b945a` ile eklendi; bunun CI sonucu ayrıca doğrulanmalıdır. Bu karşılaştırma eski betiği fiilen çalıştıran diferansiyel test değildir ve `akilli-aday-puanlama.yml` için 92'lik tam davranışsal kabul sayısını artırmaz. Gerçek ffprobe, CSV şeması, URL bazında en yüksek skor seçimi ve artifact davranışı hâlâ açık.

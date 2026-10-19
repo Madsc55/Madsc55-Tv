@@ -20,7 +20,12 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
                 raise ValueError("Invalid EXTINF metadata")
             channel_name = line.rsplit(",", 1)[-1].strip()
             match = re.search(r'(?:^|\s)tvg-id="([^"]*)"', line.split(",", 1)[0])
-            pending = {"name": channel_name, "tvg_id": match.group(1) if match else ""}
+            attrs = line.split(",", 1)[0]
+            logo = re.search(r'(?:^|\s)tvg-logo="([^"]*)"', attrs)
+            group = re.search(r'(?:^|\s)group-title="([^"]*)"', attrs)
+            pending = {"name": channel_name, "tvg_id": match.group(1) if match else "",
+                       "tvg_logo": logo.group(1) if logo else "",
+                       "group_title": group.group(1) if group else ""}
             if not channel_name:
                 raise ValueError("Empty channel name")
         elif line.startswith("#"):

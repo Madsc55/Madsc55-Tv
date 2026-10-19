@@ -102,3 +102,11 @@ class HandoffTests(unittest.TestCase):
         for field in ("name", "tvg_logo", "group_title"):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 assess_candidates({"candidates": [{**discovery["candidates"][0], field: []}]}, {})
+
+    def test_orphan_probe_and_ibo_evidence_fail_closed(self):
+        discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
+        orphan = 'f' * 64
+        with self.assertRaises(ValueError):
+            assess_candidates(discovery, {orphan: {"url_sha256": orphan}})
+        with self.assertRaises(ValueError):
+            assess_candidates(discovery, {}, {orphan: "WORKING"})

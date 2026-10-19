@@ -44,5 +44,7 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
                          "tvg_logo": logo, "group_title": group, **decision,
                          "ibo_device_verified": False,
                          "ibo_result_supplied": decision["ibo_result"] != "UNKNOWN"})
+    if any(key not in seen for key in probes) or any(key not in seen for key in ibo_results):
+        raise ValueError("Unlinked handoff evidence fingerprint")
     return {"assessed": assessed, "candidate_count": len(assessed),
             "production_playlist_modified": False, "network_probed": False}

@@ -78,3 +78,6 @@ GitHub Actions #8, #9 ve #10 basarili olarak dogrulandi. K2 UTF-8 BOM iceren M3U
 
 ## 19 Ekim 2026 - K1 BOM butunluk regresyonu
 K1 salt-okunur playlist butunluk denetimine UTF-8 BOM iceren M3U regresyon testi eklendi: 10151c3632fa3f3d0dff0a3d31786ce69bda1c9f. Dosyanin degismedigi ve kanal sayisinin dogru oldugu test ediliyor. Yeni Actions sonucu bekleniyor. Gercek 26 kural runtime onayi yok; eski depo degismedi.
+
+## 19 Ekim 2026 - K3 devir
+K3 sure olcum kontrolu commit 91d4236. Actions #12 son kontrolde devam ediyordu. K3 regresyon testi yazma denemesi engellendi; uygulanmadi. Sonraki is Actions #12 sonucunu kontrol etmek, testi eklemek ve besli sistem kurulumuna devam etmek. Eski depo degismedi.

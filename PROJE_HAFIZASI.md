@@ -503,3 +503,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - GitHub Actions koşu #196, run id `39280750923`, HEAD `88e196b4`, run API sonucu `completed/success`. K1 Güvenlik, K2 Keşif, K3 Kanal Testleri, K5 Genel Bakım, Beşli toplu kanıt doğrulama job API `completed/success`. K1 `Tüm regresyon testlerini çalıştır` adımı `success` (iki yeni K2→K3→K5 testi bu commit'te).
 - K4 Arşiv ve Yedek job API hâlâ `queued/null` döndürüyor, fakat `madsc-batch-k4` artifact mevcut (551 bayt) ve beşli toplu doğrulama `success`. Bu **API tutarsızlığı** sebebiyle K4 bireysel job başarı iddiası yok. Toplam 7 artifact mevcut.
 - Bunlar fixture-only ve read-only testler; gerçek ffprobe yayın ağı, IBO cihaz onayı, 92 eski workflow davranışsal parity veya offsite production restore kanıtı değildir. Korunan listeler, eski repo, main merge, PR #71 değişmedi.
+
+
+## 19 Ekim 2026 — K4 regresyon ve Actions #197 doğrulaması
+- `tests/test_backup.py` içine bozulmuş yedek ve bozulmuş geri yükleme için iki salt-okunur fixture regresyon testi eklendi: commit `a8dec667572c4a2358543437ce282d22046465f0`. Korunan liste/gerçek backup yazılmadı.
+- GitHub Actions #197 (run `39284758370`, head `a8dec667`) `completed/success`. Altı işin tamamı `completed/success`: K1 Güvenlik (Tüm regresyon testlerini çalıştır success), K2 Keşif, K3 Kanal Testleri, K4 Arşiv ve Yedek, K5 Genel Bakım ve Beşli toplu kanıt doğrulama. K4 job ve kanıt adımı bu kez ayrı ayrı success doğrulandı.
+- Yalnız fixture/salt-okunur başarıdır; offsite restore, gerçek canlı ffprobe, IBO cihaz testi ve 92/92 parity henüz kanıtlanmadı. Eski depo, korunan listeler, cron, main merge ve PR #71 değiştirilmedi.

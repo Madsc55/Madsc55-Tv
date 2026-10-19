@@ -875,3 +875,12 @@ Kullanici karari: birbiriyle bagli tum kod, fixture, test, K1-K5 entegrasyon ve 
 
 ## 20 Ekim 2026 — K3 eski EPG/logo ve 390 tekrar testi entegrasyonu
 Yeni madsc/legacy_epg_logo.py ve madsc/legacy_retest_390.py ile izole, salt okunur eski davranis sozlesmeleri eklendi. tests/test_legacy_k3_compatibility.py ve Actions #39334663810 SUCCESS (SHA 293bf819) ile temel offline regresyonlar gecti. Sonraki toplu pakette madsc/core.py K3 kanit raporuna XMLTV pilotu, logo SHA birlestirme, 20 sn ffmpeg sozlesmesi ve otomatik onay engeli eklendi; tests/test_core.py bu alanlari denetler. Bu son paketin CI sonucu henuz dogrulanmadi. Ag/canli ffprobe, 390 gercek kanal, 5 kanallik gercek pilot, IBO cihaz ve 92/92-26/26 uretim kabulu degildir. Korunan dosyalara yazma yok.
+
+
+## 20 Ekim 2026 — Son dogrulanmis K1/K3 ilerleme ve not koruma
+- K3 logo/EPG ve 390 aday tekrar testi kaynak davranis uyarlamasi: madsc/legacy_epg_logo.py, madsc/legacy_retest_390.py, tests/test_legacy_k3_compatibility.py; Actions #39334663810 SUCCESS.
+- K3 merkezi fixture kanit akisi entegrasyonu: commit 9c7055a79527b643459529294759f1a09d59109b; Actions #39334973919 SUCCESS.
+- K1 izole rapor yazma siniri ve negatif testleri: madsc/fixture_report_writer.py, tests/test_fixture_report_writer.py; commit 7edeafcf5e8067985905ae6f8bf536bb173f3a20; Actions #39335736344 SUCCESS. Bu tum depo icin runtime write gate degildir.
+- 99 YAML, 130 Python, 68 test kaynak envanteri daha once tamamlandi; tekrar baslama. Tam esdegerlik 0/92, gercek runtime guvenlik onayi 0/26. 47% yalnizca tahmini gelistirme puani, uretim hazirligi degil.
+- Oncelik: K1 merkezi kanit entegrasyonu; K2-K3-K5 aday, EPG/logo, tekrar test zinciri; eski-yeni fixture diferansiyel kaniti; gercek restore ve IBO cihaz kabulunu ayri tut.
+- Korunan CALISANLAR/YENILER/YEDEKLER/HEPSI/FAVORILER/EPG/logo/backup, eski salt okunur depo ve PR #71 degistirilmeyecek. Kullanici baglantili degisiklikleri tek toplu paket ve CI olarak istiyor. Kritik bulgular hem bu dosyaya hem SOHBET_DEVIR_NOTU_2026-10-20.md dosyasina kaydedilecek.

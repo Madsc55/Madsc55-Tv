@@ -55,7 +55,7 @@ class LegacyReportExportTests(unittest.TestCase):
             history.write_text(json.dumps({url: [{"at": (now - timedelta(hours=25)).isoformat(), "state": "VIDEO_SES_VAR"},
                                                  {"at": (now - timedelta(hours=1)).isoformat(), "state": "VIDEO_SES_VAR"}]}), encoding="utf-8")
             dest = base / "reports"
-            export_legacy_report(str(scores), str(stable), str(dest), history_json=str(history), now=now)
+            export_legacy_report(str(scores), str(stable), str(dest), history_json=str(history), now=now, require_history=True)
             with (dest / "BIRLESIK_ADAY_ONAY_RAPORU.csv").open(encoding="utf-8-sig", newline="") as handle:
                 row = next(csv.DictReader(handle))
             self.assertEqual(row["PUAN"], "65")
@@ -79,4 +79,15 @@ class LegacyReportExportTests(unittest.TestCase):
             dest = base / "reports"
             with self.assertRaises(ValueError):
                 export_legacy_report(str(scores), str(stable), str(dest), history_json=str(history))
+            self.assertFalse(dest.exists())
+
+    def test_required_history_rejects_csv_only_export(self):
+        with tempfile.TemporaryDirectory() as root:
+            base = Path(root)
+            scores, stable = base / "scores.csv", base / "stable.csv"
+            scores.write_text("YAYIN_URL,PUAN\nhttps://example.org/live,35\n", encoding="utf-8")
+            stable.write_text("YAYIN_URL,24_SAAT_KARARLI\nhttps://example.org/live,EVET\n", encoding="utf-8")
+            dest = base / "reports"
+            with self.assertRaises(ValueError):
+                export_legacy_report(str(scores), str(stable), str(dest), require_history=True)
             self.assertFalse(dest.exists())

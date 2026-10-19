@@ -143,3 +143,25 @@ class BackupTests(unittest.TestCase):
             for invalid in ([], None, "sample.txt"):
                 with self.subTest(names=invalid), self.assertRaises(ValueError):
                     verify_sandbox_restore(Path(a), Path(b), invalid)
+    def test_independent_restore_rejects_nested_trees(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            source = base / "source"
+            backup = source / "backup"
+            restored = base / "restored"
+            for tree in (source, backup, restored):
+                tree.mkdir(parents=True, exist_ok=True)
+                (tree / "sample.txt").write_text("fixture")
+            with self.assertRaises(ValueError):
+                verify_independent_restore(source, backup, restored, ["sample.txt"])
+
+    def test_independent_restore_rejects_duplicate_resolved_roots(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            source, backup = base / "source", base / "backup"
+            source.mkdir()
+            backup.mkdir()
+            for tree in (source, backup):
+                (tree / "sample.txt").write_text("fixture")
+            with self.assertRaises(ValueError):
+                verify_independent_restore(source, backup, source / ".", ["sample.txt"])

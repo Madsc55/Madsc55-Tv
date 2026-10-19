@@ -539,3 +539,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `tests/test_backup.py` içine iki salt-okunur sandbox regresyonu eklendi: üç bağımsız ağaçta iç içe dosya bozulması/kaybı yakalanır; yedek ağaçtaki iç içe sembolik bağlantı reddedilir. Commit `327fc6fad49fa9b1c13350d01df487f0e8519e4a`.
 - GitHub Actions #202 (run `39308991009`) `completed/success`; K1–K5 ve beşli toplu kanıt doğrulama 6/6 `completed/success`, başarısız step yok.
 - Gerçek harici depolama geri yüklemesi veya üretim restore kanıtı değildir; canlı ffprobe, IBO cihaz doğrulaması ve 92 eski workflow davranışsal eşdeğerliği hâlâ kanıtlanmadı. Korunan listeler, eski depo ve PR #71 değişmedi.
+
+
+## 19 Ekim 2026 — K2→K3 çoklu aday kanıt ayrımı ve Actions #203
+- `tests/test_handoff.py` içine iki fixture regresyonu eklendi: iki adayın IBO ve probe kanıtları URL SHA256 ile ayrılır, birinin WORKING sonucu diğerine taşınmaz; boş keşifte bağlantısız IBO kanıtı reddedilir. Commit `b2ee7c51ad69ce35c9a67d972f422fbeb536add4`.
+- GitHub Actions #203 (run `39309574845`) `completed/success`; K1–K5 ve beşli toplu kanıt doğrulama dahil 6/6 iş `completed/success`, başarısız step yok.
+- Yalnızca fixture kanıtı; gerçek IBO cihazı, canlı ffprobe, offsite restore ve 92 workflow parity kanıtlanmadı. Korunan listeler, eski depo, main merge ve PR #71 değiştirilmedi.

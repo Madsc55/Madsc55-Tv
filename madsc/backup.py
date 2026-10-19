@@ -4,6 +4,9 @@ import hashlib
 from pathlib import Path
 
 def snapshot_manifest(root: Path, paths: list[str]) -> dict:
+    root = Path(root)
+    if root.is_symlink() or not root.is_dir():
+        raise ValueError("Backup root must be a real directory")
     base = root.resolve(strict=True)
     if (not isinstance(paths, list) or any(not isinstance(name, str) or not name for name in paths)
             or len(set(paths)) != len(paths)):
@@ -61,6 +64,9 @@ def verify_independent_restore(source: Path, backup: Path, restored: Path,
             any(not isinstance(name, str) or not name for name in names) or
             len(set(names)) != len(names)):
         raise ValueError("Restore audit requires unique named files")
+    if any(Path(path).is_symlink() or not Path(path).is_dir()
+           for path in (source, backup, restored)):
+        raise ValueError("Independent restore trees must be real directories")
     locations = [path.resolve(strict=True) for path in (source, backup, restored)]
     if len(set(locations)) != 3:
         raise ValueError("Source, backup and restored trees must be distinct")

@@ -24,3 +24,22 @@ def evaluate_probe(probe: dict) -> dict:
         "ibo_device_verified": False,
         "production_change_allowed": False,
     }
+
+
+def evaluate_repeated_probes(probes: list[dict], minimum_passes: int = 2) -> dict:
+    """Evaluate independently supplied measurements, without claiming a live run."""
+    if not isinstance(probes, list) or not probes or type(minimum_passes) is not int or minimum_passes < 2:
+        raise ValueError("Invalid repeated-probe evidence")
+    if len(probes) < minimum_passes:
+        raise ValueError("Insufficient independent samples")
+    evaluated = [evaluate_probe(probe) for probe in probes]
+    digests = {item["url_sha256"] for item in evaluated}
+    if len(digests) != 1:
+        raise ValueError("Mixed channel fingerprints")
+    passes = sum(item["technical_status"] == "PRELIMINARY_PASS" for item in evaluated)
+    return {"url_sha256": evaluated[0]["url_sha256"],
+            "samples": len(evaluated), "preliminary_passes": passes,
+            "stable_preliminary": passes >= minimum_passes and passes == len(evaluated),
+            "actual_network_measurements_verified": False,
+            "stream_continuity_verified": False, "ibo_device_verified": False,
+            "production_change_allowed": False}

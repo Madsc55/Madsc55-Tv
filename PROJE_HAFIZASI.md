@@ -317,3 +317,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Eski `scripts/akilli_aday_puanla.py` içindeki görüntü +20, ses +15, çözünürlük +3/+7/+10, HTTPS logo +5 ve `TEKNIK_ADAY` / `EK_DOGRULAMA_GEREKLI` karar mantığı yeni depoda salt-okunur `madsc/legacy_scoring.py` fonksiyonuyla **ayrı sözleşme** olarak uygulandı (commit `5ab9cb42`). Mevcut K2/K3/K5 puanlama mantığına sessizce karıştırılmadı; gerçek yayın/kimlik/IBO/üretim onayı verilmez.
 - `tests/test_legacy_scoring.py` eşik, durum, negatif veri ve iki skorun farklılığı için testler içerir (commit `1a0b250c`). Kontrol anında Actions #165 / 39268391099 in_progress, #166 / 39268413739 pending; **başarı henüz doğrulanmadı**.
 - **AÇIK:** CSV kaynak birleştirme, eski rapor şemaları, URL kimlik modeli, 24 saat kararlılık ve gerçek ffprobe eşdeğerliği; modül eklemek 99 workflow davranış eşdeğerliği değildir. Korunan listeler/cron/PR #71/main merge değiştirilmedi.
+
+
+## 19 Ekim 2026 — Eski 24 saat kararlılık kararının salt-okunur eşleştirmesi
+- `madsc/legacy_scoring.py` içinde eski `scripts/birlesik_aday_raporu.py` kararının ayrı saf fonksiyonu eklendi: 24 saat kararlıysa +30, toplam 100 üst sınırı; teknik+kararlı `IBO_VE_KIMLIK_ONAYI_BEKLIYOR`, yalnız teknik `KARARLILIK_BEKLIYOR`, diğer `TEKNIK_DOGRULAMA_BEKLIYOR`; IBO/kullanıcı onayı YOK ve ana listeye ekleme HAYIR. Commit `0afe11a2`.
+- `tests/test_legacy_scoring.py` durum/eşik/yanlış kanıt testleri eklendi; commit `2e6fd368`. Kontrol anında #166 queued, #167 pending, #168 queued: **test başarı sonucu henüz doğrulanmadı**.
+- **AÇIK:** Gerçek 24 saat geçmiş verisini okuma ve bağımsız doğrulama, CSV `YAYIN_URL` join, rapor çıktısı şeması, gerçek ffprobe ve arşiv persistency. Saf fonksiyon yalnız verilen `stable_24h` kanıtını yorumlar; 24 saat izlendi iddiası yok. Korunan listeler/production/cron/PR #71/main merge değişmedi.

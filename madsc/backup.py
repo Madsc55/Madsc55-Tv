@@ -44,3 +44,25 @@ def verify_sandbox_restore(source: Path, restored: Path, names: list[str]) -> di
     valid = compare_copy(source, restored, names)
     return {"sandbox_restore_matches": valid, "files_checked": len(set(names)),
             "production_restore_verified": False, "production_writes": False}
+
+
+def verify_independent_restore(source: Path, backup: Path, restored: Path,
+                               names: list[str]) -> dict:
+    """Compare three pre-existing independent trees; never perform restoration."""
+    if not isinstance(names, list) or not names:
+        raise ValueError("Restore audit requires named files")
+    locations = [path.resolve(strict=True) for path in (source, backup, restored)]
+    if len(set(locations)) != 3:
+        raise ValueError("Source, backup and restored trees must be distinct")
+    if any(a.is_relative_to(b) for a in locations for b in locations if a != b):
+        raise ValueError("Nested trees are not independent")
+    original = snapshot_manifest(source, names)
+    backed_up = snapshot_manifest(backup, names)
+    recovered = snapshot_manifest(restored, names)
+    valid = original["entries"] == backed_up["entries"] == recovered["entries"]
+    return {"independent_sandbox_restore_matches": valid,
+            "files_checked": len(original["entries"]),
+            "backup_verified_against_source": original["entries"] == backed_up["entries"],
+            "restore_verified_against_backup": backed_up["entries"] == recovered["entries"],
+            "external_storage_proven": False, "production_restore_verified": False,
+            "production_writes": False}

@@ -207,3 +207,36 @@ class BackupTests(unittest.TestCase):
             self.assertTrue(result["backup_verified_against_source"])
             self.assertFalse(result["restore_verified_against_backup"])
             self.assertFalse(result["production_restore_verified"])
+
+
+    def test_three_tree_restore_detects_missing_or_changed_nested_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                (root / "nested").mkdir(parents=True)
+                (root / "nested" / "channel.txt").write_bytes(b"same-content")
+            names = ["nested/channel.txt"]
+            good = verify_independent_restore(*roots, names)
+            self.assertTrue(good["independent_sandbox_restore_matches"])
+            self.assertFalse(good["external_storage_proven"])
+            (roots[2] / "nested" / "channel.txt").write_bytes(b"changed")
+            changed = verify_independent_restore(*roots, names)
+            self.assertFalse(changed["restore_verified_against_backup"])
+            self.assertFalse(changed["independent_sandbox_restore_matches"])
+            (roots[2] / "nested" / "channel.txt").unlink()
+            with self.assertRaises((ValueError, FileNotFoundError)):
+                verify_independent_restore(*roots, names)
+
+    def test_three_tree_restore_rejects_symlinked_nested_backup_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                (root / "nested").mkdir(parents=True)
+                (root / "nested" / "channel.txt").write_text("fixture")
+            target = roots[1] / "nested" / "channel.txt"
+            target.unlink()
+            target.symlink_to(roots[0] / "nested" / "channel.txt")
+            with self.assertRaises(ValueError):
+                verify_independent_restore(*roots, ["nested/channel.txt"])

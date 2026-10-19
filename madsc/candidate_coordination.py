@@ -20,6 +20,14 @@ def coordinate(rows: list[dict], probes: dict, attempts: dict,
     if ibo_results is not None and not isinstance(ibo_results, dict):
         raise ValueError("Invalid IBO evidence")
     discovery = classify_candidates(rows)
+    for candidate in discovery["candidates"]:
+        digest = candidate.get("url_sha256")
+        if not isinstance(digest, str) or len(digest) != 64 or any(ch not in "0123456789abcdef" for ch in digest):
+            raise ValueError("Invalid candidate fingerprint")
+    candidate_digests = {candidate["url_sha256"] for candidate in discovery["candidates"]}
+    for mapping in (probes, attempts, ibo_results or {}):
+        if any(not isinstance(key, str) or key not in candidate_digests for key in mapping):
+            raise ValueError("Unknown candidate evidence fingerprint")
     result = []
     for candidate in discovery["candidates"]:
         digest = candidate["url_sha256"]

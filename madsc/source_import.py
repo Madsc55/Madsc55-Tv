@@ -15,7 +15,11 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
         if line.startswith("#EXTINF:"):
             if pending is not None:
                 raise ValueError("Unpaired channel metadata")
+            if "," not in line:
+                raise ValueError("Invalid EXTINF metadata")
             pending = line.rsplit(",", 1)[-1].strip()
+            if not pending:
+                raise ValueError("Empty channel name")
         elif line.startswith("#"):
             continue
         else:

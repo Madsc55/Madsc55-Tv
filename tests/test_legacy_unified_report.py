@@ -56,3 +56,9 @@ class LegacyUnifiedReportTests(unittest.TestCase):
     def test_history_requires_explicit_now(self):
         with self.assertRaises(ValueError):
             legacy_unified_rows([], [], history={})
+
+    def test_duplicate_candidate_url_is_rejected(self):
+        candidate = {"KANAL": "A", "PUAN": "35", "TEKNIK_KANIT": "VIDEO_SES_VAR",
+                     "YAYIN_URL": "https://example.org/live"}
+        with self.assertRaises(ValueError):
+            legacy_unified_rows([candidate, dict(candidate)], [])

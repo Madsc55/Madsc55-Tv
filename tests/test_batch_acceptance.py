@@ -89,3 +89,20 @@ class BatchAcceptanceTests(unittest.TestCase):
             file.write_text("invalid", encoding="utf-8")
             with self.assertRaises(ValueError):
                 collect(file)
+    def test_empty_fixture_check_name_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            paths = {key: self.make_report(d, key) for key in CATEGORIES}
+            path = paths["k2"]
+            data = json.loads(path.read_text(encoding="utf-8"))
+            data["fixture_checks"] = {"": True}
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(Path(d))
+
+    def test_directory_named_as_report_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            paths = {key: self.make_report(d, key) for key in CATEGORIES}
+            paths["k4"].unlink()
+            paths["k4"].mkdir()
+            with self.assertRaises(ValueError):
+                collect(Path(d))

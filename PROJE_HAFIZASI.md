@@ -84,3 +84,6 @@ K3 sure olcum kontrolu commit 91d4236. Actions #12 son kontrolde devam ediyordu.
 
 ## K3 regresyon devri - 19 Ekim 2026
 Actions 12 basarili. K3 regresyon testi d4c8f8d commitinde eklendi. Actions 13 beklemede. Eski depo degismedi.
+
+## 19 Ekim 2026 - K5 sinir testi
+K5 tekrar deneme siniri icin test eklendi: 490fad5. K3 Actions 13 son kontrolde devam ediyor. K5 limit tip kontrolu degisikligi engellendi, uygulanmadi. Sonraki is yeni Actions sonuclarini dogrulamak. Eski depo degismedi.

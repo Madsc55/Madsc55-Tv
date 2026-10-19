@@ -884,3 +884,6 @@ Yeni madsc/legacy_epg_logo.py ve madsc/legacy_retest_390.py ile izole, salt okun
 - 99 YAML, 130 Python, 68 test kaynak envanteri daha once tamamlandi; tekrar baslama. Tam esdegerlik 0/92, gercek runtime guvenlik onayi 0/26. 47% yalnizca tahmini gelistirme puani, uretim hazirligi degil.
 - Oncelik: K1 merkezi kanit entegrasyonu; K2-K3-K5 aday, EPG/logo, tekrar test zinciri; eski-yeni fixture diferansiyel kaniti; gercek restore ve IBO cihaz kabulunu ayri tut.
 - Korunan CALISANLAR/YENILER/YEDEKLER/HEPSI/FAVORILER/EPG/logo/backup, eski salt okunur depo ve PR #71 degistirilmeyecek. Kullanici baglantili degisiklikleri tek toplu paket ve CI olarak istiyor. Kritik bulgular hem bu dosyaya hem SOHBET_DEVIR_NOTU_2026-10-20.md dosyasina kaydedilecek.
+
+## 20 Ekim 2026 — K1 merkezi fixture yazma koruma kaniti paketi
+madsc/core.py K1 execute, madsc/fixture_report_writer.py ile yalnizca gecici dizindeki reports/k1.json yazimini ve CALISANLAR.m3u yaziminin reddini denetler. tests/test_core.py merkezi kanit alanini kontrol eder. Bu yalnizca fixture yazma siniri kanitidir, tum repo/uretim runtime write gate veya 26/26 onay degildir. Son CI bu committen sonra ayrica dogrulanmali. Eski repo, uretim dosyalari ve cron degistirilmedi.

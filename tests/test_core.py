@@ -14,6 +14,10 @@ class IsolationTests(unittest.TestCase):
                 self.assertFalse(result["legacy_workflows_executed"])
                 self.assertFalse(result["checks"]["runtime_rule_evidence"])
                 self.assertFalse(result["checks"]["legacy_behavioral_equivalence"])
+    def test_k1_fixture_report_write_guard_in_batch(self):
+        evidence = execute("k1")
+        self.assertTrue(evidence["fixture_report_write_guard"])
+
     def test_k3_ibo_protection_is_in_batch_report(self):
         evidence = execute("k3")
         self.assertTrue(evidence["ibo_working_survives_technical_failure"])

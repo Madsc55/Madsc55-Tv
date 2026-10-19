@@ -19,6 +19,7 @@ from madsc.legacy_epg_logo import join_pilot
 from madsc.legacy_retest_390 import evaluate_entries, parse_entries
 from madsc.candidate_coordination import coordinate
 from madsc.write_path_audit import audit_write_paths
+from madsc.fixture_report_writer import write_fixture_report
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -32,7 +33,17 @@ def execute(category: str) -> dict:
             before = inspect_playlist(p)
             after = inspect_playlist(p)
             audit = audit_write_paths(["CALISANLAR.m3u", "epg/sample.xml", "reports/fixture.json"])
-            evidence = {"protected_write_paths_identified": audit["blocked"] and len(audit["rejected"]) == 2,
+            safe_report = write_fixture_report(Path(d), "reports/k1.json", '{"isolated":true}')
+            try:
+                write_fixture_report(Path(d), "CALISANLAR.m3u", "blocked")
+                denied = False
+            except PermissionError:
+                denied = True
+            guard_verified = (safe_report["isolated_report_written"]
+                              and not safe_report["production_write_allowed"]
+                              and denied and not (Path(d) / "CALISANLAR.m3u").exists())
+            evidence = {"fixture_report_write_guard": guard_verified,
+                        "protected_write_paths_identified": audit["blocked"] and len(audit["rejected"]) == 2,
                         "audit_does_not_claim_runtime_gate": not audit["runtime_gate_enforced"],
                         "valid_playlist": before["channel_count"] == 1,
                         "no_playlist_mutation": original == p.read_bytes(),

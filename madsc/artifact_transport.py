@@ -28,6 +28,8 @@ def main():
     else:
         if args.path.is_symlink() or not args.path.is_file():
             raise ValueError("Invalid evidence file")
+        if args.path.stat().st_size > 16 * 1024 * 1024:
+            raise ValueError("Evidence exceeds 16 MiB safety limit")
         envelope = json.loads(args.path.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
         discovery = unpack(envelope, args.run_id, args.commit_sha)
         result = assess_candidates(discovery, {})

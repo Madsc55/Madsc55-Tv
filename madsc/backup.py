@@ -7,7 +7,13 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     base = root.resolve(strict=True)
     entries = []
     for name in sorted(set(paths)):
-        candidate = (base / name).resolve(strict=True)
+        requested = Path(name)
+        if requested.is_absolute() or ".." in requested.parts:
+            raise ValueError("Unsafe backup source path")
+        candidate = base / requested
+        if candidate.is_symlink():
+            raise ValueError("Symlink backup source is not permitted")
+        candidate = candidate.resolve(strict=True)
         if not candidate.is_relative_to(base) or not candidate.is_file():
             raise ValueError("Backup source must be a regular file within root")
         raw = candidate.read_bytes()

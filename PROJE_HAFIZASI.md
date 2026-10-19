@@ -337,3 +337,10 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `madsc/legacy_report_export.py` açıkça verilen iki CSV girdisini okuyup eski `BIRLESIK_ADAY_ONAY_RAPORU.csv` (UTF-8 BOM, 10 alan) ve `BIRLESIK_ADAY_OZET.json` raporlarını yalnız yeni ve boş **depo dışındaki** çıktı dizinine yazar; mevcut dizin üzerine yazmayı, repo içine yazmayı, eksik CSV başlığını reddeder. Commit `6eab20bd`. `tests/test_legacy_report_export.py` çıktı ve fail-closed durumlarını sınar; commit `f5365fc3`.
 - Actions #171 / 39269514254 queued, #172 / 39269544435 pending; bu yeni değişikliklerin CI başarısı henüz doğrulanmadı.
 - **AÇIK:** 24 saat kararlılık ölçümü yalnız CSV'de gelen `EVET` değerini yorumlar; bağımsız geçmiş doğrulaması, gerçek ffprobe, gerçek üretim iş akışı/artefakt yükleme ve 99 eski workflow eşdeğerliği kanıtlanmadı. Korunan listeler, eski depo, cron, PR #71 ve main merge değişmedi.
+
+
+## 19 Ekim 2026 — Gerçek geçmiş zaman damgasıyla 24 saat kararlılık kararının kontrolü
+- Actions #171 / 39269514254 SUCCESS, #172 / 39269544435 SUCCESS.
+- Eski `scripts/kanal_kararlilik_takip.py` okundu. Eski sözleşme: zaman damgalı bağımsız VIDEO_SES_VAR ölçümleri arasında en az 24 saat; son ölçüm en fazla 24 saat eski; tüm son 7 günlük gözlemler başarılı; aynı zamanlı çelişkili durum reddedilir; tekrarlanan zaman damgası yeni gözlem sayılmaz; gelecek/naive zamanlar reddedilir; IBO/liste onayı verilmez.
+- Yeni `madsc/legacy_stability.py` bu kararın salt-okunur saf değerlendirmesini uygular (commit `1ac34655`); `tests/test_legacy_stability.py` tekrar, hata, bayat veri, kısa aralık ve geçersiz zaman damgası testlerini içerir (commit `e2ab03bb`). Actions #173 / 39270210037 queued, #174 / 39270240380 pending; **CI sonucu henüz doğrulanmadı**.
+- **AÇIK:** gerçek medya ölçümlerini toplamak, kalıcı geçmişi yazıp güvenle restore etmek, 24 saat boyunca fiilen izlemek ve rapor CSV ile otomatik bağlantı. Şu anda yalnız sağlanan geçmiş kanıtı değerlendirilir; canlı ağ/IBO cihaz testi yapılmadı. Korunan listeler/cron/main/PR #71/legacy repo değişmedi.

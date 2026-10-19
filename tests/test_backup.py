@@ -34,6 +34,15 @@ class BackupTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 snapshot_manifest(root, ["alias.txt"])
 
+    def test_intermediate_symlink_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "actual").mkdir()
+            (root / "actual" / "file.txt").write_text("data")
+            (root / "linked").symlink_to(root / "actual", target_is_directory=True)
+            with self.assertRaises(ValueError):
+                snapshot_manifest(root, ["linked/file.txt"])
+
     def test_escape_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaises((ValueError, FileNotFoundError)):

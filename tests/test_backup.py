@@ -14,6 +14,13 @@ class BackupTests(unittest.TestCase):
             self.assertFalse(report["restore_verified"])
             (root/"a.txt").write_text("changed")
             self.assertFalse(verify_manifest(root, report))
+    def test_empty_manifest_has_no_verified_restore(self):
+        with tempfile.TemporaryDirectory() as directory:
+            result = snapshot_manifest(Path(directory), [])
+            self.assertEqual(result["entries"], [])
+            self.assertFalse(result["external_backup_verified"])
+            self.assertFalse(result["restore_verified"])
+
     def test_escape_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaises((ValueError, FileNotFoundError)):

@@ -93,3 +93,24 @@ class CandidateCoordinationTests(unittest.TestCase):
         result = coordinate(self.rows + self.rows, {}, {})
         self.assertEqual(len(result["candidates"]), 1)
         self.assertEqual(len(result["duplicates"]), 1)
+    def test_ibo_working_with_failed_probe_prioritizes_preservation(self):
+        failed = {"url_sha256": self.digest, "http_status": 503,
+                  "video": False, "audio": False, "duration_seconds": 0}
+        report = coordinate(self.rows, {self.digest: failed}, {self.digest: 3},
+                            epg_ids=set(), logo_ids=set(),
+                            ibo_results={self.digest: "WORKING"})
+        item = report["candidates"][0]
+        self.assertTrue(item["protected_working"])
+        self.assertTrue(item["hold"])
+        self.assertEqual(item["next_action"], "PRESERVE_IBO_WORKING_AND_REVIEW")
+        self.assertFalse(item["delete_allowed"])
+        self.assertFalse(item["production_change_allowed"])
+
+    def test_normalized_tvg_id_used_for_epg_and_logo(self):
+        rows = [{"name": "Sample", "url": "https://example.org/live.m3u8",
+                 "tvg_id": " sample.tv "}]
+        report = coordinate(rows, {}, {}, {"sample.tv"}, {"sample.tv"})
+        item = report["candidates"][0]
+        self.assertEqual(item["tvg_id"], "sample.tv")
+        self.assertTrue(item["epg_match"])
+        self.assertTrue(item["logo_match"])

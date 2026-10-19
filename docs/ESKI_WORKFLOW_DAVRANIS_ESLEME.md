@@ -74,3 +74,40 @@ Kaynak salt-okunur dal: `Madsc55/madsc-tv@madsc/bes-sistem-toplu-birlestirme`. B
 **Kritik:** 8 IBO YAML'ında `contents:write`, `CALISANLAR.m3u` git staging, `protected_write_gate.py` ve `git push origin HEAD:main` vardır. Gate'in varlığı **gerçek güvenlik ihlali kanıtı da güvenli yazma onayı da değildir**; scriptlerin tüm dolaylı yazma yolları ve gate enforcement ayrıca incelenecek. Kullanıcının korunan liste değişmezliği kuralı nedeniyle yeni K1–K5'e bu yazma davranışları taşınamaz. IBO cihaz testi kullanıcı tarafından yapılacak.
 
 **Toplam:** 40/99 YAML ilk davranış/izin incelemesi; 59 dosya açık. 92/99 farkı çözülmedi, 92/92 kabul verilmedi.
+
+
+## Beşinci grup — numaralı test-13..39 (27 YAML)
+
+Bu 27 dosyanın her birinin eski YAML kaynağı açılarak tetik, `permissions` ve adım isimleri incelendi. Tümü `contents:read` kullanıyor; `test-31` yalnız dispatch, diğerleri push+dispatch. **Önemli:** `test-23-live-stream` içindeki canlı erişim testi adı, yeni K3'ün gerçek canlı medya ölçümünü yaptığına kanıt değildir.
+
+| Kaynak YAML | Tetik/izin | Odak | Hedef | Kabul |
+|---|---|---|---|---|
+| `test-13-kaynak-degisiklik.yml` | push/dispatch; contents:read | erken kaynak/kararlılık/entegrasyon regresyonu | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-14-istikrar.yml` | push/dispatch; contents:read | erken kaynak/kararlılık/entegrasyon regresyonu | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-15-logo-epg.yml` | push/dispatch; contents:read | erken kaynak/kararlılık/entegrasyon regresyonu | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-16-workflow-safety.yml` | push/dispatch; contents:read | erken kaynak/kararlılık/entegrasyon regresyonu | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-17-candidate-summary.yml` | push/dispatch; contents:read | erken kaynak/kararlılık/entegrasyon regresyonu | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-18-change-simulation.yml` | push/dispatch; contents:read | erken kaynak/kararlılık/entegrasyon regresyonu | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-19-integration.yml` | push/dispatch; contents:read | erken kaynak/kararlılık/entegrasyon regresyonu | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-20-full-integration.yml` | push/dispatch; contents:read | erken kaynak/kararlılık/entegrasyon regresyonu | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-21-functional-e2e.yml` | push/dispatch; contents:read | erken kaynak/kararlılık/entegrasyon regresyonu | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-22-real-playlist.yml` | push/dispatch; contents:read | gerçek liste/canlı erişim/proje salt-okunur denetim | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-23-live-stream.yml` | push/dispatch; contents:read | gerçek liste/canlı erişim/proje salt-okunur denetim | K1/K5+K3 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-24-system-audit.yml` | push/dispatch; contents:read | gerçek liste/canlı erişim/proje salt-okunur denetim | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-25-full-project-readonly.yml` | push/dispatch; contents:read | gerçek liste/canlı erişim/proje salt-okunur denetim | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-26-automation-safety.yml` | push/dispatch; contents:read | otomasyon izinleri/aday onay/yazma riski | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-27-pipeline-contract.yml` | push/dispatch; contents:read | otomasyon izinleri/aday onay/yazma riski | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-28-approval-gate.yml` | push/dispatch; contents:read | otomasyon izinleri/aday onay/yazma riski | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-29-write-path-audit.yml` | push/dispatch; contents:read | otomasyon izinleri/aday onay/yazma riski | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-30-write-risk-report.yml` | push/dispatch; contents:read | otomasyon izinleri/aday onay/yazma riski | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-31-protected-write-gate.yml` | dispatch; contents:read | korunan yazma kapısı ve regresyon | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-32-unapproved-write-regression.yml` | push/dispatch; contents:read | korunan yazma kapısı ve regresyon | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-33-all-write-paths.yml` | push/dispatch; contents:read | korunan yazma kapısı ve regresyon | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-34-protected-write-regression.yml` | push/dispatch; contents:read | korunan yazma kapısı ve regresyon | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-35-remaining-write-gate.yml` | push/dispatch; contents:read | korunan yazma kapısı ve regresyon | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-36-system-integration-audit.yml` | push/dispatch; contents:read | sistem/dolaylı yazma denetimi | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-37-indirect-write-audit.yml` | push/dispatch; contents:read | sistem/dolaylı yazma denetimi | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-38-audit-selftest.yml` | push/dispatch; contents:read | sistem/dolaylı yazma denetimi | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+| `test-39-protected-playlist.yml` | push/dispatch; contents:read | korunan liste bütünlüğü | K1/K5 | yalnız kaynak testi; üretim kanıtı değil |
+
+**Toplam:** 67/99 kaynak YAML ilk eşleme, **32 dosya** açık. Numaralı test workflow'ları da gerçek YAML dosyasıdır; 92/99 farkını çözmek için bunları gerekçesiz kapsam dışına atmayacağız. 92/92 davranışsal kabul hâlâ yok.

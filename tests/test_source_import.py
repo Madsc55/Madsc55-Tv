@@ -23,6 +23,14 @@ class SourceImportTests(unittest.TestCase):
             self.assertEqual(len(result["candidates"]), 1)
             self.assertFalse(result["production_playlist_modified"])
 
+    def test_invalid_candidate_url_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u"
+            p.write_text("#EXTM3U\n#EXTINF:-1,One\nfile:///local\n", encoding="utf-8")
+            result = extract_candidates(p)
+            self.assertEqual(len(result["candidates"]), 0)
+            self.assertEqual(len(result["rejected"]), 1)
+
     def test_missing_url_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"

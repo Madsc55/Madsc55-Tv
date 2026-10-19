@@ -51,3 +51,6 @@ Yeni ozel repo .github/workflows/madsc-05-bakim.yml dosyasinin yalniz name basli
 
 ## 19 Ekim 2026 - K5 kabul izolasyon kaniti
 madsc/batch_acceptance.py her K1-K5 raporunda checks.isolation=true ariyor ve checks tipini denetliyor. Kod commit: 8374f137aaddf18970c3fe644dd0aaaac2545d1e. Gercek GitHub Actions calistirma kaniti bekleniyor. Eski depo degismedi; cron ve otomatik uretim islemleri acilmadi.
+
+## 19 Ekim 2026 - Kullanici onayli otomatik salt okunur test tetigi
+Kullanici onayiyla yalniz yeni Madsc55-Tv deposunun .github/workflows/madsc-05-bakim.yml dosyasina push (main; madsc/**, tests/**, ilgili YAML) eklendi. workflow_dispatch korunuyor. K1-K5 needs zinciri, contents: read, persist-credentials: false, tek regresyon gecisi ve salt okunur raporlar aynen korundu. Kod commit d59286332a9f90d71e4e141424656a7d3c131c6e. Hafiza dosyasi degisimi tetik kapsaminda degil, gereksiz run olusturmaz. Cron/uretim yazma/eski 92 workflow degisimi yok. Gercek Actions run/job/artifact sonucunu ayrica dogrulamak gerekiyor; 26/26 ve 92/92 kanitlanmis sayilmaz.

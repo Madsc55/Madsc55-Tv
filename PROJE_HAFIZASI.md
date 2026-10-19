@@ -102,3 +102,6 @@ Actions 17, 19 ve 20 success; 18 cancelled, basarili sayilmadi. K2 aday satirlar
 
 ## 19 Ekim 2026 - Actions 18 aciklama ve K2 duzeltmesi
 Actions #18 (39183571815) completed/cancelled, hic job kaydi yok; kesin iptal nedeni gorunmedi. Tekrar kuyrukta degil. Daha yeni #21 (39216738946) success. K2 EXTINF ad ve ayirac dogrulamasi 5aab945 ile, regresyon testi 4beb2c9 ile eklendi. Bu iki commitin Actions sonucu ayrica dogrulanmali. Eski depo degismedi; canli yayinlar etkilenmedi.
+
+## 19 Ekim 2026 - K2 devir
+Actions 22, 23 ve 24 basarili. K2 kanal adi tur kontrolu 11905cd ile eklendi. Eski depo degismedi. Sonraki is besli sistem toplu islev paketleri.

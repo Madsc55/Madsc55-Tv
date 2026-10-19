@@ -64,6 +64,8 @@ def evaluate_ffprobe_json(payload: dict, url_sha256: str, http_status: int = 200
         duration = float(fmt.get("duration", 0))
     except (TypeError, ValueError, OverflowError) as exc:
         raise ValueError("Invalid ffprobe duration") from exc
+    if not math.isfinite(duration) or duration < 0:
+        raise ValueError("Invalid ffprobe duration")
     report = evaluate_probe({"url_sha256": url_sha256, "http_status": http_status,
                              "video": video, "audio": audio, "duration_seconds": duration})
     return {**report, "ffprobe_json_parsed": True,

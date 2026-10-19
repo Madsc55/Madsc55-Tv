@@ -91,3 +91,10 @@ class BackupTests(unittest.TestCase):
             (Path(b) / "sample.txt").write_text("original")
             with self.assertRaises(ValueError):
                 verify_independent_restore(Path(a), Path(a), Path(b), ["sample.txt"])
+
+    def test_independent_restore_rejects_duplicate_names(self):
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b, tempfile.TemporaryDirectory() as c:
+            for root in (a, b, c):
+                (Path(root) / "sample.txt").write_text("fixture")
+            with self.assertRaises(ValueError):
+                verify_independent_restore(Path(a), Path(b), Path(c), ["sample.txt", "sample.txt"])

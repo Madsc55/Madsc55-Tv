@@ -32,3 +32,23 @@ Kaynak salt-okunur dal: `Madsc55/madsc-tv@madsc/bes-sistem-toplu-birlestirme`. B
 | `epg-pages.yml` | dispatch + başarılı `EPG Günlük Güncelleme` workflow_run(main); contents:read, **pages:write, id-token:write** | EPG XML doğrula, `_site` hazırla, Pages dağıtımı; başarılı eski workflow sonucuna bağlı | K3+K5; yeni Pages dağıtımı yetkilendirilmedi, IBO EPG cihaz uyumu kanıtlanmadı |
 
 **İkinci grup sonucu:** 16/99 eski YAML dosyasının kaynak içeriği ayrıntılı incelendi; **83 dosya** ayrıntılı inceleme bekliyor. Bu bir davranış eşdeğerliği onayı değil. İzinli eski cron, push ve Pages işlemleri **yeni depoda açılmadı**. Eski workflow'lar kapatılmadı.
+
+
+## Üçüncü grup — 12 eski YAML (kaynak tetik/izin/komut taraması)
+
+| Workflow | Tetik/izin | Gözlenen iş | K hedefi | Açık durum |
+|---|---|---|---|---|
+| `madsc-ana-liste-saglik.yml` | dispatch, schedule; contents:read | ana_liste_saglik.py --batch-size 50 --timeout 15, ffmpeg, unittest, rapor artefaktı | K3→K5 | gerçek 50'li saha ölçümü |
+| `madsc-arsiv-yedek-aktarim.yml` | dispatch; contents:read | yalnız uyarı; otomatik korunan liste aktarımı kapalı | K4+K1 | bilerek kapalı işlev |
+| `madsc-aylik-merkezi-denetim.yml` | dispatch, push, schedule; contents:read, actions:read | workflow envanteri, logo/EPG/IBO, restore, 8/18/6 alan, çoklu rapor ve regresyon | K1–K5 | toplu gerçek kabul |
+| `madsc-cuma-ana-liste-denetimi.yml` | dispatch; contents:read | haftalık ana liste denetimi ve cuma uyarı özeti; JSON artifact | K3→K5 | periyodik denetim kanıtı |
+| `madsc-documentation-check.yml` | dispatch; contents:read | belge kontrol adımı | K1+K5 | belge kapsam testi |
+| `madsc-genis-kaynak-kontrol.yml` | dispatch; contents:write, actions:write | geniş kaynak taraması, artefakt, rapor adımları; izinler yüksek | K1+K2 | YÜKSEK: gerçek yazma yolları incelenmeli |
+| `madsc-hizli-on-kontrol.yml` | dispatch, push; contents:read | cutover readiness, 92 workflow audit, preflight, regresyon ve rapor | K1+K5 | gerçek cutover kabulü |
+| `madsc-otomatik-devam.yml` | dispatch; contents:read | otomatik devam bilgilendirme/uyarı adımı | K5 | üretim otomasyonu varsayılmayacak |
+| `madsc-rule24-test.yml` | push, dispatch; contents:read | workflow_failure_gate unittest | K1 | gerçek hata kapısı uygulaması |
+| `madsc-sistem-saglik-denetimi.yml` | dispatch, schedule; contents:read | sistem sağlık denetimi, unittest ve rapor artefaktı | K1+K3+K5 | gerçek planlı koşu |
+| `madsc-son-kontrol.yml` | dispatch, schedule, workflow_run; contents:write, actions:write | failure gate, final_validation, ffmpeg, rapor; onaysız ana liste değiştirmeme uyarısı | K1+K3+K5 | YÜKSEK: write izinleri ve tüm yazma adımları ayrıca incelenecek |
+| `madsc-toplu-butunluk.yml` | dispatch, push; contents:read | bulk_integrity_gate.py ve JSON artifact | K1+K5 | gerçek bütünlük kabulü |
+
+**Toplam:** 28/99 kaynak YAML gözden geçirildi, 71 dosya açık. Bu üçüncü grup komut/izin odaklı ilk taramadır; özellikle `madsc-genis-kaynak-kontrol` ve `madsc-son-kontrol` içindeki tüm shell yazma yollarının satır satır denetimi ayrıca gereklidir. Yüksek izinli eski workflow'lar yeni sisteme taşınmadı.

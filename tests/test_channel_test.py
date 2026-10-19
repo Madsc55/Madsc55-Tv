@@ -1,5 +1,5 @@
 import unittest
-from madsc.channel_test import evaluate_probe, evaluate_repeated_probes
+from madsc.channel_test import evaluate_probe, evaluate_repeated_probes, evaluate_ffprobe_json
 
 class ChannelTests(unittest.TestCase):
     def test_success_is_not_device_approval(self):
@@ -35,3 +35,16 @@ class ChannelTests(unittest.TestCase):
              "video": True, "audio": True, "duration_seconds": 40}
         with self.assertRaises(ValueError):
             evaluate_repeated_probes([a, {**a, "url_sha256": "b" * 64}])
+
+    def test_ffprobe_json_parser_is_conservative(self):
+        payload = {"streams": [{"codec_type": "video"}, {"codec_type": "audio"}],
+                   "format": {"duration": "42.5"}}
+        result = evaluate_ffprobe_json(payload, "a" * 64)
+        self.assertEqual(result["technical_status"], "PRELIMINARY_PASS")
+        self.assertFalse(result["stream_continuity_verified"])
+        self.assertFalse(result["live_probe_executed_by_this_function"])
+        self.assertFalse(result["production_change_allowed"])
+
+    def test_ffprobe_json_rejects_bad_duration(self):
+        with self.assertRaises(ValueError):
+            evaluate_ffprobe_json({"streams": [], "format": {"duration": "NaN"}}, "a" * 64)

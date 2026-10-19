@@ -73,6 +73,22 @@ class CandidateCoordinationTests(unittest.TestCase):
         self.assertFalse(report["candidates"][0]["hold"])
         self.assertFalse(report["candidates"][0]["production_change_allowed"])
 
+    def test_unknown_ibo_keeps_full_score_candidate_held(self):
+        probe = {"url_sha256": self.digest, "http_status": 200,
+                 "video": True, "audio": True, "duration_seconds": 40}
+        rows = [{"name": "Sample", "url": "https://example.org/live.m3u8", "tvg_id": "sample.tv"}]
+        report = coordinate(rows, {self.digest: probe}, {}, {"sample.tv"}, {"sample.tv"})
+        item = report["candidates"][0]
+        self.assertEqual(item["score"], 80)
+        self.assertTrue(item["hold"])
+        self.assertTrue(item["ibo_review_required"])
+        self.assertEqual(item["next_action"], "MANUAL_IBO_REVIEW")
+
+    def test_retry_halt_overrides_metadata_and_ibo_review(self):
+        report = coordinate(self.rows, {}, {self.digest: 3}, set(), set())
+        self.assertTrue(report["candidates"][0]["hold"])
+        self.assertEqual(report["candidates"][0]["next_action"], "HALT_AND_REPORT")
+
     def test_duplicate(self):
         result = coordinate(self.rows + self.rows, {}, {})
         self.assertEqual(len(result["candidates"]), 1)

@@ -15,6 +15,8 @@ from madsc.playlist import compare_snapshots, inspect_playlist
 from madsc.source_import import extract_candidates
 from madsc.handoff import assess_candidates
 from madsc.epg_inventory import inspect_xmltv
+from madsc.legacy_epg_logo import join_pilot
+from madsc.legacy_retest_390 import evaluate_entries, parse_entries
 from madsc.candidate_coordination import coordinate
 from madsc.write_path_audit import audit_write_paths
 
@@ -95,6 +97,30 @@ def execute(category: str) -> dict:
                 and not decision["ibo_device_verified"] and decision["protected_working"])
             evidence["ibo_fixture_not_live_device_evidence"] = (
                 not protected["network_probed"] and not protected["production_playlist_modified"])
+            pilot = Path(d) / "pilot.xml"
+            pilot.write_text('<tv><channel id="fixture.tv"/><programme channel="fixture.tv"/></tv>', encoding="utf-8")
+            pilot_original = pilot.read_bytes()
+            joined = join_pilot(
+                [{"channel": "Fixture", "channel_id": "fixture.tv", "stream_sha256": digest}],
+                [{"stream_sha256": digest, "status": "PREPARED", "visual_match": "NOT_VERIFIED"}], pilot)
+            item = joined["candidate_results"][0]
+            evidence["legacy_epg_logo_pilot_join"] = (
+                item["epg_pilot_status"] == "PILOT_MATCH_WITH_PROGRAMMES"
+                and item["logo_status"] == "PREPARED"
+                and not item["playlist_approved"] and not item["ready_for_playlist"]
+                and not joined["production_ready"] and pilot_original == pilot.read_bytes())
+            from types import SimpleNamespace
+            def offline_runner(args, **kwargs):
+                return SimpleNamespace(returncode=0, stderr="",
+                                       stdout="video\\naudio\\n" if args[0] == "ffprobe" else "")
+            retest = evaluate_entries(parse_entries(
+                '#EXTM3U\\n#EXTINF:-1,Fixture\\nhttps://example.invalid/fixture\\n'.replace('\\n', '\n')),
+                runner=offline_runner, workers=2)
+            evidence["legacy_390_offline_decode_contract"] = (
+                retest["technical_pass_count"] == 1
+                and "TEKNIK_VIDEO_SES_20SN" in retest["csv_text"]
+                and not retest["identity_verified"] and not retest["production_ready"]
+                and not retest["production_writes"])
 
     elif category == "k4":
         with TemporaryDirectory() as d:

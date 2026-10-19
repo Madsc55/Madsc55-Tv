@@ -20,6 +20,11 @@ class IsolationTests(unittest.TestCase):
         self.assertTrue(evidence["ibo_fixture_not_live_device_evidence"])
         self.assertTrue(evidence["ibo_report_not_device_verified"])
 
+    def test_k3_legacy_epg_logo_and_retest_in_batch(self):
+        evidence = execute("k3")
+        self.assertTrue(evidence["legacy_epg_logo_pilot_join"])
+        self.assertTrue(evidence["legacy_390_offline_decode_contract"])
+
     def test_k4_independent_restore_stays_fixture_only(self):
         evidence = execute("k4")
         self.assertTrue(evidence["three_tree_restore_fixture"])

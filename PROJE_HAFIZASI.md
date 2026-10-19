@@ -872,3 +872,6 @@ Eski akilli aday puanlama skor vektorleri tests/test_legacy_source_score_vectors
 
 ## 20 Ekim 2026 - Toplu is ve test karari
 Kullanici karari: birbiriyle bagli tum kod, fixture, test, K1-K5 entegrasyon ve kanit belgeleri ayni toplu degisiklik paketi icinde ele alinacak. Her dosyadan sonra commit veya Actions calistirmak yerine, hazirlik ve yerel dogrulama tamamlaninca tek commit ve tek K1-K5 CI tercih edilecek. Kapsam: aday puanlama diferansiyeli, logo/EPG pilotu, 390 tekrar testi uyumlulugu ve K1-K5 kanit zinciri. Hatalar ayni paket icinde duzeltilecek. Korunan playlist, EPG, logo, yedek ve cihaz verilerine yazma yok; eski depo salt okunur. 92/92 ve 26/26 onayi halen 0.
+
+## 20 Ekim 2026 — K3 eski EPG/logo ve 390 tekrar testi entegrasyonu
+Yeni madsc/legacy_epg_logo.py ve madsc/legacy_retest_390.py ile izole, salt okunur eski davranis sozlesmeleri eklendi. tests/test_legacy_k3_compatibility.py ve Actions #39334663810 SUCCESS (SHA 293bf819) ile temel offline regresyonlar gecti. Sonraki toplu pakette madsc/core.py K3 kanit raporuna XMLTV pilotu, logo SHA birlestirme, 20 sn ffmpeg sozlesmesi ve otomatik onay engeli eklendi; tests/test_core.py bu alanlari denetler. Bu son paketin CI sonucu henuz dogrulanmadi. Ag/canli ffprobe, 390 gercek kanal, 5 kanallik gercek pilot, IBO cihaz ve 92/92-26/26 uretim kabulu degildir. Korunan dosyalara yazma yok.

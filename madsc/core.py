@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from madsc.backup import snapshot_manifest, verify_manifest
+from madsc.backup import snapshot_manifest, verify_manifest, compare_copy
 from madsc.channel_test import evaluate_probe
 from madsc.discovery import classify_candidates
 from madsc.dependencies import validate_batch, plan_task
@@ -83,7 +83,11 @@ def execute(category: str) -> dict:
             p = Path(d) / "sample.txt"
             p.write_text("fixture", encoding="utf-8")
             manifest = snapshot_manifest(Path(d), ["sample.txt"])
-            evidence = {"manifest_integrity": verify_manifest(Path(d), manifest),
+            with TemporaryDirectory() as copy_dir:
+                (Path(copy_dir) / "sample.txt").write_bytes(p.read_bytes())
+                copy_ok = compare_copy(Path(d), Path(copy_dir), ["sample.txt"])
+            evidence = {"sandbox_copy_integrity": copy_ok,
+                        "manifest_integrity": verify_manifest(Path(d), manifest),
                         "external_backup_not_claimed": not manifest["external_backup_verified"],
                         "restore_not_claimed": not manifest["restore_verified"]}
     elif category == "k5":

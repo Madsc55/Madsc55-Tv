@@ -64,6 +64,19 @@ def execute(category: str) -> dict:
             evidence["preliminary_not_approved"] = (handoff["assessed"][0]["technical_status"] == "PRELIMINARY_PASS"
                 and not handoff["assessed"][0]["production_change_allowed"])
             evidence["handoff_read_only"] = original == p.read_bytes() and not handoff["production_playlist_modified"]
+            failed = {"url_sha256": digest, "http_status": 503,
+                      "video": False, "audio": False, "duration_seconds": 0}
+            protected = assess_candidates(discovery, {digest: failed}, {digest: "WORKING"})
+            decision = protected["assessed"][0]
+            evidence["ibo_working_survives_technical_failure"] = (
+                decision["technical_status"] == "NEEDS_REVIEW"
+                and decision["ibo_result"] == "WORKING"
+                and decision["protected_working"]
+                and not decision["delete_allowed"]
+                and not decision["production_change_allowed"])
+            evidence["ibo_fixture_not_live_device_evidence"] = (
+                not protected["network_probed"] and not protected["production_playlist_modified"])
+
     elif category == "k4":
         with TemporaryDirectory() as d:
             p = Path(d) / "sample.txt"

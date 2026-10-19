@@ -62,3 +62,14 @@ class LegacyUnifiedReportTests(unittest.TestCase):
                      "YAYIN_URL": "https://example.org/live"}
         with self.assertRaises(ValueError):
             legacy_unified_rows([candidate, dict(candidate)], [])
+
+    def test_malformed_stability_claim_and_history_mapping_rejected(self):
+        url = "https://example.org/live"
+        scores = [{"KANAL": "A", "PUAN": "35", "TEKNIK_KANIT": "VIDEO_SES_VAR", "YAYIN_URL": url}]
+        for value in ("UNKNOWN", "YES", "", None):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                legacy_unified_rows(scores, [{"YAYIN_URL": url, "24_SAAT_KARARLI": value}])
+        now = datetime(2026, 10, 19, 12, tzinfo=timezone.utc)
+        for history in ({url: "not-a-list"}, {"": []}, {12: []}):
+            with self.subTest(history=history), self.assertRaises(ValueError):
+                legacy_unified_rows(scores, [], history=history, now=now)

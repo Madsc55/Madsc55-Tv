@@ -48,3 +48,25 @@ class ChannelTests(unittest.TestCase):
     def test_ffprobe_json_rejects_bad_duration(self):
         with self.assertRaises(ValueError):
             evaluate_ffprobe_json({"streams": [], "format": {"duration": "NaN"}}, "a" * 64)
+
+
+    def test_ffprobe_streams_missing_audio_require_review(self):
+        payload = {"streams": [{"codec_type": "video"}], "format": {"duration": "65"}}
+        result = evaluate_ffprobe_json(payload, "a" * 64)
+        self.assertEqual(result["technical_status"], "NEEDS_REVIEW")
+        self.assertFalse(result["production_change_allowed"])
+        self.assertFalse(result["ibo_device_verified"])
+
+    def test_ffprobe_malformed_streams_fail_closed(self):
+        for streams in (None, {}, [None], ["video"]):
+            with self.subTest(streams=streams), self.assertRaises(ValueError):
+                evaluate_ffprobe_json({"streams": streams}, "a" * 64)
+
+    def test_repeated_probe_with_one_failure_is_not_stable(self):
+        passing = {"url_sha256": "a" * 64, "http_status": 200,
+                   "video": True, "audio": True, "duration_seconds": 40}
+        failed = {**passing, "http_status": 503}
+        result = evaluate_repeated_probes([passing, failed])
+        self.assertFalse(result["stable_preliminary"])
+        self.assertEqual(result["preliminary_passes"], 1)
+        self.assertFalse(result["actual_network_measurements_verified"])

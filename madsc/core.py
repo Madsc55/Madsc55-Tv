@@ -134,7 +134,17 @@ def execute(category: str) -> dict:
                               "video": True, "audio": True, "duration_seconds": 40}},
             {}, {"fixture.tv"}, {"fixture.tv"})
         candidate_item = candidate_report["candidates"][0]
-        evidence = {"candidate_k2_k3_k5_join": candidate_item["score"] == 80 and candidate_item["hold"] and candidate_item["ibo_review_required"],
+        handoff_report = assess_candidates(classify_candidates(fixture_rows),
+            {fixture_digest: {"url_sha256": fixture_digest, "http_status": 200,
+                              "video": True, "audio": True, "duration_seconds": 40}})
+        handoff_item = handoff_report["assessed"][0]
+        evidence = {"candidate_k2_k3_k5_consistent": (
+                        handoff_item["url_sha256"] == candidate_item["url_sha256"]
+                        and handoff_item["technical_status"] == candidate_item["technical_status"]
+                        and handoff_item["tvg_id"] == candidate_item["tvg_id"]
+                        and not handoff_item["production_change_allowed"]
+                        and not handoff_report["production_playlist_modified"]),
+                    "candidate_k2_k3_k5_join": candidate_item["score"] == 80 and candidate_item["hold"] and candidate_item["ibo_review_required"],
                     "candidate_metadata_counts": candidate_report["epg_matched"] == 1 and candidate_report["logo_matched"] == 1,
                     "candidate_report_read_only": candidate_report["production_writes"] is False and candidate_report["production_ready"] is False,
                     "batch_failure_summary": not summary["requires_review"] and not summary["failed_categories"],

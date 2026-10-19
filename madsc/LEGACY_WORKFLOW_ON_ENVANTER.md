@@ -111,3 +111,14 @@ Kaynak: `Madsc55/madsc-tv` dal `madsc/bes-sistem-toplu-birlestirme`, GitHub Cont
 - Her YAML icin tetik (push, schedule, dispatch, workflow_run), islenen komutlar, yazma yetkileri, artefaktlar ve bagimliliklar tek tek incelenecek.
 - 92 ile 99 arasindaki sayim farki aciklanacak.
 - Yeni K1-K5 icinde gercek gorev karsiligi test edilmeden eski otomasyon devre disi birakilmayacak.
+
+## Dogrulanan kritik tetik ve bagimliliklar
+
+| Eski dosya | Tetik | Izin / cikti | Besli gecis riski |
+|---|---|---|---|
+| `epg-gunluk.yml` | `schedule 25 3 * * *`, `workflow_dispatch` | `contents: write`; `scripts/build_epg.py`, `scripts/build_ibo_epg_test.py`, `scripts/epg_tv_readiness.py`; korumali EPG commit/push | K3 XMLTV envanteri **EPG uretiminin karsiligi degil**; yayin zinciri tasinmadi |
+| `epg-pages.yml` | `workflow_run` basarili EPG gunluk ve `workflow_dispatch` | `pages: write`, `id-token: write`; Pages deploy ve yayindaki XML hash kontrolu | Yeni besli workflow Pages deploy etmiyor; bagimlilik acik |
+| `vod-guncelle.yml` | `schedule 17 7 * * *`, `workflow_dispatch` | `contents: write`; `scripts/vod_guncelle.py`; VOD metadata commit/push | K5 raporlama VOD guncelleme yerine gecmez |
+| `madsc-05-genel-bakim.yml` | `schedule 30 1 * * *`, `workflow_dispatch`, secili `push` | Genis kaynak tarama girdisi ve eski besli kategori bagimliliklari | Yeni besli salt okunur workflow zamanlamasiz; canli esdegerlik yok |
+
+Bu dort dosyanin tetik ve komutlari **dogrudan YAML iceriginden** okundu; diger satirlarin tam incelemesi bekliyor. Eski workflow'lar devre disi birakilmadi.

@@ -47,6 +47,12 @@ class HandoffTests(unittest.TestCase):
             with self.subTest(discovery=invalid), self.assertRaises(ValueError):
                 assess_candidates(invalid, {})
 
+    def test_invalid_probe_record_fails_closed(self):
+        discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
+        digest = discovery["candidates"][0]["url_sha256"]
+        with self.assertRaises(ValueError):
+            assess_candidates(discovery, {digest: []})
+
     def test_invalid_ibo_evidence_fails_closed(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         digest = discovery["candidates"][0]["url_sha256"]

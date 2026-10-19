@@ -8,6 +8,8 @@ class HandoffTests(unittest.TestCase):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         result = assess_candidates(discovery, {})
         self.assertEqual(result["assessed"][0]["technical_status"], "UNTESTED")
+        self.assertFalse(result["assessed"][0]["ibo_device_verified"])
+        self.assertFalse(result["assessed"][0]["ibo_result_supplied"])
         self.assertFalse(result["production_playlist_modified"])
     def test_valid_probe_is_not_production_approval(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
@@ -33,6 +35,8 @@ class HandoffTests(unittest.TestCase):
         self.assertEqual(entry["technical_status"], "NEEDS_REVIEW")
         self.assertEqual(entry["ibo_result"], "WORKING")
         self.assertTrue(entry["protected_working"])
+        self.assertFalse(entry["ibo_device_verified"])
+        self.assertTrue(entry["ibo_result_supplied"])
         self.assertFalse(entry["delete_allowed"])
         self.assertFalse(entry["production_change_allowed"])
     def test_invalid_handoff_shapes_fail_closed(self):

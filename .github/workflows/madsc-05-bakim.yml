@@ -27,7 +27,29 @@ jobs:
         with:
           python-version: '3.12'
       - name: Tüm regresyon testlerini çalıştır
-        run: python -m unittest discover -s tests -v
+        id: regression
+        shell: bash
+        run: |
+          mkdir -p reports
+          set +e
+          python -m unittest discover -s tests -v > reports/regression.log 2>&1
+          sonuc=$?
+          cat reports/regression.log
+          echo "exit_code=$sonuc" >> "$GITHUB_OUTPUT"
+          exit "$sonuc"
+      - name: Regresyon hatalarını otomatik sınıflandır
+        if: ${{ always() && !cancelled() }}
+        run: python -m madsc.ci_diagnostics --log reports/regression.log --output reports/regression-diagnostics.json --summary "$GITHUB_STEP_SUMMARY"
+      - name: Regresyon loglarını ve teşhis raporunu sakla
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-regression-diagnostics
+          path: |
+            reports/regression.log
+            reports/regression-diagnostics.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K1 salt okunur kanıt raporunu oluştur
         if: ${{ always() && !cancelled() }}
         run: python -m madsc.core --category k1 --output reports/k1.json

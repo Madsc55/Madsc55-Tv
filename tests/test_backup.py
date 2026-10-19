@@ -14,6 +14,13 @@ class BackupTests(unittest.TestCase):
             self.assertFalse(report["restore_verified"])
             (root/"a.txt").write_text("changed")
             self.assertFalse(verify_manifest(root, report))
+    def test_malformed_manifest_fails_closed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for invalid in (None, [], {}, {"entries": None}, {"entries": [None]}, {"entries": [{"path": 12}]}):
+                with self.subTest(value=invalid), self.assertRaises(ValueError):
+                    verify_manifest(root, invalid)
+
     def test_empty_manifest_has_no_verified_restore(self):
         with tempfile.TemporaryDirectory() as directory:
             result = snapshot_manifest(Path(directory), [])

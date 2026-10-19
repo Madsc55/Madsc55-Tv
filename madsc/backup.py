@@ -30,3 +30,10 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
         raise ValueError("Invalid backup manifest entry")
     current = snapshot_manifest(root, [entry["path"] for entry in manifest["entries"]])
     return current["entries"] == manifest["entries"]
+
+
+def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
+    """Check independent sandbox copies without changing either directory."""
+    first = snapshot_manifest(source, names)
+    second = snapshot_manifest(destination, names)
+    return first["entries"] == second["entries"]

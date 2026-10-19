@@ -111,3 +111,6 @@ Actions 22-24 basarili. K2-K3 handoff girdi bicimi kontrolu degisikligi guvenlik
 
 ## 19 Ekim 2026 - K2 K3 veri devri
 Probe kanit turu dogrulamasi 082a658 commitinde eklendi. Diger handoff dogrulama ve regresyon yazma denemeleri baglanti guvenlik engeline takildi. Yeni Actions sonucu dogrulanmali. Eski depo degismedi.
+
+## 19 Ekim 2026 - K2 K3 engel giderildi
+Actions 25 success. K2 K3 girdi bicimi dogrulamalari 83f0cf6, d2a7c48 ve 15b70ef ile eklendi. Toplu gecersiz veri regresyonu 7ed4c9a ile eklendi. Yeni Actions sonuclari kontrol edilmeli. Eski depo degismedi; uretim yetkisi verilmedi.

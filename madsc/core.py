@@ -7,7 +7,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verify_sandbox_restore, verify_independent_restore
-from madsc.channel_test import evaluate_probe, evaluate_repeated_probes
+from madsc.channel_test import evaluate_probe, evaluate_repeated_probes, evaluate_ffprobe_json
 from madsc.discovery import classify_candidates
 from madsc.dependencies import validate_batch, plan_task
 from madsc.maintenance import aggregate, retry_decision, summarize_batch
@@ -54,7 +54,10 @@ def execute(category: str) -> dict:
                                  "video": True, "audio": True, "duration_seconds": 40})
         repeated = evaluate_repeated_probes([{"url_sha256": "a" * 64, "http_status": 200,
                  "video": True, "audio": True, "duration_seconds": 40}] * 2)
-        evidence = {"repeated_measurements_fixture_only": repeated["stable_preliminary"] and not repeated["actual_network_measurements_verified"],
+        parsed = evaluate_ffprobe_json({"streams": [{"codec_type": "video"}, {"codec_type": "audio"}],
+                                        "format": {"duration": "40"}}, "a" * 64)
+        evidence = {"ffprobe_json_fixture_not_live": parsed["ffprobe_json_parsed"] and not parsed["live_probe_executed_by_this_function"],
+                    "repeated_measurements_fixture_only": repeated["stable_preliminary"] and not repeated["actual_network_measurements_verified"],
                     "preliminary_classification": result["technical_status"] == "PRELIMINARY_PASS",
                     "no_device_approval": not result["ibo_device_verified"],
                     "no_production_approval": not result["production_change_allowed"]}

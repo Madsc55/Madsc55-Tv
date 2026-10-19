@@ -70,3 +70,20 @@ class ChannelTests(unittest.TestCase):
         self.assertFalse(result["stable_preliminary"])
         self.assertEqual(result["preliminary_passes"], 1)
         self.assertFalse(result["actual_network_measurements_verified"])
+
+    def test_offline_probe_summary_mixed_results(self):
+        from madsc.channel_test import summarize_offline_probe_evidence
+        records = [
+            {"url_sha256": "a" * 64, "ffprobe": {"streams": [{"codec_type": "video"}, {"codec_type": "audio"}], "format": {"duration": "40"}}},
+            {"url_sha256": "b" * 64, "ffprobe": {"streams": [{"codec_type": "video"}], "format": {"duration": "40"}}},
+        ]
+        result = summarize_offline_probe_evidence(records)
+        self.assertEqual((result["channel_count"], result["preliminary_passes"], result["needs_review"]), (2, 1, 1))
+        self.assertFalse(result["network_probed"])
+        self.assertFalse(result["production_ready"])
+
+    def test_offline_probe_summary_duplicate_rejected(self):
+        from madsc.channel_test import summarize_offline_probe_evidence
+        record = {"url_sha256": "a" * 64, "ffprobe": {"streams": [], "format": {}}}
+        with self.assertRaises(ValueError):
+            summarize_offline_probe_evidence([record, record])

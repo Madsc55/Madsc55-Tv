@@ -22,3 +22,21 @@ class HandoffTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             assess_candidates(discovery, {digest: {"url_sha256": "a" * 64, "http_status": 200,
                                 "video": True, "audio": True, "duration_seconds": 40}})
+
+    def test_ibo_working_remains_protected_after_failed_probe(self):
+        discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
+        digest = discovery["candidates"][0]["url_sha256"]
+        failed = {"url_sha256": digest, "http_status": 503, "video": False,
+                  "audio": False, "duration_seconds": 0}
+        result = assess_candidates(discovery, {digest: failed}, {digest: "WORKING"})
+        entry = result["assessed"][0]
+        self.assertEqual(entry["technical_status"], "NEEDS_REVIEW")
+        self.assertEqual(entry["ibo_result"], "WORKING")
+        self.assertTrue(entry["protected_working"])
+        self.assertFalse(entry["delete_allowed"])
+        self.assertFalse(entry["production_change_allowed"])
+    def test_invalid_ibo_evidence_fails_closed(self):
+        discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
+        digest = discovery["candidates"][0]["url_sha256"]
+        with self.assertRaises(ValueError):
+            assess_candidates(discovery, {}, {digest: "ASSUMED_WORKING"})

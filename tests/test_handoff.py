@@ -67,3 +67,19 @@ class HandoffTests(unittest.TestCase):
         digest = discovery["candidates"][0]["url_sha256"]
         with self.assertRaises(ValueError):
             assess_candidates(discovery, {}, {digest: "ASSUMED_WORKING"})
+    def test_tvg_id_survives_handoff_and_ibo_working_is_protected(self):
+        discovery = classify_candidates([{"name": "TRT", "url": "https://example.org/live", "tvg_id": "trt.tv"}])
+        digest = discovery["candidates"][0]["url_sha256"]
+        result = assess_candidates(discovery, {}, {digest: "WORKING"})
+        item = result["assessed"][0]
+        self.assertEqual(item["tvg_id"], "trt.tv")
+        self.assertTrue(item["protected_working"])
+        self.assertFalse(item["delete_allowed"])
+
+    def test_duplicate_fingerprints_and_bad_metadata_fail_closed(self):
+        discovery = classify_candidates([{"name": "TRT", "url": "https://example.org/live"}])
+        item = discovery["candidates"][0]
+        with self.assertRaises(ValueError):
+            assess_candidates({"candidates": [item, item]}, {})
+        with self.assertRaises(ValueError):
+            assess_candidates({"candidates": [{**item, "tvg_id": []}]}, {})

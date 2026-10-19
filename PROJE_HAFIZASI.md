@@ -135,3 +135,6 @@ Actions #39 success. K4 manifest yapisi ba05849, kayit bicimi d9d46a1 ve gecersi
 
 ## 19 Ekim 2026 - K4 sandbox kopya kontrolu
 Actions #42 success. K4 iki bagimsiz gecici dizindeki dosya kopyalarini SHA256 manifesti ile karsilastiriyor: 89bcd71. Bozulma testi 0addf94; besli toplu fixture kontrolune baglanti 6c1418a. Gercek dis yedek veya uretim geri yukleme yapilmadi. Son Actions kontrol edilmeli.
+
+## 19 Ekim 2026 - K4 sandbox restore audit
+Actions #45 success. K4 salt-okunur sandbox restore audit 60d3128, bozulma regresyonu 1f7b287, besli toplu kontrolde audit 9e99b98. Uretim geri yukleme ve dis yedek dogrulanmadi. Yeni Actions sonucunu bekle. Eski depo degismedi.

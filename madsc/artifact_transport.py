@@ -14,6 +14,7 @@ def main():
     p.add_argument("--run-id", required=True)
     p.add_argument("--commit-sha", required=True)
     p.add_argument("--source", type=Path, help="Optional read-only M3U/M3U8 source")
+    p.add_argument("--output", type=Path, help="Optional K3/K5 verification report")
     args = p.parse_args()
     if args.mode == "produce":
         if args.source is not None:
@@ -32,6 +33,14 @@ def main():
         result = assess_candidates(discovery, {})
         if result["network_probed"] or result["production_playlist_modified"]:
             raise ValueError("Read-only invariant failed")
+        if args.output is not None:
+            if args.output.is_symlink():
+                raise ValueError("Invalid report output")
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(json.dumps({"schema": "madsc-handoff-verification-v1", "run_id": args.run_id,
+                "commit_sha": args.commit_sha, "source_digest": envelope["digest"],
+                "candidate_count": result["candidate_count"], "read_only": True,
+                "network_probed": False, "production_ready": False}, sort_keys=True) + "\n", encoding="utf-8")
     if args.mode == "produce":
         args.path.parent.mkdir(parents=True, exist_ok=True)
         args.path.write_text(json.dumps(result, sort_keys=True) + "\n", encoding="utf-8")

@@ -53,11 +53,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: K2 icin salt okunur ornek M3U kaynagi olustur
+        run: |
+          mkdir -p reports
+          printf '#EXTM3U\\n#EXTINF:-1 tvg-id="fixture.tv",Fixture only\\nhttps://example.org/fixture.m3u8\\n' > reports/k2-input.m3u
       - name: K2 izole aday kanıtını üret
         env:
           RUN_ID: ${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
-        run: python -m madsc.artifact_transport produce --path reports/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+        run: python -m madsc.artifact_transport produce --path reports/k2-candidates.json --source reports/k2-input.m3u --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
       - name: K2 aday kanıtını sakla
         uses: actions/upload-artifact@v4
         with:

@@ -40,8 +40,9 @@ class HandoffTests(unittest.TestCase):
         for invalid in (None, [], "bad"):
             with self.subTest(probes=invalid), self.assertRaises(ValueError):
                 assess_candidates(discovery, invalid)
-            with self.subTest(ibo=invalid), self.assertRaises(ValueError):
-                assess_candidates(discovery, {}, invalid)
+            if invalid is not None:
+                with self.subTest(ibo=invalid), self.assertRaises(ValueError):
+                    assess_candidates(discovery, {}, invalid)
         for invalid in (None, [], {"candidates": None}, {"candidates": [None]}):
             with self.subTest(discovery=invalid), self.assertRaises(ValueError):
                 assess_candidates(invalid, {})

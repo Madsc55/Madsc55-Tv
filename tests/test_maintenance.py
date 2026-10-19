@@ -12,5 +12,10 @@ class MaintenanceTests(unittest.TestCase):
         self.assertTrue(retry_decision(3, 3)["blocked"])
         self.assertTrue(retry_decision(4, 3)["blocked"])
 
+    def test_noninteger_limit_rejected(self):
+        for limit in (True, 2.5, "3"):
+            with self.subTest(limit=limit), self.assertRaises(ValueError):
+                retry_decision(1, limit)
+
     def test_missing_categories_never_ready(self):
         self.assertFalse(aggregate([{"category":"k1","production_writes":False}])["all_five_present"])

@@ -32,3 +32,15 @@ class HandoffAcceptanceTests(unittest.TestCase):
     def test_mismatched_candidate_count_rejected(self):
         with self.assertRaises(ValueError):
             verify(self.k2, self.report, {**self.report, "candidate_count": 2}, "123", "a" * 40)
+
+    def test_extra_fields_rejected(self):
+        with self.assertRaises(ValueError):
+            verify(self.k2, {**self.report, "extra": True}, self.report, "123", "a" * 40)
+
+    def test_false_network_probe_claim_rejected(self):
+        with self.assertRaises(ValueError):
+            verify(self.k2, self.report, {**self.report, "network_probed": True}, "123", "a" * 40)
+
+    def test_mismatched_k3_commit_rejected(self):
+        with self.assertRaises(ValueError):
+            verify(self.k2, {**self.report, "commit_sha": "b" * 40}, self.report, "123", "a" * 40)

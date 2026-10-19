@@ -45,6 +45,40 @@ class HandoffAcceptanceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify(self.k2, {**self.report, "commit_sha": "b" * 40}, self.report, "123", "a" * 40)
 
+
+    def test_k2_payload_tampering_rejected_across_categories(self):
+        changed = {**self.k2, "discovery": {**self.k2["discovery"], "candidates": []}}
+        with self.assertRaises(ValueError):
+            verify(changed, self.report, self.report, "123", "a" * 40)
+
+    def test_k3_and_k5_run_identity_mismatch_rejected(self):
+        for field, value in (("run_id", "999"), ("commit_sha", "b" * 40)):
+            with self.subTest(field=field):
+                with self.assertRaises(ValueError):
+                    verify(self.k2, {**self.report, field: value},
+                           self.report, "123", "a" * 40)
+                with self.assertRaises(ValueError):
+                    verify(self.k2, self.report,
+                           {**self.report, field: value}, "123", "a" * 40)
+
+    def test_k3_and_k5_must_not_claim_live_probing(self):
+        for field, value in (("read_only", False), ("network_probed", True),
+                             ("production_ready", True)):
+            with self.subTest(field=field):
+                with self.assertRaises(ValueError):
+                    verify(self.k2, {**self.report, field: value},
+                           self.report, "123", "a" * 40)
+
+    def test_duplicate_json_keys_rejected(self):
+        import tempfile
+        from pathlib import Path
+        from madsc.handoff_acceptance import load
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "duplicate.json"
+            path.write_text('{"run_id":"123","run_id":"999"}', encoding="utf-8")
+            with self.assertRaises(ValueError):
+                load(path)
+
     def test_symlink_evidence_file_rejected(self):
         import json
         import tempfile

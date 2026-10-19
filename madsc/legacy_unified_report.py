@@ -27,10 +27,14 @@ def legacy_unified_rows(scores: list[dict], stability: list[dict], *,
             raise ValueError("Duplicate stability URL")
         stable_by_url[url] = row
     results = []
+    seen_candidates = set()
     for row in scores:
         url = row.get("YAYIN_URL")
         if not isinstance(url, str) or not url:
             raise ValueError("Invalid candidate URL")
+        if url in seen_candidates:
+            raise ValueError("Duplicate candidate URL")
+        seen_candidates.add(url)
         try:
             score = int(row.get("PUAN") or 0)
         except (ValueError, TypeError, OverflowError) as exc:

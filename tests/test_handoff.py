@@ -87,3 +87,18 @@ class HandoffTests(unittest.TestCase):
             assess_candidates({"candidates": [item, item]}, {})
         with self.assertRaises(ValueError):
             assess_candidates({"candidates": [{**item, "tvg_id": []}]}, {})
+    def test_display_metadata_survives_k2_to_k3(self):
+        discovery = classify_candidates([{"name": "TRT 1", "url": "https://example.org/live.m3u8",
+            "tvg_id": "trt1", "tvg_logo": "https://example.org/logo.png", "group_title": "Haber"}])
+        item = assess_candidates(discovery, {})["assessed"][0]
+        self.assertEqual(item["name"], "TRT 1")
+        self.assertEqual(item["tvg_id"], "trt1")
+        self.assertEqual(item["tvg_logo"], "https://example.org/logo.png")
+        self.assertEqual(item["group_title"], "Haber")
+        self.assertFalse(item["production_change_allowed"])
+
+    def test_invalid_display_metadata_is_rejected(self):
+        discovery = classify_candidates([{"name": "TRT", "url": "https://example.org/live"}])
+        for field in ("name", "tvg_logo", "group_title"):
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                assess_candidates({"candidates": [{**discovery["candidates"][0], field: []}]}, {})

@@ -184,3 +184,26 @@ class BackupTests(unittest.TestCase):
             missing = {**manifest, "entries": manifest["entries"][:1]}
             self.assertTrue(verify_manifest(root, missing))
             self.assertFalse(verify_manifest(root, {**manifest, "entries": list(reversed(manifest["entries"]))}))
+
+
+    def test_backup_corruption_is_detected(self):
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b, tempfile.TemporaryDirectory() as c:
+            roots = [Path(x) for x in (a, b, c)]
+            for root in roots:
+                (root / "sample.txt").write_text("original")
+            (roots[1] / "sample.txt").write_text("corrupted")
+            result = verify_independent_restore(*roots, ["sample.txt"])
+            self.assertFalse(result["backup_verified_against_source"])
+            self.assertFalse(result["independent_sandbox_restore_matches"])
+            self.assertFalse(result["production_writes"])
+
+    def test_restore_corruption_is_detected(self):
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b, tempfile.TemporaryDirectory() as c:
+            roots = [Path(x) for x in (a, b, c)]
+            for root in roots:
+                (root / "sample.txt").write_text("original")
+            (roots[2] / "sample.txt").write_text("corrupted")
+            result = verify_independent_restore(*roots, ["sample.txt"])
+            self.assertTrue(result["backup_verified_against_source"])
+            self.assertFalse(result["restore_verified_against_backup"])
+            self.assertFalse(result["production_restore_verified"])

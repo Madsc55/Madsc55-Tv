@@ -1,7 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
-from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verify_sandbox_restore
+from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verify_sandbox_restore, verify_independent_restore
 
 class BackupTests(unittest.TestCase):
     def test_manifest_detects_changes_without_writing(self):
@@ -73,3 +73,21 @@ class BackupTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaises((ValueError, FileNotFoundError)):
                 snapshot_manifest(Path(directory), ["../outside"])
+
+    def test_independent_three_tree_restore(self):
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b, tempfile.TemporaryDirectory() as c:
+            for root in (a, b, c):
+                (Path(root) / "sample.txt").write_text("original")
+            report = verify_independent_restore(Path(a), Path(b), Path(c), ["sample.txt"])
+            self.assertTrue(report["independent_sandbox_restore_matches"])
+            self.assertFalse(report["external_storage_proven"])
+            self.assertFalse(report["production_restore_verified"])
+            (Path(c) / "sample.txt").write_text("damaged")
+            self.assertFalse(verify_independent_restore(Path(a), Path(b), Path(c), ["sample.txt"])["independent_sandbox_restore_matches"])
+
+    def test_independent_restore_rejects_same_tree(self):
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
+            (Path(a) / "sample.txt").write_text("original")
+            (Path(b) / "sample.txt").write_text("original")
+            with self.assertRaises(ValueError):
+                verify_independent_restore(Path(a), Path(a), Path(b), ["sample.txt"])

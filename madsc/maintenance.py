@@ -15,3 +15,13 @@ def aggregate(reports: list[dict]) -> dict:
     safe = complete and all(report.get("production_writes") is False for report in reports)
     return {"all_five_present": complete, "all_read_only": safe,
             "production_ready": False, "runtime_evidence_verified": False}
+
+
+def summarize_batch(reports: list[dict]) -> dict:
+    """Read-only per-category failure summary for coordinated maintenance."""
+    if not isinstance(reports, list) or any(not isinstance(r, dict) for r in reports):
+        raise ValueError("Invalid batch reports")
+    base = aggregate(reports)
+    failures = sorted(r.get("category", "unknown") for r in reports if r.get("status") == "failure")
+    return {**base, "failed_categories": failures, "requires_review": bool(failures) or not base["all_read_only"],
+            "production_writes": False}

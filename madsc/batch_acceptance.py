@@ -12,6 +12,8 @@ def collect(root: Path) -> dict:
         if len(matches) != 1:
             raise ValueError(f"Expected exactly one report for {key}; got {len(matches)}")
         data = json.loads(matches[0].read_text(encoding="utf-8"))
+        if not isinstance(data, dict):
+            raise ValueError(f"Invalid report object: {key}")
         if (data.get("category") != key
             or data.get("mode") != "isolated_read_only"
             or data.get("production_writes") is not False

@@ -153,3 +153,6 @@ Actions #54 completed/success ve 6/6 job success. K1-K5 izole testleri gecti; 92
 
 ## 19 Ekim 2026 - Eski workflow gercek envanter baslangici
 Actions #55 ve #56 completed/success. Eski dal `.github/workflows` GitHub API sayimi 99 YAML; eski belgede 92 yaziyor, fark arastirilacak. Bes eski besli hedef YAML haric 94 dosya. Tam 99 dosya adina gore GECICI kategori matrisi: 999ac62; dort kritik YAML tetik/izin/komut/bagimlilik incelemesi c63a73d. EPG gunluk uretimi, Pages workflow_run, VOD metadata cron ve eski bakim cron yeni fixture sistemiyle esdeger degil. Gercek esdegerlik tamamlanmadan cron acilmayacak, eski workflow kapatilmayacak. Eski depo salt okunur.
+
+## 19 Ekim 2026 - Workflow envanteri ikinci dalga
+GitHub Actions #57 success, #58 son kontrolde in_progress. Eski dalin 6 ek YAML dosyasinin gercek tetik/komut/artifact incelemesi 728aa4b. Toplam 10/99 ayrintili incelendi; 89 bekliyor. K2 gercek tarama ve K3 ffmpeg/IBO ile K4 restore dry-run esdegerlik acik. Eski repo salt okunur, yeni cron etkinlestirilmedi.

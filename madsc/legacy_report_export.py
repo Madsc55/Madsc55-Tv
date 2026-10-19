@@ -15,6 +15,15 @@ OUTPUT_CSV = "BIRLESIK_ADAY_ONAY_RAPORU.csv"
 OUTPUT_JSON = "BIRLESIK_ADAY_OZET.json"
 
 
+def _unique_json_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Duplicate key in historical JSON")
+        result[key] = value
+    return result
+
+
 def export_legacy_report(scores_csv: str, stability_csv: str, output_dir: str, *,
                          history_json: str | None = None, now: datetime | None = None,
                          require_history: bool = False) -> dict:
@@ -29,7 +38,7 @@ def export_legacy_report(scores_csv: str, stability_csv: str, output_dir: str, *
             raise ValueError("History source must be JSON")
         sources.append(history_path)
         with history_path.open(encoding="utf-8") as handle:
-            history = json.load(handle)
+            history = json.load(handle, object_pairs_hook=_unique_json_object)
         if not isinstance(history, dict):
             raise ValueError("History must be a URL mapping")
         if now is None:

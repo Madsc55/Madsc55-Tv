@@ -150,3 +150,6 @@ Actions #51 completed/success; 6/6 job success. Eski AGENTS, BES_SISTEM_TOPLU_IS
 
 ## 19 Ekim 2026 - Besli durum ve EPG zaman alanlari
 Actions #54 completed/success ve 6/6 job success. K1-K5 izole testleri gecti; 92 legacy davranis esdegerligi, 26 kural runtime, 18 gorev, gercek kanal testleri, EPG Pages ve IBO cihaz onayi, harici restore halen acik. K3 XMLTV baslangic/bitis alani eksikligi sayimi 8310afa; regresyon 133b106. Yeni Actions tamamlaninca dogrula. Eski depo degismedi.
+
+## 19 Ekim 2026 - Eski workflow gercek envanter baslangici
+Actions #55 ve #56 completed/success. Eski dal `.github/workflows` GitHub API sayimi 99 YAML; eski belgede 92 yaziyor, fark arastirilacak. Bes eski besli hedef YAML haric 94 dosya. Tam 99 dosya adina gore GECICI kategori matrisi: 999ac62; dort kritik YAML tetik/izin/komut/bagimlilik incelemesi c63a73d. EPG gunluk uretimi, Pages workflow_run, VOD metadata cron ve eski bakim cron yeni fixture sistemiyle esdeger degil. Gercek esdegerlik tamamlanmadan cron acilmayacak, eski workflow kapatilmayacak. Eski depo salt okunur.

@@ -105,3 +105,6 @@ Actions #18 (39183571815) completed/cancelled, hic job kaydi yok; kesin iptal ne
 
 ## 19 Ekim 2026 - K2 devir
 Actions 22, 23 ve 24 basarili. K2 kanal adi tur kontrolu 11905cd ile eklendi. Eski depo degismedi. Sonraki is besli sistem toplu islev paketleri.
+
+## 19 Ekim 2026 - K2 K3 toplu devir
+Actions 22-24 basarili. K2-K3 handoff girdi bicimi kontrolu degisikligi guvenlik engeline takildi, uygulanmadi. Sonraki is handoff dogrulamasini tamamlamak ve toplu K1-K5 islevlerine devam etmek. Eski depo degismedi.

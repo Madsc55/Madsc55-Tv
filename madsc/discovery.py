@@ -40,7 +40,12 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
             tvg_id = item.get("tvg_id", "")
             if not isinstance(tvg_id, str):
                 raise ValueError("Invalid tvg-id")
-            entry = {"name": name, "tvg_id": tvg_id.strip(), "url_sha256": key,
+            logo = item.get("tvg_logo", "")
+            group = item.get("group_title", "")
+            if not isinstance(logo, str) or not isinstance(group, str):
+                raise ValueError("Invalid logo or group metadata")
+            entry = {"name": name, "tvg_id": tvg_id.strip(), "tvg_logo": logo.strip(),
+                     "group_title": group.strip(), "url_sha256": key,
                      "source_index": index, "status": "candidate_only"}
             if url in seen or url in known:
                 duplicates.append(entry)

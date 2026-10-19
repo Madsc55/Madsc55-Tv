@@ -25,6 +25,11 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         tvg_id = candidate.get("tvg_id", "")
         if not isinstance(tvg_id, str):
             raise ValueError("Invalid candidate tvg-id")
+        name = candidate.get("name", "")
+        logo = candidate.get("tvg_logo", "")
+        group = candidate.get("group_title", "")
+        if any(not isinstance(value, str) for value in (name, logo, group)):
+            raise ValueError("Invalid candidate display metadata")
         probe = probes.get(digest)
         if probe is None:
             status = "UNTESTED"
@@ -35,7 +40,8 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
                 raise ValueError("Probe fingerprint mismatch")
             status = evaluate_probe(probe)["technical_status"]
         decision = classify_channel(status, ibo_results.get(digest, "UNKNOWN"))
-        assessed.append({"url_sha256": digest, "tvg_id": tvg_id, **decision,
+        assessed.append({"url_sha256": digest, "name": name, "tvg_id": tvg_id,
+                         "tvg_logo": logo, "group_title": group, **decision,
                          "ibo_device_verified": False,
                          "ibo_result_supplied": decision["ibo_result"] != "UNKNOWN"})
     return {"assessed": assessed, "candidate_count": len(assessed),

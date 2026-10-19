@@ -196,3 +196,20 @@ Salt-okunur kaynak: `Madsc55/madsc-tv@madsc/bes-sistem-toplu-birlestirme/scripts
 | `apply_ibo_second_voice.py` | satır 41 | M3U, CSV, JSON | BLOCKED |
 
 Betiğin `CALISANLAR.m3u` içindeki `📦 YEDEKLER` üyelerini sildiği/yeniden numaralandırdığı durumlar var. Kullanıcının **ana liste, YEDEKLER, YENİLER, FAVORİLER ve cihaz favorilerini değiştirmeme** talimatıyla çatışır. GitHub `protected_write_gate.py` çağrısı commit öncesi koruma amaçlıdır; Python betiği çağrıldığında **çalışma ağacını zaten değiştirebilir**. Bu nedenle güvenli alternatif: yeni K1–K5 yalnız **salt-okunur analiz ve rapor artefaktı** üretir, hiçbir listeye otomatik yazmaz. Betikler, kullanıcı ayrıca yetkilendirmedikçe K4'e aktarılmayacak. Gerçek geçmişte push yapılıp yapılmadığı bu incelemede kanıtlanmadı.
+
+
+## Ek script seviyesi denetim — Türk YEDEKLER, sayı düzeltme, keşif ve K1 gate
+
+Eski dalda salt-okunur kaynak satırları:
+
+| Betik | Somut yazma yolu | Risk kararı |
+|---|---|---|
+| `scripts/recover_turkish_backups.py` | `CALISANLAR.m3u` `PLAY.write_text` satır 78; `yedek_ulke_inceleme.csv` satır 75 ve JSON satır 79 | **BLOCKED**: YEDEKLER üyelerini değiştirebilir |
+| `scripts/keep_turkish_backups.py` | `CALISANLAR.m3u` `PLAYLIST.write_text` satır 68; ayrılanlar M3U satır 53, JSON satır 73 | **BLOCKED** |
+| `scripts/sync_yedekler_category_count.py` | `CALISANLAR.m3u` `p.write_text` satır 18; grup sayısını yeniden yazar | **BLOCKED** |
+| `tools/genis_kaynak_taramasi.py` | keşif aday inceleme/state/summary JSON ve CSV çıktıları satır 106–110; ana liste adları satır 68'de okunuyor | Rapor/keşif yazımı var, korunan listeye doğrudan yazma bu taramada bulunmadı; çıktı yolları ayrıca sınırlandırılmalı |
+| `verification_pipeline.py` | `madsc_dogrulama/` state ve summary JSON satır 96, 98 | Rapor/state yazımı; çağrılan alt komutların etkisi ayrıca denetlenmeli |
+
+`tools/protected_write_gate.py` kaynağı ayrıca tam okundu: `CALISANLAR.m3u`, `YENILER.m3u`, `YABANCI_KANALLAR.m3u`, `AGENTS.md` gibi adları; `yedekler/`, `FAVORILER/`, `EPG/`, `logolar/`, `logos/`, `arsiv/` öneklerini ve genel `.m3u/.m3u8` uzantılarını reddeder. Git `base..HEAD`, staged, unstaged, untracked ve ignored yollarını denetler; Git komutu başarısızsa **fail-closed** kod 2, korunan değişiklikte kod 1 döner. Bu kaynak davranışı **koruma tasarımı kanıtıdır**, GitHub branch ruleset veya üretimde çalışmış olduğu kanıtı değildir. `git add CALISANLAR.m3u` yapan eski workflow'ların koruma kapısından geçmesi beklenmez; geçmiş koşu sonucu ayrıca incelenmeden gerçek push iddia edilmez.
+
+Bu 3 ek korunan liste yazarı da K1 güvenlik gereği yeni sisteme taşınmayacak. Yeni repo/korunan dosyalar değiştirilmedi.

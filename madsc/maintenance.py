@@ -15,7 +15,9 @@ def aggregate(reports: list[dict]) -> dict:
     expected = {"k1", "k2", "k3", "k4", "k5"}
     complete = categories == expected and len(reports) == 5
     safe = complete and all(report.get("production_writes") is False for report in reports)
+    successful = safe and all(report.get("status") == "success" for report in reports)
     return {"all_five_present": complete, "all_read_only": safe,
+            "all_five_successful": successful,
             "production_ready": False, "runtime_evidence_verified": False}
 
 

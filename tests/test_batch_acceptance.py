@@ -22,8 +22,19 @@ class BatchAcceptanceTests(unittest.TestCase):
                 self.make_report(d, key)
             result = collect(Path(d))
             self.assertTrue(result["five_isolated_reports_valid"])
+            self.assertTrue(result["k5_fixture_evidence_verified"])
             self.assertFalse(result["production_ready"])
             self.assertFalse(result["legacy_92_behavioral_equivalence_verified"])
+    def test_false_fixture_check_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            paths = {key: self.make_report(d, key) for key in CATEGORIES}
+            path = paths["k3"]
+            data = json.loads(path.read_text(encoding="utf-8"))
+            data["fixture_checks"]["sample"] = False
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(Path(d))
+
     def test_missing_category_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:
             for key in CATEGORIES[:-1]:

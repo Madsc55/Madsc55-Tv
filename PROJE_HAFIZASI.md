@@ -900,3 +900,6 @@ Kullanici istegi: internet genelindeki acik ve izinli M3U/M3U8 canli TV listeler
 
 ## 20 Ekim 2026 — K2 eski/yeni diferansiyel test genisletmesi
 Pinned eski akilli aday puanlama betigi ile yeni madsc.legacy_candidate_merge ayni sentetik CSV girdilerinde karsilastirilacak: ayni URL icin farkli teknik skorlar ve tekrar eleme; ONCELIKLI_KANAL_TEK_NIK_RAPORU ile GENEL_ADAY_GERCEK_MEDYA_RAPORU arasinda medya kaniti onceligi. Eski CSV satirlari, UTF-8 BOM ve ozet JSON ayni olmali. Bu sadece secili eski gorev davranisina ait fixture kanitidir; 92/92 kabul degildir. CI sonucu ayrica kontrol edilecek.
+
+## 20 Ekim 2026 — K2/K3 dogrudan eski-yeni betik karsilastirma basarilari
+Actions #39337813130 (aday puanlama), #39338017857 (EPG/logo), #39338267421 (390 tekrar testi) SUCCESS. Pinned eski betikler izole sentetik ortamda fiilen calistirilarak yeni K2/K3 rapor ve CSV/M3U sonuclariyla karsilastirildi. Bunlar sadece secili senaryolardir, workflow seviyesinde 92/92 esdegerlik veya 26/26 runtime koruma onayi DEGILDIR. Sonraki toplu entegrasyon P01-P06 aday onceligi, R01-R05 tekrar takvimi, H01-H05 gecmis kanit kurallarina odaklanacak. M3U/M3U8 ve resmi YouTube Live kesif backlogu korunur.

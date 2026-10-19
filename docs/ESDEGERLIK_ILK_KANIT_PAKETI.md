@@ -62,3 +62,9 @@ Bu bölüm eski depoda salt-okunur açılan üç YAML ve bunların çağırdığ
 ## 20 Ekim 2026 — akıllı aday puanlama CSV birleştirme sözleşmesi
 
 `madsc/legacy_candidate_merge.py` eski salt-okunur `scripts/akilli_aday_puanla.py` kaynak davranışından çıkarıldı: yalnız üç rapor adından teknik kanıt önceliği, `VIDEO_SES_VAR` kanıtının önceliği, `TEKNIK_MEDYA/COZUNURLUK/SES_IZI` alanlarının URL üzerinden birleştirilmesi, HTTP(S) filtreleme, aynı URL için yüksek puanın korunması, eşit puanda ilk aday, puan/kanal sıralaması ve 13 CSV alanı. `tests/test_legacy_candidate_merge.py` olumlu/olumsuz örnekleri kapsar. Bu testler eski betikle fiili karşılaştırmalı çalıştırma, gerçek ağ/ffprobe veya tam workflow davranışsal kabul değildir; 0/92 korunur. İlk puanlama vektörleri Actions #39331287407 SUCCESS. Bu yeni kodun CI sonucu ayrıca doğrulanmalıdır.
+
+## 20 Ekim 2026 — Gercek eski betik ile diferansiyel CI kanitlari
+- Akilli aday puanlama: `tests/test_candidate_differential.py`, pinned `tests/fixtures/legacy_akilli_aday_puanla.py`; ek tekrar/teknik kanit onceligi senaryolari; commit `eaed201d`, Actions #39337813130 SUCCESS.
+- EPG/logo: `tests/test_legacy_epg_logo_differential.py`, pinned `tests/fixtures/legacy_candidate_epg_logo_join.py`; bos, pilot programli/programsiz ve logo SHA senaryolari; commit `923aea0b`, Actions #39338017857 SUCCESS.
+- 390 tekrar testi: `tests/test_legacy_390_differential.py`, pinned `tests/fixtures/legacy_tekrar_test_390.py`; agsiz ffprobe/ffmpeg taklitleriyle eski/yeni CSV ve M3U karsilastirmasi; commit `bbde1b94`, Actions #39338267421 SUCCESS.
+**Kapsam siniri:** Yalnizca secili sentetik girdi/rapor davranislari dogrudan karsilastirildi. Workflow cron/trigger/izinler, gercek ag, cihaz, hata-artifact, tam davranissal kabul kanitlanmadi. 92/92 kabul 0/92; 26/26 runtime guvenlik 0/26. Siradaki grup: eski K2 aday oncelik, tekrar siniri ve gecmis birlestirme (P01-P06, R01-R05, H01-H05), sonra K3 workflow artifact/timeout davranislari. 

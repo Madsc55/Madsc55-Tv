@@ -31,6 +31,25 @@ class DifferentialCandidateTests(unittest.TestCase):
                  "TEKNIK_MEDYA": "YALNIZ_VIDEO"},
                 {"YAYIN_URL": "ftp://example.invalid/no", "KANAL": "Rejected"}]},
             {"KESIF.csv": []},
+            {"KESIF.csv": [
+                {"YAYIN_URL": "https://example.invalid/duplicate", "KANAL": "Zulu",
+                 "TEKNIK_MEDYA": "YALNIZ_VIDEO"},
+                {"YAYIN_URL": "https://example.invalid/duplicate", "KANAL": "Alpha",
+                 "TEKNIK_MEDYA": "VIDEO_SES_VAR", "SES_IZI": "true",
+                 "COZUNURLUK": "1920x1080"},
+                {"YAYIN_URL": "https://example.invalid/other", "KANAL": "Other",
+                 "TEKNIK_MEDYA": "BILINMIYOR"},
+                {"YAYIN_URL": "not-a-url", "KANAL": "Discard"}]},
+            {"ONCELIKLI_KANAL_TEK_NIK_RAPORU.csv": [
+                {"YAYIN_URL": "https://example.invalid/same",
+                 "TEKNIK_MEDYA": "YALNIZ_VIDEO", "SES_IZI": "false"}],
+             "GENEL_ADAY_GERCEK_MEDYA_RAPORU.csv": [
+                {"YAYIN_URL": "https://example.invalid/same",
+                 "TEKNIK_MEDYA": "VIDEO_SES_VAR", "SES_IZI": "true",
+                 "COZUNURLUK": "1280x720"}],
+             "KESIF.csv": [
+                {"YAYIN_URL": "https://example.invalid/same", "KANAL": "Matched",
+                 "LOGO_ADAY_URL": "https://example.invalid/logo.png"}]},
             {"GENEL_ADAY_GERCEK_MEDYA_RAPORU.csv": [
                 {"YAYIN_URL": "http://example.invalid/z", "KANAL": "Z",
                  "TEKNIK_MEDYA": "YALNIZ_VIDEO", "SES_IZI": "true"},

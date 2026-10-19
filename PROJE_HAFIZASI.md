@@ -897,3 +897,6 @@ K2-K3-K5 handoff testi Actions #39336859638 SUCCESS. K4 icin ayni uzunlukta ama 
 
 ## 20 Ekim 2026 — K2 yeni kesif kapsami (YAPILACAK)
 Kullanici istegi: internet genelindeki acik ve izinli M3U/M3U8 canli TV listeleri, resmi canli yayin siteleri, acik IPTV dizinleri ve YouTube Live resmi/dogrulanmis televizyon yayinlari K2 kesif kapsaminda aranacak. K2 kaynak ve yayin hakki uygunlugunu, kimlik ve tekrar kontrolunu kanitlayacak. K3 akisin teknik, ses-video, EPG/logo ve oynatici uyumunu denetleyecek; K5 sureklilik/yeniden denetim yapacak. YouTube sayfa URL'si otomatik kalici M3U8 sayilmaz; token, DRM ve erisim kisitlari asilmaz. Kaynak kesfi otomatik listeye alma/onaylama degildir. Korunan listeler degistirilmez. Henuz uygulanmis/kanitlanmis degil; backlog gorevidir.
+
+## 20 Ekim 2026 — K2 eski/yeni diferansiyel test genisletmesi
+Pinned eski akilli aday puanlama betigi ile yeni madsc.legacy_candidate_merge ayni sentetik CSV girdilerinde karsilastirilacak: ayni URL icin farkli teknik skorlar ve tekrar eleme; ONCELIKLI_KANAL_TEK_NIK_RAPORU ile GENEL_ADAY_GERCEK_MEDYA_RAPORU arasinda medya kaniti onceligi. Eski CSV satirlari, UTF-8 BOM ve ozet JSON ayni olmali. Bu sadece secili eski gorev davranisina ait fixture kanitidir; 92/92 kabul degildir. CI sonucu ayrica kontrol edilecek.

@@ -144,6 +144,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: K2 aday kanıtını indir
+        uses: actions/download-artifact@v4
+        with:
+          name: madsc-k2-candidate-handoff
+          path: reports/k2-handoff
+      - name: K2 kanıtını K5'te aynı koşuyla doğrula
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
       - name: K5 salt okunur kanıt raporunu oluştur
         run: python -m madsc.core --category k5 --output reports/k5.json
       - name: K5 kanıtını sakla
@@ -173,6 +183,18 @@ jobs:
           pattern: madsc-batch-k*
           path: reports/collected
           merge-multiple: false
+      - name: K2 aday kanıtını toplu kabulde indir
+        uses: actions/download-artifact@v4
+        with:
+          name: madsc-k2-candidate-handoff
+          path: reports/k2-handoff
+      - name: K2 aday kanıtının koşu bütünlüğünü denetle
+        id: k2-handoff
+        continue-on-error: true
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.artifact_transport consume --path reports/k2-handoff/k2-candidates.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
       - name: Kanıtları doğrula ve tek rapor oluştur
         id: kabul
         continue-on-error: true
@@ -193,6 +215,7 @@ jobs:
           K4: ${{ needs.k4.result }}
           K5: ${{ needs.k5.result }}
           KABUL: ${{ steps.kabul.outcome }}
+          K2_HANDOFF: ${{ steps.k2-handoff.outcome }}
         run: |
           mkdir -p reports
           echo '## Madsc55-Tv - Besli Test Sonuclari' >> "$GITHUB_STEP_SUMMARY"
@@ -200,7 +223,7 @@ jobs:
           echo '| Kontrol | Sonuc |' >> "$GITHUB_STEP_SUMMARY"
           echo '| --- | --- |' >> "$GITHUB_STEP_SUMMARY"
           hata=0
-          for ad in K1 K2 K3 K4 K5 KABUL; do
+          for ad in K1 K2 K3 K4 K5 KABUL K2_HANDOFF; do
             case "$ad" in
               K1) durum="$K1"; etiket="K1 Guvenlik";;
               K2) durum="$K2"; etiket="K2 Kesif";;
@@ -208,6 +231,7 @@ jobs:
               K4) durum="$K4"; etiket="K4 Yedek";;
               K5) durum="$K5"; etiket="K5 Bakim";;
               KABUL) durum="$KABUL"; etiket="Toplu kabul";;
+              K2_HANDOFF) durum="$K2_HANDOFF"; etiket="K2-K3-K5 kanit aktarimi";;
             esac
             echo "| $etiket | $durum |" >> "$GITHUB_STEP_SUMMARY"
             if [ "$durum" != success ]; then hata=1; fi

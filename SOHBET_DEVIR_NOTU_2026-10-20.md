@@ -49,3 +49,7 @@
 - Kullanıcı sohbetin dolup dolmadığını ve ne kadar süre kaldığını sordu. Asistan **sohbetin kalan bağlam kotasını, dolma zamanını veya uygulamanın vereceği uyarıyı göremez**; önceden kesin bir doluluk uyarısı sözü verme.
 - Bu dosya yeni sohbet için bilinçli devir özeti. Sohbetin birebir tam arşivi değildir; birebir kayıt gerekiyorsa uygulamanın sohbet geçmişi/veri dışa aktarımı gerekir.
 - Yeni sohbette önce **bu dosyayı**, `PROJE_HAFIZASI.md` ve ilgili eşdeğerlik kanıtlarını oku; tamamlanmış işleri tekrar yapma. Kullanıcının hedefini, kararlarını ve korumalarını esas al.
+
+
+## 20 Ekim 2026 — Dogrulanmis son ilerleme
+K3 legacy EPG/logo ve 390 aday tekrar testleri eklendi; Actions #39334663810 SUCCESS. K3 core kanit akisina entegrasyon commit 9c7055a7; Actions #39334973919 SUCCESS. K1 izole rapor yazma korumasi commit 7edeafcf; Actions #39335736344 SUCCESS. Bunlar fixture testleridir, uretim kabul kaniti degildir. 92 eski workflow tam davranissal esdegerlik 0/92, 26 runtime guvenlik kabulu 0/26. 47% yalnizca tahmini gelistirme puanidir. Sonraki adim K1 merkezi kanit entegrasyonu ve K2-K3-K5 birlestirmesidir. Onceki notlar korunacak; eski repo salt okunur; uretim listeleri, EPG, logo, yedek ve favoriler degismeyecek. Kullanici baglantili isler icin tek toplu commit ve CI tercih eder.

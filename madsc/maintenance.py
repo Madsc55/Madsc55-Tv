@@ -11,7 +11,7 @@ def retry_decision(consecutive_failures: int, limit: int = 3) -> dict:
 def aggregate(reports: list[dict]) -> dict:
     if not isinstance(reports, list) or any(not isinstance(r, dict) for r in reports):
         raise ValueError("Invalid batch reports")
-    categories = {report.get("category") for report in reports}
+    categories = {report.get("category") for report in reports if isinstance(report.get("category"), str)}
     expected = {"k1", "k2", "k3", "k4", "k5"}
     complete = categories == expected and len(reports) == 5
     safe = complete and all(report.get("production_writes") is False for report in reports)
@@ -29,11 +29,11 @@ def summarize_batch(reports: list[dict]) -> dict:
     base = aggregate(reports)
     expected = {"k1", "k2", "k3", "k4", "k5"}
     failures = sorted(str(r.get("category", "unknown")) for r in reports
-                      if r.get("status") != "success" or r.get("category") not in expected)
+                      if r.get("status") != "success" or (not isinstance(r.get("category"), str) or r.get("category") not in expected))
     missing = sorted(expected - {r.get("category") for r in reports if isinstance(r.get("category"), str)})
     counts = {category: sum(r.get("category") == category for r in reports) for category in expected}
     duplicates = sorted(category for category, count in counts.items() if count > 1)
-    unexpected = sum(r.get("category") not in expected for r in reports)
+    unexpected = sum(not isinstance(r.get("category"), str) or r.get("category") not in expected for r in reports)
     unsafe = sorted(str(r.get("category", "unknown")) for r in reports
                     if r.get("production_writes") is not False)
     return {**base, "failed_categories": failures, "missing_categories": missing,

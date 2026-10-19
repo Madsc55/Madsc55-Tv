@@ -18,6 +18,7 @@ class IsolationTests(unittest.TestCase):
         evidence = execute("k3")
         self.assertTrue(evidence["ibo_working_survives_technical_failure"])
         self.assertTrue(evidence["ibo_fixture_not_live_device_evidence"])
+        self.assertTrue(evidence["ibo_report_not_device_verified"])
 
     def test_k5_checks_cross_category_and_no_duplicate_schedule(self):
         evidence = execute("k5")

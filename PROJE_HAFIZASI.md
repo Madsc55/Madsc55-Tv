@@ -234,3 +234,8 @@ Actions #75 completed/success; #71 completed/success. #72-74 cancelled (neden ke
 ## 19 Ekim 2026 - K3 ffprobe JSON kanit okuyucu
 
 Actions #76 ve #77 completed/success. K3 madsc/channel_test.py icine saglanan ffprobe JSON streams ve duration degerlerini guvenli on degerlendiren evaluate_ffprobe_json eklendi (cc69c26). Gercek ag baglantisi veya 30 saniye kesintisiz oynatma iddiasi YOK; live_probe_executed_by_this_function false. tests/test_channel_test.py iki yeni regresyon testi (b6fe40a), madsc/core.py K3 fixture kabul kontrolu (9343e94) eklendi. Actions #80 pending, #79 in_progress, #78 cancelled sorgu aninda. K1 26 runtime kural, gercek K3 yayin olcumu, IBO cihaz ve K4 harici restore acik. Eski depo ve korunan listeler degismedi.
+
+
+## 19 Ekim 2026 - K1 korunan yol on denetimi
+
+Actions #79 ve #80 completed/success. K1 icin madsc/write_path_audit.py eklendi (af2aacd): onerilen depo yollarinda korunan liste, epg ve logo hedeflerini tespit eder; traversal ve mutlak yollari reddeder. Bu yalniz on denetimdir, gercek protected_write_gate runtime entegrasyonu DEGIL. tests/test_write_path_audit.py uc test (bbdac0a) ve madsc/core.py K1 fixture kaniti (03fc5b6) eklendi. Yeni Actions sonucu henuz teyit edilmedi. K1 26 gercek kural, K3 canli stream ve IBO cihaz, K4 harici restore acik. Eski depo ve korunan listeler degistirilmedi.

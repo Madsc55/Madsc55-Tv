@@ -229,3 +229,8 @@ Actions #69 ve #70 completed/success. `madsc/channel_test.py` tekrar olcumlerini
 ## 19 Ekim 2026 - Kisa devir ve test durumu
 
 Actions #75 completed/success; #71 completed/success. #72-74 cancelled (neden kesin dogrulanmadi). K4 verify_independent_restore girdilerinde bos/gecersiz/tekrarlanan dosya adlari fail-closed reddedilir (66c85a0); test eklendi (ec92e41). Yeni commit Actions sonucu henüz dogrulanmadi. 99/99 eski workflow YAML ilk envanter tamam; davranissal entegrasyon tamam degil. K2-K3-K5 aday koordinasyonu, EPG/logo skor ve K5 fixture raporu kodlandi. K3 tekrar olcumleri ve K4 uc agac sandbox restore kontrolu fixture duzeyinde. K1 26 gercek runtime kural, K3 gercek yayin/IBO cihaz, K4 harici restore, production kabul acik. Eski Madsc55/madsc-tv dalina ve korunan listelere yazma YASAK. Yeni sohbet once bu dosyanin son bolumunu ve madsc/LEGACY_WORKFLOW_ON_ENVANTER.md dosyasini okusun; sonra Actions kontrol edip yeni Madsc55/Madsc55-Tv deposunda devam etsin.
+
+
+## 19 Ekim 2026 - K3 ffprobe JSON kanit okuyucu
+
+Actions #76 ve #77 completed/success. K3 madsc/channel_test.py icine saglanan ffprobe JSON streams ve duration degerlerini guvenli on degerlendiren evaluate_ffprobe_json eklendi (cc69c26). Gercek ag baglantisi veya 30 saniye kesintisiz oynatma iddiasi YOK; live_probe_executed_by_this_function false. tests/test_channel_test.py iki yeni regresyon testi (b6fe40a), madsc/core.py K3 fixture kabul kontrolu (9343e94) eklendi. Actions #80 pending, #79 in_progress, #78 cancelled sorgu aninda. K1 26 runtime kural, gercek K3 yayin olcumu, IBO cihaz ve K4 harici restore acik. Eski depo ve korunan listeler degismedi.

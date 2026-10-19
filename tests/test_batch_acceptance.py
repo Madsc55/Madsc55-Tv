@@ -2,13 +2,13 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from madsc.batch_acceptance import collect, CATEGORIES
+from madsc.batch_acceptance import collect, CATEGORIES, MODULES
 
 class BatchAcceptanceTests(unittest.TestCase):
     def make_report(self, directory, key):
         path = Path(directory) / ("madsc-batch-" + key) / (key + ".json")
         path.parent.mkdir(parents=True, exist_ok=True)
-        data = {"category": key, "mode": "isolated_read_only",
+        data = {"category": key, "module": MODULES[key], "mode": "isolated_read_only",
                 "production_writes": False, "legacy_workflows_executed": False,
                 "status": "isolated_fixture_checks_passed_not_production_verified",
                 "fixture_checks": {"sample": True},
@@ -137,3 +137,21 @@ class BatchAcceptanceTests(unittest.TestCase):
             (nested / "extra.txt").write_text("unexpected", encoding="utf-8")
             with self.assertRaises(ValueError):
                 collect(Path(d))
+    def test_mismatched_module_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            paths = {key: self.make_report(d, key) for key in CATEGORIES}
+            path = paths["k3"]
+            data = json.loads(path.read_text(encoding="utf-8"))
+            data["module"] = "backup"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(Path(d))
+
+    def test_fixture_check_names_are_visible_in_acceptance_report(self):
+        with tempfile.TemporaryDirectory() as d:
+            for key in CATEGORIES:
+                self.make_report(d, key)
+            report = collect(Path(d))
+            self.assertEqual(report["categories"]["k1"]["module"], "security")
+            self.assertEqual(report["categories"]["k1"]["fixture_check_names"], ["sample"])
+            self.assertFalse(report["runtime_rules_verified"])

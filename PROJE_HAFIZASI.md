@@ -564,3 +564,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - İlk kaynak zinciri `aday-bekletme.yml`: YAML ve çağrılan 8 gerçek Python dosyası eski `Madsc55/madsc-tv@madsc/bes-sistem-toplu-birlestirme` dalında salt-okunur açıldı. Dış keşif → tekrar raporu → medya testi → `gecmis.json` aday durumu → tekrar takvimi → RETEST_LIMIT=5 → kaynak güveni → öncelik raporu haritalandı.
 - Ayrıntılı girdi/çıktı ve K2/K3/K5 eşlemesi `docs/ESKI_WORKFLOW_DAVRANIS_ESLEME.md` içine işlendi, commit `964125e6e2a933558927080edd84a429533c8f25`. Runner koşuları arasında geçmiş kalıcılığı ve 10 artefaktın gerçek şema/sonuç parity'si kanıt bekliyor. 92/92 parity onayı hâlâ 0/92.
 - Yalnız belge güncellemesi; scriptler çalıştırılmadı, korunan listeler, eski depo, cron/push, main merge ve PR #71 değiştirilmedi.
+
+
+## 19 Ekim 2026 — 99 YAML derin çözümleme ikinci grup
+- Eski salt-okunur dalda 12 ek workflow YAML ve 13 çağrılan Python betiği kaynak olarak açıldı. Girdi/çıktı ve K1–K5 görev eşlemesi `docs/ESKI_WORKFLOW_DAVRANIS_ESLEME.md` içine kaydedildi, commit `4f977d38f76f626dc0e4e6113c43722dbbf29fdd`.
+- Önceki `aday-bekletme.yml` (8 betik) ile toplam 13 benzersiz YAML derin çözümleme, 21 betik kaynak incelemesi; 86 YAML aynı derinlikte henüz incelenmedi. 13 içinde `madsc-01-guvenlik.yml` 92 kapsam dışında olduğundan, 92 kapsam için bu turlarda 12 YAML derin incelendi; 80 eski kapsam YAML aynı derinlikte bekliyor. İlk YAML taraması 99/99; davranışsal parity onayı 0/92.
+- Önemli farklar: `kanal-kararlilik.yml` cache restore/save, `birlesik-aday-raporu.yml` K2→K3→K5 zinciri, `madsc-birlesik-kesif.yml` git push yazma riski, `vod-guncelle.yml` contents:write ve cron, felaket kurtarma yalnız Git kaynaklı sandbox. Betikler çalıştırılmadı; korunan listeler ve eski repo değiştirilmedi.

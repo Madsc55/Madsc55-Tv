@@ -60,3 +60,24 @@ Kanal kesfi sadece tekil URL ile sinirli olmayacak. Kamuya acik ve yasal/izinli 
 
 ## 20 Ekim 2026 — Yeni sohbet icin guncel kanit ve sonraki grup
 Basarili dogrudan eski-yeni fixture diferansiyelleri: aday puanlama #39337813130; EPG/logo #39338017857; 390 teknik retest #39338267421. Kodlar tests/test_candidate_differential.py, tests/test_legacy_epg_logo_differential.py, tests/test_legacy_390_differential.py. Bu tam workflow kabul degildir: 0/92 ve 0/26 korunur. Sonraki toplu kod grubu: P01-P06 aday oncelik, R01-R05 tekrar araligi, H01-H05 gecmis birlestirme, ardindan workflow artifact ve timeout farklari. K2 acik/izinli M3U/M3U8, canli TV sitesi ve resmi YouTube Live kesif backlogu unutulmayacak.
+
+
+## 20 Ekim 2026 — K2 history kanit zinciri ve bagimsiz GitHub kaynagi (SON GUNCEL)
+**Yalnizca Madsc55/Madsc55-Tv main yazilabilir.** Eski Madsc55/madsc-tv depoyu, eski workflow hatalarini, cronlari ve PR #71'i yeni depo ile karistirma. Korunan CALISANLAR/YENILER/YEDEKLER/HEPSI/FAVORILER, EPG/logo ve uretim yedekleri degistirilmedi.
+
+Dogrulanmis GitHub Actions basarilari: #39339828805 H05 atomic history envelope/R05 offline HLS; #39339972513 read-only legacy history bridge; #39340660815 K2 core fixture bridge; #39340902966 K2-K3-K5 run_id/commit_sha/digest bagli history artifact aktarimi; #39341040464 manifest SHA256 source gate; #39341268096 GitHub run/artifact/ancestry provenance testleri; #39341601409 salt-okunur GitHub REST istemcisi; #39341835535 fail-closed kaynak CLI; #39342095390 strict ZIP/SHA256 extraction; #39342334826 birlesik dogrulama pipeline; #39342558278 ayri opt-in workflow kod regresyonu. Bunlar basarili *izole CI*; canli kaynak kabulune esit degil.
+
+Yeni kodlar:
+- madsc/history_pair_store.py: iki legacy gecmis JSON'un tek SHA256 zarfinda atomik izole saklanmasi.
+- madsc/history_pair_bridge.py, madsc/legacy_history_merge.py, madsc/legacy_history_provenance.py: eski gecmis salt-okunur import/merge ve provenance fixture.
+- madsc/hls_segment_window.py: cevrimdisi HLS segment pencere farki, gercek medya decode veya canli akis testi degil.
+- madsc/history_handoff.py, madsc/history_transport.py: K2-K3-K5 ayni run_id, commit SHA ve digest kanit zinciri, test artifact'lari workflow madsc-05-bakim.yml uzerinde bagli.
+- madsc/history_source_gate.py: VERIFIED_SOURCE manifest, iki JSON SHA256 ve kaynak kimligi denetimi; tek basina bagimsiz kimlik kaniti degil.
+- madsc/github_history_origin.py ve madsc/github_history_client.py: GitHub REST run, artifact, compare API uzerinden bagimsiz provenance; commit soy karari ve artifact kontrolu.
+- madsc/history_artifact_download.py: yalnizca beklenen iki JSON, SHA256 ve ZIP sinirlari.
+- madsc/history_origin_cli.py, madsc/history_verified_pipeline.py: salt-okunur verified source to handoff; kaynak/token yoksa fail closed.
+- madsc/history_verified_workflow.py ve .github/workflows/madsc-k2-verified-history.yml: elle tetiklenen AYRI gercek kaynak dogrulama isi, manifest bulunmazsa bilerek basarisiz, otomatik fixture fallback yok; ana besli zincir etkilenmez.
+
+Son kod commitleri: 783a6da6, 48035507, d5a49cee, 824b2ce8, baab856a, ed75b154, 164bced5, e157fb66. Bunlarin CI basarilari yukarida. Uretim esdegerlik 0/92, runtime guvenlik kabul 0/26; tam M3U8 canli akim/ses/video ve EPG/logo dogrulamasi YAPILACAK.
+
+ONEMLI ACIK IS: Gercek history source artifact'i henuz yok/entegre degil. Manifest hashleri manifestten geldiginden bagimsiz yayinci imzasi sayilmaz. GitHub workflow gercek artifact kaydini dogrulayabilmek icin once guvenilir source artifact uretimi, GitHub API metadata semasinin gercek cevapla entegrasyon testi, ZIP indirimi ve kaynak kaydi tasarlanacak. Gercek artifact olmadan workflow'u basarili ilan etme. K2 izinli acik M3U/M3U8 ve resmi yayin kesfi, K3 ffprobe/ffmpeg gercek medya, K5 tekrar kontrolu backlogu korunur. Sonraki sohbet once bu notu ve PROJE_HAFIZASI.md'yi okusun; onceki isleri yeniden yapmasin.

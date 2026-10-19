@@ -29,8 +29,10 @@ def audit_write_paths(paths: list[str]) -> dict:
             or ":" in name
             or name.startswith("~")
             or folded in {item.casefold() for item in PROTECTED_EXACT}
+            or any(part.casefold() in {item.casefold() for item in PROTECTED_EXACT}
+                   for part in parts)
             or any(folded.startswith(prefix.casefold()) for prefix in PROTECTED_PREFIXES)
-            or PurePosixPath(name).suffix.lower() in (".m3u", ".m3u8")
+            or PurePosixPath(name).suffix.casefold() in (".m3u", ".m3u8")
             or any(part.casefold() in ("favoriler", "hepsi", "yedekler",
                                       "epg", "logolar", "logos", "arsiv") for part in parts)):
             rejected.append(raw)

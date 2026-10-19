@@ -5,10 +5,14 @@ from pathlib import Path
 
 def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     base = root.resolve(strict=True)
+    if (not isinstance(paths, list) or any(not isinstance(name, str) or not name for name in paths)
+            or len(set(paths)) != len(paths)):
+        raise ValueError("Backup paths must be unique nonempty strings")
     entries = []
-    for name in sorted(set(paths)):
+    for name in sorted(paths):
         requested = Path(name)
-        if requested.is_absolute() or ".." in requested.parts:
+        if (requested.is_absolute() or "\\" in name or
+                any(part in ("", ".", "..") for part in name.split("/"))):
             raise ValueError("Unsafe backup source path")
         candidate = base / requested
         for parent in (base, *(base / Path(*requested.parts[:i]) for i in range(1, len(requested.parts) + 1))):
@@ -26,7 +30,11 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
 def verify_manifest(root: Path, manifest: dict) -> bool:
     if not isinstance(manifest, dict) or not isinstance(manifest.get("entries"), list):
         raise ValueError("Invalid backup manifest")
-    if any(not isinstance(entry, dict) or not isinstance(entry.get("path"), str) for entry in manifest["entries"]):
+    if any(not isinstance(entry, dict) or not isinstance(entry.get("path"), str)
+           or type(entry.get("bytes")) is not int or entry["bytes"] < 0
+           or not isinstance(entry.get("sha256"), str) or len(entry["sha256"]) != 64
+           or any(c not in "0123456789abcdef" for c in entry["sha256"])
+           for entry in manifest["entries"]):
         raise ValueError("Invalid backup manifest entry")
     current = snapshot_manifest(root, [entry["path"] for entry in manifest["entries"]])
     return current["entries"] == manifest["entries"]

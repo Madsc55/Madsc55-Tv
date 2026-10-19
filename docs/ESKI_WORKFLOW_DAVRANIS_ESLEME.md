@@ -227,3 +227,25 @@ Eski dalda YAML ve çağrılan betikler salt-okunur incelendi:
 | `madsc-birlesik-kesif.yml` | `madsc_akilli_kesif.py` ffprobe çağrısı (satır 54), `madsc_kesif/` CSV/JSON/logo adayları ve state; `scripts/discovery_archive.py` history/registry; `CALISANLAR.m3u` ve `YENILER.m3u` okuma | `contents:write`, `actions:write`, cron 06:00/18:00 UTC, `git reset --hard` yalnız runner checkout, raporları `madsc_kesif/` altında 10 denemeli `git push origin HEAD:main`; gate `madsc_kesif/` için genel koruma öneki içermiyor. **Rapor push yolu mevcut**, ama gerçek push başarısı doğrulanmadı. Yeni cron/push kapalı kalmalı |
 
 **Önemli ayrım:** Gate çalışma ağacı/commit değişikliklerini reddeder; bu, yazıcı betiğin runner üzerinde dosya üretmediği anlamına gelmez. PNG ve EPG gate çağrılarının korunan dizinlere göre bloke edilmesi beklenir; bu **statik kaynak değerlendirmesi**, geçmiş koşu kanıtı değildir. VOD JSON ve `madsc_kesif/` rapor yolları gate kapsamındaki korunan dizinler arasında doğrudan yer almaz; bunların da otomatik `main` push'u yeni sistemde yetkisizdir. Korunan listelere, logolara, EPG'ye, VOD'a veya eski depoya yazılmadı.
+
+
+## Derin betik incelemesi 1 — `aday-bekletme.yml` (19 Ekim 2026)
+
+**Yöntem:** Eski salt-okunur daldaki workflow YAML ve çağırdığı **8 ayrı Python dosyasının gerçek kaynakları** okundu. Bu bölüm önceki yalnız YAML adı/adım taramasından daha derin bir girdi/çıktı haritasıdır. Hiçbir betik çalıştırılmadı.
+
+| Çalışma sırası | Gerçek giriş betiği | Kaynakta gözlenen girdi/çıktı | K1–K5 tasarım karşılığı |
+|---|---|---|---|
+| 1 | `yeni_kanal_tara.py` | Dış M3U kaynakları için `fetch`, `parse`, `norm`, `hls_probe`, `ffprobe_stream`; `YENILER_TARAMA_RAPORU.csv` gibi tarama çıktıları | K2 keşif → K3 canlı medya |
+| 2 | `aday_tekrar_raporu.py` | `aday_bekletme/HAM_ADAY_KAYNAKLARI.csv` → `TEKRAR_EDEN_ADAYLAR.csv`; `duplicate_groups` | K2 URL/aday tekrar ayrımı |
+| 3 | `gelismis_medya_testi.py` | `YENILER_TARAMA_RAPORU.csv` → `GELISMIS_MEDYA_TESTI.csv`; `check` | K3 video/ses değerlendirme |
+| 4 | `aday_bekletme.py` | Tarama CSV + `aday_bekletme/gecmis.json` → güncellenen `gecmis.json` ve `ADAY_DURUM_RAPORU.csv` | K2/K3 → K5 kalıcı aday durumu |
+| 5 | `akilli_tekrar_test_takvimi.py` | `gecmis.json` → `AKILLI_TEKRAR_TEST_TAKVIMI.csv`; `plan` | K5 zamanlama/yeniden test |
+| 6 | `altinci_aday_tekrar_test.py` | `gecmis.json` → `ALTINCI_TEKRAR_TEST.csv`; `eligible`, `check`, `load_probes`; YAML `RETEST_LIMIT=5` | K3 tekrar medya ölçümü + K5 sınır |
+| 7 | `kaynak_guven_puani.py` | `gecmis.json` → `KAYNAK_GUVEN_PUANLARI.csv` | K2 kaynak güveni → K5 karar |
+| 8 | `aday_oncelik_raporu.py` | `ADAY_DURUM_RAPORU.csv` → `ADAY_ONCELIK_RAPORU.csv`; `rank` | K5 aday önceliği |
+
+**Davranış zinciri:** dış kaynak keşfi → tekrar kayıtları → teknik video/ses testi → geçmişe yazılan bekletme durumu → tekrar test takvimi → sınırlı tekrar test → kaynak güven puanı → aday öncelik raporu. YAML'da `contents:read`, manuel ve dosya değişimi tetikleri, `cancel-in-progress: false`, 90 dakikalık job sınırı, ffmpeg kurulumu ve `if: always()` artefakt yükleme var.
+
+**Kritik bulgu:** Workflow GitHub deposuna push yapmasa bile betikler runner çalışma ağacında `aday_bekletme/gecmis.json` gibi **kalıcı olması amaçlanan durum dosyalarını yeniden yazar**. Bu, eski koşular arasında durumun gerçekten saklandığı anlamına gelmez; artifact/cache/commit üzerinden devamlılık ayrıca kanıtlanmalı. Yeni K2/K3 salt-okunur fixture testleri bu sekiz adımlı davranışın tamamını henüz karşılamıyor.
+
+**Gerekli parity testleri:** kaynak/aday tekilleştirme; tarama CSV şeması; teknik sonuç ve IBO cihaz sonucunun ayrımı; geçmiş dosyasının önce/sonra kimliği; `RETEST_LIMIT=5` ve yeniden deneme takvimi; kaynak güven puanı ve öncelik sıralaması; eksik/bozuk geçmişte fail-closed; 10 artefaktın şema ve içerik eşlemesi; runner koşuları arasında gerçekten kalıcı durum kanıtı. Korunan ana liste, YEDEKLER, YENİLER, EPG, logo ve favorilere yazma **yasak**. **Karar: `BLOCKED_NEEDS_BEHAVIOR_EVIDENCE`.**

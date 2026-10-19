@@ -21,6 +21,19 @@ class BackupTests(unittest.TestCase):
             self.assertFalse(result["external_backup_verified"])
             self.assertFalse(result["restore_verified"])
 
+    def test_absolute_path_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(ValueError):
+                snapshot_manifest(Path(directory), ["/tmp/another-file"])
+
+    def test_symlink_source_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "real.txt").write_text("data")
+            (root / "alias.txt").symlink_to(root / "real.txt")
+            with self.assertRaises(ValueError):
+                snapshot_manifest(root, ["alias.txt"])
+
     def test_escape_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaises((ValueError, FileNotFoundError)):

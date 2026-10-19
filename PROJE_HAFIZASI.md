@@ -114,3 +114,6 @@ Probe kanit turu dogrulamasi 082a658 commitinde eklendi. Diger handoff dogrulama
 
 ## 19 Ekim 2026 - K2 K3 engel giderildi
 Actions 25 success. K2 K3 girdi bicimi dogrulamalari 83f0cf6, d2a7c48 ve 15b70ef ile eklendi. Toplu gecersiz veri regresyonu 7ed4c9a ile eklendi. Yeni Actions sonuclari kontrol edilmeli. Eski depo degismedi; uretim yetkisi verilmedi.
+
+## 19 Ekim 2026 - K2 K3 Actions kontrolu
+Actions 26 success; 27 ve 28 cancelled; 29 son kontrolde in_progress. K3 probe kaydi tur kontrolu yazma denemesi engellendi, uygulanmadi. Sonraki is 29 sonucunu kontrol edip K1-K5 gercek islev paketlerini topluca gelistirmek. Eski depo degismedi.

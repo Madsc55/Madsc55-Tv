@@ -533,3 +533,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `tests/test_legacy_stability.py` içine iki regresyon testi eklendi: 24 saatlik span ve son ölçüm tazelik sınırları; saat dilimi eşdeğer ölçümlerin tekilleştirilmesi ve 7 günlük pencere dışında kalan gözlemlerin sayılmaması. Commit `710df79a10c41111cee908125e0ce9129436a214`.
 - GitHub Actions #201 (run `39308382200`) `completed/success`; K1–K5 ve beşli toplu doğrulama dahil 6/6 iş `completed/success`, başarısız step yok.
 - Testler salt-okunur sağlanan geçmiş verileridir; canlı ffprobe, IBO cihaz doğrulaması, offsite restore ve 92 eski workflow için davranışsal eşdeğerlik kanıtlanmadı. Korunan listeler, eski depo, main merge ve PR #71 değiştirilmedi.
+
+
+## 19 Ekim 2026 — K4 iç içe dosya geri yükleme denetimi ve Actions #202
+- `tests/test_backup.py` içine iki salt-okunur sandbox regresyonu eklendi: üç bağımsız ağaçta iç içe dosya bozulması/kaybı yakalanır; yedek ağaçtaki iç içe sembolik bağlantı reddedilir. Commit `327fc6fad49fa9b1c13350d01df487f0e8519e4a`.
+- GitHub Actions #202 (run `39308991009`) `completed/success`; K1–K5 ve beşli toplu kanıt doğrulama 6/6 `completed/success`, başarısız step yok.
+- Gerçek harici depolama geri yüklemesi veya üretim restore kanıtı değildir; canlı ffprobe, IBO cihaz doğrulaması ve 92 eski workflow davranışsal eşdeğerliği hâlâ kanıtlanmadı. Korunan listeler, eski depo ve PR #71 değişmedi.

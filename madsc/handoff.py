@@ -20,6 +20,8 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         if probe is None:
             status = "UNTESTED"
         else:
+            if not isinstance(probe, dict):
+                raise ValueError("Invalid probe record")
             if probe.get("url_sha256") != digest:
                 raise ValueError("Probe fingerprint mismatch")
             status = evaluate_probe(probe)["technical_status"]

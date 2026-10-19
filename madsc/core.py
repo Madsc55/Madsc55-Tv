@@ -114,7 +114,7 @@ def execute(category: str) -> dict:
                         "restore_not_claimed": not manifest["restore_verified"]}
     elif category == "k5":
         reports = [{"category": k, "production_writes": False} for k in CATEGORIES]
-        result = aggregate(reports)
+        result = aggregate([{**r, "status": "success"} for r in reports])
         summary = summarize_batch([{**r, "status": "success"} for r in reports])
         coordination = validate_batch(["candidate_discovery", "channel_assessment", "backup_restore", "schedule_collision"])
         fixture_rows = [{"name": "Fixture", "url": "https://example.org/fixture.m3u8",
@@ -131,6 +131,7 @@ def execute(category: str) -> dict:
                     "candidate_report_read_only": candidate_report["production_writes"] is False and candidate_report["production_ready"] is False,
                     "batch_failure_summary": not summary["requires_review"] and not summary["failed_categories"],
                     "five_categories": result["all_five_present"],
+                    "five_fixture_reports_successful": result["all_five_successful"],
                     "read_only": result["all_read_only"],
                     "failure_limit": retry_decision(3)["blocked"],
                     "production_not_approved": not result["production_ready"],

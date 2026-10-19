@@ -551,3 +551,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `docs/ESKI_WORKFLOW_99_ENVANTER.md` içine güncel kapsam notu eklendi, commit `4954f1ea51d79e7dda1f1a14b85c448d65e84d1e`.
 - Eski salt-okunur audit tanımı 99 YAML içinden beş `madsc-01..05` koordinatörünü ve `k1-protected-write-tests.yml`, `madsc-hizli-on-kontrol.yml` dosyalarını hariç tutuyor: 99−7=92. 99/99 ilk kaynak incelemesi tamam; 92/92 gerçek davranışsal eşdeğerlik halen `BLOCKED_NEEDS_BEHAVIOR_EVIDENCE`.
 - Bu yalnızca belge uzlaştırmasıdır; yeni Actions test koşusu tetiklendiği iddia edilmiyor. Korunan listeler, eski depo, cron/push, main merge ve PR #71 değiştirilmedi.
+
+
+## 19 Ekim 2026 — 92 workflow davranışsal kabul kapısı matrisi
+- `docs/KABUL_KAPILARI.md` güncellendi; K1–K5 için mevcut fixture/CI kanıtları ile eksik canlı/bağımsız kanıtlar ayrıldı. Commit `1bd769962ec3f12af78cfac5cdf85d15a1ba2d28`.
+- 99/99 ilk YAML incelemesi ve 99−7=92 kapsam tanımı doğrulandı; 92 davranışsal parity onayı hâlâ 0/92. Her iş için tetik/izin, script ve yazma riski, artefakt şeması, K hedefi, negatif/pozitif test, canlı/bağımsız koşu ve kullanıcı onayı zinciri olmadan `BLOCKED_NEEDS_BEHAVIOR_EVIDENCE` kaldırılmayacak.
+- Yalnızca belge değişikliği; yeni CI koşusunun çalıştığı/başarılı olduğu iddia edilmez. Korunan listeler, eski depo, cron/push, main merge ve PR #71 değiştirilmedi.

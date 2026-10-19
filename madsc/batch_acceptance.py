@@ -24,7 +24,8 @@ def collect(root: Path) -> dict:
         matches = list(root.rglob(key + ".json"))
         if len(matches) != 1:
             raise ValueError(f"Expected exactly one report for {key}; got {len(matches)}")
-        if matches[0].is_symlink() or not matches[0].is_file():
+        if (matches[0].parent.name != f"madsc-batch-{key}"
+                or matches[0].is_symlink() or not matches[0].is_file()):
             raise ValueError(f"Invalid evidence file: {key}")
         data = json.loads(matches[0].read_text(encoding="utf-8"))
         if not isinstance(data, dict):

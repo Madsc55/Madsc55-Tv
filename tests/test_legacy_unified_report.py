@@ -85,3 +85,23 @@ class LegacyUnifiedReportTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             legacy_unified_rows(scores, [{"YAYIN_URL": url, "24_SAAT_KARARLI": "EVET"}],
                                 history={url: good, "https://example.org/other": bad}, now=now)
+
+
+    def test_legacy_report_never_promotes_candidate_from_csv_alone(self):
+        url = "https://example.org/live"
+        scores = [{"KANAL": "A", "PUAN": "100", "TEKNIK_KANIT": "VIDEO_SES_VAR",
+                   "YAYIN_URL": url, "KAYNAK": "fixture"}]
+        stability = [{"YAYIN_URL": url, "24_SAAT_KARARLI": "EVET"}]
+        report = legacy_unified_rows(scores, stability)
+        row = report["rows"][0]
+        self.assertEqual(row["IBO_ONAYI"], "YOK")
+        self.assertEqual(row["KULLANICI_ONAYI"], "YOK")
+        self.assertEqual(row["ANA_LISTEYE_EKLE"], "HAYIR")
+        self.assertFalse(report["production_writes"])
+        self.assertFalse(report["historical_stability_verified"])
+
+    def test_legacy_report_rejects_orphan_duplicate_stability_url(self):
+        url = "https://example.org/live"
+        stability = [{"YAYIN_URL": url, "24_SAAT_KARARLI": "EVET"}] * 2
+        with self.assertRaises(ValueError):
+            legacy_unified_rows([], stability)

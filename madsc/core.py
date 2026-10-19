@@ -126,7 +126,7 @@ def execute(category: str) -> dict:
                               "video": True, "audio": True, "duration_seconds": 40}},
             {}, {"fixture.tv"}, {"fixture.tv"})
         candidate_item = candidate_report["candidates"][0]
-        evidence = {"candidate_k2_k3_k5_join": candidate_item["score"] == 80 and not candidate_item["hold"],
+        evidence = {"candidate_k2_k3_k5_join": candidate_item["score"] == 80 and candidate_item["hold"] and candidate_item["ibo_review_required"],
                     "candidate_metadata_counts": candidate_report["epg_matched"] == 1 and candidate_report["logo_matched"] == 1,
                     "candidate_report_read_only": candidate_report["production_writes"] is False and candidate_report["production_ready"] is False,
                     "batch_failure_summary": not summary["requires_review"] and not summary["failed_categories"],

@@ -57,3 +57,8 @@ Bu bölüm eski depoda salt-okunur açılan üç YAML ve bunların çağırdığ
 ## 19 Ekim 2026 — kaynak puanlama ve onay regresyonu
 
 `tests/test_legacy_source_score_vectors.py` eski `akilli_aday_puanla.py` kaynak incelemesinden çıkarılmış 10 puan/status vektörü ile ayrıca 4 puan × 3 teknik durum × 2 kararlılık = 24 otomatik listeye yazmama kombinasyonunu kapsar. Yanlış veri türlerinin reddi de test edilir. İlk 10 vektörün CI koşusu #39330966958 **SUCCESS**. Onay matrisi genişletmesi commit `29b945a` ile eklendi; bunun CI sonucu ayrıca doğrulanmalıdır. Bu karşılaştırma eski betiği fiilen çalıştıran diferansiyel test değildir ve `akilli-aday-puanlama.yml` için 92'lik tam davranışsal kabul sayısını artırmaz. Gerçek ffprobe, CSV şeması, URL bazında en yüksek skor seçimi ve artifact davranışı hâlâ açık.
+
+
+## 20 Ekim 2026 — akıllı aday puanlama CSV birleştirme sözleşmesi
+
+`madsc/legacy_candidate_merge.py` eski salt-okunur `scripts/akilli_aday_puanla.py` kaynak davranışından çıkarıldı: yalnız üç rapor adından teknik kanıt önceliği, `VIDEO_SES_VAR` kanıtının önceliği, `TEKNIK_MEDYA/COZUNURLUK/SES_IZI` alanlarının URL üzerinden birleştirilmesi, HTTP(S) filtreleme, aynı URL için yüksek puanın korunması, eşit puanda ilk aday, puan/kanal sıralaması ve 13 CSV alanı. `tests/test_legacy_candidate_merge.py` olumlu/olumsuz örnekleri kapsar. Bu testler eski betikle fiili karşılaştırmalı çalıştırma, gerçek ağ/ffprobe veya tam workflow davranışsal kabul değildir; 0/92 korunur. İlk puanlama vektörleri Actions #39331287407 SUCCESS. Bu yeni kodun CI sonucu ayrıca doğrulanmalıdır.

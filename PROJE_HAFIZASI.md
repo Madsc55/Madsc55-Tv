@@ -90,3 +90,6 @@ K5 tekrar deneme siniri icin test eklendi: 490fad5. K3 Actions 13 son kontrolde 
 
 ## 19 Ekim 2026 - K5 tip kontrolu tamamlandi
 Actions #13 39183103253 ve #14 39183173461 success dogrulandi. K5 retry limit bool, ondalik ve metin degerlerini reddeden tip kontrolu e3ec1f347c9ba26386febb58f41724f6c3981e01 ile eklendi. K5 regresyon testi fdf1477cd0d7c201a4ed0860dcb3575125976d88 ile eklendi. Actions #15 39183349096 in_progress, #16 39183356794 pending; sonuc bekleniyor. Eski depo ve canli listeler degismedi. Sonraki is Actions 15/16 sonucunu kontrol edip besli sistem kanit kapsamini genisletmek.
+
+## 19 Ekim 2026 - Toplu kurulum yaklasimi
+K1-K5 tek Actions workflow ve toplu kabulde zaten birlesik; kullanici istegi uzerine tek tek mikrotest yerine toplu islev paketlerine odaklanilacak. Actions #15 ve #16 success dogrulandi. Toplu kabulde JSON raporunun nesne olmasi zorunlu hale getirildi: 04d5f96. Hatali rapor sekilleri icin regresyon eklendi: 269115a. Bu iki degisikligin Actions sonuclari ayrica kontrol edilecek. Izole test basarisi uretim onayi veya 92 islev esdegerligi degildir. Eski depo degismedi.

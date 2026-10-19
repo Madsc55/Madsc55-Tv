@@ -35,6 +35,14 @@ class BatchAcceptanceTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 collect(Path(d))
 
+    def test_unexpected_json_report_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            for key in CATEGORIES:
+                self.make_report(d, key)
+            (Path(d) / "unexpected.json").write_text("{}", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(Path(d))
+
     def test_missing_category_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:
             for key in CATEGORIES[:-1]:

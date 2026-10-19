@@ -46,6 +46,6 @@ def main():
     if args.mode == "produce":
         args.path.parent.mkdir(parents=True, exist_ok=True)
         args.path.write_text(json.dumps(result, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({"mode": args.mode, "fixture_only": args.source is None if args.mode == "produce" else False, "verified": True}))
+    print(json.dumps({"mode": args.mode, "source_mode": "read_only_m3u" if args.mode == "produce" and args.source is not None else ("synthetic_fixture" if args.mode == "produce" else "verified_artifact"), "production_ready": False, "verified": True}))
 if __name__ == "__main__":
     main()

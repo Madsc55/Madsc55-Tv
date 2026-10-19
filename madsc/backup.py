@@ -49,8 +49,10 @@ def verify_sandbox_restore(source: Path, restored: Path, names: list[str]) -> di
 def verify_independent_restore(source: Path, backup: Path, restored: Path,
                                names: list[str]) -> dict:
     """Compare three pre-existing independent trees; never perform restoration."""
-    if not isinstance(names, list) or not names:
-        raise ValueError("Restore audit requires named files")
+    if (not isinstance(names, list) or not names or
+            any(not isinstance(name, str) or not name for name in names) or
+            len(set(names)) != len(names)):
+        raise ValueError("Restore audit requires unique named files")
     locations = [path.resolve(strict=True) for path in (source, backup, restored)]
     if len(set(locations)) != 3:
         raise ValueError("Source, backup and restored trees must be distinct")

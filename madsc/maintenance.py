@@ -18,6 +18,7 @@ def aggregate(reports: list[dict]) -> dict:
     successful = safe and all(report.get("status") == "success" for report in reports)
     return {"all_five_present": complete, "all_read_only": safe,
             "all_five_successful": successful,
+            "all_reports_explicitly_read_only": safe,
             "production_ready": False, "runtime_evidence_verified": False}
 
 
@@ -33,7 +34,10 @@ def summarize_batch(reports: list[dict]) -> dict:
     counts = {category: sum(r.get("category") == category for r in reports) for category in expected}
     duplicates = sorted(category for category, count in counts.items() if count > 1)
     unexpected = sum(r.get("category") not in expected for r in reports)
+    unsafe = sorted(str(r.get("category", "unknown")) for r in reports
+                    if r.get("production_writes") is not False)
     return {**base, "failed_categories": failures, "missing_categories": missing,
             "duplicate_categories": duplicates, "unexpected_category_count": unexpected,
+            "unsafe_or_unverified_write_categories": unsafe,
             "requires_review": bool(failures) or bool(missing) or bool(duplicates) or bool(unexpected) or not base["all_read_only"],
             "production_writes": False}

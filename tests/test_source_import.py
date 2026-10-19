@@ -53,3 +53,24 @@ class SourceImportTests(unittest.TestCase):
             p.write_text("#EXTM3U\n#EXTINF:-1,One\n", encoding="utf-8")
             with self.assertRaises(ValueError):
                 extract_candidates(p)
+    def test_quoted_commas_preserve_epg_logo_and_group_metadata(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u8"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt,1" tvg-logo="https://example.org/a,b.png" group-title="News, TR",TRT 1\nhttps://example.org/live\n', encoding="utf-8")
+            before = p.read_bytes()
+            result = extract_candidates(p)
+            item = result["candidates"][0]
+            self.assertEqual(item["name"], "TRT 1")
+            self.assertEqual(item["tvg_id"], "trt,1")
+            self.assertEqual(item["tvg_logo"], "https://example.org/a,b.png")
+            self.assertEqual(item["group_title"], "News, TR")
+            self.assertEqual(before, p.read_bytes())
+
+    def test_both_formats_preserve_logo_and_group(self):
+        for suffix in (".m3u", ".m3u8"):
+            with self.subTest(suffix=suffix), tempfile.TemporaryDirectory() as d:
+                p = Path(d) / ("source" + suffix)
+                p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt" tvg-logo="https://example.org/logo.png" group-title="Haber",TRT\nhttps://example.org/live\n', encoding="utf-8")
+                item = extract_candidates(p)["candidates"][0]
+                self.assertEqual(item["tvg_logo"], "https://example.org/logo.png")
+                self.assertEqual(item["group_title"], "Haber")

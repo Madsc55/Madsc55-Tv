@@ -239,3 +239,8 @@ Actions #76 ve #77 completed/success. K3 madsc/channel_test.py icine saglanan ff
 ## 19 Ekim 2026 - K1 korunan yol on denetimi
 
 Actions #79 ve #80 completed/success. K1 icin madsc/write_path_audit.py eklendi (af2aacd): onerilen depo yollarinda korunan liste, epg ve logo hedeflerini tespit eder; traversal ve mutlak yollari reddeder. Bu yalniz on denetimdir, gercek protected_write_gate runtime entegrasyonu DEGIL. tests/test_write_path_audit.py uc test (bbdac0a) ve madsc/core.py K1 fixture kaniti (03fc5b6) eklendi. Yeni Actions sonucu henuz teyit edilmedi. K1 26 gercek kural, K3 canli stream ve IBO cihaz, K4 harici restore acik. Eski depo ve korunan listeler degistirilmedi.
+
+
+## 19 Ekim 2026 - K1 legacy write gate kural eslemesi
+
+Actions #83 completed/success. Eski depodaki tools/protected_write_gate.py yalniz OKUNDU: exact korunan dosyalar, case-insensitive prefix ve herhangi .m3u/.m3u8 degisikligi engeli, git diff staged/unstaged/untracked/ignored kontrolu ve hata halinde fail-closed. Yeni madsc/write_path_audit.py yol politikasi bu kurallarla eslendi (1900248); test_write_path_audit.py guncellendi (b38eaea). Yeni audit gercek git push kapisi DEGIL; git_changed_paths ve 26 kural runtime kabul henuz uygulanmadi. Yeni Actions sonucu bekleniyor. K3 gercek yayin ve IBO, K4 harici restore acik. Eski depo ve korunan listeler degistirilmedi.

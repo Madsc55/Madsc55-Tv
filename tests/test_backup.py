@@ -165,3 +165,22 @@ class BackupTests(unittest.TestCase):
                 (tree / "sample.txt").write_text("fixture")
             with self.assertRaises(ValueError):
                 verify_independent_restore(source, backup, source / ".", ["sample.txt"])
+    def test_manifest_rejects_duplicate_entries(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "a.txt").write_text("fixture")
+            manifest = snapshot_manifest(root, ["a.txt"])
+            manifest["entries"].append(dict(manifest["entries"][0]))
+            with self.assertRaises(ValueError):
+                verify_manifest(root, manifest)
+
+    def test_manifest_detects_missing_or_extra_entries(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "a.txt").write_text("fixture")
+            (root / "b.txt").write_text("fixture-b")
+            manifest = snapshot_manifest(root, ["a.txt", "b.txt"])
+            self.assertTrue(verify_manifest(root, manifest))
+            missing = {**manifest, "entries": manifest["entries"][:1]}
+            self.assertTrue(verify_manifest(root, missing))
+            self.assertFalse(verify_manifest(root, {**manifest, "entries": list(reversed(manifest["entries"]))}))

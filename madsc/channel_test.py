@@ -43,3 +43,29 @@ def evaluate_repeated_probes(probes: list[dict], minimum_passes: int = 2) -> dic
             "actual_network_measurements_verified": False,
             "stream_continuity_verified": False, "ibo_device_verified": False,
             "production_change_allowed": False}
+
+
+def evaluate_ffprobe_json(payload: dict, url_sha256: str, http_status: int = 200) -> dict:
+    """Translate captured ffprobe JSON into conservative preliminary evidence.
+
+    A single ffprobe sample does not prove 30 seconds of live continuity.
+    """
+    if not isinstance(payload, dict) or not isinstance(payload.get("streams"), list):
+        raise ValueError("Invalid ffprobe JSON")
+    streams = payload["streams"]
+    if any(not isinstance(stream, dict) for stream in streams):
+        raise ValueError("Invalid ffprobe stream")
+    video = any(stream.get("codec_type") == "video" for stream in streams)
+    audio = any(stream.get("codec_type") == "audio" for stream in streams)
+    fmt = payload.get("format", {})
+    if not isinstance(fmt, dict):
+        raise ValueError("Invalid ffprobe format")
+    try:
+        duration = float(fmt.get("duration", 0))
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError("Invalid ffprobe duration") from exc
+    report = evaluate_probe({"url_sha256": url_sha256, "http_status": http_status,
+                             "video": video, "audio": audio, "duration_seconds": duration})
+    return {**report, "ffprobe_json_parsed": True,
+            "live_probe_executed_by_this_function": False,
+            "single_sample_only": True}

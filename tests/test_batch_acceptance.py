@@ -155,3 +155,22 @@ class BatchAcceptanceTests(unittest.TestCase):
             self.assertEqual(report["categories"]["k1"]["module"], "security")
             self.assertEqual(report["categories"]["k1"]["fixture_check_names"], ["sample"])
             self.assertFalse(report["runtime_rules_verified"])
+    def test_duplicate_json_keys_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            paths = {key: self.make_report(d, key) for key in CATEGORIES}
+            path = paths["k3"]
+            raw = path.read_text(encoding="utf-8")
+            path.write_text(raw.replace('"category": "k3"',
+                                        '"category": "k3", "category": "k2"'), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(Path(d))
+
+    def test_duplicate_nested_fixture_keys_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            paths = {key: self.make_report(d, key) for key in CATEGORIES}
+            path = paths["k2"]
+            raw = path.read_text(encoding="utf-8")
+            path.write_text(raw.replace('"sample": true',
+                                        '"sample": true, "sample": false'), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(Path(d))

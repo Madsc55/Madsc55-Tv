@@ -129,3 +129,6 @@ Actions #33 success; #34 son kontrolde queued. K3 64 karakter kucuk harf hex dog
 
 ## 19 Ekim 2026 - K2 kaynak envanteri
 Actions #34 success; #35 cancelled; #36 son kontrolde in_progress. K2 M3U kaynak kanal sayisi, kabul, tekrar ve ret sayimlari 382b036 ile eklendi; K2 toplu mutabakat kaniti 49cb5c0 ile eklendi. #36 ve yeni Actions kontrol edilmeli. Eski depo degismedi, uretim yazimi yok.
+
+## 19 Ekim 2026 - K4 manifest regresyonu
+Actions #39 success. K4 manifest yapisi ba05849, kayit bicimi d9d46a1 ve gecersiz manifest regresyonu df42919 eklendi. Yalnizca izole dosya dogrulamasi; harici yedek ve geri yukleme onayi yok. Yeni Actions sonucunu dogrula. Eski depo degismedi.

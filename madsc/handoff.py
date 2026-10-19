@@ -9,6 +9,7 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
     if not isinstance(discovery, dict) or not isinstance(discovery.get("candidates"), list):
         raise ValueError("Invalid discovery evidence")
     assessed = []
+    seen = set()
     if ibo_results is not None and not isinstance(ibo_results, dict):
         raise ValueError("Invalid IBO evidence")
     ibo_results = ibo_results or {}
@@ -18,6 +19,12 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         digest = candidate["url_sha256"]
         if len(digest) != 64 or not all(char in "0123456789abcdef" for char in digest):
             raise ValueError("Invalid candidate fingerprint")
+        if digest in seen:
+            raise ValueError("Duplicate candidate fingerprint")
+        seen.add(digest)
+        tvg_id = candidate.get("tvg_id", "")
+        if not isinstance(tvg_id, str):
+            raise ValueError("Invalid candidate tvg-id")
         probe = probes.get(digest)
         if probe is None:
             status = "UNTESTED"
@@ -28,7 +35,7 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
                 raise ValueError("Probe fingerprint mismatch")
             status = evaluate_probe(probe)["technical_status"]
         decision = classify_channel(status, ibo_results.get(digest, "UNKNOWN"))
-        assessed.append({"url_sha256": digest, **decision,
+        assessed.append({"url_sha256": digest, "tvg_id": tvg_id, **decision,
                          "ibo_device_verified": decision["ibo_result"] != "UNKNOWN"})
     return {"assessed": assessed, "candidate_count": len(assessed),
             "production_playlist_modified": False, "network_probed": False}

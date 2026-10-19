@@ -239,3 +239,34 @@ Bu 20 YAML'in tetik/izin/temel adimlari okundu. **Toplam 78/99** ayrintili incel
 - `madsc-ibo-6115-second.yml`, `madsc-ibo-ilk-239.yml`, `madsc-ibo-kararlar-grup1.yml`, `madsc-ibo-second-voice.yml`: hepsi **`CALISANLAR.m3u` dosyasini acikca `git add` eder** ve `main` dalina push etmeyi dener. `YABANCI_KANALLAR.m3u` icin `git diff --exit-code` ile degisiklik engeli var. `tools/protected_write_gate.py --base origin/main` commit/push oncesinde calisir; script ve gate kaynak kodu/izin kararlari incelenmeden **korunan playlist yazmasi guvenli denemez**. IBO `WORKING` kaniti bu YAML'larda cihazdan dogrulanmiyor.
 
 **Risk ayrimi:** Birlesik kesifin gorunen Git staging alani rapor klasoru ile sinirli; IBO kararlarinin gorunen staging alani ise korunan `CALISANLAR.m3u` dosyasini iceriyor. Bu, salt `contents: write` izinlerine bakmaktan daha somut bir yazma-yolu bulgusudur. Yeni depoda bu workflow'lar etkinlestirilmedi, hicbir korunan playlist degistirilmedi. 
+
+
+## Yedinci dalga: kalan 21 YAML kaynak incelemesi (19 Ekim 2026)
+
+Eski `madsc/bes-sistem-toplu-birlestirme` dalindaki asagidaki 21 workflow'un YAML icerigi dogrudan okundu. **Tamaminda `permissions: contents: read` var**; bu bulgu eski diger write izinli workflow'larin riskini ortadan kaldirmaz.
+
+| Workflow | Tetik / izin | Temel komut, denetim veya cikti |
+|---|---|---|
+| `test-24-system-audit.yml` | push,dispatch/read | genis sistem envanteri, Python/YAML/M3U dogrulama, unittest, artifact |
+| `test-25-full-project-readonly.yml` | push,dispatch/read | tum proje salt okunur denetimi ve unittest, artifact |
+| `test-26-automation-safety.yml` | push,dispatch/read | otomasyon guvenlik statik denetimi, artifact |
+| `test-27-pipeline-contract.yml` | push,dispatch/read | pipeline kontrat denetimi, artifact |
+| `test-28-approval-gate.yml` | push,dispatch/read | onay kapisi statik denetimi, artifact |
+| `test-29-write-path-audit.yml` | push,dispatch/read | yazma yolu taramasi, artifact |
+| `test-30-write-risk-report.yml` | push,dispatch/read | yazma risk raporu, artifact |
+| `test-31-protected-write-gate.yml` | dispatch/read | korunan yazma kapisi denetimi, dispatch-only, artifact |
+| `test-32-unapproved-write-regression.yml` | push,dispatch/read | onaysiz yazma regresyonu, artifact |
+| `test-33-all-write-paths.yml` | push,dispatch/read | tum yazma yollari taramasi, artifact |
+| `test-34-protected-write-regression.yml` | push,dispatch/read | korunan yazma regresyonu |
+| `test-35-remaining-write-gate.yml` | push,dispatch/read | kalan yazma kapilari kontrolu |
+| `test-36-system-integration-audit.yml` | push,dispatch/read | sistem entegrasyon denetimi, artifact |
+| `test-37-indirect-write-audit.yml` | push,dispatch/read | dolayli yazma yolu denetimi, artifact |
+| `test-38-audit-selftest.yml` | push,dispatch/read | denetim selftest, regresyon |
+| `test-39-protected-playlist.yml` | push,dispatch/read | scripts/protected_playlist_audit.py |
+| `test-kanal-adaylari.yml` | push,dispatch/read | scripts/test_kanal_adaylari.py, artifact |
+| `toplu-sistem-kontrol.yml` | push,dispatch/read | toplu guvenlik ve unittest, artifact |
+| `yedekler-yeniler-medya-kontrol.yml` | push,dispatch/read | ffmpeg + scripts/yedekler_yeniler_medya_kontrol.py, artifact |
+| `yeni-aday-on-test.yml` | push,dispatch/read | ffmpeg + yeni_aday_on_test.py, artifact |
+| `yeniler-guvenli-arama.yml` | push,dispatch/read | iki asamali kaynak_kesfet.py / yeni_kanal_tara.py, artifact |
+
+**Ilk YAML inceleme kapsami: 99/99.** Bu yalniz tetik/izin/temel adimlar/rapor yollari envanteridir; davranissal K1-K5 esdegerlik, canli yayin, IBO cihaz WORKING, harici restore ve production onayi kaniti DEGILDIR. `test-31` yalniz manuel calisir. Son bes aday/medya workflow'u `contents: read` ve artifact kullanir; `yeniler-guvenli-arama` iki isli kesif-tarama artifact zinciridir. 92 ile 99 arasindaki eski belge sayi farki henuz kaynak bazinda aciklanmadi. Korunan listeler ve eski depo degistirilmedi.

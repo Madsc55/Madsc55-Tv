@@ -135,3 +135,22 @@ Bu dort dosyanin tetik ve komutlari **dogrudan YAML iceriginden** okundu; diger 
 | `yedek-geri-yukleme-tatbikat.yml` | dispatch, secili push | `scripts/restore_dry_run.py`, JSON artifact; yeni K4 tatbikat kapsami esdegerligi bekliyor |
 
 Toplam **10 dosya** (ilk dalga 4 + bu dalga 6) icerik/tetik bakimindan incelendi; 89 dosyanin ayrintili incelemesi bekliyor. Siniflandirma ve sayim dosya temellidir; gercek calisma kaniti degildir.
+
+## Ucuncu dalga: 12 YAML dosyasi dogrudan incelendi
+
+| Dosya | Tetik | Dogrulanan ana is | Eslesme |
+|---|---|---|---|
+| `390-aday-tekrar-test.yml` | dispatch, push | ffmpeg, `yedekler/tekrar_test_390.py`, artifact | K3 + K4 |
+| `aday-bekletme.yml` | dispatch, push | ffmpeg; tarama, tekrar test, medya, bekletme, puan ve oncelik zinciri; artifact | K2 + K3 + K5 |
+| `aday-logo-epg-test.yml` | dispatch, push | aday EPG/logo baglanti derleme ve rapor | K3 |
+| `aday-oncelik-kontrol.yml` | dispatch, push | aday oncelik rapor kodu kontrolu | K2 + K5 |
+| `aday-yedekleme.yml` | dispatch, push | teknik adaylari yedek taslagina aktar, artifact | K3 + K4 |
+| `akilli-aday-puanlama.yml` | dispatch, push | ffmpeg, oncelikli kanal dogrulama ve puanlama, artifact | K2 + K3 |
+| `altinci-aday-tekrar-test.yml` | dispatch, push | ffmpeg, tekrar test, CSV artifact | K3 |
+| `automatic-png-logos.yml` | dispatch | PNG logo isleme, artifact | K2 + K3 |
+| `besinci-zaman-asimi-test.yml` | dispatch, push | zaman asimi fixture/test komutu | K3 |
+| `birlesik-aday-raporu.yml` | dispatch, push | kaynak tarama, oncelik, medya, puan, kararlilik ve toplu rapor, artifact | K2 + K3 + K5 |
+| `birlesik-durum-raporu.yml` | dispatch, push | durum, eksik Turkce kanallar, kaynak kapsama ve bakim raporlari | K5 + K2 |
+| `dokuzuncu-akilli-tekrar-test.yml` | dispatch, push | akilli tekrar takvimi unit test | K3 + K5 |
+
+Bu dalgada 12 dosyanin YAML tetikleri ve temel run/uses adimlari okundu. **Toplam 22/99** ayrintili inceleme; **77 dosya** kaldi. Coklu kategori eslesmesi gerektiren isler tespit edildi. Gercek gorev tasima/cron devreye alma yapilmadi.

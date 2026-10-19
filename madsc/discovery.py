@@ -4,6 +4,8 @@ from hashlib import sha256
 from urllib.parse import urlsplit, urlunsplit
 
 def normalize_url(value: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError("Candidate URL must be text")
     value = value.strip()
     parts = urlsplit(value)
     if parts.scheme.lower() not in ("http", "https") or not parts.netloc or parts.username or parts.password:

@@ -1,7 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
-from madsc.backup import snapshot_manifest, verify_manifest
+from madsc.backup import snapshot_manifest, verify_manifest, compare_copy
 
 class BackupTests(unittest.TestCase):
     def test_manifest_detects_changes_without_writing(self):
@@ -20,6 +20,15 @@ class BackupTests(unittest.TestCase):
             for invalid in (None, [], {}, {"entries": None}, {"entries": [None]}, {"entries": [{"path": 12}]}):
                 with self.subTest(value=invalid), self.assertRaises(ValueError):
                     verify_manifest(root, invalid)
+
+    def test_sandbox_copy_integrity(self):
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
+            left, right = Path(a), Path(b)
+            (left / "sample.txt").write_text("same")
+            (right / "sample.txt").write_text("same")
+            self.assertTrue(compare_copy(left, right, ["sample.txt"]))
+            (right / "sample.txt").write_text("changed")
+            self.assertFalse(compare_copy(left, right, ["sample.txt"]))
 
     def test_empty_manifest_has_no_verified_restore(self):
         with tempfile.TemporaryDirectory() as directory:

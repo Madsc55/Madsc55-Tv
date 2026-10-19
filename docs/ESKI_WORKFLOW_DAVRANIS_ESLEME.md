@@ -178,3 +178,21 @@ Eski salt-okunur `scripts/five_category_92_workflow_audit.py` içindeki `inspect
 İlk beşi `new_category_files = {f"madsc-0{n}-" for n in range(1, 6)}` önekiyle, son ikisi `if path.name in (...) : continue` kuralıyla atlanır. Ardından `if len(items) != 92: raise SystemExit(...)` kabul kapısı bulunur. **99 kaynak YAML − 7 hariç tutulan = 92 eski kapsam YAML**. Bu fark artık belirsiz değildir; ancak kapsamın kendisi scriptteki **tarihsel statik tanım**dır, üretim davranışsal kabul değildir.
 
 Aynı script her 92 iş akışında `behavioral_parity_verified=False`, `migration_decision=BLOCKED_NEEDS_BEHAVIOR_EVIDENCE` üretir; script adı eşleşmelerinin yeterli olmadığını açıkça yazar. Dolayısıyla **92/92 gerçek entegrasyon henüz kanıtlanmamıştır**. Eski dalda hiçbir dosya değiştirilmedi.
+
+
+## Sekiz eski IBO betiğinin gerçek yazma yolu denetimi
+
+Salt-okunur kaynak: `Madsc55/madsc-tv@madsc/bes-sistem-toplu-birlestirme/scripts/`. Aşağıdaki **sekiz betiğin tamamı** doğrudan `CALISANLAR.m3u` üzerinde `Path.write_text(...)` yapar. Yalnızca YAML `git add` sinyali değil, **somut Python dosya mutasyonu** tespit edilmiştir. Hiçbiri yeni sistemde çalıştırılmadı.
+
+| Betik | Ana liste mutasyonu | Ek çıktı | Sonuç |
+|---|---|---|---|
+| `archive_backups_354_classified.py` | `p.write_text` satır 32 | iki IBO M3U arşivi, JSON | BLOCKED |
+| `archive_backups_355_364.py` | satır 26 | arşiv M3U, JSON | BLOCKED |
+| `archive_backups_16_49.py` | satır 26 | arşiv M3U, JSON | BLOCKED |
+| `archive_backups_399_onward.py` | satır 28 | arşiv M3U, JSON | BLOCKED |
+| `apply_ibo_6115_second.py` | satır 40 | M3U, CSV, JSON | BLOCKED |
+| `apply_ibo_first_239_decisions.py` | satır 40 | CSV, JSON | BLOCKED |
+| `apply_ibo_decisions_group1.py` | satır 54 | M3U, CSV, JSON | BLOCKED |
+| `apply_ibo_second_voice.py` | satır 41 | M3U, CSV, JSON | BLOCKED |
+
+Betiğin `CALISANLAR.m3u` içindeki `📦 YEDEKLER` üyelerini sildiği/yeniden numaralandırdığı durumlar var. Kullanıcının **ana liste, YEDEKLER, YENİLER, FAVORİLER ve cihaz favorilerini değiştirmeme** talimatıyla çatışır. GitHub `protected_write_gate.py` çağrısı commit öncesi koruma amaçlıdır; Python betiği çağrıldığında **çalışma ağacını zaten değiştirebilir**. Bu nedenle güvenli alternatif: yeni K1–K5 yalnız **salt-okunur analiz ve rapor artefaktı** üretir, hiçbir listeye otomatik yazmaz. Betikler, kullanıcı ayrıca yetkilendirmedikçe K4'e aktarılmayacak. Gerçek geçmişte push yapılıp yapılmadığı bu incelemede kanıtlanmadı.

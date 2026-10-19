@@ -893,3 +893,7 @@ K3 negatif senaryolar (logo SHA eslesmesi, ffmpeg decode hatasi, ffprobe excepti
 
 ## 20 Ekim 2026 — K4 yeni negatif restore testleri
 K2-K3-K5 handoff testi Actions #39336859638 SUCCESS. K4 icin ayni uzunlukta ama farkli SHA256 icerikli backup ve iki dosyadan yalnizca EPG restore bozulmasi senaryolari tests/test_backup.py dosyasina eklendi. Gercek offsite yedek veya uretim restore onayi DEGIL. Yeni CI sonucu ayrica dogrulanacak.
+
+
+## 20 Ekim 2026 — K2 yeni kesif kapsami (YAPILACAK)
+Kullanici istegi: internet genelindeki acik ve izinli M3U/M3U8 canli TV listeleri, resmi canli yayin siteleri, acik IPTV dizinleri ve YouTube Live resmi/dogrulanmis televizyon yayinlari K2 kesif kapsaminda aranacak. K2 kaynak ve yayin hakki uygunlugunu, kimlik ve tekrar kontrolunu kanitlayacak. K3 akisin teknik, ses-video, EPG/logo ve oynatici uyumunu denetleyecek; K5 sureklilik/yeniden denetim yapacak. YouTube sayfa URL'si otomatik kalici M3U8 sayilmaz; token, DRM ve erisim kisitlari asilmaz. Kaynak kesfi otomatik listeye alma/onaylama degildir. Korunan listeler degistirilmez. Henuz uygulanmis/kanitlanmis degil; backlog gorevidir.

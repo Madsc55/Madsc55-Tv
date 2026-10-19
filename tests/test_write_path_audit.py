@@ -40,3 +40,10 @@ class WritePathAuditTests(unittest.TestCase):
         result = audit_write_paths(["reports/safe.json", "EPG/guide.xml"])
         self.assertTrue(result["blocked"])
         self.assertEqual(result["rejected"], ["EPG/guide.xml"])
+    def test_nested_protected_exact_names_blocked(self):
+        paths = ["docs/AGENTS.md", "nested/GUVENLIK_KURALLARI.md",
+                 "reports/CALISMAYANLAR.txt", "nested/YENILER.m3u"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths)
+        self.assertTrue(result["blocked"])
+

@@ -52,6 +52,8 @@ def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
 
 def verify_sandbox_restore(source: Path, restored: Path, names: list[str]) -> dict:
     """Audit an already restored sandbox tree; never write to either tree."""
+    if not isinstance(names, list) or not names:
+        raise ValueError("Sandbox restore audit requires named files")
     valid = compare_copy(source, restored, names)
     return {"sandbox_restore_matches": valid, "files_checked": len(set(names)),
             "production_restore_verified": False, "production_writes": False}

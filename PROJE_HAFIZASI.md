@@ -582,3 +582,11 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `docs/ESKI_WORKFLOW_DAVRANIS_ESLEME.md` içine 10 YAML'ın gerçek adım, betik, girdi/çıktı ve risk haritası eklendi; commit `bf7e514270837f988e1e2f227b750f39f2c1e63c`.
 - Özellikle `iptv-test.yml` → `iptv_test.py` kaynak kodunda `CALISANLAR.m3u` doğrudan `write_text` ile yeniden yazılıyor; `CALISMAYANLAR.txt` ve `TEST_RAPORU.csv` da üretiliyor. Salt-okunur GitHub token runner üzerindeki mutasyonu engellemez. Betik yeni sistemde korunan liste üzerinde çalıştırılmayacak.
 - Derin kaynak çözümleme toplamı 23/99 YAML, 32 benzersiz Python betik; 76 YAML kaldı. 92 eski kapsamda 22/92 derin incelendi; parity 0/92. Eski repo ve korunan listeler değiştirilmedi; yeni CI koşusu iddia edilmiyor.
+
+
+## 19 Ekim 2026 — YENİ SOHBETE DEVİR (GÜNCEL ANA REFERANS)
+- Kullanıcı açıkça 99 otomasyonun her birinin gerçek kaynak davranışını çözmeyi, YAPILACAK/YAPILMAYACAK/KANIT BEKLEYEN kararlarını saklamayı ve K1–K5 sistemini kanıtla bitirmeyi istedi. Yeni sohbetten aynı yerden devam edilecek.
+- **İLK OKUNACAK DOSYA:** `docs/YENI_SOHBET_DEVIR_2026-10-19.md` (commit `6d1c8dde40d0a7020eee9f6b650ea483140ae925`). Bu dosya repo ayrımı, yasaklar, önceki CI/test commitleri, derin incelenen 23 YAML adı, 32 Python, kritik korunan liste yazma riskleri, 76 bekleyen YAML ve 92 parity kabul planını ayrıntılı içerir. Kelimesi kelimesine sohbet transkripti değil, uygulanabilir teknik devir notudur.
+- Son durum: 99/99 YAML ilk tarama; 23/99 derin kaynak görev çözümü; 32 benzersiz Python kaynak incelemesi; 76/99 derin çözüm bekliyor; 22/92 eski kapsam derin incelendi; **0/92 parity doğrulandı**. `automatic-png-logos.yml` kritik yerel liste yazma bulgusu belgeli, tam matrisi tamamlanınca sayaca dahil et.
+- Eski `Madsc55/madsc-tv` / `madsc/bes-sistem-toplu-birlestirme` SALT OKUNUR. Yeni `Madsc55/Madsc55-Tv` çalışma deposu. Korunan kanal listeleri/YEDEKLER/YENİLER/FAVORİLER/EPG/logo/URL/ID/sıra değişmez; cron/push/deploy, main merge, PR #71 yok. Kullanıcı IBO WORKING dediği kanal teknik fail diye silinmez.
+- Yeni sohbet görevi: devir notunu oku; 76 YAML'ı gerçek script, alt çağrı, yan etki, state, artefakt, K1–K5, parity kanıtı bazında gruplar halinde incele; her grubu `docs/ESKI_WORKFLOW_DAVRANIS_ESLEME.md` ve `PROJE_HAFIZASI.md` içine işle. Gerçek test yoksa test varmış gibi anlatma.

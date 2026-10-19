@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime, timedelta, timezone
 from madsc.legacy_unified_report import legacy_unified_rows, FIELDS
 
 
@@ -31,3 +32,27 @@ class LegacyUnifiedReportTests(unittest.TestCase):
                                   ([], [{"YAYIN_URL": "x"}, {"YAYIN_URL": "x"}])):
             with self.subTest(scores=scores, stability=stability), self.assertRaises(ValueError):
                 legacy_unified_rows(scores, stability)
+
+    def test_csv_yes_requires_matching_independent_history_when_supplied(self):
+        now = datetime(2026, 10, 19, 12, tzinfo=timezone.utc)
+        url = "https://example.org/live"
+        scores = [{"KANAL": "A", "PUAN": "35", "TEKNIK_KANIT": "VIDEO_SES_VAR", "YAYIN_URL": url}]
+        stability = [{"YAYIN_URL": url, "24_SAAT_KARARLI": "EVET"}]
+        def at(hours):
+            return {"at": (now - timedelta(hours=hours)).isoformat(), "state": "VIDEO_SES_VAR"}
+        good = legacy_unified_rows(scores, stability, history={url: [at(25), at(1)]}, now=now)
+        self.assertEqual(good["rows"][0]["PUAN"], 65)
+        self.assertEqual(good["rows"][0]["24_SAAT_KARARLI"], "EVET")
+        self.assertTrue(good["historical_stability_verified"])
+        missing = legacy_unified_rows(scores, stability, history={}, now=now)
+        self.assertEqual(missing["rows"][0]["PUAN"], 35)
+        self.assertEqual(missing["rows"][0]["24_SAAT_KARARLI"], "HAYIR")
+        self.assertEqual(missing["rows"][0]["DURUM"], "KARARLILIK_BEKLIYOR")
+        repeated = legacy_unified_rows(scores, stability, history={url: [at(25), at(25)]}, now=now)
+        self.assertEqual(repeated["rows"][0]["24_SAAT_KARARLI"], "HAYIR")
+        no_csv = legacy_unified_rows(scores, [], history={url: [at(25), at(1)]}, now=now)
+        self.assertEqual(no_csv["rows"][0]["24_SAAT_KARARLI"], "HAYIR")
+
+    def test_history_requires_explicit_now(self):
+        with self.assertRaises(ValueError):
+            legacy_unified_rows([], [], history={})

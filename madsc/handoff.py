@@ -9,6 +9,8 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
     if not isinstance(discovery, dict) or not isinstance(discovery.get("candidates"), list):
         raise ValueError("Invalid discovery evidence")
     assessed = []
+    if ibo_results is not None and not isinstance(ibo_results, dict):
+        raise ValueError("Invalid IBO evidence")
     ibo_results = ibo_results or {}
     for candidate in discovery["candidates"]:
         digest = candidate["url_sha256"]

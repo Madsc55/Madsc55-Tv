@@ -91,6 +91,8 @@ def execute(category: str) -> dict:
             xml.write_text('<tv><channel id="sample.tv"/><programme channel="sample.tv"/></tv>', encoding="utf-8")
             epg = inspect_xmltv(xml, {"sample.tv"})
             evidence["xmltv_id_matching"] = epg["matched_playlist_ids"] == 1 and epg["orphaned_programmes"] == 0 and not epg["device_verified"]
+            evidence["ibo_report_not_device_verified"] = (decision["ibo_result_supplied"]
+                and not decision["ibo_device_verified"] and decision["protected_working"])
             evidence["ibo_fixture_not_live_device_evidence"] = (
                 not protected["network_probed"] and not protected["production_playlist_modified"])
 

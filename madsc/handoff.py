@@ -13,6 +13,8 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         raise ValueError("Invalid IBO evidence")
     ibo_results = ibo_results or {}
     for candidate in discovery["candidates"]:
+        if not isinstance(candidate, dict) or not isinstance(candidate.get("url_sha256"), str):
+            raise ValueError("Invalid candidate fingerprint")
         digest = candidate["url_sha256"]
         probe = probes.get(digest)
         if probe is None:

@@ -141,3 +141,6 @@ Actions #45 success. K4 salt-okunur sandbox restore audit 60d3128, bozulma regre
 
 ## 19 Ekim 2026 - GitHub Actions kesin kontrol
 Actions #48 completed/success (9e99b98): Guvenlik, Kesif, Kanal Testleri, Arsiv ve Yedek, Genel Bakim ve Besli toplu kanit dogrulama 6/6 success. #46 success, #47 cancelled. URL: https://github.com/Madsc55/Madsc55-Tv/actions/runs/39221975909 . Izole fixture testleri; canli uretim dogrulamasi degil. Eski depo degismedi.
+
+## 19 Ekim 2026 - K5 toplu hata raporu
+Actions #48 6/6 success. K5 besli kategori hata ozeti b493951, regresyon f9f80aa, toplu fixture baglantisi 201c1cf. Sonraki is yeni Actions run bitince alt isleri kontrol etmek. Uretim yazimi ve eski depoda degisiklik yok.

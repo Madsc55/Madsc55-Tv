@@ -45,3 +45,31 @@ class LegacyStabilityTests(unittest.TestCase):
     def test_untested_state_cannot_be_recorded_as_measurement(self):
         with self.assertRaises(ValueError):
             evaluate_legacy_stability([self.observation(1, "TEST_EDILMEDI")], self.now)
+
+
+    def test_24_hour_boundary_requires_fresh_independent_measurement(self):
+        cases = [
+            ([self.observation(48), self.observation(24)], "EVET"),
+            ([self.observation(48), self.observation(24 + 1 / 3600)], "HAYIR"),
+            ([self.observation(24), self.observation(0)], "EVET"),
+            ([self.observation(23.999), self.observation(0)], "HAYIR"),
+        ]
+        for observations, expected in cases:
+            with self.subTest(observations=observations):
+                report = evaluate_legacy_stability(observations, self.now)
+                self.assertEqual(report["24_SAAT_KARARLI"], expected)
+                self.assertFalse(report["production_writes"])
+
+    def test_old_history_and_timezone_aliases_cannot_inflate_observation_count(self):
+        old = self.observation(24 * 8)
+        same_in_utc = self.observation(25)
+        same_in_plus_two = {
+            "at": (self.now - timedelta(hours=25)).astimezone(
+                timezone(timedelta(hours=2))).isoformat(),
+            "state": "VIDEO_SES_VAR",
+        }
+        report = evaluate_legacy_stability(
+            [old, same_in_utc, same_in_plus_two, self.observation(1)], self.now)
+        self.assertEqual(report["GOZLEM_SAYISI"], 2)
+        self.assertEqual(report["24_SAAT_KARARLI"], "EVET")
+        self.assertFalse(report["network_probed"])

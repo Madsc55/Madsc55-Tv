@@ -109,6 +109,12 @@ def execute(category: str) -> dict:
                     (Path(third_dir) / "sample.txt").write_bytes(p.read_bytes())
                     independent = verify_independent_restore(Path(d), Path(copy_dir), Path(third_dir), ["sample.txt"])
             evidence = {"three_tree_restore_fixture": independent["independent_sandbox_restore_matches"] and not independent["external_storage_proven"],
+                        "independent_restore_reports_no_production_proof": (
+                            independent["backup_verified_against_source"]
+                            and independent["restore_verified_against_backup"]
+                            and independent["files_checked"] == 1
+                            and independent["production_restore_verified"] is False
+                            and independent["production_writes"] is False),
                         "sandbox_restore_audit": restore_audit["sandbox_restore_matches"] and not restore_audit["production_restore_verified"],
                         "sandbox_copy_integrity": copy_ok,
                         "manifest_integrity": verify_manifest(Path(d), manifest),

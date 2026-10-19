@@ -159,3 +159,6 @@ GitHub Actions #57 success, #58 son kontrolde in_progress. Eski dalin 6 ek YAML 
 
 ## 19 Ekim 2026 - Workflow envanteri ucuncu dalga
 Actions #59 completed/success (728aa4b). 12 ek YAML dogrudan tetik/komut/artefakt icin incelendi, matris 68fc4a9. Toplam 22/99 ayrintili incelendi, 77 kaldi. Aday bekletme ve birlesik aday raporu K2-K3-K5 ortak bagimlilikli; yalniz dosya adina gore tek kategori yetersiz. Eski repo salt okunur; cron acilmadi, eski is kapatilmadi. Yeni Actions sonucu kontrol edilecek.
+
+## 19 Ekim 2026 - Workflow envanteri dorduncu dalga
+Actions #60 completed/success. 16 ek eski YAML dogrudan tetik, izin, komut ve rapor adimlari icin incelendi; matris 619d7a3. Toplam 38/99, 61 ayrintili inceleme kaldi. `madsc-birlesik-kesif.yml` contents:write ve kesif arsivi adimlari risk incelemesi gerektiriyor; izinsiz korunan dosya yazimi yapilmadi. Eski repo salt okunur; cron acilmadi, workflow kapatilmadi.

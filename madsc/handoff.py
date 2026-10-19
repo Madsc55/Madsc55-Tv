@@ -6,6 +6,8 @@ from madsc.ibo_policy import classify_channel
 def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dict[str, str] | None = None) -> dict:
     if not isinstance(probes, dict):
         raise ValueError("Probe evidence must be a dictionary")
+    if not isinstance(discovery, dict) or not isinstance(discovery.get("candidates"), list):
+        raise ValueError("Invalid discovery evidence")
     assessed = []
     ibo_results = ibo_results or {}
     for candidate in discovery["candidates"]:

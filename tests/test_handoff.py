@@ -51,6 +51,11 @@ class HandoffTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             assess_candidates({"candidates": [{"url_sha256": "bad"}]}, {})
 
+    def test_nonhex_fingerprint_fails_closed(self):
+        for invalid in ("z" * 64, "G" * 64, " " * 64):
+            with self.subTest(value=invalid), self.assertRaises(ValueError):
+                assess_candidates({"candidates": [{"url_sha256": invalid}]}, {})
+
     def test_invalid_probe_record_fails_closed(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         digest = discovery["candidates"][0]["url_sha256"]

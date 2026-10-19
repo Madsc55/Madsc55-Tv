@@ -369,3 +369,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 ## 19 Ekim 2026 — #180/#181 gerçek log kök neden düzeltmesi
 - Actions #180 ve #181 FAILURE. #181 job logu incelendi: K1 Güvenlik `test_export_history_corroborates_csv_claim` testinde `Missing YAYIN_URL header` hatası, diğer K2/K3/K4/K5 ve kabul jobları SUCCESS. Kök neden: `legacy_report_export.py` history JSON yolunu `sources` listesine ekleyip CSV okuyucusuyla **tüm** kaynakları okuması. `scores, stability = [load(path) for path in sources[:2]]` düzeltildi; history JSON ayrı `json.load` ile okunmaya devam eder, yol izolasyonu için `sources` listesinde kalır. Commit `a0e4a9d3`.
 - Yeni commit sonrası Actions sonucu henüz doğrulanmadı. Korunan listeler, eski repo, PR #71, cron ve main merge değişmedi.
+
+
+## 19 Ekim 2026 — #182 geçti; eski CSV şemasıyla doğrudan karşılaştırma
+- Actions #182 / 39272207360 SUCCESS: JSON'un CSV okuyucusuna gitmesi hatası düzeltmesi CI ile doğrulandı.
+- Eski depodaki `scripts/birlesik_aday_raporu.py` ve `scripts/akilli_aday_puanla.py` kaynakları tekrar okundu. Birleşik çıktıdaki 10 alan ve `AKILLI_ADAY_PUANLARI.csv` 13 alan şeması doğrulandı; `TEKNIK_KANIT`, `PUAN`, `YAYIN_URL`, `KAYNAK` alanları gerçek eski kaynaktan teyit edildi. Yeni raporun 10 alanlı sıralaması ve durum kararları kaynakla uyumlu. Eski skor scripti adayları URL'ye göre tekilleştirirken yeni birleşik görünüm aynı URL'yi iki kez raporlayabiliyordu; artık duplicate URL fail-closed reddediliyor (commit `05fba911`, test `35ad11b0`).
+- Actions #183 / 39273289239 in_progress, #184 / 39273307180 pending; yeni commitlerin CI sonucu henüz doğrulanmadı. Bu kontrol gerçek saha ffprobe veya IBO cihaz testi değildir. Korunan listeler, cron, eski repo, main merge ve PR #71 değişmedi.

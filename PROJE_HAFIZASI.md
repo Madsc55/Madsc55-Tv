@@ -381,3 +381,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - Actions #183 / 39273289239 SUCCESS ve #184 / 39273307180 SUCCESS.
 - `madsc/legacy_unified_report.py` CSV kararlılık alanında yalnız `EVET`/`HAYIR` kabul eder; eksik/bilinmeyen değer fail-closed reddedilir. Sağlanan tarihsel URL->gözlem eşlemesinin URL anahtarları boş olmayan metin, değerleri liste olmalıdır. Commit `93c384af`. Regresyon testleri `de3e2c8f`.
 - Actions #185 / 39273845451 queued ve #186 / 39273862210 queued; sonuç henüz doğrulanmadı. Gerçek medya testleri, kalıcı tarihsel kanıt, IBO cihaz onayı hâlâ açık. Korunan listeler, eski repo, cron, main merge ve PR #71 değişmedi.
+
+
+## 19 Ekim 2026 — #185/#186 başarılı; tam tarihsel geçmiş doğrulaması
+- Actions #185 / 39273845451 SUCCESS ve #186 / 39273862210 SUCCESS.
+- Eski `scripts/kanal_kararlilik_takip.py` tekrar okundu: `KARARLILIK_GECMISI.json` URL->`[{at,state}]` biçimi ve bütün geçmişin doğrulanması teyit edildi. Yeni `madsc/legacy_unified_report.py` artık geçmiş JSON verildiğinde sadece rapordaki adayların değil, dosyadaki **tüm** URL gözlemlerinin zaman damgalarını ve çelişkilerini doğrular; alakasız URL'de bozuk kayıt varsa fail-closed. Commit `62f431d9`, test `3bfe3959`.
+- Actions #187 / 39275828816 in_progress ve #188 / 39275852182 queued; sonuç henüz doğrulanmadı. Gerçek 24 saat ölçüm, kalıcı geçmiş ve IBO cihaz doğrulaması yapılmadı. Korunan listeler, eski repo, cron, main merge ve PR #71 değişmedi.

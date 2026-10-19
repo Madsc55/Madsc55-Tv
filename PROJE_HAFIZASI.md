@@ -509,3 +509,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `tests/test_backup.py` içine bozulmuş yedek ve bozulmuş geri yükleme için iki salt-okunur fixture regresyon testi eklendi: commit `a8dec667572c4a2358543437ce282d22046465f0`. Korunan liste/gerçek backup yazılmadı.
 - GitHub Actions #197 (run `39284758370`, head `a8dec667`) `completed/success`. Altı işin tamamı `completed/success`: K1 Güvenlik (Tüm regresyon testlerini çalıştır success), K2 Keşif, K3 Kanal Testleri, K4 Arşiv ve Yedek, K5 Genel Bakım ve Beşli toplu kanıt doğrulama. K4 job ve kanıt adımı bu kez ayrı ayrı success doğrulandı.
 - Yalnız fixture/salt-okunur başarıdır; offsite restore, gerçek canlı ffprobe, IBO cihaz testi ve 92/92 parity henüz kanıtlanmadı. Eski depo, korunan listeler, cron, main merge ve PR #71 değiştirilmedi.
+
+
+## 19 Ekim 2026 — K3 regresyon ve Actions #198
+- `tests/test_channel_test.py` içine 3 salt-okunur fixture regresyonu eklendi: ses akışı eksikse NEEDS_REVIEW, bozuk ffprobe streams fail-closed, tekrarlı ölçümlerde tek hata stable sayılmıyor. Commit `928f2297c866cff4667cf822ca8df5fad0fbe4b9`.
+- GitHub Actions #198 (`39306754708`) `completed/success`; altı işin tamamı `completed/success`, K1 tüm regresyon testleri adımı `success`.
+- Gerçek ffprobe ağ ölçümü, IBO cihaz testi, K4 offsite restore ve 92/92 eski davranış eşdeğerliği hâlâ kanıtlanmadı. Eski repo, korunan listeler, cron, main merge ve PR #71 değişmedi.

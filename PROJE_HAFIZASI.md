@@ -96,3 +96,6 @@ K1-K5 tek Actions workflow ve toplu kabulde zaten birlesik; kullanici istegi uze
 
 ## 19 Ekim 2026 - K2 toplu paket ilerleme
 Actions 17 ve 18 son kontrolde calisiyor veya bekliyor. K2 URL metin turu kontrolu de197ec ile eklendi; yerel file URL reddi regresyonu c7bbc46 ile eklendi. EXTINF bicim sertlestirmesi bu denemede baglanti guvenlik engeline takildi ve uygulanmadi. Sonraki turda Actions sonuclarini dogrula; tekil mikrotestler yerine K1-K5 buyuk islev paketleri ve gercek kanit odagi sursun. Eski depo degismedi.
+
+## 19 Ekim 2026 - K2 toplu durum
+Actions 17, 19 ve 20 success; 18 cancelled, basarili sayilmadi. K2 aday satirlari liste bicimi dogrulamasi a0bc9bd ile eklendi. EXTINF ad dogrulamasi yazma denemesi yine engellendi, uygulanmadi. Yeni Actions sonucu ayrica kontrol edilmeli. Eski depo degismedi; izole testler uretim onayi degildir.

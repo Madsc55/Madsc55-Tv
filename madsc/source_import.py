@@ -16,11 +16,11 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
         if line.startswith("#EXTINF:"):
             if pending is not None:
                 raise ValueError("Unpaired channel metadata")
-            if "," not in line:
+            parts = re.split(r',(?=(?:[^"]*"[^"]*")*[^"]*$)', line, maxsplit=1)
+            if len(parts) != 2:
                 raise ValueError("Invalid EXTINF metadata")
-            channel_name = line.rsplit(",", 1)[-1].strip()
-            match = re.search(r'(?:^|\s)tvg-id="([^"]*)"', line.split(",", 1)[0])
-            attrs = line.split(",", 1)[0]
+            attrs, channel_name = parts[0], parts[1].strip()
+            match = re.search(r'(?:^|\s)tvg-id="([^"]*)"', attrs)
             logo = re.search(r'(?:^|\s)tvg-logo="([^"]*)"', attrs)
             group = re.search(r'(?:^|\s)group-title="([^"]*)"', attrs)
             pending = {"name": channel_name, "tvg_id": match.group(1) if match else "",

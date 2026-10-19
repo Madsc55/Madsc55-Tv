@@ -9,6 +9,7 @@ from tempfile import TemporaryDirectory
 from madsc.backup import snapshot_manifest, verify_manifest
 from madsc.channel_test import evaluate_probe
 from madsc.discovery import classify_candidates
+from madsc.dependencies import validate_batch, plan_task
 from madsc.maintenance import aggregate, retry_decision
 from madsc.playlist import compare_snapshots, inspect_playlist
 from madsc.source_import import extract_candidates
@@ -74,10 +75,15 @@ def execute(category: str) -> dict:
     elif category == "k5":
         reports = [{"category": k, "production_writes": False} for k in CATEGORIES]
         result = aggregate(reports)
+        coordination = validate_batch(["candidate_discovery", "channel_assessment", "backup_restore", "schedule_collision"])
         evidence = {"five_categories": result["all_five_present"],
                     "read_only": result["all_read_only"],
                     "failure_limit": retry_decision(3)["blocked"],
-                    "production_not_approved": not result["production_ready"]}
+                    "production_not_approved": not result["production_ready"],
+                    "cross_category_handoff": plan_task("candidate_discovery")["involved_categories"] == ["k2", "k3", "k4", "k5"],
+                    "single_batch_no_extra_triggers": coordination["independent_extra_triggers"] == 0,
+                    "no_schedule_activation": all(not task["schedule_activation_allowed"] for task in coordination["tasks"]),
+                    "no_legacy_shutdown": all(not task["legacy_workflows_disabled"] for task in coordination["tasks"])}
     else:
         raise ValueError("Unknown category")
     return evidence

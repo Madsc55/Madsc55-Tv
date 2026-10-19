@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 def retry_decision(consecutive_failures: int, limit: int = 3) -> dict:
-    if type(consecutive_failures) is not int or consecutive_failures < 0 or not 1 <= limit <= 10:
+    if type(consecutive_failures) is not int or consecutive_failures < 0 or type(limit) is not int or not 1 <= limit <= 10:
         raise ValueError("Invalid failure count or retry limit")
     blocked = consecutive_failures >= limit
     return {"blocked": blocked, "next_action": "HALT_AND_REPORT" if blocked else "RETRY_LATER",

@@ -79,5 +79,14 @@ class MaintenanceTests(unittest.TestCase):
         self.assertEqual(result["failed_fixture_checks"], ["k2"])
         self.assertFalse(result["production_ready"])
 
+    def test_unhashable_category_fails_closed_without_type_error(self):
+        for invalid in ([], {}, ["k1"]):
+            with self.subTest(invalid=invalid):
+                reports = [{"category": invalid, "production_writes": False, "status": "success"}]
+                self.assertFalse(aggregate(reports)["all_five_present"])
+                summary = summarize_batch(reports)
+                self.assertTrue(summary["requires_review"])
+                self.assertEqual(summary["unexpected_category_count"], 1)
+
     def test_missing_categories_never_ready(self):
         self.assertFalse(aggregate([{"category":"k1","production_writes":False}])["all_five_present"])

@@ -515,3 +515,9 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 - `tests/test_channel_test.py` içine 3 salt-okunur fixture regresyonu eklendi: ses akışı eksikse NEEDS_REVIEW, bozuk ffprobe streams fail-closed, tekrarlı ölçümlerde tek hata stable sayılmıyor. Commit `928f2297c866cff4667cf822ca8df5fad0fbe4b9`.
 - GitHub Actions #198 (`39306754708`) `completed/success`; altı işin tamamı `completed/success`, K1 tüm regresyon testleri adımı `success`.
 - Gerçek ffprobe ağ ölçümü, IBO cihaz testi, K4 offsite restore ve 92/92 eski davranış eşdeğerliği hâlâ kanıtlanmadı. Eski repo, korunan listeler, cron, main merge ve PR #71 değişmedi.
+
+
+## 19 Ekim 2026 — IBO koruma regresyonu ve Actions #199
+- `tests/test_candidate_coordination.py` içine iki fixture testi eklendi: IBO WORKING + K3 başarısız + tam metadata halinde koruma/hold; IBO WORKING + eksik probe halinde koruma/hold. Commit `00370bc07f90ae8f369d56448a83cadb6962b5e8`.
+- Actions #199 (run `39307239343`) `completed/success`; altı işin tamamı `completed/success`, failed step yok.
+- Yalnızca sağlanan IBO sonuçları üzerinden fixture testi; gerçek IBO cihazı kullanıcı tarafından test edilecek. YEDEKLER'e otomatik yazılmadı, korunan listeler ve eski repo değişmedi. 92 workflow parity, canlı ağ ffprobe ve offsite restore henüz kanıtlanmadı.

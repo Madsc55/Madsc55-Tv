@@ -10,7 +10,6 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
     if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Invalid playlist header")
     rows = []
-    channel_groups = []
     pending = None
     for line in lines[1:]:
         if line.startswith("#EXTINF:"):
@@ -32,5 +31,9 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
         raise ValueError("Missing channel URL")
     result = classify_candidates(rows, known_urls)
     result["source_format"] = source.suffix.lower()
+    result["source_channel_count"] = len(rows)
+    result["accepted_channel_count"] = len(result["candidates"])
+    result["duplicate_channel_count"] = len(result["duplicates"])
+    result["rejected_channel_count"] = len(result["rejected"])
     result["production_playlist_modified"] = False
     return result

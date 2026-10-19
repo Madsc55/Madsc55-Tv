@@ -39,6 +39,14 @@ class BatchAcceptanceTests(unittest.TestCase):
             path.write_text(json.dumps(data), encoding="utf-8")
             with self.assertRaises(ValueError):
                 collect(Path(d))
+    def test_malformed_report_shapes_fail_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            paths = {key: self.make_report(d, key) for key in CATEGORIES}
+            for malformed in ([], None, "unexpected"):
+                paths["k3"].write_text(json.dumps(malformed), encoding="utf-8")
+                with self.subTest(malformed=malformed), self.assertRaises(ValueError):
+                    collect(Path(d))
+
     def test_duplicate_evidence_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:
             for key in CATEGORIES:

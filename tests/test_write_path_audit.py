@@ -15,5 +15,15 @@ class WritePathAuditTests(unittest.TestCase):
 
     def test_traversal_rejected(self):
         for path in ("../CALISANLAR.m3u", "/tmp/a", "a/../b", "a\\b"):
-            with self.subTest(path=path), self.assertRaises(ValueError):
-                audit_write_paths([path])
+            with self.subTest(path=path):
+                self.assertTrue(audit_write_paths([path])["blocked"])
+
+    def test_legacy_exact_and_suffix_protection(self):
+        report = audit_write_paths(["AGENTS.md", "CALISMAYANLAR.txt",
+                                    "sample.m3u8", "nested/YENILER.m3u"])
+        self.assertEqual(len(report["rejected"]), 4)
+
+    def test_legacy_prefix_casefold_protection(self):
+        report = audit_write_paths(["YEDEKLER/a.txt", "LoGoS/a.png",
+                                    "ArSiV/sample.txt", "EPG/data.xml"])
+        self.assertEqual(len(report["rejected"]), 4)

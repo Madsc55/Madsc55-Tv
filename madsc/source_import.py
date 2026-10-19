@@ -1,6 +1,7 @@
 """Import channels from M3U/M3U8 text into a read-only candidate inventory."""
 from __future__ import annotations
 from pathlib import Path
+import re
 from madsc.discovery import classify_candidates
 
 def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict:

@@ -2,11 +2,13 @@
 from __future__ import annotations
 import json
 from pathlib import Path
+from madsc.maintenance import verify_fixture_evidence
 
 CATEGORIES = ("k1", "k2", "k3", "k4", "k5")
 
 def collect(root: Path) -> dict:
     reports = {}
+    evidence_reports = []
     for key in CATEGORIES:
         matches = list(root.rglob(key + ".json"))
         if len(matches) != 1:
@@ -27,8 +29,15 @@ def collect(root: Path) -> dict:
             or data["checks"].get("runtime_rule_evidence") is not False
             or data.get("checks", {}).get("legacy_behavioral_equivalence") is not False):
             raise ValueError(f"Invalid or unverified evidence: {key}")
+        evidence_reports.append({"category": key, "status": "success",
+                                 "production_writes": data["production_writes"],
+                                 "fixture_checks": data["fixture_checks"]})
         reports[key] = {"status": data["status"], "fixture_checks": len(data["fixture_checks"])}
+    verification = verify_fixture_evidence(evidence_reports)
+    if not verification["fixture_evidence_verified"]:
+        raise ValueError("K1-K5 fixture evidence verification failed")
     return {"category_order": list(CATEGORIES), "categories": reports,
+            "k5_fixture_evidence_verified": verification["fixture_evidence_verified"],
             "five_isolated_reports_valid": True, "runtime_rules_verified": False,
             "legacy_92_behavioral_equivalence_verified": False,
             "ibo_device_verified": False, "external_restore_verified": False,

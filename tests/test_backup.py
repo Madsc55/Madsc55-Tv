@@ -116,3 +116,25 @@ class BackupTests(unittest.TestCase):
                         {**entry, "bytes": True}, {**entry, "bytes": -1}):
                 with self.subTest(entry=bad), self.assertRaises(ValueError):
                     verify_manifest(root, {"entries": [bad]})
+    def test_manifest_rejects_symlink_root(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            real = base / "real"
+            real.mkdir()
+            (real / "sample.txt").write_text("fixture")
+            alias = base / "alias"
+            alias.symlink_to(real, target_is_directory=True)
+            with self.assertRaises(ValueError):
+                snapshot_manifest(alias, ["sample.txt"])
+
+    def test_independent_restore_rejects_symlink_tree(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            trees = [base / name for name in ("source", "backup", "restored")]
+            for tree in trees:
+                tree.mkdir()
+                (tree / "sample.txt").write_text("fixture")
+            alias = base / "backup-alias"
+            alias.symlink_to(trees[1], target_is_directory=True)
+            with self.assertRaises(ValueError):
+                verify_independent_restore(trees[0], alias, trees[2], ["sample.txt"])

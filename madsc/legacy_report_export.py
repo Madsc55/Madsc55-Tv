@@ -16,7 +16,10 @@ OUTPUT_JSON = "BIRLESIK_ADAY_OZET.json"
 
 
 def export_legacy_report(scores_csv: str, stability_csv: str, output_dir: str, *,
-                         history_json: str | None = None, now: datetime | None = None) -> dict:
+                         history_json: str | None = None, now: datetime | None = None,
+                         require_history: bool = False) -> dict:
+    if type(require_history) is not bool or (require_history and history_json is None):
+        raise ValueError("Historical measurements required for verified export")
     sources = [Path(scores_csv).resolve(strict=True), Path(stability_csv).resolve(strict=True)]
     if not all(path.is_file() and path.suffix.lower() == ".csv" for path in sources):
         raise ValueError("Both sources must be CSV files")
@@ -53,6 +56,7 @@ def export_legacy_report(scores_csv: str, stability_csv: str, output_dir: str, *
                "kullanici_onayi_olmadan_eklenen": 0,
                "historical_evidence_source": report["historical_evidence_source"],
                "historical_evidence_supplied": history is not None,
+               "history_required": require_history,
                "uyari": "Teknik puanlama kimlik veya IBO oynatma onayi degildir. Bu is akisinin liste yazma izni yoktur."}
     dest.mkdir(parents=False, exist_ok=False)
     with (dest / OUTPUT_CSV).open("w", encoding="utf-8-sig", newline="") as handle:

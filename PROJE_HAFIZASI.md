@@ -147,3 +147,6 @@ Actions #48 6/6 success. K5 besli kategori hata ozeti b493951, regresyon f9f80aa
 
 ## 19 Ekim 2026 - K3 XMLTV islev paketi
 Actions #51 completed/success; 6/6 job success. Eski AGENTS, BES_SISTEM_TOPLU_IS_DEFTERI ve BES_SISTEM_GECIS_KONTROL tekrar incelendi. Yeni XMLTV salt okunur kanal/program envanteri ve tvg-id eslestirme 6e802eb; regresyon 3df6cff; K3 fixture entegrasyonu 5190659. IBO cihaz EPG kabul edilmis sayilmaz. Yeni Actions tamamlaninca alt isler kontrol edilmeli. Eski depo degismedi.
+
+## 19 Ekim 2026 - Besli durum ve EPG zaman alanlari
+Actions #54 completed/success ve 6/6 job success. K1-K5 izole testleri gecti; 92 legacy davranis esdegerligi, 26 kural runtime, 18 gorev, gercek kanal testleri, EPG Pages ve IBO cihaz onayi, harici restore halen acik. K3 XMLTV baslangic/bitis alani eksikligi sayimi 8310afa; regresyon 133b106. Yeni Actions tamamlaninca dogrula. Eski depo degismedi.

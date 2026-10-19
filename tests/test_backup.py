@@ -98,3 +98,21 @@ class BackupTests(unittest.TestCase):
                 (Path(root) / "sample.txt").write_text("fixture")
             with self.assertRaises(ValueError):
                 verify_independent_restore(Path(a), Path(b), Path(c), ["sample.txt", "sample.txt"])
+    def test_manifest_rejects_duplicate_and_unsafe_paths(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "a.txt").write_text("safe")
+            for names in (["a.txt", "a.txt"], ["a\\b"], ["./a.txt"],
+                          ["a//b"], [""], [None]):
+                with self.subTest(names=names), self.assertRaises(ValueError):
+                    snapshot_manifest(root, names)
+
+    def test_manifest_rejects_malformed_integrity_fields(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "a.txt").write_text("safe")
+            entry = snapshot_manifest(root, ["a.txt"])["entries"][0]
+            for bad in ({**entry, "sha256": "invalid"},
+                        {**entry, "bytes": True}, {**entry, "bytes": -1}):
+                with self.subTest(entry=bad), self.assertRaises(ValueError):
+                    verify_manifest(root, {"entries": [bad]})

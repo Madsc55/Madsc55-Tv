@@ -48,3 +48,6 @@ Yeni ozel deponun resmi adi Madsc55-Tv; eski madsc-tv yalniz salt okunur referan
 
 ## 19 Ekim 2026 - Madsc55-Tv GitHub Actions gorunen adi
 Yeni ozel repo .github/workflows/madsc-05-bakim.yml dosyasinin yalniz name basligi Madsc55-Tv - Besli Toplu Guvenlik ve Kabul olarak degistirildi. Commit efbca192608746f2524da8591740dc9956414579. Manuel workflow_dispatch, salt-okunur izinler, K1-K5 sirasi ve artifactler degismedi. Gercek Actions run sonucu henuz dogrulanmadi. Eski repo ve korunan listeler degismedi.
+
+## 19 Ekim 2026 - K5 kabul izolasyon kaniti
+madsc/batch_acceptance.py her K1-K5 raporunda checks.isolation=true ariyor ve checks tipini denetliyor. Kod commit: 8374f137aaddf18970c3fe644dd0aaaac2545d1e. Gercek GitHub Actions calistirma kaniti bekleniyor. Eski depo degismedi; cron ve otomatik uretim islemleri acilmadi.

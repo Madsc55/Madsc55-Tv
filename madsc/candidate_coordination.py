@@ -24,10 +24,14 @@ def coordinate(rows: list[dict], probes: dict, attempts: dict,
     for candidate in discovery["candidates"]:
         digest = candidate["url_sha256"]
         probe = probes.get(digest)
+        if probe is not None and not isinstance(probe, dict):
+            raise ValueError("Invalid probe evidence")
         if probe is not None and probe.get("url_sha256") != digest:
             raise ValueError("Probe fingerprint mismatch")
         status = evaluate_probe(probe)["technical_status"] if probe else "UNTESTED"
         failures = attempts.get(digest, 0)
+        if type(failures) is not int or failures < 0:
+            raise ValueError("Invalid retry count")
         retry = retry_decision(failures)
         channel_id = rows[candidate["source_index"]].get("tvg_id", "")
         if not isinstance(channel_id, str):

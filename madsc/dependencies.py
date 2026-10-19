@@ -28,7 +28,7 @@ def plan_task(task: str) -> dict:
             "production_writes": False}
 
 def validate_batch(tasks: list[str]) -> dict:
-    if not isinstance(tasks, list) or len(set(tasks)) != len(tasks):
+    if not isinstance(tasks, list) or not tasks or any(not isinstance(t, str) for t in tasks) or len(set(tasks)) != len(tasks):
         raise ValueError("Duplicate or invalid task batch")
     plans = [plan_task(t) for t in tasks]
     return {"tasks": plans, "five_categories": list(OWNERS),

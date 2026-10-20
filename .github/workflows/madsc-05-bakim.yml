@@ -278,19 +278,26 @@ jobs:
           path: reports/k5-handoff.json
           if-no-files-found: error
           retention-days: 14
-      - name: K5 toplu fixture ozetini K1 korumali raporla
+      - name: K1-K4 gercek kategori kanitlarini indir
+        uses: actions/download-artifact@v4
+        with:
+          pattern: madsc-batch-k[1-4]
+          path: reports/k5-actual-evidence
+          merge-multiple: false
+      - name: K5 mevcut kategori kanitini olustur
+        run: python -m madsc.core --category k5 --output reports/k5.json
+      - name: K5 kendi kategori kanitini ayni paket yapisina ekle
         run: |
-          mkdir -p reports/reports
-          python -c 'import json;print(json.dumps([{"category":k,"status":"success","production_writes":False} for k in ("k1","k2","k3","k4","k5")]))' > reports/k5-summary-input.json
-          python -m madsc.stage_report_cli --stage k5 --input reports/k5-summary-input.json --isolated-report-root reports
+          mkdir -p reports/k5-actual-evidence/madsc-batch-k5 reports/reports
+          cp reports/k5.json reports/k5-actual-evidence/madsc-batch-k5/k5.json
+      - name: K5 gercek bes kategori kanitini K1 korumali raporla
+        run: python -m madsc.stage_report_cli --stage k5 --batch-evidence-root reports/k5-actual-evidence --isolated-report-root reports
       - name: K5 korumali kaniti sakla
         uses: actions/upload-artifact@v4
         with:
           name: madsc-k5-guarded-evidence
           path: reports/reports/k5-isolated-evidence.json
           retention-days: 14
-      - name: K5 salt okunur kanıt raporunu oluştur
-        run: python -m madsc.core --category k5 --output reports/k5.json
       - name: K5 kanıtını sakla
         uses: actions/upload-artifact@v4
         with:

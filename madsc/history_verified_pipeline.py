@@ -18,6 +18,10 @@ def produce_verified_history(manifest_path, output_path, *, current_sha, run_id,
                              token=None, verify_origin=verify_live_github_origin,
                              download=download_verified_history_artifact):
     manifest_path, output_path = Path(manifest_path), Path(output_path)
+    # K1 guards the destination before network verification or artifact download.
+    enforce_write_paths([output_path.name])
+    if output_path.parent.exists() and output_path.parent.is_symlink():
+        raise ValueError("Symlinked evidence parent forbidden")
     if manifest_path.is_symlink() or not manifest_path.is_file() or output_path.is_symlink():
         raise ValueError("Unsafe manifest or output path")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -40,9 +44,8 @@ def produce_verified_history(manifest_path, output_path, *, current_sha, run_id,
         handoff = pack_history(pair, run_id, current_sha)
     if output_path.exists() or output_path.is_symlink():
         raise ValueError("Refusing to overwrite existing history evidence")
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    if output_path.parent.is_symlink():
-        raise ValueError("Unsafe evidence output directory")
+    if not output_path.parent.is_dir() or output_path.parent.is_symlink():
+        raise ValueError("Evidence output parent must be an existing real directory")
     # Exclusive creation prevents replacing evidence created by another process.
     with output_path.open("x", encoding="utf-8") as handle:
         handle.write(json.dumps(handoff, sort_keys=True) + "\n")

@@ -10,7 +10,7 @@ from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verif
 from madsc.channel_test import evaluate_probe, evaluate_repeated_probes, evaluate_ffprobe_json
 from madsc.discovery import classify_candidates
 from madsc.dependencies import validate_batch, plan_task
-from madsc.maintenance import aggregate, retry_decision, summarize_batch
+from madsc.maintenance import aggregate, retry_decision, summarize_batch, review_candidate_batch
 from madsc.playlist import compare_snapshots, inspect_playlist
 from madsc.source_import import extract_candidates
 from madsc.handoff import assess_candidates
@@ -195,7 +195,19 @@ def execute(category: str) -> dict:
             {fixture_digest: {"url_sha256": fixture_digest, "http_status": 200,
                               "video": True, "audio": True, "duration_seconds": 40}})
         handoff_item = handoff_report["assessed"][0]
-        evidence = {"candidate_k2_k3_k5_consistent": (
+        with TemporaryDirectory() as source_dir, TemporaryDirectory() as backup_dir, TemporaryDirectory() as restored_dir:
+            for directory in (source_dir, backup_dir, restored_dir):
+                (Path(directory) / "fixture.txt").write_text("isolated-k4", encoding="utf-8")
+            k4_review = verify_independent_restore(
+                Path(source_dir), Path(backup_dir), Path(restored_dir), ["fixture.txt"])
+        cross_system_review = review_candidate_batch(candidate_report, k4_review)
+        evidence = {"k2_k3_k4_k5_candidate_restore_review": (
+                        cross_system_review["review_evidence_complete"]
+                        and cross_system_review["candidate_count"] == 1
+                        and cross_system_review["held_count"] == 1
+                        and not cross_system_review["production_ready"]
+                        and not cross_system_review["production_writes"]),
+                    "candidate_k2_k3_k5_consistent": (
                         handoff_item["url_sha256"] == candidate_item["url_sha256"]
                         and handoff_item["technical_status"] == candidate_item["technical_status"]
                         and handoff_item["tvg_id"] == candidate_item["tvg_id"]

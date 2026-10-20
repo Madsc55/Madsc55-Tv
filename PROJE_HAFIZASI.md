@@ -1158,3 +1158,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - K5 Actions madsc-k3-guarded-evidence indirir, k5_channel_gate calistirir, ayri artifact saklar (0b0d82f5ee3cc69dd166b1fa91f7e161e89d6f52). Testler 8ffe4b4f2cefddcdf0629587bff58c4ca0cddbce.
 - Son CI 39411744643 pending; ara kosular 39411726765 ve 39411711232 cancelled. Basari iddiasi yok. K5 gate varligi fixture'in canli probe oldugunu ispatlamaz.
 - Eski depo ve korunan dosyalar degismedi. %47/%53, 0/92 davranissal, 0/26 runtime guvenlik kabul.
+
+
+## 20 Ekim 2026 - K5 kanal kaniti icerik tutarliligi
+- Onceki K5 offline/canli guvenlik Actions 39411744643 SUCCESS.
+- madsc/k5_channel_gate.py artik K3 technical_samples_supplied/probed sayisi, preliminary_passes+needs_review, benzersiz url_sha256 ve her kanal icin technical_status/stream_continuity_verified/channel_identity_verified/ibo_device_verified/production_change_allowed alanlarini fail-closed denetler. Commit aff33890f95c28e225fed46022bae6f052093737.
+- tests/test_k5_channel_gate.py tutarsiz teknik sayi ve sahte ornek bayragi regresyonlari eklendi. Commit e57f5908cf296cf59f6a06f70fb7f06dc85f6aaf. Son CI 39412256597 ilk kontrol aninda in_progress (onceki commit); yeni test commit run'i henuz gorunmemisti. Kabul iddiasi yok.
+- Bu paket gercek ffprobe olcumunu toplamaz; yalniz getirilen teknik kanitin tutarliligini korur. Gercek ffprobe kayitlarini kaynak kimligi, guvenilir toplama ortami ve K2 fingerprint ile iliskilendirme sonraki is. Korunan dosyalar degismedi. %47/%53; 0/92, 0/26.

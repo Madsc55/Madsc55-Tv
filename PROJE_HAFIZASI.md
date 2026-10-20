@@ -1135,3 +1135,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - madsc-05-bakim.yml K5 job'una K3 handoff artifact indirimi ve madsc.handoff_acceptance ile K2/K3/K5 run_id, commit_sha, source_digest, candidate_count ve read-only receipt esleme kapisi eklendi. K5 raporlamadan once capraz kanit tutarsizsa durur. Sonuc artifact: madsc-k5-cross-handoff-verification. Workflow commit 10a36a77a675e0319e5021b229659c62543b5f2f.
 - Yeni run 39410321203 son kontrolde queued; test sonucu kesinlesmedi. Bu fixture cross-handoff, canli stream veya 92 eski davranissal esdegerlik kaniti degildir. K1-K5 bagli test ve rapor sureci korunur.
 - Korunan listeler, EPG, logo, favoriler, yedekler, PR #71 ve eski depo degistirilmedi. %47/%53 referans; 0/92 ve 0/26 runtime kabul.
+
+
+## 20 Ekim 2026 - K2 aday K3 offline teknik kanit parmak izi baglantisi
+- Onceki Actions 39410321203 SUCCESS. Yeni madsc/candidate_probe_link.py K2 envelope'i run_id/commit_sha/SHA256 digest ile unpack eder; K3 offline ffprobe kayitlarinin url_sha256 parmak izlerinin tamamini dogrulanmis K2 adaylarina baglar, yabanci probe'u reddeder. Test edilmemis adaylari ayrica sayar; canli ag/IBO/uretim onayi vermez. Kod commit 02bcf367faeb167649a7bfb0f76c05930d50fdc0.
+- Testler: eslesen aday, yanlis run, yabanci probe, test edilmemis aday; commit b3e559043176e34809b5adceae05cf95acb188fc. CI 39410757432 son kontrolde pending; basarili iddiasi yok.
+- Bu fonksiyon henuz mevcut workflow'un K3 adiminda kullanilmiyor; sonraki is fixture akisini gercek K2 candidate digest ile baglayip K3/K5'e entegre etmek. K1-K5 capraz etkileri ve veri koruma kurallari gecerli. %47/%53; 0/92, 0/26.

@@ -14,7 +14,7 @@ def priority_rows(rows):
         media = row.get("MEDYA_TEST") == "VIDEO_SES_VAR"
         return (0 if verified and new else 1 if verified else 2 if media and new
                 else 3 if media else 4, row.get("KANAL", "").casefold())
-    return [{"ONCELIK": rank(row)[0] + 1, "INCELEME_NOTU": NOTE, **row}
+    return [{**row, "ONCELIK": rank(row)[0] + 1, "INCELEME_NOTU": NOTE}
             for row in sorted(rows, key=rank)]
 
 

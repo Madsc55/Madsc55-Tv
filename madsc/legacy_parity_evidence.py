@@ -2,13 +2,8 @@
 
 Inventory is not proof. Only independently supplied evidence can advance acceptance.
 """
-import hashlib
-import json
-
 REQUIRED = ("legacy_execution", "new_execution", "input_output_comparison",
             "side_effect_comparison", "failure_timeout_comparison", "reviewer_approval")
-STAGES = ("K1", "K2", "K3", "K4", "K5")
-
 def validate_inventory(inventory):
     rows = inventory.get("workflows")
     if not isinstance(rows, list) or len(rows) != 99:
@@ -40,6 +35,9 @@ def ledger(inventory, evidence=None):
                        and isinstance(proofs[key].get("run_id"), int)
                        and proofs[key]["run_id"] > 0
                        for key in REQUIRED)
+        # Self-reported hashes and run IDs are not independent verification.
+        # A separate evidence verifier must authorize acceptance; until then fail closed.
+        accepted = False
         output.append({"path": path, "stages": row.get("candidate_k_stages", []),
                        "accepted": accepted, "missing": [k for k in REQUIRED if k not in proofs]})
     return {"total": len(rows), "accepted": sum(r["accepted"] for r in output),

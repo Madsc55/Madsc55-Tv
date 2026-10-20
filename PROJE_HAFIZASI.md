@@ -947,3 +947,9 @@ Sonraki is: 45 arşiv notunun icinden ilgili kurallari ve tamamlanmis isleri onc
 - Kod: 0fbd349849e047191119f52407efe64f40542a76 — madsc/history_real_source_publish.py artık her bağımsız sağlanan geçmiş dosyasının SHA256 özetini hesaplar, çıktı baytlarını yeniden okuyup özet eşleşmesini doğrular; raporda source_sha256 ve byte_integrity_verified alanları bulunur.
 - Test: 5ce005bccd4e9924be9330c87554b6dd2f1f9fd5 — tests/test_history_real_source_publish.py kaynak ve yayımlanan dosyalar için SHA256 kanıtını kontrol eder.
 - Bu kod değişikliği gerçek tarihsel kaynak dosyalarını sağlamaz; real_source_independently_authenticated hâlâ false. Gerçek K2 geçmiş kabulü ve 92/92 eşdeğerlik henüz tamamlanmadı. Sonuç için ilgili GitHub Actions regresyon koşusu doğrulanmalıdır.
+
+
+### 20 Ekim 2026 — K2 ek kaynak değişim koruması ve doğrulanmış CI
+- Önceki K2 SHA256 regresyon CI https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350031190 SUCCESS (commit 5ce005bccd4e9924be9330c87554b6dd2f1f9fd5). Kod koşusu https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350021463 SUCCESS.
+- Ek kod commit 340a37a6e10353e37c2829a86c9f98c5acba3f89: gerçek geçmiş kaynağı doğrulama ile yayınlama arasında değişirse fail-closed reddet; kaynak dosyaları veya üretim listeleri değiştirilmez. Yeni commitin CI sonucu ayrıca kontrol edilmeli.
+- Hâlâ gerçek kaynak doğrulaması yok; 92 davranışsal eşdeğerlik 0/92 ve runtime güvenlik kabulü 0/26. Önceki kaynak araştırmasını tekrar etmeden gerçek uygulama/kabul adımlarına devam et.

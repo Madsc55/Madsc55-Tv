@@ -1,12 +1,6 @@
 name: Madsc55-Tv Toplu Kesif ve Yayin Dogrulama
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - madsc/turkish_tv_batch_validation.py
-      - madsc/k3_turkish_tv_video_pilot.py
-      - .github/workflows/madsc-turkish-tv-batch.yml
 permissions:
   contents: read
 jobs:

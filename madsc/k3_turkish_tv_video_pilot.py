@@ -49,43 +49,56 @@ def safe_curl(url, limit):
     return result.stdout if result.returncode == 0 and len(result.stdout) <= limit else None
 
 
-def verify_video(url):
+def verify_av(url):
+    """Verify codec streams from an HLS segment; audio language is not inferred."""
     manifest = safe_curl(url, 65536)
     if not manifest or not manifest.lstrip().startswith(b"#EXTM3U"):
-        return False, "no_manifest"
+        return False, False, "no_manifest"
     text = manifest.decode("utf-8-sig", errors="replace")
     if "#EXT-X-STREAM-INF" in text:
-        lines = [s.strip() for s in text.splitlines()]
-        variants = [lines[i+1] for i, s in enumerate(lines[:-1]) if s.startswith("#EXT-X-STREAM-INF") and lines[i+1] and not lines[i+1].startswith("#")]
+        lines = [line.strip() for line in text.splitlines()]
+        variants = [lines[i + 1] for i, line in enumerate(lines[:-1])
+                    if line.startswith("#EXT-X-STREAM-INF") and lines[i + 1]
+                    and not lines[i + 1].startswith("#")]
         if not variants:
-            return False, "no_variant"
+            return False, False, "no_variant"
         nested = urljoin(url, variants[0])
         if urlsplit(nested).hostname != urlsplit(url).hostname:
-            return False, "cross_host_variant"
+            return False, False, "cross_host_variant"
         url = nested
         manifest = safe_curl(url, 65536)
         if not manifest:
-            return False, "variant_unreachable"
+            return False, False, "variant_unreachable"
         text = manifest.decode("utf-8-sig", errors="replace")
-    segments = [s.strip() for s in text.splitlines() if s.strip() and not s.startswith("#")]
+    segments = [line.strip() for line in text.splitlines()
+                if line.strip() and not line.startswith("#")]
     if not segments:
-        return False, "no_segments"
+        return False, False, "no_segments"
     segment_url = urljoin(url, segments[0])
     if urlsplit(segment_url).hostname != urlsplit(url).hostname:
-        return False, "cross_host_segment"
+        return False, False, "cross_host_segment"
     payload = safe_curl(segment_url, MAX_SEGMENT)
     if not payload or len(payload) < 188:
-        return False, "segment_unreachable"
+        return False, False, "segment_unreachable"
     with tempfile.TemporaryDirectory() as folder:
         segment = Path(folder) / "sample.ts"
         segment.write_bytes(payload)
         try:
-            p = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
-                                "-of", "json", str(segment)], capture_output=True, timeout=8)
-            streams = json.loads(p.stdout or b"{}").get("streams", [])
+            result = subprocess.run(
+                ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
+                 "-of", "json", str(segment)], capture_output=True, timeout=8)
+            streams = json.loads(result.stdout or b"{}").get("streams", [])
         except (subprocess.TimeoutExpired, ValueError):
-            return False, "probe_error"
-    return (any(s.get("codec_type") == "video" for s in streams), "video_detected" if any(s.get("codec_type") == "video" for s in streams) else "no_video")
+            return False, False, "probe_error"
+    video = any(stream.get("codec_type") == "video" for stream in streams)
+    audio = any(stream.get("codec_type") == "audio" for stream in streams)
+    return video, audio, "video_audio_detected" if video and audio else (
+        "video_detected" if video else "audio_only" if audio else "no_av")
+
+
+def verify_video(url):
+    video, _audio, reason = verify_av(url)
+    return video, reason
 
 
 def run():

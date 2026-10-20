@@ -1,0 +1,68 @@
+"""Read-only GitHub API inventory of all 99 legacy workflow source blobs."""
+import argparse
+import base64
+import json
+import os
+from pathlib import Path
+import re
+import urllib.parse
+import urllib.request
+
+REPO = "Madsc55/madsc-tv"
+BRANCH = "madsc/bes-sistem-toplu-birlestirme"
+
+
+def github(url, token):
+    headers = {"Accept": "application/vnd.github+json", "User-Agent": "madsc-source-audit"}
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as response:
+        return json.load(response)
+
+
+def run(output, token):
+    ref = urllib.parse.quote(BRANCH, safe="")
+    tree = github(f"https://api.github.com/repos/{REPO}/git/trees/{ref}?recursive=1", token)
+    if tree.get("truncated"):
+        raise ValueError("Incomplete legacy tree")
+    entries = sorted((item for item in tree["tree"]
+                      if item["path"].startswith(".github/workflows/")
+                      and item["path"].endswith((".yml", ".yaml"))
+                      and item["type"] == "blob"), key=lambda item: item["path"])
+    if len(entries) != 99:
+        raise ValueError(f"Expected 99 original workflows, got {len(entries)}")
+    rows = []
+    for item in entries:
+        if item.get("size", 0) > 250000:
+            raise ValueError("Oversized workflow")
+        blob = github(f"https://api.github.com/repos/{REPO}/git/blobs/{item['sha']}", token)
+        raw = base64.b64decode(blob["content"])
+        source = raw.decode("utf-8")
+        rows.append({
+            "path": item["path"], "git_blob_sha": item["sha"], "bytes": len(raw),
+            "uses": sorted(set(re.findall(r"(?m)^\s*-?\s*uses:\s*([^\s#]+)", source))),
+            "trigger_indicators": sorted(set(re.findall(r"(?m)^\s*(workflow_dispatch|workflow_call|push|pull_request|schedule|workflow_run):", source))),
+            "command_lines": [line.strip() for line in source.splitlines()
+                              if any(word in line for word in ("python ", "python3 ", "bash ", "node ", "ffmpeg", "ffprobe"))][:150],
+            "permission_lines": [line.strip() for line in source.splitlines()
+                                 if any(word in line for word in ("contents:", "actions:", "pages:", "id-token:"))][:50],
+            "artifact_lines": [line.strip() for line in source.splitlines()
+                               if "upload-artifact" in line or "download-artifact" in line][:50],
+            "behavioral_parity_verified": False,
+        })
+    report = {"source_repository": REPO, "source_branch": BRANCH, "source_workflow_count": 99,
+              "behavioral_parity_verified_count": 0, "production_writes": False, "workflows": rows}
+    path = Path(output)
+    if path.exists():
+        raise ValueError("Will not overwrite evidence")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("x", encoding="utf-8") as stream:
+        json.dump(report, stream, ensure_ascii=False, indent=2, sort_keys=True)
+    print(json.dumps({"workflow_count": len(rows), "behavioral_parity_verified_count": 0}))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", required=True)
+    args = parser.parse_args()
+    run(args.output, os.getenv("GITHUB_TOKEN", ""))

@@ -57,5 +57,30 @@ class VerifiedHistoryPipelineTests(unittest.TestCase):
             self.assertFalse(output.exists())
 
 
+    def test_existing_evidence_is_never_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps({
+                "schema": 1, "mode": "VERIFIED_SOURCE",
+                "source_run_id": "123", "source_commit_sha": A,
+                "production_writes": False,
+                "hashes": {n: hashlib.sha256(v).hexdigest() for n, v in FILES.items()}
+            }))
+            output = root / "handoff.json"
+            output.write_text("ORIGINAL", encoding="utf-8")
+            def verify(*args, **kwargs):
+                return {"artifact_id": 456, "source_run_id": "123",
+                        "source_commit_sha": A}
+            def download(*, destination, **kwargs):
+                destination.mkdir()
+                for name, value in FILES.items():
+                    (destination / name).write_bytes(value)
+            with self.assertRaises(ValueError):
+                produce_verified_history(
+                    manifest, output, current_sha=B, run_id="789",
+                    token="test-token", verify_origin=verify, download=download)
+            self.assertEqual(output.read_text(encoding="utf-8"), "ORIGINAL")
+
 if __name__ == "__main__":
     unittest.main()

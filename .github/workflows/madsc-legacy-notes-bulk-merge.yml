@@ -1,6 +1,13 @@
 name: Madsc55-Tv - Eski Notlar Toplu Birlestirme
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/birlestir_eski_sistem_notlari.py'
+      - 'madsc/legacy_notes_integrity.py'
+      - 'tests/test_legacy_notes_integrity.py'
+      - '.github/workflows/madsc-legacy-notes-bulk-merge.yml'
 permissions:
   contents: read
 jobs:

@@ -1,7 +1,9 @@
 import tempfile
+import json
+from unittest.mock import patch
 import unittest
 from pathlib import Path
-from madsc.restore_drill import run_drill
+from madsc.restore_drill import run_drill, main
 
 
 class RestoreDrillTests(unittest.TestCase):
@@ -36,3 +38,21 @@ class RestoreDrillTests(unittest.TestCase):
             (root / "alias.txt").symlink_to(root / "real.txt")
             with self.assertRaises(ValueError):
                 run_drill(root, ["alias.txt"])
+
+    def test_k4_cli_uses_k1_guard_for_isolated_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "source").mkdir()
+            (root / "source" / "a.txt").write_text("safe")
+            (root / "reports").mkdir()
+            output = root / "reports/k4-isolated-evidence.json"
+            args = ["restore_drill", "--source", str(root / "source"),
+                    "--file", "a.txt", "--output", str(output),
+                    "--isolated-report-root", str(root)]
+            with patch("sys.argv", args):
+                main()
+            payload = json.loads(output.read_text())
+            self.assertEqual(payload["category"], "k4")
+            self.assertFalse(payload["production_writes"])
+            with patch("sys.argv", args), self.assertRaises(FileExistsError):
+                main()

@@ -1265,3 +1265,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/k5_channel_gate.py` içine ayrı `evaluate_k3_head_observation` fonksiyonu eklendi (commit 46160b39c591df705639d90c558ffe17039e19a5): K2 envelope/run/SHA/digest/fingerprint bağlamını, TLS/DNS ve yönlendirme reddini doğrular; HEAD transport gözlemini stream sürekliliği/IBO/üretim kabulüne yükseltmez. Eski offline K3 kanıt sözleşmesi değişmedi.
 - `tests/test_k5_head_observation.py` (commit 819b5a514180be694f982b3ca6cb03d089bfbc32) sahte HEAD gözlem, farklı aday, yönlendirme, bozuk tür ve canlı onay iddialarına karşı negatif testleri ekledi. Actions #39421390769 ilk kontrolde queued; başarı henüz doğrulanmadı.
 - Gerçek HEAD ölçümü tetiklenmedi; eski depo ve korunan üretim dosyaları değiştirilmedi. Gerçek ffprobe/ffmpeg/IBO ve 30 saniye canlı süreklilik kabulü hâlâ yok. 0/92 davranışsal eşdeğerlik ve 0/26 runtime güvenlik kabulü değişmedi.
+
+
+## 20 Ekim 2026 — K5 HEAD rapor doğrulama ile bağımsız ağ kanıtını ayırma
+- Önceki #39421069065 altı job SUCCESS doğrulanmıştı. K5 HEAD yeni test koşusu #39421390769 son sorguda CANCELLED; bu koşu için başarı iddia edilmez. #39421372129 son sorguda in_progress.
+- `madsc/k5_channel_gate.py` HEAD değerlendirme fonksiyonunun __main__ guard sonrası konumu düzeltildi ve `head_transport_observed=True` yerine yalnızca `head_transport_claim_validated=True`, `head_transport_independently_verified=False` döndürülecek biçimde fail-closed rapor semantiği uygulandı. Commit 0e571e86b3b5dd3c8ae3ac70878760d668f411e4.
+- `tests/test_k5_head_observation.py` yeni ayrımı sınar. Commit d4f5a811c82fe104406e7bbd4697786c0136daec. Yeni Actions sonucunu ayrıca doğrula.
+- Raporun kendisi imzalı/bağımsız canlı socket kanıtı değildir. Korunan üretim ve eski depo değişmedi, canlı ağ probe başlatılmadı. Kabul 0/92 ve 0/26.

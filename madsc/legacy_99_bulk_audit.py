@@ -1,6 +1,7 @@
 """Read-only GitHub API inventory of all 99 legacy workflow source blobs."""
 import argparse
 import base64
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -36,7 +37,14 @@ def run(output, token):
         if item.get("size", 0) > 250000:
             raise ValueError("Oversized workflow")
         blob = github(f"https://api.github.com/repos/{REPO}/git/blobs/{item['sha']}", token)
-        raw = base64.b64decode(blob["content"])
+        if blob.get("encoding") != "base64":
+            raise ValueError("Unexpected blob encoding")
+        raw = base64.b64decode(blob["content"], validate=True)
+        expected_sha = hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\\0" + raw).hexdigest()
+        if expected_sha != item["sha"] or blob.get("sha") != item["sha"]:
+            raise ValueError("Source blob SHA mismatch")
+        if len(raw) != item.get("size"):
+            raise ValueError("Source blob size mismatch")
         source = raw.decode("utf-8")
         rows.append({
             "path": item["path"], "git_blob_sha": item["sha"], "bytes": len(raw),
@@ -50,7 +58,7 @@ def run(output, token):
                                if "upload-artifact" in line or "download-artifact" in line][:50],
             "behavioral_parity_verified": False,
         })
-    report = {"source_repository": REPO, "source_branch": BRANCH, "source_workflow_count": 99,
+    report = {"source_repository": REPO, "source_branch": BRANCH, "source_tree_sha": tree.get("sha"), "source_workflow_count": 99,
               "behavioral_parity_verified_count": 0, "production_writes": False, "workflows": rows}
     path = Path(output)
     if path.exists():

@@ -1307,3 +1307,12 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/k5_channel_gate.py` HEAD raporunun tam 14 üretici alanından oluşmasını şart koşar; bilinmeyen/gizli veya eksik alan fail-closed reddedilir. İçerik SHA-256 yalnızca kabul edilmiş kapalı şema için üretilir. Commit 78f99feccc6118fc6dd5ca99e78da642ddf48502.
 - `tests/test_k5_head_observation.py` ekstra gizli alan ve eksik alan regresyonları eklendi. Commit aef9f4acf08bb5935329a96de2870acb641a3183. Actions #39423668755 ilk kontrolde queued; yeni CI sonucu doğrulanmadı.
 - Ağ gözlemi bağımsız tasdik edilmedi, gerçek stream/IBO testi yapılmadı, üretim/eski repo değişmedi; 0/92 ve 0/26 kabul sayaçları sabit.
+
+
+## 20 Ekim 2026 — Öncelik değişimi: 99 YAML için davranış kanıt engelleri
+- Kullanıcı genel 47/53 ilerlemesinin yerinde saymasından haklı olarak şikâyet etti. Bundan sonra yalnızca K3/K5 küçük güvenlik yamaları değil, eski 92 otomasyonun gerçek davranış karşılaştırmaları önceliklidir; sahte ilerleme puanı üretme.
+- `madsc/legacy_99_bulk_audit.py` tüm 99 kaynak YAML satırında 6 kanıt eksikliğini ayrı işaretler (`legacy_execution`, `new_execution`, `input_output_comparison`, `side_effect_comparison`, `failure_timeout_comparison`, `reviewer_approval`) ve tür bazında toplamları fail-closed hesaplar. Commitler 6f4f04134d391e36cac77c69a6447ce989c84eda ve f94978ea4a28393efdf0789239f5488351d6dce3.
+- `tests/test_legacy_99_source_integrity.py` her satırın BLOCKED kaldığını, altı engeli ve sahte onayın reddini doğrular. Commitler 38534e0f0d867083e83eac9fe00f938bf930e00a ve a50147e3ddd6251d7f0d46d4d04b2a0cc7cf7e24.
+- İlk kod SHA 6f4f041 için Actions #39424425976 SUCCESS; daha yeni Actions #39424609517 ilk kontrolde pending, henüz başarı iddiası yok.
+- Sonraki görev: eski ve yeni gerçek betikleri aynı sentetik girdide izole çalıştırıp exit/status, dosya SHA, hata/timeout ve yan etkileri karşılaştır; yalnızca gerçek diferansiyel kanıtla 0/92 ilerlet. Kaynak envanteri/fixture tek başına eşdeğerlik değildir.
+- Korunan üretim dosyaları, eski repo ve canlı yayınlar değişmedi. 0/92 ve 0/26 kabul sayaçları hâlâ geçerli.

@@ -3,7 +3,7 @@ import argparse
 import json
 from pathlib import Path
 
-from madsc.batch_acceptance import _unique_json_pairs, CATEGORIES, MODULES
+from madsc.batch_acceptance import _unique_json_pairs, CATEGORIES, MODULES, collect
 from madsc.channel_test import summarize_offline_probe_evidence
 from madsc.maintenance import summarize_batch
 from madsc.fixture_report_writer import write_stage_report
@@ -21,33 +21,17 @@ def build_report(stage, payload):
 
 
 def load_batch_reports(root: Path) -> list[dict]:
-    """Read actual same-run category artifacts, never fabricated success records."""
+    """Validate the complete artifact package with the same K5 acceptance gate."""
     root = Path(root)
-    if root.is_symlink() or not root.is_dir():
-        raise ValueError("Invalid batch evidence directory")
+    collect(root)
     reports = []
     for stage in CATEGORIES:
         path = root / f"madsc-batch-{stage}" / f"{stage}.json"
-        if path.is_symlink() or path.parent.is_symlink() or not path.is_file():
-            raise ValueError(f"Missing or unsafe {stage} evidence")
-        if path.stat().st_size > 1024 * 1024:
-            raise ValueError("Oversized category evidence")
         data = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
-        if (not isinstance(data, dict) or data.get("category") != stage
-                or data.get("module") != MODULES[stage]
-                or data.get("mode") != "isolated_read_only"
-                or data.get("production_writes") is not False
-                or data.get("legacy_workflows_executed") is not False
-                or data.get("status") != "isolated_fixture_checks_passed_not_production_verified"
-                or not isinstance(data.get("fixture_checks"), dict)
-                or not data["fixture_checks"]
-                or any(v is not True for v in data["fixture_checks"].values())):
-            raise ValueError(f"Unverified {stage} evidence")
         reports.append({"category": stage, "status": "success",
                         "production_writes": False,
                         "fixture_checks": data["fixture_checks"]})
     return reports
-
 
 def main():
     parser = argparse.ArgumentParser()

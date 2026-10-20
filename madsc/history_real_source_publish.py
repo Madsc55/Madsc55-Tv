@@ -3,6 +3,7 @@
 No fixture generation and no writes to production histories.
 """
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -21,14 +22,20 @@ def publish_source(folder, output):
         if source.stat().st_size > 8 * 1024 * 1024:
             raise ValueError("Oversized history document")
     # Verify structure before writing any evidence.
-    pair = import_legacy_pair(folder)
+    import_legacy_pair(folder)
+    # Bind the published bytes to a reproducible source fingerprint.
+    source_bytes = {name: (folder / name).read_bytes() for name in KEYS}
+    digests = {name: hashlib.sha256(source_bytes[name]).hexdigest() for name in KEYS}
     if output.exists():
         raise ValueError("Refusing to overwrite source evidence")
     output.mkdir(parents=True, exist_ok=False)
     for name in KEYS:
         with (output / name).open("xb") as handle:
-            handle.write((folder / name).read_bytes())
-    return {"source_files": list(KEYS), "production_writes": False,
+            handle.write(source_bytes[name])
+        if hashlib.sha256((output / name).read_bytes()).hexdigest() != digests[name]:
+            raise ValueError("Published history byte integrity mismatch")
+    return {"source_files": list(KEYS), "source_sha256": digests,
+            "byte_integrity_verified": True, "production_writes": False,
             "real_source_independently_authenticated": False}
 
 

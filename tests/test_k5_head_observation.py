@@ -24,7 +24,8 @@ class K5HeadObservationTests(unittest.TestCase):
     def test_head_transport_never_grants_stream_acceptance(self):
         result = evaluate_k3_head_observation(self.observation, self.envelope,
                                               self.run, self.sha)
-        self.assertTrue(result["head_transport_observed"])
+        self.assertTrue(result["head_transport_claim_validated"])
+        self.assertFalse(result["head_transport_independently_verified"])
         self.assertFalse(result["actual_stream_measurements_verified"])
         self.assertFalse(result["production_ready"])
 

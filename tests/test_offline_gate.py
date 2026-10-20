@@ -38,7 +38,8 @@ class OfflineGateTests(unittest.TestCase):
         run.return_value.returncode = 0
         run.return_value.stdout = ""
         run.return_value.stderr = "Ran 73 tests in 0.123s\\n\\nOK"
-        five.return_value = {"fixture_gate_passed": True, "categories": {
+        five.return_value = {"fixture_gate_passed": True, "categories_checked": 5,
+                             "production_ready": False, "production_writes": False, "categories": {
             key: "success" for key in ("k1", "k2", "k3", "k4", "k5")}, "errors": {}}
         output = io.StringIO()
         with redirect_stdout(output):
@@ -46,6 +47,20 @@ class OfflineGateTests(unittest.TestCase):
         report = json.loads(output.getvalue())
         self.assertTrue(report["five_stage_fixture_gate_passed"])
         self.assertFalse(report["production_acceptance"])
+
+    @patch("madsc.offline_five_gate.assess_all")
+    @patch("madsc.offline_gate.subprocess.run")
+    def test_incomplete_five_stage_evidence_fails_closed(self, run, five):
+        run.return_value.returncode = 0
+        run.return_value.stdout = ""
+        run.return_value.stderr = "Ran 73 tests in 0.123s\\n\\nOK"
+        five.return_value = {"fixture_gate_passed": True, "categories_checked": 4,
+                             "categories": {key: "success" for key in ("k1", "k2", "k3", "k4")},
+                             "production_ready": False, "production_writes": False}
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.assertEqual(main(), 1)
+        self.assertFalse(json.loads(output.getvalue())["five_stage_fixture_gate_passed"])
 
     @patch("madsc.offline_gate.subprocess.run")
     def test_zero_discovered_tests_never_pass(self, run):

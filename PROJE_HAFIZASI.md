@@ -1341,3 +1341,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - **İLK GERÇEK SONUÇ** GitHub Actions #39438888120 live-discovery SUCCESS, artifact 12272953781. Kaynak bytes 28656, kaynakta 220 yayın kaydı, ilk 100 pilot adayının 100'ü sınıflandırıldı, 0 tekrar, 0 geçersiz. SHA256 kaynak ade6c0c6845e693b807b83cdf606aac49565f5002fa0ada8d9459e3185e7562b. Bu sonuçlar **yayın çalışıyor** veya görüntü/ses var anlamına GELMEZ: stream_reachability_tested=false, device_verified=false, production_playlist_modified=false.
 - Bir önceki CI #39438268021 ilk denemede GitHub upload-artifact ECONNRESET ile başarısızdı; yalnız başarısız işler yeniden çalıştırıldı, son kontrol GitHub SUCCESS.
 - **SONRAKİ GERÇEK İŞ:** K3'te URL'lerin ağ erişimini ve ffprobe görüntü/sesini sınırlı güvenli pilotta test et; URL/secret sızdırma ve SSRF koruması, süre/bütçe sınırı, rapor ve korunan playlistlere yazmama şart. K2 kaynak 220'nin ilk 100'ü görüldü, kalan 120 henüz taranmadı. Tam eski workflow 0/92, güvenlik runtime kabulü 0/26.
+
+
+## 20 Ekim 2026 — Yeni sisteme bağımsız M3U8 listesi (KULLANICI KARARI)
+- Kullanıcı yeni sistem için ayrı M3U8 oluşturulmasını, eski listenin tamamıyla aynı kalmasını açıkça istedi.
+- `MADSC55_TV_YENI_TEST.m3u8` dosyası `main` dalında sadece `#EXTM3U\n` içeriğiyle oluşturuldu; commit 9af7b7b347a70593d47abd2e0722c5ff31177393. Henüz **0 kanal** var; bu çalışır liste değildir.
+- Eski listelere, CALISANLAR/YENILER/YEDEKLER/HEPSI/FAVORILER, XMLTV, EPG, logolar, yedekler, eski depo ve IBO kararlarına dokunulmayacak.
+- Yeni listede yalnız K3 ağ+görüntü+ses kontrollerinden geçen ve güvenli yayın için onaylanmış adaylar yer alacak. Pilot adayları otomatik ekleme yetkisi değildir; kullanıcı onayı sınırları korunacak.
+- Olası raw URL `https://raw.githubusercontent.com/Madsc55/Madsc55-Tv/main/MADSC55_TV_YENI_TEST.m3u8`; depo özel ise IBO erişimi engellenebilir. Kamuya açma veya özel URL sızdırma kullanıcı onayı gerektirir.

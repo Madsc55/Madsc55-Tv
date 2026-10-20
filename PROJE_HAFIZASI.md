@@ -1071,3 +1071,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Gecmis yazma, mevcut raporu degistirme ve path traversal testleri eklendi: 26a7b775295b91dd705f9c90589a92248a569b33. Actions 39406192839 son kontrolde pending; SUCCESS iddiasi yok.
 - Onceki izole K1-K5 CI 39404862422 SUCCESS. Canli IPTV, IBO, tum yazma yollari veya davranissal esdegerlik kaniti degil. Eski depo ve korunan listeler degismedi.
 - Siradaki is: K3-K4-K5 gercek rapor/yedek/yazma cagrilarini ayni K1 politikasina baglamak, bagli testleri toplu calistirmak. Genel referans %47/%53, kabul 0/92 ve 0/26.
+
+
+## 20 Ekim 2026 - K1 guvenlik kapisinin K3/K4/K5 izole kanit arayuzune baglanmasi
+- K3 kanal testi, K4 yedek ve K5 bakim raporlarinin izole yazimi icin write_stage_report eklendi. Ortak K1 write_fixture_report korumasini cagirir, asama ve production_writes:false alanlarini zorunlu kilar, mevcut kanit dosyasini ezmez. Commit 604a4559ac97cb4e928fff8703fe7f987aa1326d.
+- K3/K4/K5 yazim ve reddetme regresyonlari eklendi: b2b35889dfb8425b566e63de699f251b1234a71b. Toplu CI 39406887334 son kontrolde queued; henuz basarili sayilmaz.
+- K1-K2 onceki toplu CI 39406192839 SUCCESS. Yeni arayuz mevcut K3/K4/K5 uretim cagrilarina henuz baglanmadi; bu eksik acik kalacak.
+- 20 calisma ilkesi ve ek depo kimligi kurali, eski depo salt okunurlugu ve korunan verilerin degistirilmemesi suruyor. 99 YAML aynen tasinmayacak; islevleri besli sistemde gelistirilecek. Genel referans %47/%53.

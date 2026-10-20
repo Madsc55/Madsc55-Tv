@@ -24,6 +24,15 @@ def verify(merged, archive, report):
         raise ValueError("Invalid merged archive header")
     if f"Birleştirilen kaynak sayısı: {len(sources)}.\n" not in text:
         raise ValueError("Merged source count mismatch")
+    # Reconstruct the entire document, not only the marked source sections.
+    # Otherwise unmarked injected text can pass all per-source hash checks.
+    expected = (
+        "# ESKİ SİSTEM NOTLARI\\n\\n"
+        "Kaynak: Madsc55/madsc-tv, madsc/bes-sistem-toplu-birlestirme.\\n"
+        "Bu belge tarihsel arşivdir; eski talimatlar yeni yazma izni vermez.\\n"
+        f"Birleştirilen kaynak sayısı: {len(sources)}.\\n"
+        "Her bölüm SHA256 ile tanımlanır; özgün içerik değiştirilmez.\\n"
+    ).encode("utf-8")
     results = []
     for p in sources:
         if p.is_symlink():
@@ -38,9 +47,12 @@ def verify(merged, archive, report):
         body = text.split(begin, 1)[1].split(end, 1)[0].encode("utf-8")
         if body != data:
             raise ValueError(f"Byte mismatch: {rel}")
+        expected += begin.encode("utf-8") + data + end.encode("utf-8")
         results.append({"path": rel, "sha256": digest, "bytes": len(data)})
     if text.count("<!-- KAYNAK-BASLANGIC:") != len(sources) or text.count("<!-- KAYNAK-BITIS:") != len(sources):
         raise ValueError("Unexpected extra merged source markers")
+    if raw != expected:
+        raise ValueError("Unexpected text outside verified legacy source sections")
     if report.exists() or report.is_symlink():
         raise ValueError("Refusing to overwrite verification report")
     report.parent.mkdir(parents=True, exist_ok=True)

@@ -39,7 +39,7 @@ def run(output, token):
         blob = github(f"https://api.github.com/repos/{REPO}/git/blobs/{item['sha']}", token)
         if blob.get("encoding") != "base64":
             raise ValueError("Unexpected blob encoding")
-        raw = base64.b64decode(blob["content"], validate=True)
+        raw = base64.b64decode("".join(blob["content"].split()), validate=True)
         expected_sha = hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
         if expected_sha != item["sha"] or blob.get("sha") != item["sha"]:
             raise ValueError("Source blob SHA mismatch")

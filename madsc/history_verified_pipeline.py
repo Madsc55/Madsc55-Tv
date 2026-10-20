@@ -12,6 +12,7 @@ from madsc.github_history_client import verify_live_github_origin
 from madsc.history_artifact_download import download_verified_history_artifact
 from madsc.history_handoff import pack_history
 from madsc.history_source_gate import load_verified_source
+from madsc.write_path_audit import enforce_local_output_path
 
 
 def produce_verified_history(manifest_path, output_path, *, current_sha, run_id,

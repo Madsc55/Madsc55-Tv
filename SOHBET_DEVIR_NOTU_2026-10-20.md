@@ -170,3 +170,11 @@ Kullanici istegi: Bu sohbetin tum onemli taleplerini, kararlarini, yapilanlari, 
 - Genel %47 tamam / %53 kalan SADECE TARIHSEL REFERANS, her commit sonrasi hesaplanan gercek oran DEGIL. Kaynak envanteri: 99/99 YAML, 130/130 Python kaynak, 68/68 test dosyasi ilk inceleme. 92 eski davranistan DOGRULANMIS davranissal esdegerlik 0/92; 26 runtime guvenlik kabul 0/26. 26 hedefe karsin arivdeki GUVENLIK_KURALLARI.md sadece 24 numarali madde iceriyor; iki maddeyi uydurma. Yeni kanit olmadan yuzdeyi artirma, ama ilerlemeyi ayrik raporla.
 - SIRADAKI SOMUT IS: (1) K1-K5 toplu CI son durumunu kontrol et. (2) Eski kaynak betik ile yeni esdegerini izole sentetik girdilerle gercekten calistirip diferansiyel davranissal test kur; eski kodu ve korunan dosyalari degistirme. (3) K2 adaylari icin guvenli, yetkilendirilmis, salt-okunur GERCEK teknik olcum toplama ve kaynak/provenance dogrulamasini K3/K5'e bagla; canli kanal kimligi/IBO kabulunu ayri tut. (4) 92 davranisin kabul matrisi, 26 guvenlik maddesi runtime kaniti, K4 harici backup/restore. (5) Her paket sonunda gercek commit, CI run, artifact ve eksikleri PROJE_HAFIZASI.md'ye kaydet.
 - Bu devir ozeti sohbetlerin birebir tam transkripti DEGIL. Tam sohbet otomatik eksiksiz okunmus sayilmaz. Yeni sohbetin basinda once dosyalardan kanit topla, kullaniciya eski kararlarini tekrar anlattirma.
+
+
+## ZORUNLU AD VE DEPO KIMLIGI KONTROLU - 20 Ekim 2026
+- Yeni sistemin TAM ve TEK dogru adi: **Madsc55-Tv**. GitHub sahibi/deposu: **Madsc55/Madsc55-Tv**. Yazilabilir tek dal: **main**.
+- **Madsc-Tv**, **MADSC TV** veya **Madsc55/madsc-tv** yeni sistemin adi/depusu olarak kullanilamaz. Kisa, eksik veya eski adla proje tanitma; yeni sohbet baslik ve cevaplarinda **Madsc55-Tv** yaz.
+- **Madsc55/madsc-tv** eski depodur; **madsc/bes-sistem-toplu-birlestirme** dali da dahil kesinlikle salt okunur. Kullanici acik izin vermedikce eski depoda commit, dosya degisikligi, Actions tetikleme veya workflow duzenlemesi YASAK.
+- HER YENI SOHBETTE ilk GitHub yazma isleminden ONCE hedef repository_full_name=Madsc55/Madsc55-Tv ve branch=main oldugunu acikca dogrula. Adlar birbirine benziyor diye eski depoya yazma. Yanlis hedef saptanirsa yazma islemini durdur.
+- Bu madde mevcut 21 kurali guclendirir; onceki korumalari kaldirmaz. Yeni sohbete devirde aynen korunur.

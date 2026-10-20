@@ -25,6 +25,13 @@ class WorkflowSecurityTests(unittest.TestCase):
                 if re.search(r"uses:\s*actions/checkout@", content):
                     self.assertRegex(content, r"(?m)^\s+persist-credentials:\s*false\s*$")
 
+    def test_notes_merge_cannot_push_after_one_time_delivery(self):
+        workflow = (WORKFLOWS / "madsc-legacy-notes-bulk-merge.yml").read_text(encoding="utf-8")
+        self.assertIn("permissions:\\n  contents: read", workflow)
+        self.assertIn("persist-credentials: false", workflow)
+        self.assertNotRegex(workflow, r"(?m)^\\s*git push\\b")
+        self.assertNotIn("Commit only verified merged notes to main", workflow)
+
     def test_five_stage_chain_stops_after_failed_dependency(self):
         workflow = (WORKFLOWS / "madsc-05-bakim.yml").read_text(encoding="utf-8")
         for stage, upstream in (("k2", "k1"), ("k3", "k2"),

@@ -1382,3 +1382,8 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 ## 20 Ekim 2026 — K5 toplu sonuç doğruluğu
 - `madsc/offline_gate.py` içindeki unittest başarı durumu ile K1–K5 fixture gate sonucu artık ayrı hesaplanıyor. `unittest_passed` test sayısı >0, sıfır çıkış ve timeout olmaması gerektiriyor; `all_offline_gates_passed` ancak hem unittest hem beşli kapı başarılıysa true. Önceki `tests_passed` alanının sonradan değiştirilmiş exit_code'a bağlı yanlış pozitif üretme riski giderildi. Kod commit `6ae488704ee2ee04ac57171e03e810db708f7462`, regresyon commit `e9963ee2f5187e118cfc4239e687a054baab4ab2`.
 - Testler henüz yürütülmedi; Actions kotası 2000/2000, $0 bütçe ve Private depo korunuyor. 92/92 davranış kabulü 0/92, 26/26 runtime güvenlik kabulü 0/26. Beşli offline gate canlı entegrasyon/IBO/offsite restore yerine geçmez.
+
+
+## 20 Ekim 2026 — K2/K3 aday kanıt doğrulama sertleştirmesi
+- `madsc/candidate_coordination.py` içine kabul edilmiş aday fingerprint'lerinin tekil olma şartı ve boş/yalnız boşluk EPG/logo kimliklerinin reddi eklendi. K2 keşif → K3 değerlendirme kanıtı belirsiz kimlikle devam etmez. Kod commit `04bbca454a8a38346db041011f5c402e16cb17f8`; negatif EPG/logo testi commit `e71b725f4faccb52c2f03431a7c654e61d184afa`.
+- Henüz test yürütülmedi; 0/92 davranış, 0/26 runtime güvenlik kabulü değişmedi. Bu kod gerçek internet keşfi, medya probe, IBO cihaz testi, offsite restore veya üretim yazma onayı değildir. Actions tetiklenmedi; $0 bütçe, 21 kural, eski depo salt okunur ve korunan dosyalar aynen.

@@ -1258,3 +1258,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Actions #39419767071 (cff69db3) ve #39419786552 (d675d38c) completed FAILURE. #39419786552 Güvenlik job logu: `test_shared_deadline_blocks_socket_after_dns` içinde DNS deadline kaynaklı `TimeoutError`, `except (..., OSError)` tarafından `ValueError('DNS resolution failed')` olarak maskelenmiş; 321 regresyondan 1 error. K2/K3/K4/K5 işlerinin skip/failure zinciri güvenlik jobuna bağımlı; bağımsız canlı kabul sonucu değil.
 - `madsc/https_head_probe.py` DNS exception sırası düzeltildi: `except TimeoutError: raise` genel `OSError` yakalamadan önce geldi. Commit 48961554ed27612bea1ffaee627ba456f253fcec.
 - Yeni Actions #39419973232 ilk kontrolde queued; SUCCESS henüz doğrulanmadı. Canlı ağ isteği yapılmadı, üretim dosyaları ve eski depo değişmedi. 0/92 davranışsal ve 0/26 runtime kabul değişmedi.
+
+
+## 20 Ekim 2026 — DNS CI yeşil, K3 HEAD → K5 ayrı taşıma kapısı
+- Actions #39421069065 (SHA bc8b22969b4bb9d128b7c8bbb4be1d5f23ee5e7d) completed SUCCESS; Güvenlik, Keşif, Kanal Testleri, Arşiv ve Yedek, Genel Bakım ve Beşli toplu kanıt doğrulama işlerinin hepsi SUCCESS. Önceki üç kırmızı koşunun test hatası zinciri giderildi; bu üretim kabulü değildir.
+- `madsc/k5_channel_gate.py` içine ayrı `evaluate_k3_head_observation` fonksiyonu eklendi (commit 46160b39c591df705639d90c558ffe17039e19a5): K2 envelope/run/SHA/digest/fingerprint bağlamını, TLS/DNS ve yönlendirme reddini doğrular; HEAD transport gözlemini stream sürekliliği/IBO/üretim kabulüne yükseltmez. Eski offline K3 kanıt sözleşmesi değişmedi.
+- `tests/test_k5_head_observation.py` (commit 819b5a514180be694f982b3ca6cb03d089bfbc32) sahte HEAD gözlem, farklı aday, yönlendirme, bozuk tür ve canlı onay iddialarına karşı negatif testleri ekledi. Actions #39421390769 ilk kontrolde queued; başarı henüz doğrulanmadı.
+- Gerçek HEAD ölçümü tetiklenmedi; eski depo ve korunan üretim dosyaları değiştirilmedi. Gerçek ffprobe/ffmpeg/IBO ve 30 saniye canlı süreklilik kabulü hâlâ yok. 0/92 davranışsal eşdeğerlik ve 0/26 runtime güvenlik kabulü değişmedi.

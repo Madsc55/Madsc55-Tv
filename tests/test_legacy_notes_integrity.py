@@ -31,6 +31,21 @@ class LegacyNotesIntegrityTests(unittest.TestCase):
                 legacy_notes_integrity.verify(merged, archive, root / "bad-report.json")
             self.assertFalse((root / "bad-report.json").exists())
 
+    def test_unmarked_injected_text_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            archive = root / "archive"
+            archive.mkdir()
+            (archive / "AGENTS.md").write_text("Rules\n", encoding="utf-8")
+            merged = root / "merged.md"
+            with patch.object(merger, "ARCHIVE", archive), patch.object(merger, "OUTPUT", merged):
+                merger.build(include_structured=True, remove=False)
+            original = merged.read_text(encoding="utf-8")
+            merged.write_text(original + "\nINJECTED APPROVAL\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Unexpected text"):
+                legacy_notes_integrity.verify(merged, archive, root / "report.json")
+            self.assertFalse((root / "report.json").exists())
+
     def test_missing_archive_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

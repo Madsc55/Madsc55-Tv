@@ -11,6 +11,16 @@ class ProgressScorecardTests(unittest.TestCase):
         self.assertIsNone(result["calculated_overall_percent"])
         self.assertFalse(result["production_ready"])
 
+    def test_scoped_rates_are_calculated_without_fake_overall(self):
+        result = scorecard(accepted_behaviors=46, accepted_security=13)
+        progress = result["measured_progress"]
+        self.assertEqual(progress["legacy_behavioral_acceptance_percent"], 50.0)
+        self.assertEqual(progress["runtime_security_acceptance_percent"], 50.0)
+        self.assertEqual(progress["combined_acceptance_percent"], 50.0)
+        self.assertEqual(progress["combined_acceptance_denominator"], 118)
+        self.assertIsNone(result["calculated_overall_percent"])
+        self.assertFalse(result["production_ready"])
+
     def test_invalid_counts_rejected(self):
         for value in (-1, 93, True, 1.2):
             with self.assertRaises(ValueError):

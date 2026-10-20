@@ -8,7 +8,9 @@ class K5ChannelGateTests(unittest.TestCase):
              "candidate_count": 1, "probed_candidates": 0, "untested_candidates": 1,
              "network_probed": False, "ibo_device_verified": False,
              "live_continuity_verified": False, "candidate_identity_verified": False,
-             "production_writes": False, "production_ready": False, "results": []}
+             "production_writes": False, "production_ready": False, "results": [],
+             "technical_samples_supplied": False,
+             "preliminary_passes": 0, "needs_review": 0}
         r = {"category": "k3", "production_writes": False,
              "production_ready": False, "evidence": e}
         result = evaluate_k3_evidence(r)
@@ -21,6 +23,10 @@ class K5ChannelGateTests(unittest.TestCase):
                 evaluate_k3_evidence(bad)
         with self.assertRaises(ValueError):
             evaluate_k3_evidence({**r, "evidence": {**e, "untested_candidates": 0}})
+        with self.assertRaises(ValueError):
+            evaluate_k3_evidence({**r, "evidence": {**e, "technical_samples_supplied": True}})
+        with self.assertRaises(ValueError):
+            evaluate_k3_evidence({**r, "evidence": {**e, "preliminary_passes": 1}})
 
 
 if __name__ == "__main__":

@@ -1187,3 +1187,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - BIRLESIK_KALICI_CALISMA_KURALLARI.md 20 ilke + ek 21 depo kimligi korunacak. Yeni Madsc55/Madsc55-Tv main yazilabilir; eski Madsc55/madsc-tv salt okunur. ESKI_SISTEM_NOTLARI.md, bu hafiza, devir notu, eski AGENTS/810/DEVAM ve ilgili ariv belgeleri okunmadan karar alinmayacak; okunmayan belge okundu denmeyecek.
 - Referans %47/%53 degismedi; bu sabit tarihsel oran, guncel kanita dayali yuzde degil. Envanter 99/99 YAML, 130/130 Python, 68/68 test dosyasi; gercek davranissal kabul 0/92, runtime guvenlik 0/26. K3 gercek canli ffprobe/IBO ve K4 harici restore yok. Sonraki is kanitli diferansiyel esdegerlik ve guvenli gercek olcum entegrasyonu; uretim yazma kapali.
 - Kullanici yeni sohbette yapilanlarin ve kararlarin unutulmamasini istiyor; bu notlar sureklilik icindir, birebir tam sohbet transkripti degildir.
+
+
+## 20 Ekim 2026 - Kesin proje adi ve eski depo karismasini onleme
+- Kullanici tekrar acikca duzeltti: yeni sistemin dogru adi **Madsc55-Tv**, tek yazilabilir GitHub deposu **Madsc55/Madsc55-Tv**, dal **main**. Yanlis kisaltma Madsc-Tv veya genel MADSC TV adi yeni proje adi olarak kullanilmayacak.
+- Eski **Madsc55/madsc-tv** ve madsc/bes-sistem-toplu-birlestirme salt okunur. Yeni sohbet ve her yazma oncesi depo/dal kontrolu zorunlu.
+- Birlesik kurallar commit c2995e1234e6b2589df9eb59a0c2ba149915e984 ve sohbet devir notu commit 7aac00360347c2ee6b787c0c7feaf22311007787 bu ayrimi ek zorunlu madde olarak guclendirdi.

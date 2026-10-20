@@ -25,6 +25,16 @@ class WorkflowSecurityTests(unittest.TestCase):
                 if re.search(r"uses:\s*actions/checkout@", content):
                     self.assertRegex(content, r"(?m)^\s+persist-credentials:\s*false\s*$")
 
+    def test_five_stage_chain_stops_after_failed_dependency(self):
+        workflow = (WORKFLOWS / "madsc-05-bakim.yml").read_text(encoding="utf-8")
+        for stage, upstream in (("k2", "k1"), ("k3", "k2"),
+                                ("k4", "k3"), ("k5", "k4")):
+            with self.subTest(stage=stage):
+                expected = ("  " + stage + ":\n    if: " +
+                            "${{ needs." + upstream + ".result == 'success' }}")
+                self.assertIn(expected, workflow)
+        self.assertIn("  toplu-kabul:\n    if: ${{ always() && !cancelled() }}", workflow)
+
     def test_no_scheduled_or_pull_request_target_workflows(self):
         for path in sorted(WORKFLOWS.glob("*.y*ml")):
             with self.subTest(workflow=path.name):

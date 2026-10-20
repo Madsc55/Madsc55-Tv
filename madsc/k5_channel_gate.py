@@ -103,10 +103,6 @@ def main():
     print(json.dumps(result, sort_keys=True))
 
 
-if __name__ == "__main__":
-    main()
-
-
 
 def evaluate_k3_head_observation(observation: dict, k2_envelope: dict,
                                  run_id: str, commit_sha: str) -> dict:
@@ -123,6 +119,8 @@ def evaluate_k3_head_observation(observation: dict, k2_envelope: dict,
             observation.get("run_id") != run_id or
             observation.get("commit_sha") != commit_sha):
         raise ValueError("K2-K3 HEAD provenance mismatch")
+    # This function validates a supplied report; it cannot attest that sockets
+    # or TLS were actually used. Never promote caller claims to live acceptance.
     for key in ("tls_verified", "dns_pinned", "network_probed"):
         if observation.get(key) is not True:
             raise ValueError("Missing HEAD transport evidence: " + key)
@@ -135,7 +133,12 @@ def evaluate_k3_head_observation(observation: dict, k2_envelope: dict,
         raise ValueError("Invalid or redirected HTTP status")
     return {"schema": "madsc-k5-k3-head-transport-review-v1",
             "url_sha256": digest, "http_status": status,
-            "head_transport_observed": True,
+            "head_transport_claim_validated": True,
+            "head_transport_independently_verified": False,
             "actual_stream_measurements_verified": False,
             "live_continuity_verified": False, "ibo_device_verified": False,
             "production_ready": False}
+
+
+if __name__ == "__main__":
+    main()

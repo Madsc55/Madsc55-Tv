@@ -31,6 +31,16 @@ def main():
     test_count = int(matches[-1]) if matches else 0
     if exit_code == 0 and test_count == 0:
         exit_code = 2
+    # Require the real K1-K5 isolated executors, not only passing unit tests.
+    from madsc.offline_five_gate import assess_all
+    try:
+        five_stage = assess_all()
+        five_stage_passed = five_stage.get("fixture_gate_passed") is True
+    except Exception as exc:
+        five_stage = {"fixture_gate_passed": False, "errors": {"orchestration": type(exc).__name__}}
+        five_stage_passed = False
+    if not five_stage_passed and exit_code == 0:
+        exit_code = 3
     report = {
         "mode": "offline_local",
         "scope": "unit_regression_only",
@@ -40,8 +50,11 @@ def main():
         "test_exit_code": exit_code,
         "timed_out": timed_out,
         "tests_discovered": test_count,
-        "tests_passed": exit_code == 0,
-        "note": "Offline unit tests cannot certify live K1-K5 or production.",
+        "tests_passed": test_count > 0 and not timed_out and result.returncode == 0 if not timed_out else False,
+        "five_stage_fixture_gate_passed": five_stage_passed,
+        "five_stage_fixture_categories": five_stage.get("categories", {}),
+        "five_stage_fixture_errors": five_stage.get("errors", {}),
+        "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification.",
     }
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if exit_code:

@@ -1316,3 +1316,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - İlk kod SHA 6f4f041 için Actions #39424425976 SUCCESS; daha yeni Actions #39424609517 ilk kontrolde pending, henüz başarı iddiası yok.
 - Sonraki görev: eski ve yeni gerçek betikleri aynı sentetik girdide izole çalıştırıp exit/status, dosya SHA, hata/timeout ve yan etkileri karşılaştır; yalnızca gerçek diferansiyel kanıtla 0/92 ilerlet. Kaynak envanteri/fixture tek başına eşdeğerlik değildir.
 - Korunan üretim dosyaları, eski repo ve canlı yayınlar değişmedi. 0/92 ve 0/26 kabul sayaçları hâlâ geçerli.
+
+
+## 20 Ekim 2026 — İki toplu çalıştırmalı diferansiyel test paketi
+- `tests/test_legacy_scoring_differential_batch.py` eski puanlama CLI fixture betiğini alt süreçte çalıştırıp yeni `legacy_technical_score` ile 8 teknik vektör, URL tekilleştirme, CSV sıralama, JSON özet ve otomatik onay reddini karşılaştırır. Commit 81e7c8eb42784820c1b6f07ad0d4c76f63fe9800, Actions #39425233309 altı job SUCCESS doğrulandı.
+- `tests/test_legacy_retest_differential_batch.py` eski tekrar-test takvimi CLI fixture betiğini izole geçici dizinde sabit UTC saatle çalıştırıp yeni `retest_rows` ile 2/6/12/24 saat, bozuk tarih, geçersiz kayıt ve CSV satırlarını karşılaştırır. Commit 744e320390596fe2d717e263aac686ab6747d0c0, Actions #39437371154 ilk kontrolde queued, sonucu henüz doğrulanmadı.
+- ÖNEMLİ: Bu fixture betikleri eski depodan bağımsız imza/SHA ile doğrulanmış kaynak yürütümü sayılmaz; script düzeyinde sentetik karşılaştırma, 92 workflow'un trigger/izin/artefakt/hata/yan etki tam kabulü değildir. Sayaçlar 0/92 ve 0/26 kalır.
+- Kullanıcı toplu çalışma kuralının ihlalinden rahatsız. Bundan sonra küçük tekil yamalar yerine birbiriyle ilgili eski davranışları toplu karşılaştırma paketlerinde birleştir, CI hatalarını topluca düzelt, tamamlanan kaynak incelemelerini tekrar yapma.
+- Korunan üretim, EPG, playlist, IBO, yedek ve eski repo değiştirilmedi.

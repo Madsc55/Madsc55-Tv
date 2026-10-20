@@ -31,6 +31,12 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
             self.assertTrue(all(not x["stage_mapping_reviewed"] for x in report["workflows"]))
             self.assertEqual(report["source_tree_sha"], "source-tree")
             self.assertEqual(report["behavioral_parity_verified_count"], 0)
+            self.assertEqual(report["blocked_workflow_count"], 99)
+            self.assertTrue(all(row["behavioral_evidence_status"] ==
+                                "BLOCKED_NEEDS_BEHAVIOR_EVIDENCE"
+                                for row in report["workflows"]))
+            self.assertTrue(all(len(row["evidence_missing"]) == 6
+                                for row in report["workflows"]))
 
     def test_stage_hints_remain_provisional(self):
         self.assertEqual(audit.candidate_stages("epg-gunluk.yml"), ["K3"])

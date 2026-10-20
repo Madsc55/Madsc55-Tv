@@ -46,22 +46,22 @@ def build(include_structured=False, remove=False):
             raise RuntimeError(f"UTF-8 olmayan not: {rel}") from exc
         hashes[rel] = hashlib.sha256(data).hexdigest()
         # Her bolumun ham icerigini degistirmeden sakla; fence/escape uygulama.
-        pieces.append(f"\\n\\n<!-- KAYNAK-BASLANGIC: {rel} SHA256:{hashes[rel]} -->\\n")
+        pieces.append(f"\n\n<!-- KAYNAK-BASLANGIC: {rel} SHA256:{hashes[rel]} -->\n")
         pieces.append(value)
-        pieces.append(f"\\n<!-- KAYNAK-BITIS: {rel} -->\\n")
+        pieces.append(f"\n<!-- KAYNAK-BITIS: {rel} -->\n")
     header = (
-        "# ESKİ SİSTEM NOTLARI\\n\\n"
-        "Kaynak: Madsc55/madsc-tv, madsc/bes-sistem-toplu-birlestirme.\\n"
-        "Bu belge tarihsel arşivdir; eski talimatlar yeni yazma izni vermez.\\n"
-        f"Birleştirilen kaynak sayısı: {len(paths)}.\\n"
-        "Her bölüm SHA256 ile tanımlanır; özgün içerik değiştirilmez.\\n"
+        "# ESKİ SİSTEM NOTLARI\n\n"
+        "Kaynak: Madsc55/madsc-tv, madsc/bes-sistem-toplu-birlestirme.\n"
+        "Bu belge tarihsel arşivdir; eski talimatlar yeni yazma izni vermez.\n"
+        f"Birleştirilen kaynak sayısı: {len(paths)}.\n"
+        "Her bölüm SHA256 ile tanımlanır; özgün içerik değiştirilmez.\n"
     )
     merged = header + "".join(pieces)
     # Kaynaklar ancak tam byte-seviyesi geri ayristirma ile dogrulanir.
     for p in paths:
         rel = p.relative_to(ARCHIVE).as_posix()
-        start = f"\\n\\n<!-- KAYNAK-BASLANGIC: {rel} SHA256:{hashes[rel]} -->\\n"
-        end = f"\\n<!-- KAYNAK-BITIS: {rel} -->\\n"
+        start = f"\n\n<!-- KAYNAK-BASLANGIC: {rel} SHA256:{hashes[rel]} -->\n"
+        end = f"\n<!-- KAYNAK-BITIS: {rel} -->\n"
         if merged.count(start) != 1 or merged.count(end) != 1:
             raise RuntimeError(f"Sinir isaretcisi tekil degil: {rel}")
         recovered = merged.split(start, 1)[1].split(end, 1)[0].encode("utf-8")

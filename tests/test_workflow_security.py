@@ -27,7 +27,7 @@ class WorkflowSecurityTests(unittest.TestCase):
 
     def test_notes_merge_cannot_push_after_one_time_delivery(self):
         workflow = (WORKFLOWS / "madsc-legacy-notes-bulk-merge.yml").read_text(encoding="utf-8")
-        self.assertIn("permissions:\\n  contents: read", workflow)
+        self.assertRegex(workflow, r"(?m)^permissions:\s*\n  contents: read\s*$")
         self.assertIn("persist-credentials: false", workflow)
         self.assertNotRegex(workflow, r"(?m)^\\s*git push\\b")
         self.assertNotIn("Commit only verified merged notes to main", workflow)

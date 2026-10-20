@@ -47,3 +47,14 @@ class WritePathAuditTests(unittest.TestCase):
         self.assertEqual(result["rejected"], paths)
         self.assertTrue(result["blocked"])
 
+
+    def test_duplicate_paths_rejected_fail_closed(self):
+        result = audit_write_paths(["reports/safe.json", "reports/SAFE.json"])
+        self.assertTrue(result["blocked"])
+        self.assertEqual(result["rejected"], ["reports/SAFE.json"])
+        self.assertFalse(result["write_performed"])
+
+    def test_identical_paths_rejected_fail_closed(self):
+        result = audit_write_paths(["reports/safe.json", "reports/safe.json"])
+        self.assertTrue(result["blocked"])
+        self.assertEqual(result["rejected"], ["reports/safe.json"])

@@ -56,6 +56,7 @@ class OfflineFiveGateTests(unittest.TestCase):
         from madsc.core import execute
         checks = execute("k5")
         self.assertIs(checks["k2_k3_k4_k5_candidate_restore_review"], True)
+        self.assertIs(checks["k4_corruption_blocks_k5_review"], True)
 
     def test_missing_checks_block_batch(self):
         result = assess_all(lambda category: {})

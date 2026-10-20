@@ -1387,3 +1387,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 ## 20 Ekim 2026 — K2/K3 aday kanıt doğrulama sertleştirmesi
 - `madsc/candidate_coordination.py` içine kabul edilmiş aday fingerprint'lerinin tekil olma şartı ve boş/yalnız boşluk EPG/logo kimliklerinin reddi eklendi. K2 keşif → K3 değerlendirme kanıtı belirsiz kimlikle devam etmez. Kod commit `04bbca454a8a38346db041011f5c402e16cb17f8`; negatif EPG/logo testi commit `e71b725f4faccb52c2f03431a7c654e61d184afa`.
 - Henüz test yürütülmedi; 0/92 davranış, 0/26 runtime güvenlik kabulü değişmedi. Bu kod gerçek internet keşfi, medya probe, IBO cihaz testi, offsite restore veya üretim yazma onayı değildir. Actions tetiklenmedi; $0 bütçe, 21 kural, eski depo salt okunur ve korunan dosyalar aynen.
+
+
+## 20 Ekim 2026 — K2/K3 → K4 → K5 gerçek karar verisi bağlantısı
+- `madsc/maintenance.py` içine `review_candidate_batch(coordination, backup_evidence)` eklendi. K2/K3 aday SHA256 kimliği tekilliği, `delete_allowed=False`, `production_change_allowed=False`, IBO koruma/hold bayrakları, K4 bağımsız sandbox restore kanıtı birlikte denetleniyor. K5 sonuç raporunda aday, bekleyen ve IBO korunan sayıları ve restore durumu var; üretim onayı daima false. Commit `f25800d4d2bcdf0fe40c512a948dafbc0442e3f3`.
+- `tests/test_maintenance.py` içine başarı, K4 eksik kanıt, silme izni, mükerrer aday ve sahte harici depolama iddiası negatif senaryoları eklendi. Commit `3bb26583e9f0d210f2a6854311f404f6d780f9f4`.
+- Bu fonksiyon henüz gerçek yürütücüye bağlanmadı ve testler henüz çalıştırılmadı. 0/92 ve 0/26 kabul değişmedi. GitHub Actions kotası dolu; tetiklenmedi. Eski repo ve üretim dosyaları değiştirilmedi. Sonraki adım: K5 fonksiyonunu gerçek K1–K5 offline executor içine bağla ve uçtan uca regresyonu çalıştır.

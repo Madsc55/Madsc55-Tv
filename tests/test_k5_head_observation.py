@@ -56,6 +56,21 @@ class K5HeadObservationTests(unittest.TestCase):
                                                  self.run, self.sha)
 
 
+    def test_rejects_unknown_and_missing_fields(self):
+        for extra in ({"hidden_approval": True}, {"extra": "harmless"}):
+            with self.subTest(extra=extra):
+                with self.assertRaises(ValueError):
+                    evaluate_k3_head_observation(
+                        dict(self.observation, **extra), self.envelope,
+                        self.run, self.sha)
+        for missing in ("tls_verified", "http_status", "schema"):
+            with self.subTest(missing=missing):
+                altered = dict(self.observation)
+                del altered[missing]
+                with self.assertRaises(ValueError):
+                    evaluate_k3_head_observation(
+                        altered, self.envelope, self.run, self.sha)
+
     def test_digest_changes_on_evidence_change(self):
         baseline = evaluate_k3_head_observation(
             self.observation, self.envelope, self.run, self.sha)

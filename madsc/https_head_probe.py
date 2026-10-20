@@ -7,6 +7,9 @@ import ipaddress
 import time
 import socket
 import ssl
+import subprocess
+import sys
+import json
 from urllib.parse import urlsplit
 
 from madsc.probe_target_gate import validate_probe_handoff, validate_resolved_addresses
@@ -23,13 +26,26 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
     gate = validate_probe_handoff(url, envelope, run_id, commit_sha, authorized=True)
     parts = urlsplit(url)
     host = parts.hostname
-    # Validate every DNS answer before selecting an address. Re-resolution inside
-    # the TLS connection is forbidden: connect only to the selected numeric IP.
+    # Resolve DNS in a separate bounded process: unlike a thread, a stuck
+    # getaddrinfo can be killed at the deadline. The child opens no TCP socket.
+    resolver = ("import json,socket,sys; "
+                "a=socket.getaddrinfo(sys.argv[1],443,type=socket.SOCK_STREAM,"
+                "proto=socket.IPPROTO_TCP); "
+                "print(json.dumps([x[4][0] for x in a]))")
     try:
-        answers = socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM,
-                                     proto=socket.IPPROTO_TCP)
-        ips = validate_resolved_addresses([entry[4][0] for entry in answers])
-    except (socket.gaierror, OSError) as exc:
+        budget = deadline - time.monotonic()
+        if budget <= 0:
+            raise TimeoutError("DNS deadline exceeded")
+        completed = subprocess.run(
+            [sys.executable, "-I", "-c", resolver, host],
+            capture_output=True, text=True, timeout=budget, check=True,
+            env={"PYTHONIOENCODING": "utf-8"})
+        if len(completed.stdout) > 16384:
+            raise ValueError("Oversized DNS response")
+        ips = validate_resolved_addresses(json.loads(completed.stdout))
+    except subprocess.TimeoutExpired as exc:
+        raise TimeoutError("DNS deadline exceeded") from exc
+    except (subprocess.CalledProcessError, json.JSONDecodeError, OSError) as exc:
         raise ValueError("DNS resolution failed") from exc
     if not ips:
         raise ValueError("No safe DNS address")

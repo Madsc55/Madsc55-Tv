@@ -1,4 +1,6 @@
 import hashlib
+import subprocess
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -15,13 +17,13 @@ class HTTPSHeadProbeTests(unittest.TestCase):
         }]}, self.run, self.sha)
 
     def test_opt_in_required_before_dns(self):
-        with patch("madsc.https_head_probe.socket.getaddrinfo") as dns:
+        with patch("madsc.https_head_probe.subprocess.run") as dns:
             with self.assertRaises(PermissionError):
                 observe_https_headers(self.url, self.envelope, self.run, self.sha)
             dns.assert_not_called()
 
     def test_timeout_and_foreign_candidate_rejected_before_dns(self):
-        with patch("madsc.https_head_probe.socket.getaddrinfo") as dns:
+        with patch("madsc.https_head_probe.subprocess.run") as dns:
             for timeout in (0, -1, 6, True, float("nan")):
                 with self.subTest(timeout=timeout), self.assertRaises(ValueError):
                     observe_https_headers(self.url, self.envelope, self.run, self.sha,
@@ -34,7 +36,7 @@ class HTTPSHeadProbeTests(unittest.TestCase):
     def test_private_dns_answer_never_opens_socket(self):
         answers = [(2, 1, 6, "", ("8.8.8.8", 443)),
                    (2, 1, 6, "", ("127.0.0.1", 443))]
-        with patch("madsc.https_head_probe.socket.getaddrinfo", return_value=answers), \
+        with patch("madsc.https_head_probe.subprocess.run", return_value=SimpleNamespace(stdout=__import__("json").dumps([x[4][0] for x in answers]))), \
              patch("madsc.https_head_probe.socket.socket") as connect:
             with self.assertRaises(ValueError):
                 observe_https_headers(self.url, self.envelope, self.run, self.sha,
@@ -44,7 +46,7 @@ class HTTPSHeadProbeTests(unittest.TestCase):
 
     def test_shared_deadline_blocks_socket_after_dns(self):
         answers = [(2, 1, 6, "", ("8.8.8.8", 443))]
-        with patch("madsc.https_head_probe.socket.getaddrinfo", return_value=answers), \
+        with patch("madsc.https_head_probe.subprocess.run", return_value=SimpleNamespace(stdout=__import__("json").dumps([x[4][0] for x in answers]))), \
              patch("madsc.https_head_probe.time.monotonic", side_effect=[100.0, 106.0]), \
              patch("madsc.https_head_probe.socket.socket") as connect:
             with self.assertRaises(TimeoutError):
@@ -57,11 +59,21 @@ class HTTPSHeadProbeTests(unittest.TestCase):
         envelope = pack({"candidates": [{
             "url_sha256": hashlib.sha256(url.encode()).hexdigest()
         }]}, self.run, self.sha)
-        with patch("madsc.https_head_probe.socket.getaddrinfo",
-                   return_value=[(2, 1, 6, "", ("8.8.8.8", 443))]), \
+        with patch("madsc.https_head_probe.subprocess.run",
+                   return_value=SimpleNamespace(stdout='["8.8.8.8"]')), \
              patch("madsc.https_head_probe.socket.socket") as connect:
             with self.assertRaises(ValueError):
                 observe_https_headers(url, envelope, self.run, self.sha, authorized=True)
+            connect.assert_not_called()
+
+
+    def test_dns_timeout_kills_resolution_before_socket(self):
+        with patch("madsc.https_head_probe.subprocess.run",
+                   side_effect=subprocess.TimeoutExpired("dns", 1)), \
+             patch("madsc.https_head_probe.socket.socket") as connect:
+            with self.assertRaises(TimeoutError):
+                observe_https_headers(self.url, self.envelope, self.run, self.sha,
+                                      authorized=True, timeout=1)
             connect.assert_not_called()
 
 

@@ -1,12 +1,6 @@
 name: Madsc55-Tv - 99 Eski Workflow Toplu Denetim
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'madsc/legacy_99_bulk_audit.py'
-      - 'tests/test_legacy_99_source_integrity.py'
-      - '.github/workflows/madsc-legacy-99-bulk-audit.yml'
 permissions:
   contents: read
 jobs:

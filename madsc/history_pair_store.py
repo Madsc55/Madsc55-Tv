@@ -57,3 +57,25 @@ def atomic_write_pair(destination, pair):
     finally:
         if staged is not None:
             staged.unlink(missing_ok=True)
+
+
+def write_isolated_history_pair(root, relative_path, pair):
+    """K2 history artifact through K1 guard; never touches legacy histories."""
+    from madsc.write_path_audit import enforce_write_paths
+    if not isinstance(relative_path, str) or not relative_path.startswith("reports/"):
+        raise PermissionError("Only isolated history reports are permitted")
+    enforce_write_paths([relative_path])
+    root = Path(root)
+    if root.is_symlink() or not root.is_dir():
+        raise PermissionError("Invalid history root")
+    target = root.joinpath(*relative_path.split("/"))
+    if target.is_symlink() or target.exists():
+        raise PermissionError("Existing history evidence cannot be replaced")
+    if target.parent.is_symlink() or not target.parent.is_dir():
+        raise PermissionError("History report directory must already exist")
+    if not target.parent.resolve().is_relative_to(root.resolve()):
+        raise PermissionError("History report escapes root")
+    raw = encode_pair(pair)
+    with target.open("x", encoding="utf-8") as handle:
+        handle.write(raw)
+    return {"isolated_history_written": True, "production_write_allowed": False}

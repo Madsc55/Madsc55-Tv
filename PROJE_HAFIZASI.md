@@ -1300,3 +1300,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/k5_channel_gate.py`: kabul edilen HEAD gözleminin sıralı/kanonik JSON içeriği SHA-256 olarak `observation_sha256` alanına bağlanır. Bu içerik bütünlüğü için referans parmak izidir; imza veya bağımsız ağ gözlem kanıtı değildir. Commit 3f7a90e9965bdffdd7a5365441cfea6c994dc8a6.
 - `tests/test_k5_head_observation.py`: deterministik SHA-256 ve 200→204 değişince parmak izi değişimi sınanır. Commit 79fc82dee145bc4c03389f50172c4fd4479e05de. Actions #39423176530 ilk kontrolde pending; CI sonucu henüz doğrulanmadı.
 - Gerçek ağ probe çalıştırılmadı; üretim, EPG, IBO, yedekler ve eski depo değişmedi. 0/92 eski otomasyon davranışsal eşdeğerliği ve 0/26 güvenlik runtime kabulü devam ediyor.
+
+
+## 20 Ekim 2026 — K5 HEAD kapalı şema ve değiştirilmiş rapor reddi
+- Actions #39423176530 (79fc82dee145bc4c03389f50172c4fd4479e05de) ve #39423154872 (3f7a90e9965bdffdd7a5365441cfea6c994dc8a6) SUCCESS doğrulandı.
+- `madsc/k5_channel_gate.py` HEAD raporunun tam 14 üretici alanından oluşmasını şart koşar; bilinmeyen/gizli veya eksik alan fail-closed reddedilir. İçerik SHA-256 yalnızca kabul edilmiş kapalı şema için üretilir. Commit 78f99feccc6118fc6dd5ca99e78da642ddf48502.
+- `tests/test_k5_head_observation.py` ekstra gizli alan ve eksik alan regresyonları eklendi. Commit aef9f4acf08bb5935329a96de2870acb641a3183. Actions #39423668755 ilk kontrolde queued; yeni CI sonucu doğrulanmadı.
+- Ağ gözlemi bağımsız tasdik edilmedi, gerçek stream/IBO testi yapılmadı, üretim/eski repo değişmedi; 0/92 ve 0/26 kabul sayaçları sabit.

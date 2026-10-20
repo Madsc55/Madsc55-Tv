@@ -329,6 +329,23 @@ jobs:
           name: madsc-cross-handoff-acceptance
           path: reports/k2-k3-k5-kabul.json
           retention-days: 14
+      - name: K4 restore tatbikati kanitini indir
+        uses: actions/download-artifact@v4
+        with:
+          name: madsc-k4-restore-drill
+          path: reports/k4-drill
+      - name: K4 restore kanitini toplu kabulde dogrula
+        id: k4-restore
+        continue-on-error: true
+        run: python -m madsc.k4_evidence --report reports/k4-drill/k4-restore-drill.json --output reports/k4-restore-acceptance.json
+      - name: K4 restore kabul raporunu sakla
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k4-restore-acceptance
+          path: reports/k4-restore-acceptance.json
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Kanıtları doğrula ve tek rapor oluştur
         id: kabul
         continue-on-error: true
@@ -352,6 +369,7 @@ jobs:
           K2_HANDOFF: ${{ steps.k2-handoff.outcome }}
           CROSS_HANDOFF: ${{ steps.cross-handoff.outcome }}
           HISTORY_CHAIN: ${{ steps.history-chain.outcome }}
+          K4_RESTORE: ${{ steps.k4-restore.outcome }}
         run: |
           mkdir -p reports
           echo '## Madsc55-Tv - Besli Test Sonuclari' >> "$GITHUB_STEP_SUMMARY"
@@ -359,7 +377,7 @@ jobs:
           echo '| Kontrol | Sonuc |' >> "$GITHUB_STEP_SUMMARY"
           echo '| --- | --- |' >> "$GITHUB_STEP_SUMMARY"
           hata=0
-          for ad in K1 K2 K3 K4 K5 KABUL K2_HANDOFF CROSS_HANDOFF HISTORY_CHAIN; do
+          for ad in K1 K2 K3 K4 K5 KABUL K2_HANDOFF CROSS_HANDOFF HISTORY_CHAIN K4_RESTORE; do
             case "$ad" in
               K1) durum="$K1"; etiket="K1 Guvenlik";;
               K2) durum="$K2"; etiket="K2 Kesif";;
@@ -370,6 +388,7 @@ jobs:
               K2_HANDOFF) durum="$K2_HANDOFF"; etiket="K2-K3-K5 kanit aktarimi";;
               CROSS_HANDOFF) durum="$CROSS_HANDOFF"; etiket="K2-K3-K5 capraz kanit kabul";;
               HISTORY_CHAIN) durum="$HISTORY_CHAIN"; etiket="K2-K3-K5 history zinciri";;
+              K4_RESTORE) durum="$K4_RESTORE"; etiket="K4 izole restore kaniti";;
             esac
             echo "| $etiket | $durum |" >> "$GITHUB_STEP_SUMMARY"
             if [ "$durum" != success ]; then hata=1; fi

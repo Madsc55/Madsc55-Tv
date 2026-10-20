@@ -12,6 +12,7 @@ import tempfile
 from pathlib import Path
 
 from madsc.backup import snapshot_manifest, verify_independent_restore
+from madsc.fixture_report_writer import write_stage_report
 
 
 def run_drill(source: Path, names: list[str]) -> dict:
@@ -46,8 +47,17 @@ def main() -> None:
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--file", action="append", required=True, dest="names")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--isolated-report-root", type=Path)
     args = parser.parse_args()
     report = run_drill(args.source, args.names)
+    if args.isolated_report_root is not None:
+        expected = args.isolated_report_root / "reports/k4-isolated-evidence.json"
+        if args.output != expected:
+            raise ValueError("K4 isolated output must use the protected reports path")
+        write_stage_report(args.isolated_report_root, "k4",
+                           {**report, "category": "k4", "production_ready": False})
+        print(json.dumps(report, sort_keys=True))
+        return
     if args.output.exists() or args.output.is_symlink():
         raise ValueError("Refusing to overwrite drill evidence")
     args.output.parent.mkdir(parents=True, exist_ok=True)

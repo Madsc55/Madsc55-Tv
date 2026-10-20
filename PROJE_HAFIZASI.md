@@ -1399,3 +1399,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/core.py` K5 executor içine `review_candidate_batch()` bağlandı. K2/K3 fixture aday raporu ile K4 `verify_independent_restore()` tarafından üç ayrı geçici dizinde doğrulanan sandbox restore raporu K5'te aynı karar nesnesinde kontrol ediliyor. Yeni boolean fixture check `k2_k3_k4_k5_candidate_restore_review`; commit `9ac7fece4266a9c1b54c05f4acee967b3a8306c6`.
 - `tests/test_offline_five_gate.py` gerçek `execute('k5')` sonucunda yeni bağlantı kontrolünün true olmasını isteyen test eklendi. Commit `1065942e4f1dae87e9000024217c0c394e75caa6`.
 - Kod commit edildi, fakat test yürütülmedi ve Actions tetiklenmedi (2000/2000 ücretsiz dakika dolu, $0 bütçe). Bu yalnız izole fixture entegrasyonudur, canlı kanallar/IBO cihazı/harici depolama kanıtı değildir; 0/92, 0/26. Korunan dosyalar ve eski depo değişmedi.
+
+
+## 20 Ekim 2026 — K4 bozulmuş geri yükleme negatif kanıtı K5'e bağlandı
+- `madsc/core.py` K5 fixture yürütmesinde önce bağımsız üç-dizin restore doğrulanır, ardından restore edilmiş test dosyası kasıtlı değiştirilir ve K4 tekrar karşılaştırılır. `review_candidate_batch` ikinci bozuk raporu kabul kanıtı saymamalıdır. `k4_corruption_blocks_k5_review` kontrolü eklendi. Commit `bbe8bc9db492bc0339f719b256e19ba1dc6123e1`.
+- `tests/test_offline_five_gate.py` gerçek K5 yürütücüsünün sağlam restore ve bozuk restore reddi kontrollerini ikisini de true vermesini zorunlu kılıyor. Commit `74b43b90115ae16f796a3f7ef264c8ddaccb8220`.
+- Testlerin yürütülmesi doğrulanmadı, Actions tetiklenmedi, 0/92 ve 0/26 kabul değişmedi. Üretim listeleri, eski depo ve IBO cihazı etkilenmedi. Sıradaki: ücretsiz yerel tam regresyon çalıştırması ve gerçek K1 yazma kapısı entegrasyonuna odaklanma.

@@ -42,3 +42,23 @@ def audit_write_paths(paths: list[str]) -> dict:
             rejected.append(raw)
     return {"rejected": rejected, "blocked": bool(rejected),
             "write_performed": False, "runtime_gate_enforced": False}
+
+
+class ProtectedWriteRejected(PermissionError):
+    """Fail-closed refusal before any proposed protected repository write."""
+
+
+def enforce_write_paths(paths: list[str]) -> dict:
+    """Call immediately before a repository write; never grants user approval.
+
+    This is a reusable runtime guard for callers that explicitly invoke it.
+    It does not intercept independent GitHub Actions or direct git pushes.
+    """
+    report = audit_write_paths(paths)
+    if report["blocked"]:
+        raise ProtectedWriteRejected(
+            "Protected or ambiguous write paths rejected: " +
+            ", ".join(report["rejected"])
+        )
+    return {"blocked": False, "checked_paths": list(paths),
+            "write_performed": False, "runtime_gate_enforced": True}

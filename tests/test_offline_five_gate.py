@@ -52,6 +52,11 @@ class OfflineFiveGateTests(unittest.TestCase):
         self.assertEqual(result["legacy_92_behavioral_acceptance"], 0)
         self.assertEqual(result["runtime_security_26_acceptance"], 0)
 
+    def test_real_k5_joins_candidate_and_independent_restore(self):
+        from madsc.core import execute
+        checks = execute("k5")
+        self.assertIs(checks["k2_k3_k4_k5_candidate_restore_review"], True)
+
     def test_missing_checks_block_batch(self):
         result = assess_all(lambda category: {})
         self.assertFalse(result["fixture_gate_passed"])

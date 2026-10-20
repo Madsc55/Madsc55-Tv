@@ -1245,3 +1245,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/https_head_probe.py` ortak monotonic deadline ile TCP connect, TLS handshake, send ve her recv öncesinde kalan süreyi socket timeout'a uygular; ASCII dışı URL path güvenle reddedilir; HTTP durum kodu tam 3 basamak ve HTTP/1.0/1.1 olmalı; bütün 3xx yönlendirmeleri reddedilir. Commit ad0f1f9e1d06a0015d54e3903d0cba553445a4a2.
 - `tests/test_https_head_probe.py` deadline bitince socket açılmaması ve ASCII dışı yolun reddi regresyonlarını içerir. Commit 0e4198ddacbe2de2c00f31143c110999fce245ca. Actions #39418959967 son kontrolde pending; başarı henüz iddia edilmiyor.
 - DNS getaddrinfo çözümlemesi henüz bu ortak deadline tarafından kesin sınırlandırılmıyor; gerçek ölçüm kullanımından önce bu açık giderilmeli. HEAD gözlemi canlı ffprobe/ffmpeg, IBO ve 30 saniyelik süreklilik kanıtı değildir. Korunan üretim dosyalarına ve eski depoya dokunulmadı; 0/92 ve 0/26 kabul değişmedi.
+
+
+## 20 Ekim 2026 — K3 DNS kesin süre sınırı
+- Önceki HEAD deadline/HTTP sertleştirme Actions #39418959967, SHA 0e4198ddacbe2de2c00f31143c110999fce245ca, completed SUCCESS doğrulandı.
+- `madsc/https_head_probe.py` DNS getaddrinfo işlemini kill edilebilir izole Python subprocess içine taşıdı; subprocess.run timeout ortak monotonic deadline'dan kalan süreyi kullanıyor, çıktı boyutu sınırlı, tüm IP yanıtları önceki fail-closed gate ile doğrulanıyor. Commit cff69db346d2374cea3369f62c2112d021b316dd.
+- `tests/test_https_head_probe.py` DNS subprocess mock'larına uyarlandı; DNS timeout halinde socket açılmaması regresyonu eklendi. Commit d675d38c8f4ed7ffb973bcd79b89a6be5ec57704. Actions #39419786552 ilk kontrolde pending; SUCCESS henüz doğrulanmadı.
+- Bu yalnız opt-in HTTPS HEAD gözlemidir; gerçek yayın ffprobe/ffmpeg, IBO, 30 saniye süreklilik ve K5 canlı kanıt zinciri henüz yok. Ağ testi gerçek hedefte çalıştırılmadı; korunan üretim ve eski depo değişmedi. Kabul sayaçları 0/92 ve 0/26.

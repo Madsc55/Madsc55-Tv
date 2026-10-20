@@ -1,0 +1,32 @@
+name: Madsc55-Tv K3 Turkce TV Video Pilotu
+on:
+  push:
+    branches: [main]
+    paths:
+      - madsc/k3_turkish_tv_video_pilot.py
+      - .github/workflows/madsc-k3-turkish-tv-video.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  video-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Confirm ffprobe availability
+        run: ffprobe -version | head -n 1
+      - name: Run bounded Turkish TV video probe without modifying playlists
+        run: python -m madsc.k3_turkish_tv_video_pilot
+      - name: Upload redacted report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k3-turkish-tv-video-pilot
+          path: reports/k3-turkish-tv-video-pilot.json
+          retention-days: 14

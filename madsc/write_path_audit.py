@@ -8,6 +8,7 @@ from pathlib import PurePosixPath
 PROTECTED_EXACT = frozenset({
     "CALISANLAR.m3u", "CALISMAYANLAR.txt", "YENILER.m3u",
     "YABANCI_KANALLAR.m3u", "GUVENLIK_KURALLARI.md", "AGENTS.md",
+    "xmltv.xml", "playlist.m3u8",
 })
 PROTECTED_PREFIXES = ("yedekler/", "YEDEKLER/", "FAVORILER/", "HEPSI/",
                       "EPG/", "logolar/", "logos/", "arsiv/")

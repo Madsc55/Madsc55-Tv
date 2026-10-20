@@ -979,3 +979,19 @@ Bu bolum sohbetler arasi devirde onceliklidir; onceki kararlari kaybetme.
 6. Eski notlar ve kararlar korunacak, kayip olmadan yeni sistemde erisilebilir olacak. Tam aktarilmayan arsivleri aktarildi diye bildirme.
 7. Sohbet bitiminde yapilanlar, bekleyenler, engeller, dogrulanmis kanitlar ve siradaki somut uygulama adimlari notlara yazilacak. Kullanici ayni talepleri tekrar etmek zorunda birakilmayacak.
 8. Asistanin tum onceki sohbetleri otomatik olarak eksiksiz gorebildigi iddia edilmez; eksik baglam varsa kayitlardan arastirilir ve sinirlar acikca belirtilir.
+
+
+## GENISLETILMIS BAGLAYICI PROJE KURALLARI — 20 Ekim 2026
+Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kullanicidan teyit al.
+9. Her gorev icin etki matrisi olustur: K1/K2/K3/K4/K5 etkileniyor mu, hangi girdi/cikti ve bagimliliklar var, hangi test/kabul kaniti gereklidir? Etkilenenlerin hepsi ayni is paketinde tamamlanmadan gorev kapatilmaz.
+10. Tamamlanma seviyeleri ayri kaydedilir: kaynak incelemesi, kod uygulanmasi, birim testi, sistemler arasi entegrasyon, gercek veriyle davranissal esdegerlik, runtime guvenlik, uretim kabul. Fixture CI yalnizca ilgili test seviyesini kanitlar.
+11. Eski 99 YAML ve 92 otomasyon icin sadece sayim degil, gorev, tetikleyici, girdiler, ciktilar, yazma etkileri, bagimliliklar, guvenlik kosullari, yeni K karsiligi ve davranissal kabul kaniti izlenir; mevcut arastirma tekrar edilmez.
+12. Notlar sadece sohbet ozeti degil, karar kaydi, yapilacak/yapilmayacak isler, acik sorunlar, teknik borc, kanit baglantilari, riskler ve siradaki somut uygulama adimlarini kapsar. Yeni sohbette bu kayitlar okunur; eksik gecmis gerekirse ayrica aranir.
+13. Yedekleme ve geri yukleme isleri gercek veri kaybina yol acmadan yapilir; korunan dosyalara izinsiz yazilmaz, bagimsiz kopya ve restore kaniti ayrilir, gercek dis depolama kaniti olmadan uretim yedegi tamamlandi denmez.
+14. Kanal kesfi ve gecmis K2; kanal sagligi K3; EPG/XMLTV ve tvg-id uyumu, IPTV oynatici farkliliklari ve IBO Player Pro gercek cihaz dogrulamasi birbirinden ayri kabul edilir. Tek oynaticida calisma tum oynaticilarin kabulunu kanitlamaz.
+15. K1 guvenlik kurallari sadece rapor degil, ilgili gercek yazma/isletim yollarinda zorunlu engel olacak sekilde baglanir; runtime kaniti olmadan 26 kural kabul edilmis sayilmaz.
+16. K5 bakım sadece ozet uretmez; K1-K4 basarisizliklarini ve eksik kanitlarini fail-closed birlestirir; sahte basari veya otomatik uretim degisikligi yapmaz.
+17. Buyuk bir is kucuk parcali commitlerle ilerlese bile kullaniciya 'tamamlandi' yalnizca kapsamin tum bagimliliklari ve kabul testleri tamamlandiginda denir. Her turda mevcut tamamlanma ve acik kalanlar somut ayrilir.
+18. Kaynaklarin tumunun goruldugu veya sohbetlerin eksiksiz aktarildigi varsayilmaz. Bilinmeyen, eksik, dogrulanmamis veya bloke isler acikca yazilir; hicbir eski kaynak silinmez.
+19. Degisikliklerin kaniti GitHub commit SHA, ilgili Actions run sonucu, artifact ve test kapsamidir. Calisan/queued CI icin SUCCESS iddia edilmez. Tekrarlayan kucuk testler asil entegrasyonun yerine gecmez.
+20. Proje sahibi onayi olmadan canli yayin listeleri, EPG/gecmis, korunan kaynaklar veya uretim sistemleri degistirilmez. Once salt okunur ve izole dogrulama, sonra izinli kontrollu gecis uygulanir.

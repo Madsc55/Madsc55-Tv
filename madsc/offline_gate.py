@@ -35,7 +35,15 @@ def main():
     from madsc.offline_five_gate import assess_all
     try:
         five_stage = assess_all()
-        five_stage_passed = five_stage.get("fixture_gate_passed") is True
+        expected = {"k1", "k2", "k3", "k4", "k5"}
+        categories = five_stage.get("categories")
+        five_stage_passed = (five_stage.get("fixture_gate_passed") is True
+                             and five_stage.get("categories_checked") == 5
+                             and isinstance(categories, dict)
+                             and set(categories) == expected
+                             and all(categories[key] == "success" for key in expected)
+                             and five_stage.get("production_ready") is False
+                             and five_stage.get("production_writes") is False)
     except Exception as exc:
         five_stage = {"fixture_gate_passed": False, "errors": {"orchestration": type(exc).__name__}}
         five_stage_passed = False
@@ -43,14 +51,14 @@ def main():
         exit_code = 3
     report = {
         "mode": "offline_local",
-        "scope": "unit_regression_only",
+        "scope": "unit_regression_and_isolated_five_stage_fixture",
         "production_acceptance": False,
         "legacy_92_behavioral_acceptance": 0,
         "runtime_security_26_acceptance": 0,
         "test_exit_code": exit_code,
         "timed_out": timed_out,
         "tests_discovered": test_count,
-        "tests_passed": test_count > 0 and not timed_out and result.returncode == 0 if not timed_out else False,
+        "tests_passed": test_count > 0 and not timed_out and exit_code in (0, 3),
         "five_stage_fixture_gate_passed": five_stage_passed,
         "five_stage_fixture_categories": five_stage.get("categories", {}),
         "five_stage_fixture_errors": five_stage.get("errors", {}),

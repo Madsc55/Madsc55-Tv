@@ -1040,3 +1040,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Tek dosya birleşimi daha önce main'e teslim edildiği için `.github/workflows/madsc-legacy-notes-bulk-merge.yml` salt okunur `contents: read`, `persist-credentials: false` olarak geri alındı ve otomatik `git push` kaldırıldı. Commit `65858bf3e74b2ffa1ae0004bd629e6808d4e5d42`. Birleşim Actions #39355451415 SUCCESS.
 - Güvenlik regresyonuna not birleştirme iş akışının bir daha push/credential yetkisi taşımamasını kontrol eden test eklendi. Commit `3da63cc6fb76af5fd78eecb3bf9313d8158bb406`. Beşli CI #39355467204 henüz sonucu doğrulanmadı.
 - 99 kaynak denetimi SUCCESS olsa da 92/92 davranışsal eşdeğerlik ve 26/26 runtime güvenlik kabulü hâlâ 0; üretim onayı yok. Eski depoya yazma yok. Genel referans %47/%53.
+
+
+## 20 Ekim 2026 — 292 testteki K1 hata zinciri giderildi
+- Kullanıcının ekran görüntülerindeki önceki K1 failure: `test_notes_merge_cannot_push_after_one_time_delivery` testinin YAML izin satırını yanlış kaçışla karşılaştırması. 292 testte 1 failure, K2–K5 skipped, toplu kabul artifact indirmeleri buna bağlı failed.
+- Test düzeltmesi commit `1fdc2684d21d6e59a4e9a908d1d661efa6e748c2`.
+- GitHub Actions `39355568913` SUCCESS: Güvenlik, Keşif, Kanal Testleri, Arşiv ve Yedek, Genel Bakım, Beşli toplu kanıt doğrulama işlerinin tamamı success. Bu izole CI kabulüdür; canlı üretim, 92 davranış eşdeğerliği veya 26 runtime güvenlik kuralı kabulü değildir.
+- Eski depo ve korunan yayın dosyaları değişmedi; kullanıcı referansı %47 tamamlanan / %53 kalan.

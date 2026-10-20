@@ -1149,3 +1149,12 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - madsc-05-bakim.yml K3 adimi artik sabit a*64 sahte parmak izi yerine ayni kosunun dogrulanmis K2 aday envelope'inden fingerprint cikarir ve candidate_probe_link CLI ile K3 izole raporunu yazar. Commit 15de0293af6bc56ad316c37791789b4f35ddff79.
 - DIKKAT: K3 ffprobe kayitlari hala sentetik fixture (video/audio/40s); gercek ffprobe veya canli sureklilik kaniti degildir. Gercek kayit gelirse K2 baglantisi dogrulanabilir. Actions 39411220582 son kontrolde queued; basari iddiasi yok.
 - Korunan listeler/EPG/favoriler/yedekler/eski depo/PR71 degismedi. 0/92, 0/26, %47/%53 referans.
+
+
+## 20 Ekim 2026 - K5 K3 offline/canli kabul ayrimi
+- Onceki K2-K3 Actions 39411220582 SUCCESS.
+- candidate_probe_link K3 raporuna technical_samples_supplied, live_continuity_verified:false, candidate_identity_verified:false alanlari eklendi (104a01ed57e14eaa778309f70252d7e1d7a8308d).
+- madsc/k5_channel_gate.py K3 korumali raporunun K2-K3 bagli schema, aday/probe sayilari ve network/IBO/canli sureklilik/kimlik/production false bayraklarini fail-closed kontrol eder; izole K5 gate raporu yazar (b675f3dee08ed5fe914ab8547dabee58e25d106a).
+- K5 Actions madsc-k3-guarded-evidence indirir, k5_channel_gate calistirir, ayri artifact saklar (0b0d82f5ee3cc69dd166b1fa91f7e161e89d6f52). Testler 8ffe4b4f2cefddcdf0629587bff58c4ca0cddbce.
+- Son CI 39411744643 pending; ara kosular 39411726765 ve 39411711232 cancelled. Basari iddiasi yok. K5 gate varligi fixture'in canli probe oldugunu ispatlamaz.
+- Eski depo ve korunan dosyalar degismedi. %47/%53, 0/92 davranissal, 0/26 runtime guvenlik kabul.

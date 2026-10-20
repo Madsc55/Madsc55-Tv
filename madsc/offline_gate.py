@@ -29,6 +29,7 @@ def main():
     # unittest can exit 0 after discovering zero tests: never accept that as green.
     matches = re.findall(r"Ran (\d+) tests? in", stderr + "\n" + stdout)
     test_count = int(matches[-1]) if matches else 0
+    unittest_passed = exit_code == 0 and test_count > 0 and not timed_out
     if exit_code == 0 and test_count == 0:
         exit_code = 2
     # Require the real K1-K5 isolated executors, not only passing unit tests.
@@ -58,8 +59,9 @@ def main():
         "test_exit_code": exit_code,
         "timed_out": timed_out,
         "tests_discovered": test_count,
-        "tests_passed": test_count > 0 and not timed_out and exit_code in (0, 3),
+        "tests_passed": unittest_passed,
         "five_stage_fixture_gate_passed": five_stage_passed,
+        "all_offline_gates_passed": unittest_passed and five_stage_passed,
         "five_stage_fixture_categories": five_stage.get("categories", {}),
         "five_stage_fixture_errors": five_stage.get("errors", {}),
         "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification.",

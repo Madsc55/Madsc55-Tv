@@ -19,7 +19,7 @@ Tek tek commit/test döngüleri yerine, ilgili kod, test, kanıt ve dokümantasy
 - 92 otomasyonun tam davranışsal eşdeğerlik kabulü: **0/92**.
 - 26 güvenlik kuralının gerçek çalışma zamanı kabulü: **0/26**.
 - K2 gerçek geçmiş üreticisi ve doğrulayıcısı kodu var; bağımsız doğrulanmış gerçek artifact/manifest henüz yok.
-- Eski not arşivi kopyaları mevcut; `ESKI_SISTEM_NOTLARI.md` tek metin birleşimi tamamlanmış değil.
+- Yeni depodaki 70 arşiv kaynağı tek tam metinde birleştirildi; Actions #39354650723 başarılı. Bu, eski depodaki tüm olası dosyaların taşındığı anlamına gelmez.
 - Gerçek EPG/IBO cihaz, ağ ve bağımsız restore kabulü yok.
 
 ## İlerleme disiplini
@@ -28,3 +28,13 @@ Tek tek commit/test döngüleri yerine, ilgili kod, test, kanıt ve dokümantasy
 3. Paket sonunda tek toplu CI/kanıt değerlendirmesi yap; iptal edilen koşuları başarı sayma.
 4. Kanıt olmadan `behavioral_parity_verified`, `production_ready` veya güvenlik kabulü artırma.
 5. Korunan M3U/M3U8, EPG, logo, favori ve yedeklere izinsiz yazma yapma; otomatik kanal ekleme/silme yok.
+
+## 20 Ekim 2026 — Kabul durumu ve çalışma sırası
+
+- Kullanıcının son kabul ettiği genel ilerleme referansı: yüzde 47 tamamlandı, yüzde 53 kaldı. Bu, ölçülmüş üretim kabul yüzdesi değildir; yeni kanıt ve mutabakat olmadan değiştirilmez.
+- Birleşik 70 kaynak dosyası: ESKI_SISTEM_NOTLARI.md, Actions #39354650723 başarılı.
+- 92 eski davranışın gerçek eşdeğerlik kabulü: 0/92. Statik envanter, kod ve izole fixture testleri kabul sayılmaz.
+- 26 güvenlik kuralının gerçek çalışma zamanı kabulü: 0/26. Politika belgeleri veya salt okunur testler kabul sayılmaz.
+- Üretim: IBO cihaz, canlı EPG, gerçek yayın ve harici restore doğrulaması açık.
+- Çalışma önceliği: 92 eski iş akışını kaynak SHA, tetik, izin, komut, çıktı, hata, K1-K5 karşılığı ve kanıt bağlantısıyla satır satır doğrula; ilgili 26 güvenlik kuralının izinli ve reddedilen gerçek çalışma yollarını aynı pakette sınayıp korunan veri değişmezliğini doğrula. Gerçek kanıt olmadan sayaç yükseltme.
+- Eski Madsc55/madsc-tv deposuna ve korunan M3U/EPG/logo/favori/yedeklere izinsiz yazma yok.

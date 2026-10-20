@@ -33,6 +33,7 @@ def publish_source(folder, output):
             raise ValueError("History source changed during validation")
     if output.exists():
         raise ValueError("Refusing to overwrite source evidence")
+    enforce_local_output_path(output.absolute())
     # K1: deny protected destination names and paths before creating evidence.
     enforce_write_paths([output.name, *(output.name + "/" + name for name in KEYS)])
     if output.parent.is_symlink() or not output.parent.is_dir():

@@ -1202,3 +1202,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Envanter tarihsel 99/99 YAML, 130/130 Python, 68/68 test. Davranissal tam kabul 0/92, runtime guvenlik 0/26; yuzde 47/53 tarihsel referans. CI fixture basarisi canli kabul degil.
 - K1-K5 mevcut kanit zinciri: K2 envelope/run/SHA/digest -> K3 offline probe URL fingerprint -> K5 cross-handoff/channel gate; canli ffprobe/ffmpeg, cihaz IBO, kaynak/izin ve offsite restore kaniti acik. Mevcut testleri tekrar kurma.
 - Siradaki toplu paket: guvenli opt-in ve salt okunur gercek kanal olcumu icin kaynak/izin/SSRF/yol/timeout/URL maskeleme kapilari; K2 aday fingerprint baglantisi, K3 ffprobe/ffmpeg teknik kanit, K5 kanit dogrulama, K1 negatif guvenlik ve K4 degismezlik testleri. Eski-yeni workflow tetik/izin/artifact/timeout farklarini ayni paket icinde kanitla. Korunan playlist, EPG, logo, yedek, cihaz favorileri ve PR71 degismeyecek. Kod/CI bu turda henuz degistirilmedi; kabul sayaclari artirilmaz.
+
+
+## 20 Ekim 2026 — K3/K5 sahte canlı kanıt engeli, CI doğrulandı
+- Yalnız yeni Madsc55/Madsc55-Tv main üzerinde `madsc/k5_channel_gate.py` için çevrimdışı sonuçlardaki `actual_network_measurements_verified`, `network_probed`, `production_ready` sahte true alanları reddedildi (commit 07414551fca295274fe95524a7692790356e604a).
+- `tests/test_k5_channel_gate.py` negatif regresyon testleri eklendi (commit d39481ec00c5cae14f86acd2adb6aa3f02544660). GitHub Actions #39414904510, head SHA d39481ec00c5cae14f86acd2adb6aa3f02544660, completed SUCCESS olarak REST API ile doğrulandı. Bu offline test kabulüdür, canlı ölçüm değildir.
+- Eski depo, korunan playlist/EPG/logo/favori/yedek ve cronlara dokunulmadı. Tam davranışsal kabul 0/92; gerçek runtime güvenlik kabulü 0/26. Referans %47/%53 güncel hesaplanmış oran değildir.
+- Açık: K1/K3 tüm alanlar için fail-closed kanıt şeması, izinli/opt-in gerçek ffprobe/ffmpeg ölçümü, IBO cihaz doğrulaması, K4 bağımsız offsite restore ve K5 gerçek uçtan uca kabul. Bu turda canlı yayın ölçümü başlatılmadı.

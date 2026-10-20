@@ -1,0 +1,58 @@
+"""Single-run multi-source discovery and bounded video/audio validation. No playlist writes."""
+import concurrent.futures
+import hashlib
+import json
+import os
+from pathlib import Path
+
+from madsc.legacy_multisource_discovery import SOURCES, scan, RADIO
+from madsc.k3_turkish_tv_video_pilot import verify_video
+
+MAX_PROBES = int(os.environ.get("MADSC_MAX_PROBES", "120"))
+TURKISH_FEEDS = ("-TR", "TURKCE", "TURKIYE", "TURK_KANAL", "iptv-turk")
+def eligible_source(name):
+    return any(term in name.upper() for term in ("-TR", "TURKCE", "TURKIYE")) or name == "iptv-turk-tr"
+
+def run():
+    found = {}
+    sources_ok = 0
+    total = 0
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
+        for name, entries, error in pool.map(scan, SOURCES.items()):
+            if error is None:
+                sources_ok += 1
+            if not eligible_source(name):
+                continue
+            for title, url in entries:
+                total += 1
+                if any(w in title.casefold() for w in RADIO):
+                    continue
+                if not url.startswith("https://"):
+                    continue
+                key = hashlib.sha256(url.encode()).hexdigest()
+                found.setdefault(key, (title, url))
+    chosen = list(found.items())[:MAX_PROBES]
+    def test(item):
+        digest, (title, url) = item
+        try:
+            ok, reason = verify_video(url)
+        except Exception as exc:
+            ok, reason = False, "blocked_or_unreachable"
+        return {"name": title[:100], "sha256": digest, "video": ok, "reason": reason,
+                "audio": "not_tested", "turkish_audio": "not_verified"}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
+        results = list(pool.map(test, chosen))
+    reasons = {k: sum(x["reason"] == k for x in results) for k in sorted(set(x["reason"] for x in results))}
+    report = {"stage": "BATCH_DISCOVER_VALIDATE", "sources_checked": len(SOURCES),
+              "sources_ok": sources_ok, "entries_in_turkish_feeds": total,
+              "unique_https_nonradio_candidates": len(found), "tested": len(results),
+              "video_verified": sum(x["video"] for x in results),
+              "audio_verified": 0, "turkish_audio_verified": 0,
+              "playlist_modified": False, "reason_counts": reasons, "results": results}
+    out = Path("reports/turkish-tv-batch-validation.json")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({k:v for k,v in report.items() if k != "results"}, ensure_ascii=False))
+
+if __name__ == "__main__":
+    run()

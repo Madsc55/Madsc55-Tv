@@ -1217,3 +1217,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Son GitHub Actions #39415583107, SHA 206645be5b047ccae3f2156cdcc0576f3ad16f9a, ilk kontrol anında pending idi; SUCCESS iddiası yok, sonuç tekrar doğrulanmalı. Önceki #39414904510 SUCCESS ayrı commit'e aittir.
 - K2-K3 offline handoff korunuyor; canlı ffprobe/ffmpeg henüz yapılmadı, IBO cihaz ve K4 offsite restore kanıtı yok. 92 davranışsal tam kabul 0/92 ve 26 runtime güvenlik kabulü 0/26 değişmedi. Korunan playlist/EPG/logo/yedek/favori dosyalarına yazılmadı.
 - Sıradaki bütünleşik iş: CI sonucunu doğrula; K1 izinli ağ hedefi/SSRF/timeout/redirect kontrolleriyle açık opt-in salt-okunur K3 gerçek ölçüm, K2 provenance ve K5 kanıt ayrımını birlikte uygula; bağımsız K4 geri yükleme kanıtını ayrıca topla. Onaysız üretim değişikliği yok.
+
+
+## 20 Ekim 2026 — K1/K3 gerçek ölçüm öncesi güvenli hedef ön kontrolü
+- GitHub Actions #39415583107, SHA 206645be5b047ccae3f2156cdcc0576f3ad16f9a, completed SUCCESS doğrulandı. Bu yalnız offline K1/K3/K5 kanıt kapısı testidir.
+- `madsc/probe_target_gate.py` eklendi (commit 3e6cfd50d80df54585d9e76381ce3513eff74510): açık `authorized=True` zorunlu; yalnız HTTPS, varsayılan 443; URL kimlik bilgileri/fragment/yerel ve özel IP/yerel DNS adları reddi; salt okunur SHA256 fingerprint ve preflight-only çıktısı. DNS adları güvenli sayılıp otomatik ağa açılmaz; bağlantı anında DNS/IP pinning ve redirect kontrolü hâlâ gerekli.
+- `tests/test_probe_target_gate.py` negatif izin/SSRF URL testleri eklendi (commit c440f2d4d07e581d299bd2311c04c59afcfc4182). Actions #39416121054 ilk kontrolde pending; başarı henüz doğrulanmadı.
+- Ağ bağlantısı, ffprobe, playlist/EPG/logo/yedek/favori değişikliği, eski depo yazması yapılmadı. K2–K3 gerçek ölçüm provenance, K4 offsite restore ve IBO cihaz kabulü açık. Gerçek davranışsal eşdeğerlik 0/92, runtime güvenlik 0/26.

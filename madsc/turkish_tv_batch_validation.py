@@ -6,9 +6,9 @@ import os
 from pathlib import Path
 
 from madsc.legacy_multisource_discovery import SOURCES, scan, RADIO
-from madsc.k3_turkish_tv_video_pilot import verify_video
+from madsc.k3_turkish_tv_video_pilot import verify_av
 
-MAX_PROBES = int(os.environ.get("MADSC_MAX_PROBES", "120"))
+MAX_PROBES = min(1000, max(1, int(os.environ.get("MADSC_MAX_PROBES", "1000"))))
 TURKISH_FEEDS = ("-TR", "TURKCE", "TURKIYE", "TURK_KANAL", "iptv-turk")
 def eligible_source(name):
     return any(term in name.upper() for term in ("-TR", "TURKCE", "TURKIYE")) or name == "iptv-turk-tr"
@@ -35,11 +35,11 @@ def run():
     def test(item):
         digest, (title, url) = item
         try:
-            ok, reason = verify_video(url)
+            video, audio, reason = verify_av(url)
         except Exception as exc:
-            ok, reason = False, "blocked_or_unreachable"
-        return {"name": title[:100], "sha256": digest, "video": ok, "reason": reason,
-                "audio": "not_tested", "turkish_audio": "not_verified"}
+            video, audio, reason = False, False, "blocked_or_unreachable"
+        return {"name": title[:100], "sha256": digest, "video": video, "reason": reason,
+                "audio": audio, "turkish_audio": "not_verified"}
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
         results = list(pool.map(test, chosen))
     reasons = {k: sum(x["reason"] == k for x in results) for k in sorted(set(x["reason"] for x in results))}
@@ -47,7 +47,8 @@ def run():
               "sources_ok": sources_ok, "entries_in_turkish_feeds": total,
               "unique_https_nonradio_candidates": len(found), "tested": len(results),
               "video_verified": sum(x["video"] for x in results),
-              "audio_verified": 0, "turkish_audio_verified": 0,
+              "video_and_audio_verified": sum(x["video"] and x["audio"] for x in results),
+              "audio_verified": sum(x["audio"] for x in results), "turkish_audio_verified": 0,
               "playlist_modified": False, "reason_counts": reasons, "results": results}
     out = Path("reports/turkish-tv-batch-validation.json")
     out.parent.mkdir(parents=True, exist_ok=True)

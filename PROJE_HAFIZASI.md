@@ -1179,3 +1179,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - madsc/progress_scorecard.py kaynak envanterini (99 YAML, 130 Python, 68 test dosyasi) davranissal kabulden (0/92) ve calisma zamani guvenlik kabulunden (0/26) ayri raporlar. Kanitsiz genel yuzde uretmez. Commit: 27ed5318a629fb1f8e7f40473ac291ff0fe10d42.
 - Regresyon testleri: 868959f2f4e8fe46564c84096a89821cbc0d8bd9. K5 Actions rapor artifact entegrasyonu ve erken CI basarisi iddiasini engelleyen duzeltme: 81eb43bed387fd7ee667578a73e4e874aab4877d.
 - Son kontrol aninda run 39413388267 pending. Uretim kabul iddiasi yok. Korunan dosyalar ve eski depo degistirilmedi.
+
+
+## 20 Ekim 2026 - Yeni sohbete kesin devir ve guncel CI
+- Son K1-K5 Actions 39413388267 SUCCESS (SHA 81eb43be). Son onceki 39412769302 SUCCESS. 39413372227 ve 39413355840 ara commit kosulari cancelled, basari sayilmaz.
+- Yeni sohbet icin SOHBET_DEVIR_NOTU_2026-10-20.md bolum 8 genisletildi: kurallar, depo ayrimi, K1-K5 bagimliliklari, yapilanlar, yapilmayanlar, siradaki isler, kabul sayaclari ve kaynak okuma zorunlulugu. Commit 9fd61fdc53e76cdf7f163adaf6bf2880c2862c1d.
+- BIRLESIK_KALICI_CALISMA_KURALLARI.md 20 ilke + ek 21 depo kimligi korunacak. Yeni Madsc55/Madsc55-Tv main yazilabilir; eski Madsc55/madsc-tv salt okunur. ESKI_SISTEM_NOTLARI.md, bu hafiza, devir notu, eski AGENTS/810/DEVAM ve ilgili ariv belgeleri okunmadan karar alinmayacak; okunmayan belge okundu denmeyecek.
+- Referans %47/%53 degismedi; bu sabit tarihsel oran, guncel kanita dayali yuzde degil. Envanter 99/99 YAML, 130/130 Python, 68/68 test dosyasi; gercek davranissal kabul 0/92, runtime guvenlik 0/26. K3 gercek canli ffprobe/IBO ve K4 harici restore yok. Sonraki is kanitli diferansiyel esdegerlik ve guvenli gercek olcum entegrasyonu; uretim yazma kapali.
+- Kullanici yeni sohbette yapilanlarin ve kararlarin unutulmamasini istiyor; bu notlar sureklilik icindir, birebir tam sohbet transkripti degildir.

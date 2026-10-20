@@ -105,3 +105,37 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+def evaluate_k3_head_observation(observation: dict, k2_envelope: dict,
+                                 run_id: str, commit_sha: str) -> dict:
+    """Separate HEAD transport evidence from offline K3 and live stream acceptance."""
+    if not isinstance(observation, dict) or observation.get("schema") != "madsc-k3-https-head-observation-v1":
+        raise ValueError("Invalid K3 HTTPS HEAD observation")
+    discovery = unpack(k2_envelope, run_id, commit_sha)
+    fingerprints = [item["url_sha256"] for item in discovery["candidates"]]
+    digest = observation.get("url_sha256")
+    if (not isinstance(digest, str) or len(digest) != 64 or
+            any(c not in "0123456789abcdef" for c in digest) or
+            fingerprints.count(digest) != 1 or
+            observation.get("k2_source_digest") != k2_envelope["digest"] or
+            observation.get("run_id") != run_id or
+            observation.get("commit_sha") != commit_sha):
+        raise ValueError("K2-K3 HEAD provenance mismatch")
+    for key in ("tls_verified", "dns_pinned", "network_probed"):
+        if observation.get(key) is not True:
+            raise ValueError("Missing HEAD transport evidence: " + key)
+    for key in ("redirects_followed", "stream_continuity_verified",
+                "ibo_device_verified", "production_writes", "production_ready"):
+        if observation.get(key) is not False:
+            raise ValueError("Unsafe HEAD observation claim: " + key)
+    status = observation.get("http_status")
+    if type(status) is not int or not 100 <= status <= 599 or 300 <= status < 400:
+        raise ValueError("Invalid or redirected HTTP status")
+    return {"schema": "madsc-k5-k3-head-transport-review-v1",
+            "url_sha256": digest, "http_status": status,
+            "head_transport_observed": True,
+            "actual_stream_measurements_verified": False,
+            "live_continuity_verified": False, "ibo_device_verified": False,
+            "production_ready": False}

@@ -26,6 +26,10 @@ def publish_source(folder, output):
     # Bind the published bytes to a reproducible source fingerprint.
     source_bytes = {name: (folder / name).read_bytes() for name in KEYS}
     digests = {name: hashlib.sha256(source_bytes[name]).hexdigest() for name in KEYS}
+    # Reject source changes between validation and publication.
+    for name in KEYS:
+        if (folder / name).is_symlink() or (folder / name).read_bytes() != source_bytes[name]:
+            raise ValueError("History source changed during validation")
     if output.exists():
         raise ValueError("Refusing to overwrite source evidence")
     output.mkdir(parents=True, exist_ok=False)

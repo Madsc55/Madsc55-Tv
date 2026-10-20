@@ -1107,3 +1107,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - K3 fixture JSON printf yerine python json.dumps ile uretiliyor. Duzeltme commit 30fbba668682fd84e9ee8aa295cc0d44e1bc1ab6. Kesin kok neden log satiri ile henuz kanitlanmadi; bu bir ilk duzeltme denemesidir.
 - Yeni Actions 39408869866 son kontrolde in_progress. Basari kesinlesmeden kabul edilmeyecek. K4/K5 ve toplu kabul zincirinin sonucu kontrol edilecek.
 - Eski repo, uretim kanal listeleri, EPG, favoriler, yedekler ve PR #71 degistirilmedi. Referans %47/%53; 0/92, 0/26.
+
+
+## 20 Ekim 2026 - K5 gercek kategori artifact baglantisi
+- Onceki duzeltme CI 39408869866 SUCCESS: K1-K5 izole toplu zincir tekrar gecti.
+- K5 onceki sabit success fixture dizisi yerine ayni Actions kosusunun madsc-batch-k1..k4 artifact'larini indirir, kendi k5.json raporunu ekler, tum bes kategori JSON kanitini load_batch_reports ile kimlik/mod/izin/durum/fixture alanlarinda fail-closed denetler. Ardindan K1 korumali write_stage_report ile K5 izole ozetini yazar. Kod f9846cc024dfbead8552acb403cbe57a136b41d3; workflow e465b0c162aa666cbb633628cdb06e548a4edf96; eksik kanit testi c77471502d3bf62981bc372c4403a58b0b2e4ae5.
+- Son test 39409310885 pending. Ara workflow run 39409293787 cancelled, basari olarak sayilmaz. Tam zincir ve artifact indirme dogrulanmali.
+- Bu gelistirme fixture CI kanitinin sahte sabit success ile temsilini azaltir, ancak gercek kanal ag testi/IBO/harici restore/92 davranissal kabul/26 runtime guvenlik kabulunu kanitlamaz. Eski repo ve korunan listeler degismedi. Referans %47/%53.

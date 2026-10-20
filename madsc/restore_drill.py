@@ -1,0 +1,59 @@
+"""K4 executable isolated backup and restore drill.
+
+Copies only allowlisted files into temporary directories; source is never modified.
+This is not proof of external storage or production restoration.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import shutil
+import tempfile
+from pathlib import Path
+
+from madsc.backup import snapshot_manifest, verify_independent_restore
+
+
+def run_drill(source: Path, names: list[str]) -> dict:
+    source = Path(source)
+    baseline = snapshot_manifest(source, names)
+    if not baseline["entries"]:
+        raise ValueError("Restore drill requires nonempty file selection")
+    with tempfile.TemporaryDirectory(prefix="madsc-k4-") as tmp:
+        base = Path(tmp)
+        backup, restored = base / "backup", base / "restored"
+        backup.mkdir()
+        restored.mkdir()
+        for entry in baseline["entries"]:
+            name = entry["path"]
+            for target in (backup, restored):
+                destination = target / name
+                destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source / name, backup / name)
+            shutil.copyfile(backup / name, restored / name)
+        report = verify_independent_restore(source, backup, restored, names)
+        if not report["independent_sandbox_restore_matches"]:
+            raise ValueError("Backup and restore drill integrity mismatch")
+        if snapshot_manifest(source, names)["entries"] != baseline["entries"]:
+            raise ValueError("Source changed during restore drill")
+        return {**report, "drill_executed": True, "temporary_backup_created": True,
+                "temporary_restore_created": True, "source_unchanged": True,
+                "external_storage_proven": False, "production_restore_verified": False}
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--file", action="append", required=True, dest="names")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    report = run_drill(args.source, args.names)
+    if args.output.exists() or args.output.is_symlink():
+        raise ValueError("Refusing to overwrite drill evidence")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(json.dumps(report, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

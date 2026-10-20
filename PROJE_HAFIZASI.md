@@ -1286,3 +1286,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/k5_channel_gate.py` HEAD raporunda eklenmiş canlı/IBO/üretim onayı iddialarını fail-closed reddeder; 2xx HTTP durumunu `http_success_status` olarak ayrıca sınıflandırır, diğer 1xx/4xx/5xx transport raporu olabilir fakat başarılı HTTP sayılmaz. Commit 636e2d7fd42d39d0dbbc2db6bda5dae7edd99e54.
 - `tests/test_k5_head_observation.py` sahte onay bayrakları ve 100/401/403/404/500 durumlarının negatif regresyonlarını içerir. Commit e7baa07586067e1bbb724affac62e5d8e00acd2e. Actions #39422168285 ilk kontrolde queued; sonuç henüz doğrulanmadı.
 - K5 yalnızca rapor biçimi/kimliği inceler, gerçek TLS/socket olayını bağımsız doğrulamaz. Gerçek yayın, IBO ve süreklilik kabulü yok; üretim/eski repo dokunulmadı. 0/92 ve 0/26.
+
+
+## 20 Ekim 2026 — K3 URL ayrıştırma ve DNS tekrar yanıtları
+- Önceki Actions #39422168285 (e7baa07586067e1bbb724affac62e5d8e00acd2e) ve #39422153081 (636e2d7fd42d39d0dbbc2db6bda5dae7edd99e54) completed SUCCESS doğrulandı.
+- `madsc/probe_target_gate.py` ters eğik çizgi içeren belirsiz URL'leri reddeder; `getaddrinfo` içinde yaygın tekrarlı güvenli IP yanıtlarını önce bütün IP'leri denetleyip sonra sıralı tekilleştirir. Karma özel/genel DNS yanıtı hâlâ fail-closed. Commit a643d06290501978cac4794b0f51b4c73d1b9ca4.
+- `tests/test_probe_target_gate.py` güvenli tekrarlı DNS yanıtını ve backslash URL reddini test eder. Commit a9d2461dbeb73aa93b6a0e46235206348d91a5ce. Actions #39422624033 ilk kontrolde queued; SUCCESS henüz iddia edilmez.
+- Bu güvenlik regresyonları canlı yayın/IBO/gerçek üretim kabulü değildir. Ağ hedefleri tetiklenmedi, korunan listeler ve eski depo değişmedi; 0/92 ve 0/26.

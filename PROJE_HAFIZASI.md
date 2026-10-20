@@ -967,3 +967,15 @@ Sonraki is: 45 arşiv notunun icinden ilgili kurallari ve tamamlanmis isleri onc
 - CI entegrasyonu 51b8730cca605dacbdeec7ab16fed065f029ca20: .github/workflows/madsc-05-bakim.yml K4 işinde izole geri yükleme tatbikatı yürütür ve madsc-k4-restore-drill artifact'ını yükler. CI https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350699732 ilk sorguda pending; sonucu doğrulamadan başarılı ilan etme.
 - K2 kaynak değişimi test koşusu https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350454947 SUCCESS; K2 kod koşusu https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350369959 SUCCESS.
 - Bu K4 tatbikatı harici depolama ya da gerçek üretim restore kanıtı değildir. 92 davranışsal eşdeğerlik ve 26 runtime kural kabul sayaçları hâlâ sıfır.
+
+
+## KALICI CALISMA KURALLARI — Kullanici teyidi 20 Ekim 2026
+Bu bolum sohbetler arasi devirde onceliklidir; onceki kararlari kaybetme.
+1. Yeni sistem Madsc55-Tv (Madsc55/Madsc55-Tv); eski Madsc55/madsc-tv salt okunur tarihsel kaynaktir. Isimleri karistirma.
+2. K1 guvenlik, K2 kesif/gecmis, K3 kanal testi, K4 yedek/geri yukleme, K5 bakim tek bir entegre sistemdir. Bir is birden fazla K'yi etkiliyorsa ayni is kapsaminda hepsini uygula ve birlikte dogrula. Sadece ortak CI calismasi davranissal entegrasyon kaniti sayilmaz.
+3. Onceki sohbetlerde kararlastirilan hedefleri, kullanici taleplerini, yapilanlari ve yapilacaklari kaybetme. Her yeni sohbette once PROJE_HAFIZASI.md, SOHBET_DEVIR_NOTU_2026-10-20.md ve ilgili mevcut kanitlari oku; gerektiginde onceki sohbet baglamini ara. Tum sohbetlerin otomatik eksiksiz aktarıldigini varsayma.
+4. 99 eski YAML / 92 otomasyonun daha once yapilmis kaynak incelemesini gereksiz tekrarlama. Davranissal esdegerlik kabul edilmis sayisi 0/92, 26 runtime guvenlik kabul sayisi 0/26; dogrulanmadan sayilari yukseltme.
+5. Kucuk tekil testleri bitmis sistem gibi sunma. Kapsamli, baglantili uygulama ve gercek kabul kanitlari uret; commit, GitHub Actions sonucu ve artefakt referanslarini kaydet.
+6. Eski notlar ve kararlar korunacak, kayip olmadan yeni sistemde erisilebilir olacak. Tam aktarilmayan arsivleri aktarildi diye bildirme.
+7. Sohbet bitiminde yapilanlar, bekleyenler, engeller, dogrulanmis kanitlar ve siradaki somut uygulama adimlari notlara yazilacak. Kullanici ayni talepleri tekrar etmek zorunda birakilmayacak.
+8. Asistanin tum onceki sohbetleri otomatik olarak eksiksiz gorebildigi iddia edilmez; eksik baglam varsa kayitlardan arastirilir ve sinirlar acikca belirtilir.

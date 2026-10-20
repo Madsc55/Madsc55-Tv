@@ -20,6 +20,14 @@ class EvidenceLedgerTest(unittest.TestCase):
             "side_effect_comparison", "failure_timeout_comparison", "reviewer_approval")}
         report = ledger(inventory(), {".github/workflows/w00.yml": all_proofs})
         self.assertEqual(report["accepted"], 0)
+        self.assertTrue(report["rows"][0]["evidence_metadata_complete"])
+        self.assertEqual(report["rows"][0]["independent_verification"], "not_implemented")
+    def test_bool_run_id_not_accepted_as_metadata(self):
+        proofs = {key: {"sha256": "a"*64, "run_id": True} for key in (
+            "legacy_execution", "new_execution", "input_output_comparison",
+            "side_effect_comparison", "failure_timeout_comparison", "reviewer_approval")}
+        result = ledger(inventory(), {".github/workflows/w00.yml": proofs})
+        self.assertFalse(result["rows"][0]["evidence_metadata_complete"])
     def test_reject_unknown_workflow(self):
         with self.assertRaises(ValueError):
             ledger(inventory(), {"other": {}})

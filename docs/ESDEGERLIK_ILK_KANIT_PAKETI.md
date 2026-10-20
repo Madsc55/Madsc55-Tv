@@ -68,3 +68,16 @@ Bu bölüm eski depoda salt-okunur açılan üç YAML ve bunların çağırdığ
 - EPG/logo: `tests/test_legacy_epg_logo_differential.py`, pinned `tests/fixtures/legacy_candidate_epg_logo_join.py`; bos, pilot programli/programsiz ve logo SHA senaryolari; commit `923aea0b`, Actions #39338017857 SUCCESS.
 - 390 tekrar testi: `tests/test_legacy_390_differential.py`, pinned `tests/fixtures/legacy_tekrar_test_390.py`; agsiz ffprobe/ffmpeg taklitleriyle eski/yeni CSV ve M3U karsilastirmasi; commit `bbde1b94`, Actions #39338267421 SUCCESS.
 **Kapsam siniri:** Yalnizca secili sentetik girdi/rapor davranislari dogrudan karsilastirildi. Workflow cron/trigger/izinler, gercek ag, cihaz, hata-artifact, tam davranissal kabul kanitlanmadi. 92/92 kabul 0/92; 26/26 runtime guvenlik 0/26. Siradaki grup: eski K2 aday oncelik, tekrar siniri ve gecmis birlestirme (P01-P06, R01-R05, H01-H05), sonra K3 workflow artifact/timeout davranislari. 
+
+
+## 20 Ekim 2026 — Toplu eski/yeni CLI karşılaştırma ve bilinen güvenlik farkı
+
+| Betik düzeyi | Çalıştırmalı fixture testi | CI kanıtı | Sınır |
+|---|---|---|---|
+| `akilli_aday_puanla.py` | `tests/test_legacy_scoring_differential_batch.py`: 8 puan vektörü, URL dedup, CSV sıra, JSON özet, otomatik liste onayı yok | #39425233309 SUCCESS | Sabitlenmiş fixture, eski Git SHA'sı bağımsız doğrulanmadı |
+| `akilli_tekrar_test_takvimi.py` | `tests/test_legacy_retest_differential_batch.py`: 2/6/12/24 saat, bozuk tarih, geçersiz kayıt, CSV eşleme | #39437371154 SUCCESS | Sabitlenmiş fixture, gerçek cron/cache zinciri yok |
+| `aday_oncelik_raporu.py` | `tests/test_legacy_priority_differential_batch.py`: beş seviye, tie-break ve CSV | #39437666057 SUCCESS | Sabitlenmiş fixture, workflow tetik/izin/artefakt karşılaştırması yok |
+
+**Eski betikteki güvenlik farkı (kasıtlı eşdeğer olmama):** `aday_oncelik_raporu.py` çıktısında `{ "ONCELIK": tier + 1, "INCELEME_NOTU": ..., **row }` sırası nedeniyle giriş CSV'sinde bulunan `ONCELIK`/`INCELEME_NOTU` alanları hesaplanan değerleri geçersiz kılabiliyor. Yeni `priority_rows` bu alanları girişten sonra yeniden hesaplayarak sahte öncelik veya otomatik onay notunu reddediyor. Negatif test: `test_legacy_input_fields_can_override_computed_priority`, commit `d3f7764423607d600fbdc34e923d0650dec6935a`. Bu **bilinçli güvenlik düzeltmesi**dir; tam davranış eşdeğerliği iddia edilmez. Son commitin CI sonucu ayrıca kontrol edilmelidir.
+
+Bu üç betik karşılaştırması **üç workflow kabulü değildir**. Gerçek 92 workflow için kaynak commit/bağımlılık hashleri, tetik/izin, hata/timeout, artefaktlar, yan etkiler ve kullanıcı onayı gereklidir. Kabul 0/92, K1 runtime kabulü 0/26. Korunan üretim dosyalarına yazma yok.

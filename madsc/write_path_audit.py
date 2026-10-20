@@ -3,7 +3,7 @@
 Mirrors legacy protected_write_gate path policy; does not enforce Git pushes.
 """
 from __future__ import annotations
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 
 PROTECTED_EXACT = frozenset({
     "CALISANLAR.m3u", "CALISMAYANLAR.txt", "YENILER.m3u",

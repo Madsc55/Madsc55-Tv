@@ -7,6 +7,11 @@ class CandidateCoordinationTests(unittest.TestCase):
         self.rows = [{"name": "Sample", "url": "https://example.org/live.m3u8"}]
         self.digest = classify_candidates(self.rows)["candidates"][0]["url_sha256"]
 
+    def test_empty_metadata_identifier_is_rejected(self):
+        for kwargs in ({"epg_ids": {""}}, {"logo_ids": {"  "}}):
+            with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
+                coordinate(self.rows, {}, {}, **kwargs)
+
     def test_missing_probe_is_held(self):
         result = coordinate(self.rows, {}, {})
         self.assertTrue(result["candidates"][0]["hold"])

@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 from madsc.legacy_multisource_discovery import SOURCES, scan, RADIO
-from madsc.k3_turkish_tv_video_pilot import verify_av
+from madsc.k3_turkish_tv_video_pilot import verify_av, category
 
 MAX_PROBES = min(1000, max(1, int(os.environ.get("MADSC_MAX_PROBES", "1000"))))
 TURKISH_FEEDS = ("-TR", "TURKCE", "TURKIYE", "TURK_KANAL", "iptv-turk")
@@ -32,6 +32,7 @@ def run():
                 key = hashlib.sha256(url.encode()).hexdigest()
                 found.setdefault(key, (title, url))
     chosen = list(found.items())[:MAX_PROBES]
+    by_digest = dict(chosen)
     def test(item):
         digest, (title, url) = item
         try:
@@ -50,6 +51,26 @@ def run():
               "video_and_audio_verified": sum(x["video"] and x["audio"] for x in results),
               "audio_verified": sum(x["audio"] for x in results), "turkish_audio_verified": 0,
               "playlist_modified": False, "reason_counts": reasons, "results": results}
+    # Export only public-source candidates with both A/V codecs for manual playback.
+    # This is NOT the production playlist and does NOT certify spoken Turkish.
+    playlist = ["#EXTM3U"]
+    exported = 0
+    for result in results:
+        if not (result["video"] and result["audio"]):
+            continue
+        title, url = by_digest[result["sha256"]]
+        safe_title = title.replace("\\r", " ").replace("\\n", " ").replace('"', "'")[:100]
+        group = category(safe_title)
+        if not group:
+            continue
+        playlist.append(f'#EXTINF:-1 group-title="{group}",{safe_title}')
+        playlist.append(url)
+        exported += 1
+    playlist_out = Path("reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8")
+    playlist_out.parent.mkdir(parents=True, exist_ok=True)
+    playlist_out.write_text("\n".join(playlist) + "\n", encoding="utf-8")
+    report["test_playlist_candidates"] = exported
+    report["test_playlist_language_status"] = "unverified"
     out = Path("reports/turkish-tv-batch-validation.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

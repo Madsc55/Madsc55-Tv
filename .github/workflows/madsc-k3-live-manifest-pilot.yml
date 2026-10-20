@@ -1,10 +1,5 @@
 name: Madsc55-Tv K3 Gercek Kanal Baglanti Pilotu
 on:
-  push:
-    branches: [main]
-    paths:
-      - madsc/k3_live_manifest_pilot.py
-      - .github/workflows/madsc-k3-live-manifest-pilot.yml
   workflow_dispatch:
 permissions:
   contents: read

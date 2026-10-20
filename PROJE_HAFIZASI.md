@@ -1017,3 +1017,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `.github/workflows/madsc-05-bakim.yml` toplu kabul adimi K4 restore artifact'ini indirip dogrular; sonuc K5 toplu hata sayacina eklenir, dogrulama artifact'i saklanir. Commit `dc5eb4523c2f2583f0e707b1a5ff5766cd8c7f33`.
 - `tests/test_k4_evidence.py` eksik ve sahte kanitlari reddeden testler eklendi; commit `3a78352e7facaff1cbe67cc875c1218eb637cac8`. Actions #39354010229 baslangicta PENDING; basari henuz kanitlanmadi.
 - Onceki not butunluk degisikligi icin Actions #39353692761 ve #39353692734 SUCCESS. 92 davranissal esdegerlik ve 26 runtime guvenlik kabulu hala 0; fiziksel tek dosya birlestirme hala acik.
+
+
+## 20 Ekim 2026 — ESKI_SISTEM_NOTLARI.md fiziksel tek dosya teslimi
+- `.github/workflows/madsc-legacy-notes-bulk-merge.yml` icin yalnız yeni repo main dalina SHA256 dogrulanmis birlesik notu commit eden adim eklendi; eski kaynak notlar silinmedi, eski repo degistirilmedi. Commit `b36c4d8a41645d1dba331df323cf88247bfa159e`.
+- Actions run #39354650723 SUCCESS. Main'deki `ESKI_SISTEM_NOTLARI.md` tekrar okundu: artik indeks degil, 70 arşiv kaynagini kapsayan 1.790.411 karakterlik tam metin; bolumler kaynak SHA256 ve sinir isaretcileriyle ayriliyor.
+- Kapsam siniri: 70 kaynak = yeni repo arşivinde mevcut 45 metin ve 25 yapisal kaynak; eski depodaki tüm diger 52 yapisal dosyanin aktarildigi iddia edilmez. 92/92 davranissal esdegerlik ve 26/26 runtime guvenlik kabulü hala 0; canli cihaz/EPG/offsite restore üretim kabulu yok.
+- Siradaki toplu is: 92 otomasyonun kaynak kodu/tetik/izin/artefact/hata davranisi matrisi ve 26 kuralin gerçek yazma/engelleme kanitlarini bagimsiz kanitla kapat. Fixture CI veya statik envanterden kabul sayaci arttirma.

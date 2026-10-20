@@ -1062,3 +1062,12 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - 99 kaynak regresyonu ve workflow CI kapısı commit `15371971e923d4c389823b073be3724208b2b999`, `5c276f7d13bfec29dc4c556aa8d77e829ba7ec7a`. Actions #39356612285 henüz sonuçlanmadı.
 - Önceki K1–K5 izole güvenlik entegrasyon testi #39356267666 SUCCESS. Gerçek üretim/IBO/harici restore onayı değildir.
 - Sıradaki büyük iş: geçici K sınıflamasını 99 dosyanın komut, tetik, izin, çıktı, bağımlılık ve yan etki kaynaklarıyla doğrula; 26 kuralın onaylı kaynak metnini belirle; beşli sistemde gerçek görev çağrı noktalarına bağla. Korunan veriye ve eski depoya yazma yok. 92/92 ve 26/26 kabul hâlâ 0; genel referans %47/%53.
+
+
+## 20 Ekim 2026 - Besli sistem dogrudan islev kurulum karari ve K1-K2 entegrasyonu
+- Kullanici karari: 99 eski YAML kopyalanmaz; islevler dogrudan K1-K5 icinde kurulur, tekrarlar birlestirilir. 20 ortak calisma ilkesi ve ek depo kimligi ilkesi gecerlidir. K1 isi K2-K5'i ilgilendiriyorsa ilgili baglantilar ayni paketle degerlendirilir.
+- 26 guvenlik hedefi ayri otomasyonlar degil, K1 ve ilgili sistemlerin gercek islem noktalarinda uygulanir. Kaynakta 24 madde tanimli, kalan ikisi kesinlestirilmeden uydurulmaz.
+- K1 korumasi K2 izole gecmis raporu yazicisina baglandi: madsc/history_pair_store.py write_isolated_history_pair. Commit cbf250650818c23c25e1137f4e92391a947762b3.
+- Gecmis yazma, mevcut raporu degistirme ve path traversal testleri eklendi: 26a7b775295b91dd705f9c90589a92248a569b33. Actions 39406192839 son kontrolde pending; SUCCESS iddiasi yok.
+- Onceki izole K1-K5 CI 39404862422 SUCCESS. Canli IPTV, IBO, tum yazma yollari veya davranissal esdegerlik kaniti degil. Eski depo ve korunan listeler degismedi.
+- Siradaki is: K3-K4-K5 gercek rapor/yedek/yazma cagrilarini ayni K1 politikasina baglamak, bagli testleri toplu calistirmak. Genel referans %47/%53, kabul 0/92 ve 0/26.

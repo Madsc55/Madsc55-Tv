@@ -1100,3 +1100,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Onceki stage_report_cli test CI 39407853563 SUCCESS. Yeni workflow CI 39408633114 son kontrolde queued; yeni zincirin tam basarisi henuz kanitlanmadi.
 - Bu islem mevcut beşli workflow'u degistirdi, ancak eski depo, korunan kanal listeleri, EPG, favoriler, yedekler ve PR #71 degismedi. Fixture verisi canli test/IBO/harici backup veya 92/26 kabulune esit degildir. Referans %47/%53.
 - Sonraki adim: 39408633114 alt islerini kontrol et; basarisizlik varsa ayni K1-K5 etkileriyle duzelt; gercek kaynakla davranissal kaniti ayrica tamamla.
+
+
+## 20 Ekim 2026 - Besli toplu run 39408633114 K3 hatasi ve duzeltme
+- Actions 39408633114 FAILURE: K1 ve K2 SUCCESS; K3 'K3 offline fixture kaniti olustur ve K1 korumali raporla' adiminda FAILURE; K4/K5 SKIPPED; toplu kabul eksik artifact nedeniyle FAILURE.
+- K3 fixture JSON printf yerine python json.dumps ile uretiliyor. Duzeltme commit 30fbba668682fd84e9ee8aa295cc0d44e1bc1ab6. Kesin kok neden log satiri ile henuz kanitlanmadi; bu bir ilk duzeltme denemesidir.
+- Yeni Actions 39408869866 son kontrolde in_progress. Basari kesinlesmeden kabul edilmeyecek. K4/K5 ve toplu kabul zincirinin sonucu kontrol edilecek.
+- Eski repo, uretim kanal listeleri, EPG, favoriler, yedekler ve PR #71 degistirilmedi. Referans %47/%53; 0/92, 0/26.

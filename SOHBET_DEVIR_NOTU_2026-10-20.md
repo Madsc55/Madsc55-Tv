@@ -178,3 +178,19 @@ Kullanici istegi: Bu sohbetin tum onemli taleplerini, kararlarini, yapilanlari, 
 - **Madsc55/madsc-tv** eski depodur; **madsc/bes-sistem-toplu-birlestirme** dali da dahil kesinlikle salt okunur. Kullanici acik izin vermedikce eski depoda commit, dosya degisikligi, Actions tetikleme veya workflow duzenlemesi YASAK.
 - HER YENI SOHBETTE ilk GitHub yazma isleminden ONCE hedef repository_full_name=Madsc55/Madsc55-Tv ve branch=main oldugunu acikca dogrula. Adlar birbirine benziyor diye eski depoya yazma. Yanlis hedef saptanirsa yazma islemini durdur.
 - Bu madde mevcut 21 kurali guclendirir; onceki korumalari kaldirmaz. Yeni sohbete devirde aynen korunur.
+
+
+
+## YENI SOHBET DEVRI — 20 Ekim 2026 gece
+
+Tek yazilabilir proje Madsc55-Tv, repo Madsc55/Madsc55-Tv, dal main. Eski Madsc55/madsc-tv ve madsc/bes-sistem-toplu-birlestirme SALT OKUNUR; Madsc55-Tv-Test'e dokunma. Ilk yazmadan once repo/dal kimligini dogrula.
+
+Yeni sohbette once BIRLESIK_KALICI_CALISMA_KURALLARI.md (21 kural), PROJE_HAFIZASI.md, ESKI_SISTEM_NOTLARI.md, bu devir dosyasi ve ilgili arsivleri oku. Tum gecmis sohbetleri eksiksiz okudugunu iddia etme. K1 guvenlik, K2 kesif/gecmis, K3 kanal/EPG/logo/IBO, K4 yedek/restore, K5 orkestrasyon/rapor. Canli listeler, playlist.m3u8, xmltv.xml, epg, logolar, arsiv, FAVORILER, HEPSI, YEDEKLER ve PR #71 korunur. IBO onayli kanal otomatik silinmez.
+
+Actions 2000/2000 kota dolu; sifir butce, kart yok. Onay ve kota olmadan workflow tetikleme; commitlerde [skip ci]. Kabul 0/92 eski davranis ve 0/26 runtime guvenlik. 99/99 YAML ilk envanter, 23/99 derin YAML, 130/130 Python, 68/68 test ilk envanter; %47/%53 tarihsel, gercek guncel ilerleme olcumu degil.
+
+Bu sohbetlerde K1 K5 izole rapor yazimina baglandi; K4 bozuk restore negatif kontrolu; K2 real-source publisher ve verified-history pipeline K1 kontrolleri; K1 tam yerel cikti yolu kontrolu ve negatif testleri eklendi. Commitler: 6d32290d, 370608e6, bddf8f95, ccdb2576, 9c63d291, 03ec9f4e, 27a21ac7, 34c2cae4. PROJE_HAFIZASI.md son kaydinda bunlardan sonra verified-history traversal onarimi 6432d44d ve test dc68f298 da var. Kodun guncel GitHub main halini tekrar dogrula.
+
+KRITIK: Guncel main icin offline toplu regresyonun gectigi kanitlanmadi. Yerel eski kopya guncel main sayilmaz; DNS nedeniyle dogrudan klon sorunu bildirildi. K1 tam yol on-kontrolu atomik guvenli yazma garantisi degil; TOCTOU, tum bagimsiz yazicilar ve repo kok siniri hala acik. Test calistirmadan yesil deme.
+
+SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda ucretsiz offline toplu test et, (3) hatalari duzelt ve K1 yazicilarini sertlestir, (4) 92 eski davranisin diferansiyel esdegerligi ve 26 runtime guvenlik kabulunu gercek kanitla ilerlet, (5) K2/K3/K4/K5 gercek butunlesik kanitlarini olustur. Her degisikligi PROJE_HAFIZASI.md'ye commit SHA ile kaydet.

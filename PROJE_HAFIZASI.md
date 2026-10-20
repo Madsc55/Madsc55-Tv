@@ -1279,3 +1279,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/https_head_probe.py`: timeout NaN/±Infinity dahil sonlu ve 0–5 saniye aralığında olmalı; numerik global IP hedeflerinde DNS subprocess çağrısı atlanıp aynı IP validasyon kapısı kullanılır. Commit 153881ccd208cb50a14dd172407565c1074569a8.
 - `tests/test_https_head_probe.py` sonsuz timeout negatif regresyonu eklendi. Commit 6f72a490a60007b18c081cbe352b9550e63356af. Actions #39421735763 ilk kontrolde queued, sonuç henüz doğrulanmadı.
 - Bu değişiklikler canlı yayın/IBO kabulü değildir; ağ probe gerçek hedefte tetiklenmedi. Korunan dosyalar ve eski depo değişmedi. 0/92 davranışsal ve 0/26 runtime güvenlik kabulü sabit.
+
+
+## 20 Ekim 2026 — K5 HEAD sahte canlı onay ve HTTP sınıflandırması
+- Actions #39421735763 (SHA 6f72a490a60007b18c081cbe352b9550e63356af) completed SUCCESS; #39421531900 (SHA d4f5a811c82fe104406e7bbd4697786c0136daec) completed SUCCESS. İptal edilen eski koşular başarı sayılmadı.
+- `madsc/k5_channel_gate.py` HEAD raporunda eklenmiş canlı/IBO/üretim onayı iddialarını fail-closed reddeder; 2xx HTTP durumunu `http_success_status` olarak ayrıca sınıflandırır, diğer 1xx/4xx/5xx transport raporu olabilir fakat başarılı HTTP sayılmaz. Commit 636e2d7fd42d39d0dbbc2db6bda5dae7edd99e54.
+- `tests/test_k5_head_observation.py` sahte onay bayrakları ve 100/401/403/404/500 durumlarının negatif regresyonlarını içerir. Commit e7baa07586067e1bbb724affac62e5d8e00acd2e. Actions #39422168285 ilk kontrolde queued; sonuç henüz doğrulanmadı.
+- K5 yalnızca rapor biçimi/kimliği inceler, gerçek TLS/socket olayını bağımsız doğrulamaz. Gerçek yayın, IBO ve süreklilik kabulü yok; üretim/eski repo dokunulmadı. 0/92 ve 0/26.

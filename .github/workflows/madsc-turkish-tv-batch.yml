@@ -26,5 +26,7 @@ jobs:
         if: always()
         with:
           name: turkish-tv-batch-validation
-          path: reports/turkish-tv-batch-validation.json
+          path: |
+            reports/turkish-tv-batch-validation.json
+            reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8
           retention-days: 14

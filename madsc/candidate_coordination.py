@@ -20,11 +20,17 @@ def coordinate(rows: list[dict], probes: dict, attempts: dict,
     if ibo_results is not None and not isinstance(ibo_results, dict):
         raise ValueError("Invalid IBO evidence")
     discovery = classify_candidates(rows)
+    if any(type(value) is not str or not value.strip() for value in (epg_ids or set())):
+        raise ValueError("Empty EPG identifier")
+    if any(type(value) is not str or not value.strip() for value in (logo_ids or set())):
+        raise ValueError("Empty logo identifier")
     for candidate in discovery["candidates"]:
         digest = candidate.get("url_sha256")
         if not isinstance(digest, str) or len(digest) != 64 or any(ch not in "0123456789abcdef" for ch in digest):
             raise ValueError("Invalid candidate fingerprint")
     candidate_digests = {candidate["url_sha256"] for candidate in discovery["candidates"]}
+    if len(candidate_digests) != len(discovery["candidates"]):
+        raise ValueError("Duplicate accepted candidate fingerprint")
     for mapping in (probes, attempts, ibo_results or {}):
         if any(not isinstance(key, str) or key not in candidate_digests for key in mapping):
             raise ValueError("Unknown candidate evidence fingerprint")

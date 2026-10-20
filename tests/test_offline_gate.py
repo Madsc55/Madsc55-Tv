@@ -30,6 +30,7 @@ class OfflineGateTests(unittest.TestCase):
         self.assertEqual(report["test_exit_code"], 3)
         self.assertFalse(report["five_stage_fixture_gate_passed"])
         self.assertTrue(report["tests_passed"])
+        self.assertFalse(report["all_offline_gates_passed"])
         self.assertFalse(report["production_acceptance"])
 
     @patch("madsc.offline_five_gate.assess_all")
@@ -46,6 +47,7 @@ class OfflineGateTests(unittest.TestCase):
             self.assertEqual(main(), 0)
         report = json.loads(output.getvalue())
         self.assertTrue(report["five_stage_fixture_gate_passed"])
+        self.assertTrue(report["all_offline_gates_passed"])
         self.assertFalse(report["production_acceptance"])
 
     @patch("madsc.offline_five_gate.assess_all")

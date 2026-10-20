@@ -25,6 +25,22 @@ class OfflineFiveGateTests(unittest.TestCase):
         self.assertEqual(result["categories_checked"], 5)
         self.assertEqual(result["errors"]["k2"], "RuntimeError")
 
+    def test_truthy_nonboolean_is_rejected(self):
+        result = assess_all(lambda category: {"isolated": 1})
+        self.assertFalse(result["fixture_gate_passed"])
+        self.assertEqual(len(result["errors"]), 5)
+
+    def test_one_stage_failure_does_not_skip_other_stages(self):
+        visited = []
+        def executor(category):
+            visited.append(category)
+            if category == "k2":
+                raise RuntimeError("failed")
+            return {"isolated": True}
+        result = assess_all(executor)
+        self.assertEqual(visited, ["k1", "k2", "k3", "k4", "k5"])
+        self.assertFalse(result["fixture_gate_passed"])
+
     def test_missing_checks_block_batch(self):
         result = assess_all(lambda category: {})
         self.assertFalse(result["fixture_gate_passed"])

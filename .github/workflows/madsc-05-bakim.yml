@@ -61,7 +61,7 @@ jobs:
           path: reports/k1.json
           retention-days: 14
   k2:
-    if: ${{ always() && !cancelled() }}
+    if: ${{ needs.k1.result == 'success' }}
     name: Keşif
     needs: k1
     runs-on: ubuntu-latest
@@ -117,7 +117,7 @@ jobs:
           path: reports/k2.json
           retention-days: 14
   k3:
-    if: ${{ always() && !cancelled() }}
+    if: ${{ needs.k2.result == 'success' }}
     name: Kanal Testleri
     needs: k2
     runs-on: ubuntu-latest
@@ -174,7 +174,7 @@ jobs:
           path: reports/k3.json
           retention-days: 14
   k4:
-    if: ${{ always() && !cancelled() }}
+    if: ${{ needs.k3.result == 'success' }}
     name: Arşiv ve Yedek
     needs: k3
     runs-on: ubuntu-latest
@@ -209,7 +209,7 @@ jobs:
           path: reports/k4.json
           retention-days: 14
   k5:
-    if: ${{ always() && !cancelled() }}
+    if: ${{ needs.k4.result == 'success' }}
     name: Genel Bakım
     needs: k4
     runs-on: ubuntu-latest

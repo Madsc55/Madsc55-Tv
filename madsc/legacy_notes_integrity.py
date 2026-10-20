@@ -27,11 +27,11 @@ def verify(merged, archive, report):
     # Reconstruct the entire document, not only the marked source sections.
     # Otherwise unmarked injected text can pass all per-source hash checks.
     expected = (
-        "# ESKİ SİSTEM NOTLARI\\n\\n"
-        "Kaynak: Madsc55/madsc-tv, madsc/bes-sistem-toplu-birlestirme.\\n"
-        "Bu belge tarihsel arşivdir; eski talimatlar yeni yazma izni vermez.\\n"
-        f"Birleştirilen kaynak sayısı: {len(sources)}.\\n"
-        "Her bölüm SHA256 ile tanımlanır; özgün içerik değiştirilmez.\\n"
+        "# ESKİ SİSTEM NOTLARI\n\n"
+        "Kaynak: Madsc55/madsc-tv, madsc/bes-sistem-toplu-birlestirme.\n"
+        "Bu belge tarihsel arşivdir; eski talimatlar yeni yazma izni vermez.\n"
+        f"Birleştirilen kaynak sayısı: {len(sources)}.\n"
+        "Her bölüm SHA256 ile tanımlanır; özgün içerik değiştirilmez.\n"
     ).encode("utf-8")
     results = []
     for p in sources:

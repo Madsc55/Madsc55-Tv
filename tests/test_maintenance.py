@@ -1,5 +1,5 @@
 import unittest
-from madsc.maintenance import retry_decision, aggregate, summarize_batch, verify_fixture_evidence
+from madsc.maintenance import retry_decision, aggregate, summarize_batch, verify_fixture_evidence, review_candidate_batch
 
 class MaintenanceTests(unittest.TestCase):
     def test_bounded_retry(self):
@@ -90,3 +90,36 @@ class MaintenanceTests(unittest.TestCase):
 
     def test_missing_categories_never_ready(self):
         self.assertFalse(aggregate([{"category":"k1","production_writes":False}])["all_five_present"])
+
+class CrossSystemReviewTests(unittest.TestCase):
+    def setUp(self):
+        self.coordination = {"candidates": [{
+            "url_sha256": "a" * 64, "hold": True, "protected_working": True,
+            "production_change_allowed": False, "delete_allowed": False}],
+            "production_writes": False, "production_ready": False, "network_probed": False}
+        self.backup = {"independent_sandbox_restore_matches": True,
+                       "production_writes": False, "production_restore_verified": False,
+                       "external_storage_proven": False}
+
+    def test_k5_preserves_ibo_and_requires_k4(self):
+        result = review_candidate_batch(self.coordination, self.backup)
+        self.assertTrue(result["review_evidence_complete"])
+        self.assertEqual(result["protected_ibo_working_count"], 1)
+        self.assertFalse(result["production_ready"])
+        self.backup["independent_sandbox_restore_matches"] = False
+        self.assertFalse(review_candidate_batch(self.coordination, self.backup)["review_evidence_complete"])
+
+    def test_unsafe_or_repeated_candidate_rejected(self):
+        self.coordination["candidates"][0]["delete_allowed"] = True
+        with self.assertRaises(ValueError):
+            review_candidate_batch(self.coordination, self.backup)
+        self.coordination["candidates"][0]["delete_allowed"] = False
+        self.coordination["candidates"].append(dict(self.coordination["candidates"][0]))
+        with self.assertRaises(ValueError):
+            review_candidate_batch(self.coordination, self.backup)
+
+    def test_external_restore_claim_rejected(self):
+        self.backup["external_storage_proven"] = True
+        with self.assertRaises(ValueError):
+            review_candidate_batch(self.coordination, self.backup)
+

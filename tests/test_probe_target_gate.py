@@ -23,7 +23,7 @@ class ProbeTargetGateTests(unittest.TestCase):
             "https://[::1]/a", "https://user:password@video.example.com/a",
             "https://video.example.com:8443/a", "https://host.internal/a",
             "https://video.example.com/a#fragment", "https://video.example.com/a\n",
-            "https://host/a",
+            "https://host/a", "https://video.example.com\\\\@127.0.0.1/a",
         )
         for url in urls:
             with self.subTest(url=url), self.assertRaises(ValueError):
@@ -33,8 +33,10 @@ class ProbeTargetGateTests(unittest.TestCase):
     def test_dns_answers_all_public_and_unique(self):
         self.assertEqual(validate_resolved_addresses(["8.8.8.8", "1.1.1.1"]),
                          ("8.8.8.8", "1.1.1.1"))
+        self.assertEqual(validate_resolved_addresses(["8.8.8.8", "8.8.8.8"]),
+                         ("8.8.8.8",))
         for answers in ([], ["8.8.8.8", "127.0.0.1"], ["169.254.169.254"],
-                        ["8.8.8.8", "8.8.8.8"], ["::1"], ["invalid"],
+                        ["::1"], ["invalid"],
                         ["::ffff:8.8.8.8"]):
             with self.subTest(answers=answers), self.assertRaises(ValueError):
                 validate_resolved_addresses(answers)

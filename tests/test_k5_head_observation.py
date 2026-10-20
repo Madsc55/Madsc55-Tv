@@ -28,18 +28,38 @@ class K5HeadObservationTests(unittest.TestCase):
         self.assertFalse(result["head_transport_independently_verified"])
         self.assertFalse(result["actual_stream_measurements_verified"])
         self.assertFalse(result["production_ready"])
+        self.assertTrue(result["http_success_status"])
 
     def test_fail_closed_on_forged_claims(self):
         for key, value in (("http_status", 302), ("http_status", True),
                            ("url_sha256", "0" * 64), ("k2_source_digest", "fake"),
                            ("tls_verified", False), ("dns_pinned", None),
                            ("stream_continuity_verified", True),
-                           ("production_ready", True), ("network_probed", 1)):
+                           ("production_ready", True), ("network_probed", 1),
+                           ("actual_network_measurements_verified", True),
+                           ("actual_stream_measurements_verified", True),
+                           ("live_continuity_verified", True),
+                           ("candidate_identity_verified", True),
+                           ("channel_identity_verified", True),
+                           ("production_change_allowed", True),
+                           ("production_approved", True),
+                           ("ibo_approved", True),
+                           ("head_transport_independently_verified", True)):
             with self.subTest(key=key, value=value):
                 item = dict(self.observation, **{key: value})
                 with self.assertRaises(ValueError):
                     evaluate_k3_head_observation(item, self.envelope,
                                                  self.run, self.sha)
+
+
+    def test_non_success_http_is_not_live_success(self):
+        for status in (100, 401, 403, 404, 500):
+            with self.subTest(status=status):
+                result = evaluate_k3_head_observation(
+                    dict(self.observation, http_status=status), self.envelope,
+                    self.run, self.sha)
+                self.assertFalse(result["http_success_status"])
+                self.assertFalse(result["production_ready"])
 
 
 if __name__ == "__main__":

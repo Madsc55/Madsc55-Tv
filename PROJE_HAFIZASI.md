@@ -1424,3 +1424,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/history_verified_pipeline.py` K2 doğrulanmış geçmiş kaynağı indirme/aktarma akışında çıktı adı için `enforce_write_paths` K1 kontrolü ekledi; çıktı üst dizini mevcut gerçek dizin olmak zorunda, sessiz klasör oluşturma kaldırıldı. Commit `c5fc6bd08cb702b348b6aefcd92939b451fde10b`.
 - `tests/test_history_verified_pipeline.py` `playlist.m3u8` korunan hedefinin GitHub origin doğrulama çağrısından önce reddedildiğini ve çıktı üretilmediğini kontrol eden negatif test içeriyor. Commit `f47a227e7371756a9484f149c7255fd98b3c1624`.
 - Yalnız çıktı dosyasının adı denetleniyor; mutlak çıktı yolunun tüm üst bileşenlerini ve bağımsız workflow git yazmalarını merkezi biçimde koruma kapsamı henüz kanıtlanmadı. Testler çalıştırılmadı, Actions tetiklenmedi; 0/92 ve 0/26 değişmedi. Sonraki adım: tüm çıktı yollarını checkout sınırı, symlink ve korunan ata dizinleri açısından denetleyen merkezi yardımcı ve offline regresyon.
+
+
+## 20 Ekim 2026 — K1 tam yerel çıktı yolu kontrolü ve import hatası
+- `madsc/write_path_audit.py`: `enforce_local_output_path` ile mutlak çıktı yolu, mevcut hedef, mevcut ebeveyn, symlink atalar, korunan yol bileşenleri ve isteğe bağlı allowed_root denetleniyor; yalnız preflight, yazma yetkisi vermez. Commit `6d32290df4870783db007b03b9481f62ecc59666`.
+- `madsc/history_verified_pipeline.py`: önceki turda eklenen fakat import edilmeyen `enforce_write_paths` çağrısı düzeltildi; yeni tam-yol kontrolü kullanılıyor. Commit `8e8c2c32f16c103bc8b81bcbc4ff08b7568a1268`.
+- `tests/test_write_path_audit.py`: güvenli hedef, korunan ata, mevcut dosya, symlink üst dizin ve izinli kök dışına çıkma negatif senaryoları eklendi. Commit `1613ab312cef78f928bba5757603e1274778b345`.
+- Henüz test yürütülmedi. GitHub Actions kotası dolu olduğundan tetiklenmedi. Gerçek üretim ve tüm yazma noktaları kabul edilmedi; 0/92 ve 0/26 değişmedi. Sonraki öncelik: yerel toplu regresyon, diğer gerçek yazıcılar için tam-yol K1 entegrasyonu ve olası symlink/TOCTOU sınırlarının güçlendirilmesi.

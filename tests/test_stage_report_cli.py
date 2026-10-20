@@ -54,10 +54,23 @@ class StageReportCLITests(unittest.TestCase):
                     "mode": "isolated_read_only", "production_writes": False,
                     "legacy_workflows_executed": False,
                     "status": "isolated_fixture_checks_passed_not_production_verified",
-                    "fixture_checks": {"isolated": True}}))
+                    "fixture_checks": {"isolated": True},
+                    "checks": {"isolation": True, "runtime_rule_evidence": False,
+                               "legacy_behavioral_equivalence": False}}))
             result = build_report("k5", load_batch_reports(root))
             self.assertTrue(result["evidence"]["all_five_successful"])
             (root / "madsc-batch-k3/k3.json").unlink()
+            with self.assertRaises(ValueError):
+                load_batch_reports(root)
+            (root / "madsc-batch-k3/k3.json").write_text(json.dumps({
+                "category": "k3", "module": MODULES["k3"],
+                "mode": "isolated_read_only", "production_writes": False,
+                "legacy_workflows_executed": False,
+                "status": "isolated_fixture_checks_passed_not_production_verified",
+                "fixture_checks": {"isolated": True},
+                "checks": {"isolation": True, "runtime_rule_evidence": False,
+                           "legacy_behavioral_equivalence": False}}))
+            (root / "madsc-batch-k3/extra.txt").write_text("unexpected")
             with self.assertRaises(ValueError):
                 load_batch_reports(root)
 

@@ -26,8 +26,16 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
             import json
             report = json.loads(path.read_text())
             self.assertEqual(report["source_workflow_count"], 99)
+            self.assertTrue(report["candidate_mapping_only"])
+            self.assertEqual(len(report["workflows"]), 99)
+            self.assertTrue(all(not x["stage_mapping_reviewed"] for x in report["workflows"]))
             self.assertEqual(report["source_tree_sha"], "source-tree")
             self.assertEqual(report["behavioral_parity_verified_count"], 0)
+
+    def test_stage_hints_remain_provisional(self):
+        self.assertEqual(audit.candidate_stages("epg-gunluk.yml"), ["K3"])
+        self.assertEqual(audit.candidate_stages("madsc-tum-sistem-yedek.yml"), ["K4"])
+        self.assertEqual(audit.candidate_stages("unmapped.yml"), ["UNCLASSIFIED"])
 
     def test_forged_blob_is_rejected(self):
         raw = b"name: sample\n"

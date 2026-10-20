@@ -1224,3 +1224,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/probe_target_gate.py` eklendi (commit 3e6cfd50d80df54585d9e76381ce3513eff74510): açık `authorized=True` zorunlu; yalnız HTTPS, varsayılan 443; URL kimlik bilgileri/fragment/yerel ve özel IP/yerel DNS adları reddi; salt okunur SHA256 fingerprint ve preflight-only çıktısı. DNS adları güvenli sayılıp otomatik ağa açılmaz; bağlantı anında DNS/IP pinning ve redirect kontrolü hâlâ gerekli.
 - `tests/test_probe_target_gate.py` negatif izin/SSRF URL testleri eklendi (commit c440f2d4d07e581d299bd2311c04c59afcfc4182). Actions #39416121054 ilk kontrolde pending; başarı henüz doğrulanmadı.
 - Ağ bağlantısı, ffprobe, playlist/EPG/logo/yedek/favori değişikliği, eski depo yazması yapılmadı. K2–K3 gerçek ölçüm provenance, K4 offsite restore ve IBO cihaz kabulü açık. Gerçek davranışsal eşdeğerlik 0/92, runtime güvenlik 0/26.
+
+
+## 20 Ekim 2026 — K2 kaynak eşleşmeli K3 ön kontrol paketi
+- Önceki K1 hedef kontrolü commit 3e6cfd50 için Actions #39416106588 completed SUCCESS; `tests/test_probe_target_gate.py` commit c440f2d4 için #39416121054 son sorguda in_progress, başarı varsayılmadı.
+- `madsc/probe_target_gate.py` içine salt okunur `validate_resolved_addresses` (bütün DNS yanıtları global IP olmalı, IPv4-mapped IPv6 ve tekrarlar reddedilir) ve `validate_probe_handoff` (açık izin, K2 envelope/run/SHA/digest ve URL SHA256 aday üyeliği zorunlu) eklendi. Commit d15faec7c2b488211fde134cfbc3198fcb5502b3.
+- Negatif DNS/SSRF, yetkisiz çağrı, yabancı K2 aday ve yanlış run testleri `tests/test_probe_target_gate.py` dosyasına eklendi. Commit aec6e974566bec27b428593542b9e91e72670fe7; Actions #39416361407 ilk kontrolde queued. Kod ve test commitleri var, CI SUCCESS henüz iddia edilmez.
+- DNS/IP pinning ve redirects/timeout sınırları şu anda yalnız preflight gereksinimi olarak raporlanır; bunları uygulayan ağ çalıştırıcısı ve canlı ffprobe henüz YOK. `authorized=True` otomatik canlı yayın test izni sayılmamalı. Korunan üretim dosyaları ve eski depo değişmedi. Davranışsal 0/92, runtime güvenlik 0/26.

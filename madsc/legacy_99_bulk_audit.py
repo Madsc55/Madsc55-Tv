@@ -40,7 +40,7 @@ def run(output, token):
         if blob.get("encoding") != "base64":
             raise ValueError("Unexpected blob encoding")
         raw = base64.b64decode(blob["content"], validate=True)
-        expected_sha = hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\\0" + raw).hexdigest()
+        expected_sha = hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
         if expected_sha != item["sha"] or blob.get("sha") != item["sha"]:
             raise ValueError("Source blob SHA mismatch")
         if len(raw) != item.get("size"):

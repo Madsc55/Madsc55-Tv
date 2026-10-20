@@ -1,10 +1,5 @@
 name: Madsc55-Tv K3 Turkce TV Video Pilotu
 on:
-  push:
-    branches: [main]
-    paths:
-      - madsc/k3_turkish_tv_video_pilot.py
-      - .github/workflows/madsc-k3-turkish-tv-video.yml
   workflow_dispatch:
 permissions:
   contents: read

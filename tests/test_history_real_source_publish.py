@@ -66,6 +66,33 @@ class RealSourcePublisherTests(unittest.TestCase):
                     publish_source(source, target)
             self.assertFalse(target.exists())
 
+    def test_k1_denies_protected_destination_before_creation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            source.mkdir()
+            (source / "gecmis.json").write_text('{"history":{}}')
+            (source / "ana_liste_test_gecmisi.json").write_text('{"channels":{}}')
+            target = root / "YEDEKLER"
+            with self.assertRaises(PermissionError):
+                publish_source(source, target)
+            self.assertFalse(target.exists())
+
+    def test_k1_runtime_gate_is_called_before_evidence_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            source.mkdir()
+            (source / "gecmis.json").write_text('{"history":{}}')
+            (source / "ana_liste_test_gecmisi.json").write_text('{"channels":{}}')
+            target = root / "out"
+            with patch("madsc.history_real_source_publish.enforce_write_paths",
+                       side_effect=PermissionError("K1 blocked")) as guard:
+                with self.assertRaises(PermissionError):
+                    publish_source(source, target)
+            self.assertEqual(guard.call_count, 1)
+            self.assertFalse(target.exists())
+
     def test_symlinked_source_file_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

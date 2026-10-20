@@ -10,6 +10,7 @@ import ssl
 import subprocess
 import sys
 import json
+import math
 from urllib.parse import urlsplit
 
 from madsc.probe_target_gate import validate_probe_handoff, validate_resolved_addresses
@@ -19,13 +20,19 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
                           *, authorized: bool = False, timeout: float = 5.0) -> dict:
     if authorized is not True:
         raise PermissionError("Explicit probe authorization required")
-    if type(timeout) not in (float, int) or not 0 < timeout <= 5:
+    if type(timeout) not in (float, int) or not math.isfinite(timeout) or not 0 < timeout <= 5:
         raise ValueError("Unsafe network timeout")
     started = time.monotonic()
     deadline = started + timeout
     gate = validate_probe_handoff(url, envelope, run_id, commit_sha, authorized=True)
     parts = urlsplit(url)
     host = parts.hostname
+    # A numeric IP must not be sent to a DNS resolver; it has already passed
+    # the global-address check in K1 preflight.
+    try:
+        literal_ip = ipaddress.ip_address(host)
+    except ValueError:
+        literal_ip = None
     # Resolve DNS in a separate bounded process: unlike a thread, a stuck
     # getaddrinfo can be killed at the deadline. The child opens no TCP socket.
     resolver = ("import json,socket,sys; "
@@ -33,16 +40,19 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
                 "proto=socket.IPPROTO_TCP); "
                 "print(json.dumps([x[4][0] for x in a]))")
     try:
-        budget = deadline - time.monotonic()
-        if budget <= 0:
-            raise TimeoutError("DNS deadline exceeded")
-        completed = subprocess.run(
-            [sys.executable, "-I", "-c", resolver, host],
-            capture_output=True, text=True, timeout=budget, check=True,
-            env={"PYTHONIOENCODING": "utf-8"})
-        if len(completed.stdout) > 16384:
-            raise ValueError("Oversized DNS response")
-        ips = validate_resolved_addresses(json.loads(completed.stdout))
+        if literal_ip is not None:
+            ips = validate_resolved_addresses([str(literal_ip)])
+        else:
+            budget = deadline - time.monotonic()
+            if budget <= 0:
+                raise TimeoutError("DNS deadline exceeded")
+            completed = subprocess.run(
+                [sys.executable, "-I", "-c", resolver, host],
+                capture_output=True, text=True, timeout=budget, check=True,
+                env={"PYTHONIOENCODING": "utf-8"})
+            if len(completed.stdout) > 16384:
+                raise ValueError("Oversized DNS response")
+            ips = validate_resolved_addresses(json.loads(completed.stdout))
     except subprocess.TimeoutExpired as exc:
         raise TimeoutError("DNS deadline exceeded") from exc
     except TimeoutError:

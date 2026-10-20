@@ -117,6 +117,13 @@ class LocalOutputGuardTests(unittest.TestCase):
                 enforce_local_output_path(existing)
             self.assertEqual(existing.read_text(), "original")
 
+    def test_absolute_traversal_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(root / "nested" / ".." / "evidence.json")
+            self.assertFalse((root / "evidence.json").exists())
+
     def test_symlinked_parent_and_root_boundary_blocked(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

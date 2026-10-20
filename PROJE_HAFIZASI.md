@@ -1393,3 +1393,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/maintenance.py` içine `review_candidate_batch(coordination, backup_evidence)` eklendi. K2/K3 aday SHA256 kimliği tekilliği, `delete_allowed=False`, `production_change_allowed=False`, IBO koruma/hold bayrakları, K4 bağımsız sandbox restore kanıtı birlikte denetleniyor. K5 sonuç raporunda aday, bekleyen ve IBO korunan sayıları ve restore durumu var; üretim onayı daima false. Commit `f25800d4d2bcdf0fe40c512a948dafbc0442e3f3`.
 - `tests/test_maintenance.py` içine başarı, K4 eksik kanıt, silme izni, mükerrer aday ve sahte harici depolama iddiası negatif senaryoları eklendi. Commit `3bb26583e9f0d210f2a6854311f404f6d780f9f4`.
 - Bu fonksiyon henüz gerçek yürütücüye bağlanmadı ve testler henüz çalıştırılmadı. 0/92 ve 0/26 kabul değişmedi. GitHub Actions kotası dolu; tetiklenmedi. Eski repo ve üretim dosyaları değiştirilmedi. Sonraki adım: K5 fonksiyonunu gerçek K1–K5 offline executor içine bağla ve uçtan uca regresyonu çalıştır.
+
+
+## 20 Ekim 2026 — GitHub üzerinde gerçek K5 yürütücü bağlantısı
+- `madsc/core.py` K5 executor içine `review_candidate_batch()` bağlandı. K2/K3 fixture aday raporu ile K4 `verify_independent_restore()` tarafından üç ayrı geçici dizinde doğrulanan sandbox restore raporu K5'te aynı karar nesnesinde kontrol ediliyor. Yeni boolean fixture check `k2_k3_k4_k5_candidate_restore_review`; commit `9ac7fece4266a9c1b54c05f4acee967b3a8306c6`.
+- `tests/test_offline_five_gate.py` gerçek `execute('k5')` sonucunda yeni bağlantı kontrolünün true olmasını isteyen test eklendi. Commit `1065942e4f1dae87e9000024217c0c394e75caa6`.
+- Kod commit edildi, fakat test yürütülmedi ve Actions tetiklenmedi (2000/2000 ücretsiz dakika dolu, $0 bütçe). Bu yalnız izole fixture entegrasyonudur, canlı kanallar/IBO cihazı/harici depolama kanıtı değildir; 0/92, 0/26. Korunan dosyalar ve eski depo değişmedi.

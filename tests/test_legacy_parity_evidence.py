@@ -14,6 +14,12 @@ class EvidenceLedgerTest(unittest.TestCase):
         report = ledger(inventory(), {".github/workflows/w00.yml":
                        {"legacy_execution": {"sha256": "a"*64, "run_id": 1}}})
         self.assertEqual(report["accepted"], 0)
+    def test_forged_complete_evidence_stays_blocked(self):
+        all_proofs = {key: {"sha256": "a"*64, "run_id": 123} for key in (
+            "legacy_execution", "new_execution", "input_output_comparison",
+            "side_effect_comparison", "failure_timeout_comparison", "reviewer_approval")}
+        report = ledger(inventory(), {".github/workflows/w00.yml": all_proofs})
+        self.assertEqual(report["accepted"], 0)
     def test_reject_unknown_workflow(self):
         with self.assertRaises(ValueError):
             ledger(inventory(), {"other": {}})

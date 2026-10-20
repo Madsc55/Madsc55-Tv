@@ -1371,3 +1371,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `tests/test_offline_gate.py` dosyasına K3 başarısızken yeşil unittest'in engellenmesi ve iki gate beraber geçince yalnız offline başarı senaryoları eklendi. Commit `fa47a219446622c7523935848e371cecb34bd54f`.
 - **Henüz gerçek Python regresyonu çalıştırılmadı** ve Actions 2000/2000 kota dolu olduğu için tetiklenmedi. Bu değişiklik K1–K5 fixture bağını güçlendirir; 92 davranış kabulü 0/92, 26 runtime güvenlik 0/26, canlı medya/IBO/offsite restore kanıtı eksik. Eski repo, üretim listeleri ve cron değiştirilmedi.
 - Sıradaki büyük paket: yerel gate'i gerçek çalışma ortamında test et; gerçek K1 yazma yolları, K2 keşif, K3 medya/EPG, K4 bağımsız restore ve K5 kanıt bağlarını gerçek negatif senaryolarla sertleştir; eski notların tam birleştirilmesini bitir. 21 kural ve $0 maliyet geçerli.
+
+
+## 20 Ekim 2026 — K1–K5 eksik/yanıltıcı kanıta karşı sertleştirme
+- `madsc/offline_gate.py` artık `fixture_gate_passed=True` tek başına kabul etmiyor: `categories_checked==5`, tam `k1,k2,k3,k4,k5` kümesi, her kategoride `success`, `production_ready=False`, `production_writes=False` zorunlu. Eksik K5 veya yanlış üretim bayrağıyla başarı kapalı. Commit `1850182dc1443b584b11a481c2db5d7cdd015037`.
+- `tests/test_offline_gate.py` gerçekçi beşli mock alanlarıyla güncellendi; 4 kategori olmasına rağmen `fixture_gate_passed=True` verilmesi negatif testle reddediliyor. Commit `4f106ee74780a13d71ac84d68aa5e7de241f2fbf`.
+- Testler **henüz çalıştırılmadı**; özel depoya container üzerinden ağ erişimi yok ve GitHub Actions 2000/2000 ücretsiz kota dolu. Bunlar üretim davranış kabulü değildir; 0/92 ve 0/26 korunur. Eski repo ve canlı dosyalar değişmedi. Sıradaki iş: tam offline regresyonun gerçekten yürütülmesi, K1–K5 görev/veri zincirinin genişletilmesi, kaynak notların tam birleşmesi.

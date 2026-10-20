@@ -15,9 +15,19 @@ def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
         raise PermissionError("Report target must be a regular file")
     if destination.is_symlink() or destination.parent.is_symlink():
         raise PermissionError("Symlink target forbidden")
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    if not destination.parent.resolve().is_relative_to(root.resolve()):
+    # Check every existing ancestor before mkdir: an intermediate symlink
+    # must not create directories outside the isolated fixture root.
+    base = root.resolve(strict=True)
+    cursor = root
+    for part in relative_path.split("/")[:-1]:
+        cursor = cursor / part
+        if cursor.is_symlink():
+            raise PermissionError("Symlink ancestor forbidden")
+        if cursor.exists() and not cursor.is_dir():
+            raise PermissionError("Report ancestor must be a directory")
+    if not destination.parent.resolve().is_relative_to(base):
         raise PermissionError("Escaping fixture root")
+    destination.parent.mkdir(parents=True, exist_ok=True)
     if destination.exists():
         raise FileExistsError("Refusing to overwrite existing report evidence")
     with destination.open("x", encoding="utf-8") as handle:

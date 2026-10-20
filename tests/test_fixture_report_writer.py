@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 from madsc.fixture_report_writer import write_fixture_report
+from madsc.history_pair_store import write_isolated_history_pair, decode_pair
 
 
 class FixtureReportWriterTests(unittest.TestCase):
@@ -49,3 +50,25 @@ class FixtureReportWriterTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 write_fixture_report(root, "reports/evidence.json", "second")
             self.assertEqual((root / "reports/evidence.json").read_text(), "first")
+
+    def test_k2_history_is_protected_by_k1_and_does_not_overwrite(self):
+        pair = {"gecmis.json": {"history": {}},
+                "ana_liste_test_gecmisi.json": {"channels": {}}}
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            result = write_isolated_history_pair(root, "reports/history-pair.json", pair)
+            self.assertTrue(result["isolated_history_written"])
+            self.assertEqual(decode_pair((root / "reports/history-pair.json").read_text()), pair)
+            with self.assertRaises(PermissionError):
+                write_isolated_history_pair(root, "reports/history-pair.json", pair)
+
+    def test_k2_history_rejects_traversal_and_protected_paths(self):
+        pair = {"gecmis.json": {"history": {}},
+                "ana_liste_test_gecmisi.json": {"channels": {}}}
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            for path in ("reports/../gecmis.json", "gecmis.json", "reports/test.m3u8"):
+                with self.subTest(path=path), self.assertRaises(PermissionError):
+                    write_isolated_history_pair(root, path, pair)

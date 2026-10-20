@@ -1411,3 +1411,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/core.py` K5 izole yürütücüsü, K2/K3 aday + K4 geri yükleme değerlendirme raporunu `write_stage_report` üzerinden K1 `enforce_write_paths` kapısından geçirip yalnız geçici `reports/k5-isolated-evidence.json` yoluna yazıyor. Kaydedilen JSON eşitliği, `production_writes=True` reddi ve ikinci yazmanın `FileExistsError` ile engellenmesi tek fixture kontrolü `k1_guards_k5_report_write` altında sınanıyor. Commit `7e7383c7bdd44353c3330a9a0aa3f9c6c4095753`.
 - `tests/test_offline_five_gate.py` gerçek K5 yürütücüde bu K1 kontrolünün True olmasını gerektiriyor. Commit `f55022b325d8ee64c14fd098f0fdda4e3489469e`.
 - Bu yalnızca izole K5 kanıt yazıcısına bağlandı; GitHub git push/diğer Actions yazma yollarının tümüne evrensel runtime K1 kapısı kurulduğu iddia edilmez. Testler çalıştırılmadı; 0/92, 0/26 değişmedi. Ücretli Actions tetiklenmedi, eski depo ve canlı dosyalar değişmedi. Sıradaki: gerçek kodda diğer dosya yazma noktalarını envanterleyip korumalı yollara K1 zorunlu kontrolünü genişletmek; ücretsiz offline regresyon çalıştırmak.
+
+
+## 20 Ekim 2026 — K1 geçmiş kaynak yayımlayıcısı yazma denetimi
+- `madsc/history_real_source_publish.py` gerçek kaynak geçmiş kanıtı dizini oluşturulmadan önce K1 `enforce_write_paths` kontrolünü ve gerçek mevcut üst dizin şartını uyguluyor. Commit `fab4316a958f94b5bd21d070fd99d8e65af57c55`.
+- `tests/test_history_real_source_publish.py` korunan `YEDEKLER` hedefi ve K1 tarafından reddedilen yazma çağrısında hiç çıktı oluşmaması negatif senaryolarını içeriyor. Commit `a8dc0ba6fbdb1b2d8462fba6dc126448c4a94104`.
+- `madsc/write_path_audit.py` korunan klasörlerin yalnız alt yollarını değil kök adlarını da engelliyor. Commit `94698ff573cfcf3c62ba9ed4eb2518de58b8304a`.
+- Test yürütülmedi; Actions başlatılmadı; 0/92 davranışsal ve 0/26 runtime güvenlik kabulü değişmedi. Bu K1 kapısı sadece çağıran yazıcılarda etkilidir, git push veya bağımsız Actions işlerini otomatik yakalamaz. Sonraki: tüm diğer gerçek yazıcıları envanterleyip güvenli hedef denetimini genişletmek, offline testleri çalıştırmak.

@@ -1114,3 +1114,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - K5 onceki sabit success fixture dizisi yerine ayni Actions kosusunun madsc-batch-k1..k4 artifact'larini indirir, kendi k5.json raporunu ekler, tum bes kategori JSON kanitini load_batch_reports ile kimlik/mod/izin/durum/fixture alanlarinda fail-closed denetler. Ardindan K1 korumali write_stage_report ile K5 izole ozetini yazar. Kod f9846cc024dfbead8552acb403cbe57a136b41d3; workflow e465b0c162aa666cbb633628cdb06e548a4edf96; eksik kanit testi c77471502d3bf62981bc372c4403a58b0b2e4ae5.
 - Son test 39409310885 pending. Ara workflow run 39409293787 cancelled, basari olarak sayilmaz. Tam zincir ve artifact indirme dogrulanmali.
 - Bu gelistirme fixture CI kanitinin sahte sabit success ile temsilini azaltir, ancak gercek kanal ag testi/IBO/harici restore/92 davranissal kabul/26 runtime guvenlik kabulunu kanitlamaz. Eski repo ve korunan listeler degismedi. Referans %47/%53.
+
+
+## 20 Ekim 2026 - K5 artifact paket guvenligi sertlestirme
+- Onceki tam besli Actions 39409310885 SUCCESS.
+- K5 load_batch_reports artik sadece kisitli alanlari kontrol etmek yerine madsc.batch_acceptance.collect ile tum 5 artifact paketini, dosya/dizin yapisini, symlink, beklenmeyen dosya, kategori schema, checks ve fixture alanlarini ayni fail-closed kabul kapisindan dogrular. Kod commit 4c884ac6e4f62e4c5507e3b7b8635bf389691907.
+- test_stage_report_cli fixture'i tam schema ile duzeltildi; beklenmeyen extra.txt dosyasi reddi eklendi. Test commit e9133fc9149972034a0f8cd595557e7901671eab.
+- Yeni toplu Actions 39409800593 son kontrolde pending; onceki 39409784819 in_progress. Bunlar basarili ilan edilmedi.
+- Eski depo ve korunan listeler degismedi. 0/92 davranissal, 0/26 runtime guvenlik kabul; %47/%53 referans.

@@ -20,6 +20,7 @@ def validate_probe_target(url: str, *, authorized: bool = False) -> dict:
     except ValueError as exc:
         raise ValueError("Invalid probe URL") from exc
     if (parts.scheme != "https" or not host or not parts.netloc or
+            "\\" in url or parts.netloc.startswith((".", "-")) or
             parts.username is not None or parts.password is not None or
             parts.fragment or port not in (None, 443) or
             not host.isascii() or host.endswith(".") or
@@ -65,9 +66,9 @@ def validate_resolved_addresses(addresses: list[str]) -> tuple[str, ...]:
                 isinstance(address, ipaddress.IPv6Address) and address.ipv4_mapped is not None):
             raise ValueError("Non-public DNS answer")
         validated.append(str(address))
-    if len(set(validated)) != len(validated):
-        raise ValueError("Duplicate DNS answer")
-    return tuple(validated)
+    # getaddrinfo commonly repeats an address across socket families/records.
+    # Validate *every* answer first, then deduplicate without weakening SSRF checks.
+    return tuple(dict.fromkeys(validated))
 
 
 def validate_probe_handoff(url: str, envelope: dict, run_id: str,

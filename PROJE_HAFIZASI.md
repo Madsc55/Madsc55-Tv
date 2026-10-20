@@ -1141,3 +1141,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Onceki Actions 39410321203 SUCCESS. Yeni madsc/candidate_probe_link.py K2 envelope'i run_id/commit_sha/SHA256 digest ile unpack eder; K3 offline ffprobe kayitlarinin url_sha256 parmak izlerinin tamamini dogrulanmis K2 adaylarina baglar, yabanci probe'u reddeder. Test edilmemis adaylari ayrica sayar; canli ag/IBO/uretim onayi vermez. Kod commit 02bcf367faeb167649a7bfb0f76c05930d50fdc0.
 - Testler: eslesen aday, yanlis run, yabanci probe, test edilmemis aday; commit b3e559043176e34809b5adceae05cf95acb188fc. CI 39410757432 son kontrolde pending; basarili iddiasi yok.
 - Bu fonksiyon henuz mevcut workflow'un K3 adiminda kullanilmiyor; sonraki is fixture akisini gercek K2 candidate digest ile baglayip K3/K5'e entegre etmek. K1-K5 capraz etkileri ve veri koruma kurallari gecerli. %47/%53; 0/92, 0/26.
+
+
+## 20 Ekim 2026 - K2-K3 aday teknik fixture baglantisi Actions'ta zorunlu
+- 39410735665 ve 39410757432 onceki K2-K3 fingerprint kod/test kosulari SUCCESS.
+- madsc/candidate_probe_link.py icine K2 envelope + K3 offline probe JSON okuyup run_id/commit_sha ve URL SHA256 bagini denetleyen K1 korumali K3 rapor CLI eklendi. Commit e3b3ee200594eeb3a478c5b4c63df78fc9d92174.
+- madsc-05-bakim.yml K3 adimi artik sabit a*64 sahte parmak izi yerine ayni kosunun dogrulanmis K2 aday envelope'inden fingerprint cikarir ve candidate_probe_link CLI ile K3 izole raporunu yazar. Commit 15de0293af6bc56ad316c37791789b4f35ddff79.
+- DIKKAT: K3 ffprobe kayitlari hala sentetik fixture (video/audio/40s); gercek ffprobe veya canli sureklilik kaniti degildir. Gercek kayit gelirse K2 baglantisi dogrulanabilir. Actions 39411220582 son kontrolde queued; basari iddiasi yok.
+- Korunan listeler/EPG/favoriler/yedekler/eski depo/PR71 degismedi. 0/92, 0/26, %47/%53 referans.

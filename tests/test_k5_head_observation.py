@@ -1,4 +1,5 @@
 import hashlib
+import json
 import unittest
 
 from madsc.artifact_handoff import pack
@@ -29,6 +30,9 @@ class K5HeadObservationTests(unittest.TestCase):
         self.assertFalse(result["actual_stream_measurements_verified"])
         self.assertFalse(result["production_ready"])
         self.assertTrue(result["http_success_status"])
+        self.assertEqual(result["observation_sha256"], hashlib.sha256(
+            json.dumps(self.observation, sort_keys=True, separators=(",", ":"),
+                       ensure_ascii=True, allow_nan=False).encode("utf-8")).hexdigest())
 
     def test_fail_closed_on_forged_claims(self):
         for key, value in (("http_status", 302), ("http_status", True),
@@ -51,6 +55,16 @@ class K5HeadObservationTests(unittest.TestCase):
                     evaluate_k3_head_observation(item, self.envelope,
                                                  self.run, self.sha)
 
+
+    def test_digest_changes_on_evidence_change(self):
+        baseline = evaluate_k3_head_observation(
+            self.observation, self.envelope, self.run, self.sha)
+        altered = evaluate_k3_head_observation(
+            dict(self.observation, http_status=204), self.envelope,
+            self.run, self.sha)
+        self.assertNotEqual(baseline["observation_sha256"],
+                            altered["observation_sha256"])
+        self.assertFalse(altered["head_transport_independently_verified"])
 
     def test_non_success_http_is_not_live_success(self):
         for status in (100, 401, 403, 404, 500):

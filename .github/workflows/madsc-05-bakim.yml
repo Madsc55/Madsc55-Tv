@@ -165,11 +165,14 @@ jobs:
           path: reports/k3-handoff.json
           if-no-files-found: error
           retention-days: 14
-      - name: K3 offline fixture kaniti olustur ve K1 korumali raporla
+      - name: K3 aday parmak iziyle bagli offline fixture kaniti
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
           mkdir -p reports/reports
-          python -c 'import json;print(json.dumps([{"url_sha256":"a"*64,"ffprobe":{"streams":[{"codec_type":"video"},{"codec_type":"audio"}],"format":{"duration":"40"}}}]))' > reports/k3-offline-input.json
-          python -m madsc.stage_report_cli --stage k3 --input reports/k3-offline-input.json --isolated-report-root reports
+          python -c 'import json;from madsc.batch_acceptance import _unique_json_pairs;from madsc.artifact_handoff import unpack;import os;d=json.load(open("reports/k2-handoff/k2-candidates.json"),object_pairs_hook=_unique_json_pairs);c=unpack(d,os.environ["RUN_ID"],os.environ["COMMIT_SHA"])["candidates"];print(json.dumps([{"url_sha256":x["url_sha256"],"ffprobe":{"streams":[{"codec_type":"video"},{"codec_type":"audio"}],"format":{"duration":"40"}}} for x in c]))' > reports/k3-offline-input.json
+          python -m madsc.candidate_probe_link --candidates reports/k2-handoff/k2-candidates.json --probes reports/k3-offline-input.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA" --isolated-report-root reports
       - name: K3 korumali kaniti sakla
         uses: actions/upload-artifact@v4
         with:

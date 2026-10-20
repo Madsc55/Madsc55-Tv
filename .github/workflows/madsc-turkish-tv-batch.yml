@@ -5,21 +5,22 @@ on:
     branches: [main]
     paths:
       - madsc/turkish_tv_batch_validation.py
+      - madsc/k3_turkish_tv_video_pilot.py
       - .github/workflows/madsc-turkish-tv-batch.yml
 permissions:
   contents: read
 jobs:
   discover-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-      - name: Discover and verify 120 Turkish feed candidates in one run
+      - name: Discover and verify up to 1000 Turkish feed candidates in one run
         env:
-          MADSC_MAX_PROBES: '120'
+          MADSC_MAX_PROBES: '1000'
         run: python -m madsc.turkish_tv_batch_validation
       - uses: actions/upload-artifact@v4
         if: always()

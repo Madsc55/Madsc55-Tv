@@ -26,3 +26,33 @@ def link_candidate_probes(envelope: dict, records: list[dict], run_id: str, comm
         "production_writes": False, "production_ready": False,
         "results": summary["results"],
     }
+
+
+def main():
+    import argparse
+    import json
+    from pathlib import Path
+    from madsc.batch_acceptance import _unique_json_pairs
+    from madsc.fixture_report_writer import write_stage_report
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--candidates", type=Path, required=True)
+    parser.add_argument("--probes", type=Path, required=True)
+    parser.add_argument("--run-id", required=True)
+    parser.add_argument("--commit-sha", required=True)
+    parser.add_argument("--isolated-report-root", type=Path, required=True)
+    args = parser.parse_args()
+    def load(path):
+        if path.is_symlink() or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024:
+            raise ValueError("Invalid or oversized evidence")
+        return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
+    linked = link_candidate_probes(load(args.candidates), load(args.probes),
+                                  args.run_id, args.commit_sha)
+    report = {"category": "k3", "production_writes": False,
+              "production_ready": False, "evidence": linked}
+    print(json.dumps(write_stage_report(args.isolated_report_root, "k3", report),
+                     sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

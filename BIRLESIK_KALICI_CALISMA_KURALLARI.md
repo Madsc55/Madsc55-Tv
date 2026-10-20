@@ -44,3 +44,11 @@ Tarih: 20 Ekim 2026. Bu belge eski ve yeni notlardan çıkarılmış çalışma 
 - Eski depodaki Actions run/commit/test basarisi yeni Madsc55-Tv sisteminin ilerlemesi veya kabulu olarak sunulamaz. Her kanit icin dogru repo, dal, commit SHA ve run ID birlikte dogrulanir.
 - Eski sistemin notlari, hatalari ve kazanilmis islevleri yeni K1–K5 sistemine bilgi kaynagidir; yeni sistemin gelistirmesi yalniz yeni depoda yapilir. Tamamlanan incelemeleri ve testleri gereksiz tekrarlama.
 - Bu madde mevcut **20 calisma ilkesine ek** baglayici kuraldir; onceki ilkeleri kaldirmaz veya degistirmez. Yeni sohbet devir notuna da aktarilir.
+
+
+## ZORUNLU AD VE DEPO KIMLIGI KONTROLU - 20 Ekim 2026
+- Yeni sistemin TAM ve TEK dogru adi: **Madsc55-Tv**. GitHub sahibi/deposu: **Madsc55/Madsc55-Tv**. Yazilabilir tek dal: **main**.
+- **Madsc-Tv**, **MADSC TV** veya **Madsc55/madsc-tv** yeni sistemin adi/depusu olarak kullanilamaz. Kisa, eksik veya eski adla proje tanitma; yeni sohbet baslik ve cevaplarinda **Madsc55-Tv** yaz.
+- **Madsc55/madsc-tv** eski depodur; **madsc/bes-sistem-toplu-birlestirme** dali da dahil kesinlikle salt okunur. Kullanici acik izin vermedikce eski depoda commit, dosya degisikligi, Actions tetikleme veya workflow duzenlemesi YASAK.
+- HER YENI SOHBETTE ilk GitHub yazma isleminden ONCE hedef repository_full_name=Madsc55/Madsc55-Tv ve branch=main oldugunu acikca dogrula. Adlar birbirine benziyor diye eski depoya yazma. Yanlis hedef saptanirsa yazma islemini durdur.
+- Bu madde mevcut 21 kurali guclendirir; onceki korumalari kaldirmaz. Yeni sohbete devirde aynen korunur.

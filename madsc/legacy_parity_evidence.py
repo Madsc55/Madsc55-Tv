@@ -28,17 +28,21 @@ def ledger(inventory, evidence=None):
         proofs = evidence.get(path, {})
         if not isinstance(proofs, dict) or set(proofs) - set(REQUIRED):
             raise ValueError("Invalid proof keys")
-        accepted = all(isinstance(proofs.get(key), dict)
-                       and isinstance(proofs[key].get("sha256"), str)
-                       and len(proofs[key]["sha256"]) == 64
-                       and all(c in "0123456789abcdef" for c in proofs[key]["sha256"])
-                       and isinstance(proofs[key].get("run_id"), int)
-                       and proofs[key]["run_id"] > 0
-                       for key in REQUIRED)
-        # Self-reported hashes and run IDs are not independent verification.
-        # A separate evidence verifier must authorize acceptance; until then fail closed.
+        valid_proofs = all(
+            isinstance(proofs.get(key), dict)
+            and isinstance(proofs[key].get("sha256"), str)
+            and len(proofs[key]["sha256"]) == 64
+            and all(c in "0123456789abcdef" for c in proofs[key]["sha256"])
+            and type(proofs[key].get("run_id")) is int
+            and proofs[key]["run_id"] > 0
+            for key in REQUIRED
+        )
+        # Evidence metadata alone cannot certify behavior. An independent
+        # verifier must supply a future approval token; this ledger is blocked.
         accepted = False
         output.append({"path": path, "stages": row.get("candidate_k_stages", []),
-                       "accepted": accepted, "missing": [k for k in REQUIRED if k not in proofs]})
+                       "accepted": accepted, "evidence_metadata_complete": valid_proofs,
+                       "missing": [k for k in REQUIRED if k not in proofs],
+                       "independent_verification": "not_implemented"})
     return {"total": len(rows), "accepted": sum(r["accepted"] for r in output),
             "blocked": sum(not r["accepted"] for r in output), "rows": output}

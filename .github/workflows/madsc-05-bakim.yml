@@ -168,7 +168,7 @@ jobs:
       - name: K3 offline fixture kaniti olustur ve K1 korumali raporla
         run: |
           mkdir -p reports/reports
-          printf '%s\\n' '[{"url_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","ffprobe":{"streams":[{"codec_type":"video"},{"codec_type":"audio"}],"format":{"duration":"40"}}}]' > reports/k3-offline-input.json
+          python -c 'import json;print(json.dumps([{"url_sha256":"a"*64,"ffprobe":{"streams":[{"codec_type":"video"},{"codec_type":"audio"}],"format":{"duration":"40"}}}]))' > reports/k3-offline-input.json
           python -m madsc.stage_report_cli --stage k3 --input reports/k3-offline-input.json --isolated-report-root reports
       - name: K3 korumali kaniti sakla
         uses: actions/upload-artifact@v4

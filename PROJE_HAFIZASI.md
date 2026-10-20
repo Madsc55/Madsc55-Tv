@@ -1418,3 +1418,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `tests/test_history_real_source_publish.py` korunan `YEDEKLER` hedefi ve K1 tarafından reddedilen yazma çağrısında hiç çıktı oluşmaması negatif senaryolarını içeriyor. Commit `a8dc0ba6fbdb1b2d8462fba6dc126448c4a94104`.
 - `madsc/write_path_audit.py` korunan klasörlerin yalnız alt yollarını değil kök adlarını da engelliyor. Commit `94698ff573cfcf3c62ba9ed4eb2518de58b8304a`.
 - Test yürütülmedi; Actions başlatılmadı; 0/92 davranışsal ve 0/26 runtime güvenlik kabulü değişmedi. Bu K1 kapısı sadece çağıran yazıcılarda etkilidir, git push veya bağımsız Actions işlerini otomatik yakalamaz. Sonraki: tüm diğer gerçek yazıcıları envanterleyip güvenli hedef denetimini genişletmek, offline testleri çalıştırmak.
+
+
+## 20 Ekim 2026 — K1 verified history pipeline yazma ön koşulu
+- `madsc/history_verified_pipeline.py` K2 doğrulanmış geçmiş kaynağı indirme/aktarma akışında çıktı adı için `enforce_write_paths` K1 kontrolü ekledi; çıktı üst dizini mevcut gerçek dizin olmak zorunda, sessiz klasör oluşturma kaldırıldı. Commit `c5fc6bd08cb702b348b6aefcd92939b451fde10b`.
+- `tests/test_history_verified_pipeline.py` `playlist.m3u8` korunan hedefinin GitHub origin doğrulama çağrısından önce reddedildiğini ve çıktı üretilmediğini kontrol eden negatif test içeriyor. Commit `f47a227e7371756a9484f149c7255fd98b3c1624`.
+- Yalnız çıktı dosyasının adı denetleniyor; mutlak çıktı yolunun tüm üst bileşenlerini ve bağımsız workflow git yazmalarını merkezi biçimde koruma kapsamı henüz kanıtlanmadı. Testler çalıştırılmadı, Actions tetiklenmedi; 0/92 ve 0/26 değişmedi. Sonraki adım: tüm çıktı yollarını checkout sınırı, symlink ve korunan ata dizinleri açısından denetleyen merkezi yardımcı ve offline regresyon.

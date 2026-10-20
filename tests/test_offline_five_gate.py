@@ -41,6 +41,17 @@ class OfflineFiveGateTests(unittest.TestCase):
         self.assertEqual(visited, ["k1", "k2", "k3", "k4", "k5"])
         self.assertFalse(result["fixture_gate_passed"])
 
+    def test_real_k1_to_k5_fixture_integration(self):
+        # Unlike mocked decision tests, exercise the actual five stage executors.
+        result = assess_all()
+        self.assertEqual(result["categories_checked"], 5)
+        self.assertEqual(set(result["categories"]), {"k1", "k2", "k3", "k4", "k5"})
+        self.assertTrue(result["fixture_gate_passed"], result["errors"])
+        self.assertFalse(result["production_ready"])
+        self.assertFalse(result["production_writes"])
+        self.assertEqual(result["legacy_92_behavioral_acceptance"], 0)
+        self.assertEqual(result["runtime_security_26_acceptance"], 0)
+
     def test_missing_checks_block_batch(self):
         result = assess_all(lambda category: {})
         self.assertFalse(result["fixture_gate_passed"])

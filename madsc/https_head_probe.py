@@ -45,6 +45,8 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
         ips = validate_resolved_addresses(json.loads(completed.stdout))
     except subprocess.TimeoutExpired as exc:
         raise TimeoutError("DNS deadline exceeded") from exc
+    except TimeoutError:
+        raise
     except (subprocess.CalledProcessError, json.JSONDecodeError, OSError) as exc:
         raise ValueError("DNS resolution failed") from exc
     if not ips:

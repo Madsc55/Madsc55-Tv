@@ -19,7 +19,7 @@ from madsc.legacy_epg_logo import join_pilot
 from madsc.legacy_retest_390 import evaluate_entries, parse_entries
 from madsc.candidate_coordination import coordinate
 from madsc.write_path_audit import audit_write_paths
-from madsc.fixture_report_writer import write_fixture_report
+from madsc.fixture_report_writer import write_fixture_report, write_stage_report
 from madsc.history_pair_bridge import bridge_legacy_pair, merge_into_envelope
 from madsc.history_pair_store import decode_pair
 
@@ -205,7 +205,28 @@ def execute(category: str) -> dict:
                 Path(source_dir), Path(backup_dir), Path(restored_dir), ["fixture.txt"])
         cross_system_review = review_candidate_batch(candidate_report, k4_review)
         corrupted_cross_review = review_candidate_batch(candidate_report, k4_corrupt_review)
-        evidence = {"k4_corruption_blocks_k5_review": (
+        with TemporaryDirectory() as evidence_dir:
+            k5_payload = {"category": "k5", "production_writes": False,
+                          "production_ready": False, "review": cross_system_review}
+            guarded_report = write_stage_report(Path(evidence_dir), "k5", k5_payload)
+            saved_report = json.loads(
+                (Path(evidence_dir) / guarded_report["relative_path"]).read_text(encoding="utf-8"))
+            try:
+                write_stage_report(Path(evidence_dir), "k5",
+                                   {"category": "k5", "production_writes": True,
+                                    "production_ready": False})
+                rejected_unsafe = False
+            except ValueError:
+                rejected_unsafe = True
+            try:
+                write_stage_report(Path(evidence_dir), "k5", k5_payload)
+                rejected_overwrite = False
+            except FileExistsError:
+                rejected_overwrite = True
+        guarded_handoff_ok = (saved_report == k5_payload and rejected_unsafe
+                              and rejected_overwrite and guarded_report["production_write_allowed"] is False)
+        evidence = {"k1_guards_k5_report_write": guarded_handoff_ok,
+                    "k4_corruption_blocks_k5_review": (
                         not k4_corrupt_review["independent_sandbox_restore_matches"]
                         and not corrupted_cross_review["review_evidence_complete"]
                         and not corrupted_cross_review["production_ready"]),

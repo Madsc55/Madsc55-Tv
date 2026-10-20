@@ -4,7 +4,6 @@ Never modifies production playlists, EPG or logos.
 """
 import re
 import xml.etree.ElementTree as ET
-from difflib import SequenceMatcher
 
 def norm(value):
     value = (value or "").casefold().replace("ı", "i")

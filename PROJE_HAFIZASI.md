@@ -1128,3 +1128,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Kullanici GitHub ekran goruntusunde #319 kirmizi, #320 calisiyor bildirdi. API: 39409784819 FAILURE; K1 'Tum regresyon testlerini calistir' FAIL, K2-K5 SKIPPED, toplu kabul FAILURE. Bu ara commit 4c884ac6, yeni strict collect semasina eski test fixture'i uymuyordu; test duzeltmesi e9133fc9 sonraki committe.
 - 39409800593 son job kontrolunde K1/K2/K3/K4 SUCCESS, K5 in_progress; toplu kabul henüz kesinlesmedi. K5 ve toplu-kabul sonucunu takip et, yesil olmadan kabul iddiasi kurma.
 - Eski depo ve korunan listeler degismedi. Referans %47/%53; 0/92, 0/26.
+
+
+## 20 Ekim 2026 - K5 icinde K2-K3-K5 aday kaniti capraz kabul kapisi
+- Son tam izole Actions 39409800593 SUCCESS; onceki 39409784819 FAILURE ara commit kaynakli.
+- madsc-05-bakim.yml K5 job'una K3 handoff artifact indirimi ve madsc.handoff_acceptance ile K2/K3/K5 run_id, commit_sha, source_digest, candidate_count ve read-only receipt esleme kapisi eklendi. K5 raporlamadan once capraz kanit tutarsizsa durur. Sonuc artifact: madsc-k5-cross-handoff-verification. Workflow commit 10a36a77a675e0319e5021b229659c62543b5f2f.
+- Yeni run 39410321203 son kontrolde queued; test sonucu kesinlesmedi. Bu fixture cross-handoff, canli stream veya 92 eski davranissal esdegerlik kaniti degildir. K1-K5 bagli test ve rapor sureci korunur.
+- Korunan listeler, EPG, logo, favoriler, yedekler, PR #71 ve eski depo degistirilmedi. %47/%53 referans; 0/92 ve 0/26 runtime kabul.

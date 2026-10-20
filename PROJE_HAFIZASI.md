@@ -1324,3 +1324,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - ÖNEMLİ: Bu fixture betikleri eski depodan bağımsız imza/SHA ile doğrulanmış kaynak yürütümü sayılmaz; script düzeyinde sentetik karşılaştırma, 92 workflow'un trigger/izin/artefakt/hata/yan etki tam kabulü değildir. Sayaçlar 0/92 ve 0/26 kalır.
 - Kullanıcı toplu çalışma kuralının ihlalinden rahatsız. Bundan sonra küçük tekil yamalar yerine birbiriyle ilgili eski davranışları toplu karşılaştırma paketlerinde birleştir, CI hatalarını topluca düzelt, tamamlanan kaynak incelemelerini tekrar yapma.
 - Korunan üretim, EPG, playlist, IBO, yedek ve eski repo değiştirilmedi.
+
+
+## 20 Ekim 2026 — Toplu diferansiyel karşılaştırmalar: puanlama, tekrar test, öncelik
+- `tests/test_legacy_scoring_differential_batch.py` pinned eski CLI ve yeni modülü 8 puanlama vektörü, CSV/JSON, tekilleştirme/sıralama ile karşılaştırır. Actions #39425233309 SUCCESS.
+- `tests/test_legacy_retest_differential_batch.py` pinned eski CLI ve yeni zamanlayıcıyı 2/6/12/24 saat, bozuk tarih, geçersiz kayıt ile karşılaştırır. Actions #39437371154 SUCCESS (altı job).
+- `tests/test_legacy_priority_differential_batch.py` pinned eski CLI ve yeni priority_rows fonksiyonunu 5 öncelik seviyesi, aynı seviyede alfabetik sıralama, notlar ve çıktı üzerinde karşılaştırır. Commit e82fe243faaf6b3daabc50bcd7f57666f5affe78; Actions #39437666057 ilk kontrolde queued, sonuç doğrulanmadı.
+- NOT: Eski priority fixture içindeki `writer.writerow({"ONCELIK": tier + 1, "INCELEME_NOTU": ..., **row})` ifadesinde giriş CSV'sinde önceden ONCELIK/INCELEME_NOTU varsa `**row` eski değerleri yeniden yazar. Yeni `priority_rows` hesaplanan alanları korur. Bu fark için ayrıca kontrollü hata/uyumsuzluk kaydı oluştur; eski hatayı üretime taşımadan semantik farkı belgelemek gerekir.
+- Bu script düzeyinde izole, sentetik fixture karşılaştırmalarıdır; eski workflow trigger, izin, artefakt ve yan etki eşdeğerliği doğrulanmadı. 0/92 ve 0/26 kabul sayaçları değişmedi. Üretim, playlist, EPG, yedekler ve eski repo değiştirilmedi.

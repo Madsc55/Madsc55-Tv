@@ -1209,3 +1209,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `tests/test_k5_channel_gate.py` negatif regresyon testleri eklendi (commit d39481ec00c5cae14f86acd2adb6aa3f02544660). GitHub Actions #39414904510, head SHA d39481ec00c5cae14f86acd2adb6aa3f02544660, completed SUCCESS olarak REST API ile doğrulandı. Bu offline test kabulüdür, canlı ölçüm değildir.
 - Eski depo, korunan playlist/EPG/logo/favori/yedek ve cronlara dokunulmadı. Tam davranışsal kabul 0/92; gerçek runtime güvenlik kabulü 0/26. Referans %47/%53 güncel hesaplanmış oran değildir.
 - Açık: K1/K3 tüm alanlar için fail-closed kanıt şeması, izinli/opt-in gerçek ffprobe/ffmpeg ölçümü, IBO cihaz doğrulaması, K4 bağımsız offsite restore ve K5 gerçek uçtan uca kabul. Bu turda canlı yayın ölçümü başlatılmadı.
+
+
+## 20 Ekim 2026 — K1/K3/K5 toplu offline kanıt sertleştirme
+- Yeni depo Madsc55/Madsc55-Tv main, eski depo salt okunur. `madsc/k5_channel_gate.py` opsiyonel canlı/üretim kanıtı alanlarında 10 bayrağı `False` dışında görünce reddedecek biçimde sertleştirildi. Commit c9bdb01436e9f2917891dfddede2f1ed29cfb615.
+- `tests/test_k5_channel_gate.py` 10 sahte olumlu sonuç bayrağı, envelope sahte bayrakları ve `None`/sayı/metin bypass girişimleri için genişletildi. Commit 206645be5b047ccae3f2156cdcc0576f3ad16f9a.
+- Son GitHub Actions #39415583107, SHA 206645be5b047ccae3f2156cdcc0576f3ad16f9a, ilk kontrol anında pending idi; SUCCESS iddiası yok, sonuç tekrar doğrulanmalı. Önceki #39414904510 SUCCESS ayrı commit'e aittir.
+- K2-K3 offline handoff korunuyor; canlı ffprobe/ffmpeg henüz yapılmadı, IBO cihaz ve K4 offsite restore kanıtı yok. 92 davranışsal tam kabul 0/92 ve 26 runtime güvenlik kabulü 0/26 değişmedi. Korunan playlist/EPG/logo/yedek/favori dosyalarına yazılmadı.
+- Sıradaki bütünleşik iş: CI sonucunu doğrula; K1 izinli ağ hedefi/SSRF/timeout/redirect kontrolleriyle açık opt-in salt-okunur K3 gerçek ölçüm, K2 provenance ve K5 kanıt ayrımını birlikte uygula; bağımsız K4 geri yükleme kanıtını ayrıca topla. Onaysız üretim değişikliği yok.

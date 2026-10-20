@@ -32,11 +32,23 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
             self.assertEqual(report["source_tree_sha"], "source-tree")
             self.assertEqual(report["behavioral_parity_verified_count"], 0)
             self.assertEqual(report["blocked_workflow_count"], 99)
+            self.assertEqual(set(report["missing_evidence_by_type"].values()), {99})
             self.assertTrue(all(row["behavioral_evidence_status"] ==
                                 "BLOCKED_NEEDS_BEHAVIOR_EVIDENCE"
                                 for row in report["workflows"]))
             self.assertTrue(all(len(row["evidence_missing"]) == 6
                                 for row in report["workflows"]))
+
+    def test_blocker_summary_rejects_forged_acceptance(self):
+        missing = ["legacy_execution", "new_execution", "input_output_comparison",
+                   "side_effect_comparison", "failure_timeout_comparison",
+                   "reviewer_approval"]
+        row = {"behavioral_parity_verified": False, "evidence_missing": missing}
+        self.assertEqual(audit.summarize_blockers([row])["legacy_execution"], 1)
+        with self.assertRaises(ValueError):
+            audit.summarize_blockers([dict(row, behavioral_parity_verified=True)])
+        with self.assertRaises(ValueError):
+            audit.summarize_blockers([dict(row, evidence_missing=missing[:-1])])
 
     def test_stage_hints_remain_provisional(self):
         self.assertEqual(audit.candidate_stages("epg-gunluk.yml"), ["K3"])

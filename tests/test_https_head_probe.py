@@ -24,7 +24,7 @@ class HTTPSHeadProbeTests(unittest.TestCase):
 
     def test_timeout_and_foreign_candidate_rejected_before_dns(self):
         with patch("madsc.https_head_probe.subprocess.run") as dns:
-            for timeout in (0, -1, 6, True, float("nan")):
+            for timeout in (0, -1, 6, True, float("nan"), float("inf"), float("-inf")):
                 with self.subTest(timeout=timeout), self.assertRaises(ValueError):
                     observe_https_headers(self.url, self.envelope, self.run, self.sha,
                                           authorized=True, timeout=timeout)

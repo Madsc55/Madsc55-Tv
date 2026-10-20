@@ -200,8 +200,16 @@ def execute(category: str) -> dict:
                 (Path(directory) / "fixture.txt").write_text("isolated-k4", encoding="utf-8")
             k4_review = verify_independent_restore(
                 Path(source_dir), Path(backup_dir), Path(restored_dir), ["fixture.txt"])
+            (Path(restored_dir) / "fixture.txt").write_text("corrupted-restore", encoding="utf-8")
+            k4_corrupt_review = verify_independent_restore(
+                Path(source_dir), Path(backup_dir), Path(restored_dir), ["fixture.txt"])
         cross_system_review = review_candidate_batch(candidate_report, k4_review)
-        evidence = {"k2_k3_k4_k5_candidate_restore_review": (
+        corrupted_cross_review = review_candidate_batch(candidate_report, k4_corrupt_review)
+        evidence = {"k4_corruption_blocks_k5_review": (
+                        not k4_corrupt_review["independent_sandbox_restore_matches"]
+                        and not corrupted_cross_review["review_evidence_complete"]
+                        and not corrupted_cross_review["production_ready"]),
+                    "k2_k3_k4_k5_candidate_restore_review": (
                         cross_system_review["review_evidence_complete"]
                         and cross_system_review["candidate_count"] == 1
                         and cross_system_review["held_count"] == 1

@@ -1,5 +1,8 @@
 import unittest
-from madsc.probe_target_gate import validate_probe_target
+from madsc.probe_target_gate import (validate_probe_target, validate_resolved_addresses,
+                                     validate_probe_handoff)
+from madsc.artifact_handoff import pack
+import hashlib
 
 
 class ProbeTargetGateTests(unittest.TestCase):
@@ -25,6 +28,32 @@ class ProbeTargetGateTests(unittest.TestCase):
         for url in urls:
             with self.subTest(url=url), self.assertRaises(ValueError):
                 validate_probe_target(url, authorized=True)
+
+
+    def test_dns_answers_all_public_and_unique(self):
+        self.assertEqual(validate_resolved_addresses(["8.8.8.8", "1.1.1.1"]),
+                         ("8.8.8.8", "1.1.1.1"))
+        for answers in ([], ["8.8.8.8", "127.0.0.1"], ["169.254.169.254"],
+                        ["8.8.8.8", "8.8.8.8"], ["::1"], ["invalid"],
+                        ["::ffff:8.8.8.8"]):
+            with self.subTest(answers=answers), self.assertRaises(ValueError):
+                validate_resolved_addresses(answers)
+
+    def test_k2_provenance_required_before_probe(self):
+        url = "https://video.example.com/live.m3u8"
+        run, sha = "12345", "a" * 40
+        digest = hashlib.sha256(url.encode()).hexdigest()
+        envelope = pack({"candidates": [{"url_sha256": digest}]}, run, sha)
+        with self.assertRaises(PermissionError):
+            validate_probe_handoff(url, envelope, run, sha)
+        valid = validate_probe_handoff(url, envelope, run, sha, authorized=True)
+        self.assertEqual(valid["k2_source_digest"], envelope["digest"])
+        self.assertFalse(valid["network_probed"])
+        self.assertFalse(valid["redirects_allowed"])
+        self.assertTrue(valid["dns_pinning_required"])
+        for bad_url, bad_run in (("https://other.example.com/live", run), (url, "999")):
+            with self.assertRaises(ValueError):
+                validate_probe_handoff(bad_url, envelope, bad_run, sha, authorized=True)
 
 
 if __name__ == "__main__":

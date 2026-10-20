@@ -46,3 +46,41 @@ def validate_probe_target(url: str, *, authorized: bool = False) -> dict:
             "target_kind": kind, "preflight_only": True,
             "network_probed": False, "production_writes": False,
             "production_ready": False}
+
+
+
+def validate_resolved_addresses(addresses: list[str]) -> tuple[str, ...]:
+    """Reject mixed public/private DNS answers; caller must pin IP at connection."""
+    if not isinstance(addresses, list) or not addresses:
+        raise ValueError("Missing resolved addresses")
+    validated = []
+    for value in addresses:
+        if not isinstance(value, str):
+            raise ValueError("Invalid DNS answer")
+        try:
+            address = ipaddress.ip_address(value)
+        except ValueError as exc:
+            raise ValueError("Invalid DNS answer") from exc
+        if not address.is_global or (
+                isinstance(address, ipaddress.IPv6Address) and address.ipv4_mapped is not None):
+            raise ValueError("Non-public DNS answer")
+        validated.append(str(address))
+    if len(set(validated)) != len(validated):
+        raise ValueError("Duplicate DNS answer")
+    return tuple(validated)
+
+
+def validate_probe_handoff(url: str, envelope: dict, run_id: str,
+                           commit_sha: str, *, authorized: bool = False) -> dict:
+    """Require a candidate fingerprint in the verified K2 envelope before any probe."""
+    from madsc.artifact_handoff import unpack
+    target = validate_probe_target(url, authorized=authorized)
+    discovery = unpack(envelope, run_id, commit_sha)
+    matches = [item for item in discovery["candidates"]
+               if item["url_sha256"] == target["url_sha256"]]
+    if len(matches) != 1:
+        raise ValueError("Probe target is not a verified K2 candidate")
+    return {**target, "k2_source_digest": envelope["digest"],
+            "run_id": run_id, "commit_sha": commit_sha,
+            "redirects_allowed": False, "max_runtime_seconds": 15,
+            "dns_pinning_required": True}

@@ -3,9 +3,11 @@ import argparse
 import json
 from pathlib import Path
 from madsc.batch_acceptance import _unique_json_pairs
+from madsc.artifact_handoff import unpack
 
 
-def evaluate_k3_evidence(report: dict) -> dict:
+def evaluate_k3_evidence(report: dict, k2_envelope: dict | None = None,
+                         run_id: str | None = None, commit_sha: str | None = None) -> dict:
     if not isinstance(report, dict) or report.get("category") != "k3":
         raise ValueError("Invalid K3 report")
     if report.get("production_writes") is not False or report.get("production_ready") is not False:
@@ -47,6 +49,15 @@ def evaluate_k3_evidence(report: dict) -> dict:
         raise ValueError("Unsafe K3 technical result")
     if sum(item["technical_status"] == "PRELIMINARY_PASS" for item in results) != evidence["preliminary_passes"]:
         raise ValueError("Inconsistent preliminary K3 pass count")
+    if k2_envelope is not None:
+        discovery = unpack(k2_envelope, run_id, commit_sha)
+        fingerprints_k2 = {item["url_sha256"] for item in discovery["candidates"]}
+        if (evidence.get("run_id") != run_id or evidence.get("commit_sha") != commit_sha or
+                evidence.get("source_digest") != k2_envelope["digest"] or
+                len(fingerprints_k2) != len(discovery["candidates"]) or
+                evidence["candidate_count"] != len(fingerprints_k2) or
+                not set(fingerprints).issubset(fingerprints_k2)):
+            raise ValueError("K2-K3-K5 provenance or candidate fingerprint mismatch")
     return {"schema": "madsc-k5-k3-safety-gate-v1",
             "candidate_count": evidence["candidate_count"],
             "probed_candidates": evidence["probed_candidates"],
@@ -62,11 +73,17 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--k3", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--k2", type=Path, required=True)
+    p.add_argument("--run-id", required=True)
+    p.add_argument("--commit-sha", required=True)
     args = p.parse_args()
     if args.k3.is_symlink() or not args.k3.is_file() or args.k3.stat().st_size > 1024 * 1024:
         raise ValueError("Invalid K3 input")
     report = json.loads(args.k3.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
-    result = evaluate_k3_evidence(report)
+    if args.k2.is_symlink() or not args.k2.is_file() or args.k2.stat().st_size > 16 * 1024 * 1024:
+        raise ValueError("Invalid K2 input")
+    k2 = json.loads(args.k2.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
+    result = evaluate_k3_evidence(report, k2, args.run_id, args.commit_sha)
     if args.output.is_symlink() or args.output.exists():
         raise FileExistsError("Refusing to overwrite K5 safety evidence")
     args.output.parent.mkdir(parents=True, exist_ok=True)

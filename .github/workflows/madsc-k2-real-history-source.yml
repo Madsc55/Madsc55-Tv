@@ -1,0 +1,43 @@
+name: Madsc55-Tv - K2 Gercek Gecmis Kaynak Yayini
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real-history-source:
+    name: Publish real K2 history only when independently supplied
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout read only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reject missing independent source (no fixture fallback)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f verified-history-source/gecmis.json || {
+            echo 'UNVERIFIED: independently supplied real gecmis.json missing'
+            exit 1
+          }
+          test -f verified-history-source/ana_liste_test_gecmisi.json || {
+            echo 'UNVERIFIED: independently supplied real ana_liste_test_gecmisi.json missing'
+            exit 1
+          }
+          python -m madsc.history_real_source_publish --folder verified-history-source --output reports/k2-real-history-source
+      - name: Upload real source pair only after validation
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k2-history-source
+          path: |
+            reports/k2-real-history-source/gecmis.json
+            reports/k2-real-history-source/ana_liste_test_gecmisi.json
+          if-no-files-found: error
+          retention-days: 14

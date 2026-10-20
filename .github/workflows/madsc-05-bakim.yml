@@ -188,6 +188,18 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: K4 gercek izole yedek ve geri yukleme tatbikati
+        run: |
+          mkdir -p reports/k4-drill-source/nested
+          printf 'backup restore evidence\\n' > reports/k4-drill-source/nested/sample.txt
+          python -m madsc.restore_drill --source reports/k4-drill-source --file nested/sample.txt --output reports/k4-restore-drill.json
+      - name: K4 geri yukleme tatbikati kanitini sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k4-restore-drill
+          path: reports/k4-restore-drill.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K4 salt okunur kanıt raporunu oluştur
         run: python -m madsc.core --category k4 --output reports/k4.json
       - name: K4 kanıtını sakla

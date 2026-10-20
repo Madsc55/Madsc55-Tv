@@ -1047,3 +1047,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Test düzeltmesi commit `1fdc2684d21d6e59a4e9a908d1d661efa6e748c2`.
 - GitHub Actions `39355568913` SUCCESS: Güvenlik, Keşif, Kanal Testleri, Arşiv ve Yedek, Genel Bakım, Beşli toplu kanıt doğrulama işlerinin tamamı success. Bu izole CI kabulüdür; canlı üretim, 92 davranış eşdeğerliği veya 26 runtime güvenlik kuralı kabulü değildir.
 - Eski depo ve korunan yayın dosyaları değişmedi; kullanıcı referansı %47 tamamlanan / %53 kalan.
+
+
+## 20 Ekim 2026 — K1 yazma kapısı ilk gerçek çağrı noktasına bağlandı
+- İzole `madsc/fixture_report_writer.py` artık korunan yol denetimini sadece raporlamıyor; yazmadan önce `enforce_write_paths` çağırıyor. Commit `c3f24417ec46c577b6deade3a8e7a440bc9d7785`.
+- `tests/test_fixture_report_writer.py` regresyonu, kapı hata verdiğinde `reports/` klasörü bile oluşturulmadığını ve dosyaya yazılmadığını denetliyor. Commit `80ad0ec924f618c1de9eea6c3ff782252b2da6ef`.
+- Önceki K1-K5 izole test #39355945113 SUCCESS. Yeni entegrasyon testi #39356267666 sonuç bekliyor; henüz kabul sayılmaz.
+- Bu yalnız izole fixture raporu yazma yolu için gerçek çağrı noktasıdır; GitHub push veya tüm üretim yazma yollarını yakaladığı iddia edilmez. 26/26 runtime kabul 0/26; 92/92 eşdeğerlik 0/92. Genel referans %47/%53.

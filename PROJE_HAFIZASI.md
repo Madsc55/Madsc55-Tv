@@ -1024,3 +1024,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Actions run #39354650723 SUCCESS. Main'deki `ESKI_SISTEM_NOTLARI.md` tekrar okundu: artik indeks degil, 70 arşiv kaynagini kapsayan 1.790.411 karakterlik tam metin; bolumler kaynak SHA256 ve sinir isaretcileriyle ayriliyor.
 - Kapsam siniri: 70 kaynak = yeni repo arşivinde mevcut 45 metin ve 25 yapisal kaynak; eski depodaki tüm diger 52 yapisal dosyanin aktarildigi iddia edilmez. 92/92 davranissal esdegerlik ve 26/26 runtime guvenlik kabulü hala 0; canli cihaz/EPG/offsite restore üretim kabulu yok.
 - Siradaki toplu is: 92 otomasyonun kaynak kodu/tetik/izin/artefact/hata davranisi matrisi ve 26 kuralin gerçek yazma/engelleme kanitlarini bagimsiz kanitla kapat. Fixture CI veya statik envanterden kabul sayaci arttirma.
+
+
+## 20 Ekim 2026 — 99 YAML kaynak bütünlüğü ve 26 güvenlik kabulü
+- Eski depo salt okunur. 99 YAML'ın GitHub blob SHA'sını dosya baytlarıyla doğrulayan fail-closed kontrol `madsc/legacy_99_bulk_audit.py` içine eklendi. GitHub base64 satır sonları katı ayrıştırmadan önce normalize edildi. Son kod commit: `6312bb38bd9082d76861ecbfb13f018dcc186ef7`.
+- Pozitif ve sahte içerik negatif testleri `tests/test_legacy_99_source_integrity.py` içinde. İlk CI #39355240566 base64 satır sonu nedeniyle FAIL verdi; düzeltmeden sonraki #39355304902 beklemede, başarı henüz iddia edilmez.
+- 99 YAML = 92 eski kapsam workflow + 7 özel/koordinatör. 99/99 kaynak denetimi ile 92/92 gerçek davranış eşdeğerliği ayrı kanıtlardır; gerçek kabul 0/92.
+- Kaynak `GUVENLIK_KURALLARI.md` belgesi 1–24 maddeleri açıkça tanımlar. 25–26'nın onaylı tam kaynak metni ayrıca kanıtlanmadan 26/26 denemez. Runtime kabul 0/26.
+- Genel ilerleme referansı kullanıcıya göre yüzde 47 tamamlanan, yüzde 53 kalan; yalnız doğrulanmış kabul değişiminde yeniden değerlendirilir.

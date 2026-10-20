@@ -165,6 +165,17 @@ jobs:
           path: reports/k3-handoff.json
           if-no-files-found: error
           retention-days: 14
+      - name: K3 offline fixture kaniti olustur ve K1 korumali raporla
+        run: |
+          mkdir -p reports/reports
+          printf '%s\\n' '[{"url_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","ffprobe":{"streams":[{"codec_type":"video"},{"codec_type":"audio"}],"format":{"duration":"40"}}}]' > reports/k3-offline-input.json
+          python -m madsc.stage_report_cli --stage k3 --input reports/k3-offline-input.json --isolated-report-root reports
+      - name: K3 korumali kaniti sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k3-guarded-evidence
+          path: reports/reports/k3-isolated-evidence.json
+          retention-days: 14
       - name: K3 salt okunur kanıt raporunu oluştur
         run: python -m madsc.core --category k3 --output reports/k3.json
       - name: K3 kanıtını sakla
@@ -193,6 +204,16 @@ jobs:
           mkdir -p reports/k4-drill-source/nested
           printf 'backup restore evidence\\n' > reports/k4-drill-source/nested/sample.txt
           python -m madsc.restore_drill --source reports/k4-drill-source --file nested/sample.txt --output reports/k4-restore-drill.json
+      - name: K4 K1 korumali izole kanit raporu
+        run: |
+          mkdir -p reports/reports
+          python -m madsc.restore_drill --source reports/k4-drill-source --file nested/sample.txt --output reports/reports/k4-isolated-evidence.json --isolated-report-root reports
+      - name: K4 korumali kaniti sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k4-guarded-evidence
+          path: reports/reports/k4-isolated-evidence.json
+          retention-days: 14
       - name: K4 geri yukleme tatbikati kanitini sakla
         uses: actions/upload-artifact@v4
         with:
@@ -256,6 +277,17 @@ jobs:
           name: madsc-k5-handoff
           path: reports/k5-handoff.json
           if-no-files-found: error
+          retention-days: 14
+      - name: K5 toplu fixture ozetini K1 korumali raporla
+        run: |
+          mkdir -p reports/reports
+          python -c 'import json;print(json.dumps([{"category":k,"status":"success","production_writes":False} for k in ("k1","k2","k3","k4","k5")]))' > reports/k5-summary-input.json
+          python -m madsc.stage_report_cli --stage k5 --input reports/k5-summary-input.json --isolated-report-root reports
+      - name: K5 korumali kaniti sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k5-guarded-evidence
+          path: reports/reports/k5-isolated-evidence.json
           retention-days: 14
       - name: K5 salt okunur kanıt raporunu oluştur
         run: python -m madsc.core --category k5 --output reports/k5.json

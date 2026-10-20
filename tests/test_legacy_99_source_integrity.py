@@ -10,8 +10,8 @@ from madsc import legacy_99_bulk_audit as audit
 
 class Legacy99SourceIntegrityTests(unittest.TestCase):
     def test_all_99_blobs_verified_byte_exactly(self):
-        raw = b"name: sample\\non: workflow_dispatch\\n"
-        sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+        raw = b"name: sample\non: workflow_dispatch\n"
+        sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
         entries = [{"path": f".github/workflows/{i:03d}.yml",
                     "type": "blob", "size": len(raw), "sha": sha}
                    for i in range(99)]
@@ -30,8 +30,8 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
             self.assertEqual(report["behavioral_parity_verified_count"], 0)
 
     def test_forged_blob_is_rejected(self):
-        raw = b"name: sample\\n"
-        sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+        raw = b"name: sample\n"
+        sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
         entries = [{"path": f".github/workflows/{i:03d}.yml",
                     "type": "blob", "size": len(raw), "sha": sha}
                    for i in range(99)]

@@ -1010,3 +1010,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/legacy_notes_integrity.py` artik kaynak bolumleri disindaki eklenmis/sahte metni de reddetmek icin birlesik belgeyi byte-seviyesinde yeniden olusturur. `tests/test_legacy_notes_integrity.py` negatif enjeksiyon testi eklendi. Son commit `8f1016c2ccceb1999a1c09f88474ccaaf518c445`. Ilk ara commit #39353672144 FAILURE; duzeltildi, son Actions sonucu henuz teyit edilmedi.
 - Kapsam siniri: main `ESKI_SISTEM_NOTLARI.md` halen tam fiziksel birlesim degil; eski arsiv kaynaklari silinmedi. 92 eski workflow davranissal kabul 0/92, 26 runtime guvenlik kabul 0/26, canli IBO/EPG ve dis depolama restore kabulu yok. Bunlari fixture CI ile tamamlanmis sayma.
 - Siradaki somut is: son toplu Actions sonucunu dogrula, hatalari gider; 45 metin + karar niteligindeki JSON/CSV kaynaklarini siniflandirip tam metin birlesim artifact'ini GitHub main'e guvenli sekilde aktar; K1–K5 gercek kanit zincirini ve bagimsiz kaynak/restore dogrulamasini ilerlet. Korunan listelere, EPG, logo, arsiv ve eski depoya dokunma.
+
+
+## 20 Ekim 2026 — K4 restore kanitinin K5 toplu kabule baglanmasi
+- `madsc/k4_evidence.py` yeni fail-closed K4 kanit dogrulayicisi: gercek izole restore, kaynak butunlugu, bagimsiz kopya dogrulamasi, dosya sayisi ve uretime yazilmadigi dogrulanir; harici/uretim restore kaniti varmis gibi davranilmaz. Commit `6cc8a684eac9f34505b8cf95064b5194ff19b605`.
+- `.github/workflows/madsc-05-bakim.yml` toplu kabul adimi K4 restore artifact'ini indirip dogrular; sonuc K5 toplu hata sayacina eklenir, dogrulama artifact'i saklanir. Commit `dc5eb4523c2f2583f0e707b1a5ff5766cd8c7f33`.
+- `tests/test_k4_evidence.py` eksik ve sahte kanitlari reddeden testler eklendi; commit `3a78352e7facaff1cbe67cc875c1218eb637cac8`. Actions #39354010229 baslangicta PENDING; basari henuz kanitlanmadi.
+- Onceki not butunluk degisikligi icin Actions #39353692761 ve #39353692734 SUCCESS. 92 davranissal esdegerlik ve 26 runtime guvenlik kabulu hala 0; fiziksel tek dosya birlestirme hala acik.

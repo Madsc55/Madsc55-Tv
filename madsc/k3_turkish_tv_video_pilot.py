@@ -113,6 +113,8 @@ def run():
     out = Path("reports/k3-turkish-tv-video-pilot.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report["reason_counts"] = {reason: sum(x["status"] == reason for x in results) for reason in sorted({x["status"] for x in results})}
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in report.items() if k not in ("results", "verified_metadata")}))
 
 

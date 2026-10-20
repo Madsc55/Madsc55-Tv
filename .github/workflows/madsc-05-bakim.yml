@@ -304,7 +304,10 @@ jobs:
           name: madsc-k3-guarded-evidence
           path: reports/k3-technical-evidence
       - name: K5 K3 offline kanit guvenlik kapisi
-        run: python -m madsc.k5_channel_gate --k3 reports/k3-technical-evidence/k3-isolated-evidence.json --output reports/k5-k3-safety-gate.json
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.k5_channel_gate --k2 reports/k2-handoff/k2-candidates.json --k3 reports/k3-technical-evidence/k3-isolated-evidence.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA" --output reports/k5-k3-safety-gate.json
       - name: K5 K3 guvenlik kapisi kanitini sakla
         uses: actions/upload-artifact@v4
         with:

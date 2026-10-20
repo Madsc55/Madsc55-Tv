@@ -27,7 +27,7 @@ def produce_verified_history(manifest_path, output_path, *, current_sha, run_id,
         raise ValueError("GitHub artifact token required")
     origin = verify_origin(
         manifest, repository="Madsc55/Madsc55-Tv", branch="main",
-        workflow_path=".github/workflows/madsc-05-bakim.yml",
+        workflow_path=".github/workflows/madsc-k2-real-history-source.yml",
         current_sha=current_sha, token=token)
     with tempfile.TemporaryDirectory(prefix="madsc-verified-history-") as tmp:
         folder = Path(tmp) / "source"

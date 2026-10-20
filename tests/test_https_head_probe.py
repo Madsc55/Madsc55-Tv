@@ -1,6 +1,6 @@
 import hashlib
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from madsc.artifact_handoff import pack
 from madsc.https_head_probe import observe_https_headers
@@ -39,6 +39,29 @@ class HTTPSHeadProbeTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 observe_https_headers(self.url, self.envelope, self.run, self.sha,
                                       authorized=True)
+            connect.assert_not_called()
+
+
+    def test_shared_deadline_blocks_socket_after_dns(self):
+        answers = [(2, 1, 6, "", ("8.8.8.8", 443))]
+        with patch("madsc.https_head_probe.socket.getaddrinfo", return_value=answers), \
+             patch("madsc.https_head_probe.time.monotonic", side_effect=[100.0, 106.0]), \
+             patch("madsc.https_head_probe.socket.socket") as connect:
+            with self.assertRaises(TimeoutError):
+                observe_https_headers(self.url, self.envelope, self.run, self.sha,
+                                      authorized=True, timeout=5)
+            connect.assert_called_once()
+
+    def test_non_ascii_path_rejected_before_socket(self):
+        url = "https://video.example.com/ç.m3u8"
+        envelope = pack({"candidates": [{
+            "url_sha256": hashlib.sha256(url.encode()).hexdigest()
+        }]}, self.run, self.sha)
+        with patch("madsc.https_head_probe.socket.getaddrinfo",
+                   return_value=[(2, 1, 6, "", ("8.8.8.8", 443))]), \
+             patch("madsc.https_head_probe.socket.socket") as connect:
+            with self.assertRaises(ValueError):
+                observe_https_headers(url, envelope, self.run, self.sha, authorized=True)
             connect.assert_not_called()
 
 

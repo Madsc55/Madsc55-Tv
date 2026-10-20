@@ -9,7 +9,7 @@ on:
       - 'tests/test_legacy_notes_integrity.py'
       - '.github/workflows/madsc-legacy-notes-bulk-merge.yml'
 permissions:
-  contents: write
+  contents: read
 jobs:
   merge-and-verify:
     name: Merge all archived legacy notes and verify byte integrity
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout read only
         uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: false
       - name: Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -30,20 +30,6 @@ jobs:
           set -euo pipefail
           python scripts/birlestir_eski_sistem_notlari.py --include-structured
           python -m madsc.legacy_notes_integrity --merged ESKI_SISTEM_NOTLARI.md --archive docs/eski_depo_not_arsivi --report reports/eski-notlar-dogrulama.json
-      - name: Commit only verified merged notes to main
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- ESKI_SISTEM_NOTLARI.md
-          if git diff --cached --quiet; then
-            echo "Verified merged notes already current."
-          else
-            git commit -m "docs: persist SHA256-verified complete legacy notes archive"
-            git push origin HEAD:main
-          fi
       - name: Upload complete merged archive and integrity proof
         uses: actions/upload-artifact@v4
         with:

@@ -1,5 +1,6 @@
 """K5 checks K3 linked channel evidence without mistaking fixtures for live proof."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from madsc.batch_acceptance import _unique_json_pairs
@@ -142,8 +143,14 @@ def evaluate_k3_head_observation(observation: dict, k2_envelope: dict,
     status = observation.get("http_status")
     if type(status) is not int or not 100 <= status <= 599 or 300 <= status < 400:
         raise ValueError("Invalid or redirected HTTP status")
+    # Stable digest binds the exact accepted report content for later audit.
+    # It is NOT a signature or independent proof that a network request occurred.
+    observation_digest = hashlib.sha256(
+        json.dumps(observation, sort_keys=True, separators=(",", ":"),
+                   ensure_ascii=True, allow_nan=False).encode("utf-8")).hexdigest()
     return {"schema": "madsc-k5-k3-head-transport-review-v1",
             "url_sha256": digest, "http_status": status,
+            "observation_sha256": observation_digest,
             "head_transport_claim_validated": True,
             "head_transport_independently_verified": False,
             "http_success_status": 200 <= status < 300,

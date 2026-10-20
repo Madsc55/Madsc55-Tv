@@ -1193,3 +1193,12 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Kullanici tekrar acikca duzeltti: yeni sistemin dogru adi **Madsc55-Tv**, tek yazilabilir GitHub deposu **Madsc55/Madsc55-Tv**, dal **main**. Yanlis kisaltma Madsc-Tv veya genel MADSC TV adi yeni proje adi olarak kullanilmayacak.
 - Eski **Madsc55/madsc-tv** ve madsc/bes-sistem-toplu-birlestirme salt okunur. Yeni sohbet ve her yazma oncesi depo/dal kontrolu zorunlu.
 - Birlesik kurallar commit c2995e1234e6b2589df9eb59a0c2ba149915e984 ve sohbet devir notu commit 7aac00360347c2ee6b787c0c7feaf22311007787 bu ayrimi ek zorunlu madde olarak guclendirdi.
+
+
+## 20 Ekim 2026 - Yeni sohbet baslangicinda bagimsiz durum dogrulamasi
+- Dogru tek yazilabilir depo Madsc55/Madsc55-Tv, main; GitHub repository API default_branch=main ve private=true dogrulandi. Eski Madsc55/madsc-tv salt okunur; hicbir yazma yapilmadi.
+- Bu kontrol sirasinda HEAD 3c712befbccf8367b273ced2074876c9b7a7c444 (yalniz belge/kimlik hafizasi commit'i). En son gorunen Actions run 39413388267, SHA 81eb43bed387fd7ee667578a73e4e874aab4877d, completed/success; alti job (K1, K2, K3, K4, K5, toplu kabul) success. HEAD icin yeni CI basarisi iddia edilmiyor.
+- BIRLESIK_KALICI_CALISMA_KURALLARI.md, SOHBET_DEVIR_NOTU_2026-10-20.md, PROJE_HAFIZASI.md ilgili kisimlari; eski AGENTS.md, GUVENLIK_KURALLARI.md, DEVAM_NOTU.md son bolumu, 810 dosya notu.md ilk ilgili bolumu ve docs/ESDEGERLIK_ILK_KANIT_PAKETI.md incelendi. ESKI_SISTEM_NOTLARI.md cok buyuk birlesik arsivinin varligi/hash'i dogrulandi; tamami satir satir okunmus sayilmiyor.
+- Envanter tarihsel 99/99 YAML, 130/130 Python, 68/68 test. Davranissal tam kabul 0/92, runtime guvenlik 0/26; yuzde 47/53 tarihsel referans. CI fixture basarisi canli kabul degil.
+- K1-K5 mevcut kanit zinciri: K2 envelope/run/SHA/digest -> K3 offline probe URL fingerprint -> K5 cross-handoff/channel gate; canli ffprobe/ffmpeg, cihaz IBO, kaynak/izin ve offsite restore kaniti acik. Mevcut testleri tekrar kurma.
+- Siradaki toplu paket: guvenli opt-in ve salt okunur gercek kanal olcumu icin kaynak/izin/SSRF/yol/timeout/URL maskeleme kapilari; K2 aday fingerprint baglantisi, K3 ffprobe/ffmpeg teknik kanit, K5 kanit dogrulama, K1 negatif guvenlik ve K4 degismezlik testleri. Eski-yeni workflow tetik/izin/artifact/timeout farklarini ayni paket icinde kanitla. Korunan playlist, EPG, logo, yedek, cihaz favorileri ve PR71 degismeyecek. Kod/CI bu turda henuz degistirilmedi; kabul sayaclari artirilmaz.

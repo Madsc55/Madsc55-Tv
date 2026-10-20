@@ -23,3 +23,18 @@ def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
     with destination.open("x", encoding="utf-8") as handle:
         handle.write(content)
     return {"isolated_report_written": True, "production_write_allowed": False}
+
+
+def write_stage_report(root: Path, stage: str, report: dict) -> dict:
+    """K3/K4/K5 isolated JSON handoff via the shared K1 write gate."""
+    import json
+    if stage not in ("k3", "k4", "k5") or not isinstance(report, dict):
+        raise ValueError("Invalid stage report")
+    if report.get("category") != stage or report.get("production_writes") is not False:
+        raise ValueError("Report must match stage and explicitly forbid production writes")
+    if report.get("production_ready") is True:
+        raise ValueError("Isolated evidence cannot assert production readiness")
+    relative_path = f"reports/{stage}-isolated-evidence.json"
+    result = write_fixture_report(root, relative_path,
+                                  json.dumps(report, sort_keys=True, ensure_ascii=False) + "\n")
+    return {**result, "stage": stage, "relative_path": relative_path}

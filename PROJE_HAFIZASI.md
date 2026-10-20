@@ -1032,3 +1032,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - 99 YAML = 92 eski kapsam workflow + 7 özel/koordinatör. 99/99 kaynak denetimi ile 92/92 gerçek davranış eşdeğerliği ayrı kanıtlardır; gerçek kabul 0/92.
 - Kaynak `GUVENLIK_KURALLARI.md` belgesi 1–24 maddeleri açıkça tanımlar. 25–26'nın onaylı tam kaynak metni ayrıca kanıtlanmadan 26/26 denemez. Runtime kabul 0/26.
 - Genel ilerleme referansı kullanıcıya göre yüzde 47 tamamlanan, yüzde 53 kalan; yalnız doğrulanmış kabul değişiminde yeniden değerlendirilir.
+
+
+## 20 Ekim 2026 — 99 kaynak audit SUCCESS, geçici yazma izni kapatıldı
+- 99 eski YAML byte-exact Git blob SHA denetimi Actions #39355304902 SUCCESS. Bu kaynak bütünlüğüdür, 92 davranışsal kabul değildir.
+- K1-K5 Actions #39355304855 FAILURE: K1 regresyon testi, birleşik notları main'e yazdırmak için geçici açılmış `contents: write` ve `persist-credentials: true` izinlerini haklı olarak reddetti.
+- Tek dosya birleşimi daha önce main'e teslim edildiği için `.github/workflows/madsc-legacy-notes-bulk-merge.yml` salt okunur `contents: read`, `persist-credentials: false` olarak geri alındı ve otomatik `git push` kaldırıldı. Commit `65858bf3e74b2ffa1ae0004bd629e6808d4e5d42`. Birleşim Actions #39355451415 SUCCESS.
+- Güvenlik regresyonuna not birleştirme iş akışının bir daha push/credential yetkisi taşımamasını kontrol eden test eklendi. Commit `3da63cc6fb76af5fd78eecb3bf9313d8158bb406`. Beşli CI #39355467204 henüz sonucu doğrulanmadı.
+- 99 kaynak denetimi SUCCESS olsa da 92/92 davranışsal eşdeğerlik ve 26/26 runtime güvenlik kabulü hâlâ 0; üretim onayı yok. Eski depoya yazma yok. Genel referans %47/%53.

@@ -16,17 +16,21 @@ def audit_write_paths(paths: list[str]) -> dict:
     if not isinstance(paths, list):
         raise ValueError("Paths must be a list")
     rejected = []
+    seen = set()
     for raw in paths:
         if not isinstance(raw, str):
             raise ValueError("Invalid repository path")
         name = raw.replace(chr(92), "/")
+        duplicate = name.casefold() in seen
+        seen.add(name.casefold())
         parts = name.split("/")
         folded = name.casefold()
-        if (chr(92) in raw or not name or name.startswith("/")
+        if (duplicate or chr(92) in raw or not name or name.startswith("/")
             or any(part in ("", ".", "..") for part in parts)
             or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw)
             or any(part.endswith((" ", ".")) for part in parts)
             or ":" in name
+            or "\\x00" in name
             or name.startswith("~")
             or folded in {item.casefold() for item in PROTECTED_EXACT}
             or any(part.casefold() in {item.casefold() for item in PROTECTED_EXACT}

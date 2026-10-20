@@ -335,6 +335,15 @@ jobs:
           name: madsc-k5-guarded-evidence
           path: reports/reports/k5-isolated-evidence.json
           retention-days: 14
+      - name: K5 kanita dayali proje ilerleme tablosunu olustur
+        run: python -m madsc.progress_scorecard --output reports/progress-scorecard.json --verified-ci
+      - name: K5 ilerleme kanitini sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-progress-scorecard
+          path: reports/progress-scorecard.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K5 kanıtını sakla
         uses: actions/upload-artifact@v4
         with:

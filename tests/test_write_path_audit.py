@@ -1,4 +1,6 @@
 import unittest
+import tempfile
+from pathlib import Path
 from madsc.write_path_audit import audit_write_paths, enforce_write_paths, enforce_local_output_path, ProtectedWriteRejected
 
 class WritePathAuditTests(unittest.TestCase):

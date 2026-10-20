@@ -3,7 +3,8 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from madsc.stage_report_cli import build_report, main
+from madsc.stage_report_cli import build_report, main, load_batch_reports
+from madsc.batch_acceptance import MODULES
 
 
 class StageReportCLITests(unittest.TestCase):
@@ -41,6 +42,24 @@ class StageReportCLITests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_report("k5", {"unexpected": True})
 
+
+    def test_k5_requires_actual_complete_category_artifacts(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for stage in ("k1", "k2", "k3", "k4", "k5"):
+                folder = root / ("madsc-batch-" + stage)
+                folder.mkdir()
+                (folder / (stage + ".json")).write_text(json.dumps({
+                    "category": stage, "module": MODULES[stage],
+                    "mode": "isolated_read_only", "production_writes": False,
+                    "legacy_workflows_executed": False,
+                    "status": "isolated_fixture_checks_passed_not_production_verified",
+                    "fixture_checks": {"isolated": True}}))
+            result = build_report("k5", load_batch_reports(root))
+            self.assertTrue(result["evidence"]["all_five_successful"])
+            (root / "madsc-batch-k3/k3.json").unlink()
+            with self.assertRaises(ValueError):
+                load_batch_reports(root)
 
 if __name__ == "__main__":
     unittest.main()

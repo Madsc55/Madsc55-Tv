@@ -1,0 +1,46 @@
+import hashlib
+import unittest
+from unittest.mock import patch
+
+from madsc.artifact_handoff import pack
+from madsc.https_head_probe import observe_https_headers
+
+
+class HTTPSHeadProbeTests(unittest.TestCase):
+    def setUp(self):
+        self.url = "https://video.example.com/live.m3u8"
+        self.run, self.sha = "12345", "a" * 40
+        self.envelope = pack({"candidates": [{
+            "url_sha256": hashlib.sha256(self.url.encode()).hexdigest()
+        }]}, self.run, self.sha)
+
+    def test_opt_in_required_before_dns(self):
+        with patch("madsc.https_head_probe.socket.getaddrinfo") as dns:
+            with self.assertRaises(PermissionError):
+                observe_https_headers(self.url, self.envelope, self.run, self.sha)
+            dns.assert_not_called()
+
+    def test_timeout_and_foreign_candidate_rejected_before_dns(self):
+        with patch("madsc.https_head_probe.socket.getaddrinfo") as dns:
+            for timeout in (0, -1, 6, True, float("nan")):
+                with self.subTest(timeout=timeout), self.assertRaises(ValueError):
+                    observe_https_headers(self.url, self.envelope, self.run, self.sha,
+                                          authorized=True, timeout=timeout)
+            with self.assertRaises(ValueError):
+                observe_https_headers("https://foreign.example.com/live", self.envelope,
+                                      self.run, self.sha, authorized=True)
+            dns.assert_not_called()
+
+    def test_private_dns_answer_never_opens_socket(self):
+        answers = [(2, 1, 6, "", ("8.8.8.8", 443)),
+                   (2, 1, 6, "", ("127.0.0.1", 443))]
+        with patch("madsc.https_head_probe.socket.getaddrinfo", return_value=answers), \
+             patch("madsc.https_head_probe.socket.socket") as connect:
+            with self.assertRaises(ValueError):
+                observe_https_headers(self.url, self.envelope, self.run, self.sha,
+                                      authorized=True)
+            connect.assert_not_called()
+
+
+if __name__ == "__main__":
+    unittest.main()

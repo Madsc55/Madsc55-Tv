@@ -1122,3 +1122,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - test_stage_report_cli fixture'i tam schema ile duzeltildi; beklenmeyen extra.txt dosyasi reddi eklendi. Test commit e9133fc9149972034a0f8cd595557e7901671eab.
 - Yeni toplu Actions 39409800593 son kontrolde pending; onceki 39409784819 in_progress. Bunlar basarili ilan edilmedi.
 - Eski depo ve korunan listeler degismedi. 0/92 davranissal, 0/26 runtime guvenlik kabul; %47/%53 referans.
+
+
+## 20 Ekim 2026 - K5 sikilastirma CI hata takibi
+- Kullanici GitHub ekran goruntusunde #319 kirmizi, #320 calisiyor bildirdi. API: 39409784819 FAILURE; K1 'Tum regresyon testlerini calistir' FAIL, K2-K5 SKIPPED, toplu kabul FAILURE. Bu ara commit 4c884ac6, yeni strict collect semasina eski test fixture'i uymuyordu; test duzeltmesi e9133fc9 sonraki committe.
+- 39409800593 son job kontrolunde K1/K2/K3/K4 SUCCESS, K5 in_progress; toplu kabul henüz kesinlesmedi. K5 ve toplu-kabul sonucunu takip et, yesil olmadan kabul iddiasi kurma.
+- Eski depo ve korunan listeler degismedi. Referans %47/%53; 0/92, 0/26.

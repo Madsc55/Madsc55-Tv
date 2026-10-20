@@ -60,3 +60,48 @@ def verify_fixture_evidence(reports: list[dict]) -> dict:
             "fixture_evidence_verified": not summary["requires_review"]
             and not missing_evidence and not failed_checks,
             "production_ready": False, "runtime_evidence_verified": False}
+
+
+def review_candidate_batch(coordination: dict, backup_evidence: dict) -> dict:
+    """K5 cross-check K2/K3 candidate decisions and K4 restore evidence.
+
+    This is a read-only review package, never an authorization to modify lists.
+    """
+    if not isinstance(coordination, dict) or not isinstance(backup_evidence, dict):
+        raise ValueError("Invalid cross-system evidence")
+    candidates = coordination.get("candidates")
+    if not isinstance(candidates, list):
+        raise ValueError("Missing K2/K3 candidates")
+    seen = set()
+    for item in candidates:
+        if not isinstance(item, dict):
+            raise ValueError("Malformed candidate evidence")
+        digest = item.get("url_sha256")
+        if (not isinstance(digest, str) or len(digest) != 64
+                or any(c not in "0123456789abcdef" for c in digest) or digest in seen):
+            raise ValueError("Invalid or repeated candidate identity")
+        seen.add(digest)
+        if (item.get("production_change_allowed") is not False
+                or item.get("delete_allowed") is not False
+                or type(item.get("hold")) is not bool
+                or type(item.get("protected_working")) is not bool):
+            raise ValueError("Unsafe candidate decision evidence")
+    if (coordination.get("production_writes") is not False
+            or coordination.get("production_ready") is not False
+            or coordination.get("network_probed") is not False):
+        raise ValueError("Unverified or unsafe coordination evidence")
+    if (backup_evidence.get("production_writes") is not False
+            or backup_evidence.get("production_restore_verified") is not False
+            or backup_evidence.get("external_storage_proven") is not False):
+        raise ValueError("Unsafe or overstated backup evidence")
+    restore_matches = backup_evidence.get("independent_sandbox_restore_matches") is True
+    return {
+        "candidate_count": len(candidates),
+        "held_count": sum(item["hold"] for item in candidates),
+        "protected_ibo_working_count": sum(item["protected_working"] for item in candidates),
+        "k4_independent_sandbox_restore_matches": restore_matches,
+        "review_evidence_complete": restore_matches and bool(candidates),
+        "production_ready": False, "production_writes": False,
+        "device_verified": False, "external_storage_proven": False,
+        "legacy_behavioral_equivalence_verified": False,
+    }

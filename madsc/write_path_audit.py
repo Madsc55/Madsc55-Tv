@@ -63,3 +63,33 @@ def enforce_write_paths(paths: list[str]) -> dict:
         )
     return {"blocked": False, "checked_paths": list(paths),
             "write_performed": False, "runtime_gate_enforced": True}
+
+
+def enforce_local_output_path(destination: Path, *, allowed_root: Path | None = None) -> dict:
+    """K1 local output preflight; reject protected ancestors and symlinks.
+
+    Does not authorize production writes or intercept unrelated callers.
+    """
+    path = Path(destination)
+    if not path.is_absolute():
+        raise ProtectedWriteRejected("Output must be an absolute path")
+    if path.exists() or path.is_symlink():
+        raise ProtectedWriteRejected("Output already exists or is a symlink")
+    parent = path.parent
+    if not parent.is_dir():
+        raise ProtectedWriteRejected("Output parent must exist")
+    for ancestor in (parent, *parent.parents):
+        if ancestor.is_symlink():
+            raise ProtectedWriteRejected("Symlinked output ancestor")
+    if allowed_root is not None:
+        root = Path(allowed_root)
+        if not root.is_absolute() or not root.is_dir() or root.is_symlink():
+            raise ProtectedWriteRejected("Invalid allowed output root")
+        if not path.is_relative_to(root) or path == root:
+            raise ProtectedWriteRejected("Output outside allowed root")
+        relative = path.relative_to(root).as_posix()
+    else:
+        relative = path.relative_to(path.anchor).as_posix()
+    enforce_write_paths([relative])
+    return {"path_checked": True, "production_writes": False,
+            "production_write_allowed": False}

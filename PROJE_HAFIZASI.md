@@ -1002,3 +1002,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Tek çalışma kuralı giriş dosyası: BIRLESIK_KALICI_CALISMA_KURALLARI.md (commit 8aad8b00ff77a093bf2ef3bfef1d3fe4de7ad44d). Eski ve yeni notları silmez veya onların yerini almaz. Önce bunu, sonra göreve ilgili özgün notları oku.
 - Kontrol edilen kaynak girişleri: PROJE_HAFIZASI.md, ESKI_SISTEM_NOTLARI.md, SOHBET_DEVIR_NOTU_2026-10-20.md. Eski arşivdeki her dosyanın baştan sona okunduğu iddia edilmez; tüm notların fiziksel tek dosyada birleştirilmesi hâlâ açık iştir.
 - Öncelik: geçmiş hata/eksik analizi + K1–K5 etki matrisi + gerçek entegrasyon/kabul. Sadece kural yazmayı sistem kurma başarısı sayma.
+
+
+## 20 Ekim 2026 — Yeni Madsc55-Tv K1–K5 fail-closed ve eski not tamlık denetimi
+- Dogru ve tek yazilabilir depo: `Madsc55/Madsc55-Tv` / `main`; eski `Madsc55/madsc-tv` salt okunur.
+- K1–K5 workflow bagimliliklari duzeltildi: K2 yalniz K1 success, K3 yalniz K2 success, K4 yalniz K3 success, K5 yalniz K4 success. Toplu-kabul basarisizliklari raporlamak icin `always()` ile devam eder. Kod commit `35ebf5c2a0f2ca942a4534433d479d77c0bb2716`, regresyon testi `2580697f5d8c3ef31ca2778de7ef16460092e99d`; Actions #39353356536 **SUCCESS** (izole CI).
+- `madsc/legacy_notes_integrity.py` artik kaynak bolumleri disindaki eklenmis/sahte metni de reddetmek icin birlesik belgeyi byte-seviyesinde yeniden olusturur. `tests/test_legacy_notes_integrity.py` negatif enjeksiyon testi eklendi. Son commit `8f1016c2ccceb1999a1c09f88474ccaaf518c445`. Ilk ara commit #39353672144 FAILURE; duzeltildi, son Actions sonucu henuz teyit edilmedi.
+- Kapsam siniri: main `ESKI_SISTEM_NOTLARI.md` halen tam fiziksel birlesim degil; eski arsiv kaynaklari silinmedi. 92 eski workflow davranissal kabul 0/92, 26 runtime guvenlik kabul 0/26, canli IBO/EPG ve dis depolama restore kabulu yok. Bunlari fixture CI ile tamamlanmis sayma.
+- Siradaki somut is: son toplu Actions sonucunu dogrula, hatalari gider; 45 metin + karar niteligindeki JSON/CSV kaynaklarini siniflandirip tam metin birlesim artifact'ini GitHub main'e guvenli sekilde aktar; K1–K5 gercek kanit zincirini ve bagimsiz kaynak/restore dogrulamasini ilerlet. Korunan listelere, EPG, logo, arsiv ve eski depoya dokunma.

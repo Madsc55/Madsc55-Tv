@@ -1439,3 +1439,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/history_real_source_publish.py` içindeki `enforce_write_paths` importu eksikti: düzeltildi (`ccdb25760fc87976c8c4521023586eec3bccdf39`).
 - `tests/test_write_path_audit.py` yeni testlerin `tempfile` ve `Path` importları eksikti: düzeltildi (`9c63d291b9421197afda780d5d13a5feb13927a6`).
 - Bu hatalar önceki kodun çalışabilirliğini engelliyordu; GitHub Actions veya güncel tam depo regresyonu çalıştırılmadı. Kabul 0/92, 0/26; üretim ve eski depo değiştirilmedi. Yerelde bulunan eski kopyalar güncel GitHub main ile eşdeğer sayılmamalı. Sonraki: güncel main kaynaklarını bağımsız yerel çalışma dizinine alıp tam offline regresyon.
+
+
+## 20 Ekim 2026 — Tam yol güvenliği genişletildi; güncel main offline test kısıtı
+- K1 `enforce_local_output_path` mutlak yolda `.` / `..` geçişlerini fail-closed reddediyor (`03ec9f4e79c99c9d50df49f0f6cbf78497c8768b`), negatif regresyon `tests/test_write_path_audit.py` eklendi (`27a21ac7c75502a78f6a0bdbd2fef453a11c42a4`).
+- K2 `history_real_source_publish.py` artık yalnız çıktı dizininin adını değil tam çıktı yolunu K1 denetimine sokuyor (`34c2cae4661e75ed0d982e8f23c7bf6b2e511876`).
+- Yerel çalışma ortamında önceki kaynak kopyaları var, ancak GitHub güncel main doğrudan klonlanamadı (github.com DNS çözümlenemiyor). Bu yüzden güncel main regresyonu yürütüldü veya geçti denmedi. Actions kotası nedeniyle CI tetiklenmedi. Kabul 0/92 ve 0/26. Sıradaki: GitHub kaynaklarının güncel çalışma kopyasını doğrulanmış şekilde oluşturup ücretsiz offline toplu regresyonu çalıştırmak; bağımsız dosya yazıcılarının K1 denetimini tamamlamak.

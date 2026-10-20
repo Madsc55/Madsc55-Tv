@@ -4,6 +4,7 @@ Never follows redirects, never sends URL credentials, never writes playlist data
 This is a single HTTP header observation, NOT an ffprobe or live stream test.
 """
 import ipaddress
+import time
 import socket
 import ssl
 from urllib.parse import urlsplit
@@ -17,6 +18,8 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
         raise PermissionError("Explicit probe authorization required")
     if type(timeout) not in (float, int) or not 0 < timeout <= 5:
         raise ValueError("Unsafe network timeout")
+    started = time.monotonic()
+    deadline = started + timeout
     gate = validate_probe_handoff(url, envelope, run_id, commit_sha, authorized=True)
     parts = urlsplit(url)
     host = parts.hostname
@@ -38,17 +41,29 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
         path += "?" + parts.query
     if any(ch in path for ch in "\r\n"):
         raise ValueError("Unsafe request target")
+    try:
+        path.encode("ascii")
+    except UnicodeEncodeError as exc:
+        raise ValueError("Non-ASCII request target must be percent-encoded") from exc
     request = ("HEAD " + path + " HTTP/1.1\r\nHost: " + host +
                "\r\nConnection: close\r\nAccept: */*\r\n\r\n").encode("ascii")
     context = ssl.create_default_context()
+    def remaining():
+        seconds = deadline - time.monotonic()
+        if seconds <= 0:
+            raise TimeoutError("HTTPS observation deadline exceeded")
+        return seconds
+
     with socket.socket(family, socket.SOCK_STREAM) as raw:
-        raw.settimeout(timeout)
+        raw.settimeout(remaining())
         raw.connect(target)
+        raw.settimeout(remaining())
         with context.wrap_socket(raw, server_hostname=host) as conn:
-            conn.settimeout(timeout)
+            conn.settimeout(remaining())
             conn.sendall(request)
             header = bytearray()
             while b"\r\n\r\n" not in header:
+                conn.settimeout(remaining())
                 block = conn.recv(1024)
                 if not block:
                     raise ValueError("Incomplete HTTP response")
@@ -57,10 +72,11 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
                     raise ValueError("Oversized HTTP response headers")
     status_line = bytes(header).split(b"\r\n", 1)[0]
     tokens = status_line.split(b" ")
-    if len(tokens) < 2 or tokens[0] != b"HTTP/1.1" or not tokens[1].isdigit():
+    if len(tokens) < 2 or tokens[0] not in (b"HTTP/1.1", b"HTTP/1.0") or\
+            len(tokens[1]) != 3 or not tokens[1].isdigit():
         raise ValueError("Invalid HTTP response")
     status = int(tokens[1])
-    if status in (301, 302, 303, 307, 308):
+    if 300 <= status < 400:
         raise ValueError("HTTP redirects prohibited")
     return {"schema": "madsc-k3-https-head-observation-v1",
             "url_sha256": gate["url_sha256"], "k2_source_digest": gate["k2_source_digest"],

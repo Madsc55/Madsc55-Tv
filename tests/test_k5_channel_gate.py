@@ -29,10 +29,21 @@ class K5ChannelGateTests(unittest.TestCase):
                     "technical_samples_supplied": True, "needs_review": 1,
                     "results": [sample]}
         for flag in ("actual_network_measurements_verified", "network_probed",
-                     "production_ready"):
+                     "live_continuity_verified", "stream_continuity_verified",
+                     "candidate_identity_verified", "channel_identity_verified",
+                     "ibo_device_verified", "production_writes", "production_ready",
+                     "production_change_allowed"):
             forged = {**sample, flag: True}
             with self.subTest(flag=flag), self.assertRaises(ValueError):
                 evaluate_k3_evidence({**r, "evidence": {**measured, "results": [forged]}})
+        for flag in ("actual_network_measurements_verified", "stream_continuity_verified",
+                     "channel_identity_verified", "production_change_allowed"):
+            with self.subTest(envelope_flag=flag), self.assertRaises(ValueError):
+                evaluate_k3_evidence({**r, "evidence": {**measured, flag: True}})
+        for invalid in (None, 1, "true"):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                evaluate_k3_evidence({**r, "evidence": {**measured,
+                    "results": [{**sample, "actual_network_measurements_verified": invalid}]}})
         with self.assertRaises(ValueError):
             evaluate_k3_evidence({**r, "evidence": {**e, "untested_candidates": 0}})
         with self.assertRaises(ValueError):

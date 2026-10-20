@@ -42,8 +42,8 @@ def write_stage_report(root: Path, stage: str, report: dict) -> dict:
         raise ValueError("Invalid stage report")
     if report.get("category") != stage or report.get("production_writes") is not False:
         raise ValueError("Report must match stage and explicitly forbid production writes")
-    if report.get("production_ready") is True:
-        raise ValueError("Isolated evidence cannot assert production readiness")
+    if report.get("production_ready") is not False:
+        raise ValueError("Isolated evidence must explicitly deny production readiness")
     relative_path = f"reports/{stage}-isolated-evidence.json"
     result = write_fixture_report(root, relative_path,
                                   json.dumps(report, sort_keys=True, ensure_ascii=False) + "\n")

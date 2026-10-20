@@ -3,6 +3,7 @@
 Run from repository root: python -m madsc.offline_gate
 """
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -25,6 +26,11 @@ def main():
             stdout = stdout.decode("utf-8", errors="replace")
         if isinstance(stderr, bytes):
             stderr = stderr.decode("utf-8", errors="replace")
+    # unittest can exit 0 after discovering zero tests: never accept that as green.
+    matches = re.findall(r"Ran (\\d+) tests? in", stderr + "\\n" + stdout)
+    test_count = int(matches[-1]) if matches else 0
+    if exit_code == 0 and test_count == 0:
+        exit_code = 2
     report = {
         "mode": "offline_local",
         "scope": "unit_regression_only",
@@ -33,6 +39,7 @@ def main():
         "runtime_security_26_acceptance": 0,
         "test_exit_code": exit_code,
         "timed_out": timed_out,
+        "tests_discovered": test_count,
         "tests_passed": exit_code == 0,
         "note": "Offline unit tests cannot certify live K1-K5 or production.",
     }

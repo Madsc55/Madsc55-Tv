@@ -38,10 +38,14 @@ def produce_verified_history(manifest_path, output_path, *, current_sha, run_id,
             folder, manifest_path, run_id=origin["source_run_id"],
             commit_sha=origin["source_commit_sha"])
         handoff = pack_history(pair, run_id, current_sha)
-    if output_path.exists():
+    if output_path.exists() or output_path.is_symlink():
         raise ValueError("Refusing to overwrite existing history evidence")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(handoff, sort_keys=True) + "\n", encoding="utf-8")
+    if output_path.parent.is_symlink():
+        raise ValueError("Unsafe evidence output directory")
+    # Exclusive creation prevents replacing evidence created by another process.
+    with output_path.open("x", encoding="utf-8") as handle:
+        handle.write(json.dumps(handoff, sort_keys=True) + "\n")
     return {"verified_source_run": origin["source_run_id"],
             "verified_artifact_id": origin["artifact_id"],
             "handoff_digest": handoff["digest"], "production_ready": False}

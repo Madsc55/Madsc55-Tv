@@ -1272,3 +1272,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/k5_channel_gate.py` HEAD değerlendirme fonksiyonunun __main__ guard sonrası konumu düzeltildi ve `head_transport_observed=True` yerine yalnızca `head_transport_claim_validated=True`, `head_transport_independently_verified=False` döndürülecek biçimde fail-closed rapor semantiği uygulandı. Commit 0e571e86b3b5dd3c8ae3ac70878760d668f411e4.
 - `tests/test_k5_head_observation.py` yeni ayrımı sınar. Commit d4f5a811c82fe104406e7bbd4697786c0136daec. Yeni Actions sonucunu ayrıca doğrula.
 - Raporun kendisi imzalı/bağımsız canlı socket kanıtı değildir. Korunan üretim ve eski depo değişmedi, canlı ağ probe başlatılmadı. Kabul 0/92 ve 0/26.
+
+
+## 20 Ekim 2026 — K3 timeout sonsuz değerleri ve numerik IP çözümleme
+- Actions #39421372129 (SHA 46160b39c591df705639d90c558ffe17039e19a5) SUCCESS doğrulandı; #39421390769 ve #39421496704 CANCELLED, #39421531900 son kontrolde in_progress. İptal edilenler başarı olarak sayılmadı.
+- `madsc/https_head_probe.py`: timeout NaN/±Infinity dahil sonlu ve 0–5 saniye aralığında olmalı; numerik global IP hedeflerinde DNS subprocess çağrısı atlanıp aynı IP validasyon kapısı kullanılır. Commit 153881ccd208cb50a14dd172407565c1074569a8.
+- `tests/test_https_head_probe.py` sonsuz timeout negatif regresyonu eklendi. Commit 6f72a490a60007b18c081cbe352b9550e63356af. Actions #39421735763 ilk kontrolde queued, sonuç henüz doğrulanmadı.
+- Bu değişiklikler canlı yayın/IBO kabulü değildir; ağ probe gerçek hedefte tetiklenmedi. Korunan dosyalar ve eski depo değişmedi. 0/92 davranışsal ve 0/26 runtime güvenlik kabulü sabit.

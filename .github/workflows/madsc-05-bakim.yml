@@ -278,6 +278,23 @@ jobs:
           path: reports/k5-handoff.json
           if-no-files-found: error
           retention-days: 14
+      - name: K3 aday dogrulama makbuzunu K5 icin indir
+        uses: actions/download-artifact@v4
+        with:
+          name: madsc-k3-handoff
+          path: reports/k3-handoff-source
+      - name: K2 K3 K5 ayni kosu aday kanitini K5'te dogrula
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: python -m madsc.handoff_acceptance --k2 reports/k2-handoff/k2-candidates.json --k3 reports/k3-handoff-source/k3-handoff.json --k5 reports/k5-handoff.json --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA" --output reports/k5-cross-handoff-verification.json
+      - name: K5 capraz aday kanitini sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k5-cross-handoff-verification
+          path: reports/k5-cross-handoff-verification.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K1-K4 gercek kategori kanitlarini indir
         uses: actions/download-artifact@v4
         with:

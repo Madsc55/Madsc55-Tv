@@ -57,6 +57,7 @@ class OfflineFiveGateTests(unittest.TestCase):
         checks = execute("k5")
         self.assertIs(checks["k2_k3_k4_k5_candidate_restore_review"], True)
         self.assertIs(checks["k4_corruption_blocks_k5_review"], True)
+        self.assertIs(checks["k1_guards_k5_report_write"], True)
 
     def test_missing_checks_block_batch(self):
         result = assess_all(lambda category: {})

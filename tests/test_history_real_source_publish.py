@@ -1,6 +1,7 @@
 """Real-source producer cannot fabricate fixture history."""
 import hashlib
 import tempfile
+from unittest.mock import patch
 import unittest
 from pathlib import Path
 
@@ -41,6 +42,29 @@ class RealSourcePublisherTests(unittest.TestCase):
                 self.assertEqual((target / name).read_bytes(), data)
             with self.assertRaises(ValueError):
                 publish_source(source, target)
+
+    def test_source_mutation_during_publication_rejected_without_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            source.mkdir()
+            (source / "gecmis.json").write_text('{"history":{}}')
+            (source / "ana_liste_test_gecmisi.json").write_text('{"channels":{}}')
+            target = root / "out"
+            original = Path.read_bytes
+            counter = {"reads": 0}
+
+            def changing_read(path):
+                if Path(path) == source / "gecmis.json":
+                    counter["reads"] += 1
+                    if counter["reads"] >= 2:
+                        return b'{"history":{"changed":{}}}'
+                return original(path)
+
+            with patch.object(Path, "read_bytes", changing_read):
+                with self.assertRaisesRegex(ValueError, "changed during validation"):
+                    publish_source(source, target)
+            self.assertFalse(target.exists())
 
     def test_symlinked_source_file_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -73,6 +73,8 @@ def enforce_local_output_path(destination: Path, *, allowed_root: Path | None = 
     path = Path(destination)
     if not path.is_absolute():
         raise ProtectedWriteRejected("Output must be an absolute path")
+    if any(part in (".", "..") for part in path.parts) or str(path) != str(path.absolute()):
+        raise ProtectedWriteRejected("Ambiguous or traversing output path")
     if path.exists() or path.is_symlink():
         raise ProtectedWriteRejected("Output already exists or is a symlink")
     parent = path.parent

@@ -1172,3 +1172,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - madsc/k5_channel_gate.py K5 raporlamadan once orijinal K2 envelope'i unpack ederek run_id, commit_sha, source_digest, aday sayisi ve her K3 probe URL fingerprint'inin K2 adaylarina aidiyetini yeniden denetler. Kod 25a6d774130eca52350134cc9a62d626d377741a.
 - madsc-05-bakim.yml K5 adimi ayni kosudan indirdigi K2 kanitini ve GitHub run/sha bilgisini bu kapidan gecirir. Commit fd79f41dc4c4d58ee8a862281ec750fd3338e53c. Testler yanlis run, digest, sayi icin 6f1d0a4a4a0f44dc2ec58b3d860069867cdd46e0.
 - Son Actions 39412769302 pending; sonucu dogrulanmadi. Fixture disinda canli network/IBO kaniti yok, production_ready false. Korunan dosyalar ve eski depo degismedi. %47/%53, 0/92, 0/26.
+
+
+## 20 Ekim 2026 - Kanita dayali ilerleme tablosu
+- %47 tamamlandi / %53 kaldi tarihsel referanstir; otomatik hesaplanan guncel kabul orani degildir.
+- madsc/progress_scorecard.py kaynak envanterini (99 YAML, 130 Python, 68 test dosyasi) davranissal kabulden (0/92) ve calisma zamani guvenlik kabulunden (0/26) ayri raporlar. Kanitsiz genel yuzde uretmez. Commit: 27ed5318a629fb1f8e7f40473ac291ff0fe10d42.
+- Regresyon testleri: 868959f2f4e8fe46564c84096a89821cbc0d8bd9. K5 Actions rapor artifact entegrasyonu ve erken CI basarisi iddiasini engelleyen duzeltme: 81eb43bed387fd7ee667578a73e4e874aab4877d.
+- Son kontrol aninda run 39413388267 pending. Uretim kabul iddiasi yok. Korunan dosyalar ve eski depo degistirilmedi.

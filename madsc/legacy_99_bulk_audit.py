@@ -13,6 +13,23 @@ REPO = "Madsc55/madsc-tv"
 BRANCH = "madsc/bes-sistem-toplu-birlestirme"
 
 
+
+K_HINTS = {
+    "K1": ("guvenlik", "security", "izin", "koruma"),
+    "K2": ("kesif", "discovery", "aday", "candidate", "kaynak", "gecmis"),
+    "K3": ("kanal-test", "iptv-test", "epg", "logo", "ibo", "stream", "retest"),
+    "K4": ("yedek", "backup", "restore", "arsiv"),
+    "K5": ("bakim", "maintenance", "rapor", "report", "saglik", "son-kontrol", "denetim"),
+}
+
+
+def candidate_stages(path):
+    """Filename-based planning hints only; never behavioral acceptance."""
+    name = Path(path).stem.casefold()
+    stages = [stage for stage, terms in K_HINTS.items()
+              if any(term in name for term in terms)]
+    return stages or ["UNCLASSIFIED"]
+
 def github(url, token):
     headers = {"Accept": "application/vnd.github+json", "User-Agent": "madsc-source-audit"}
     if token:
@@ -56,9 +73,13 @@ def run(output, token):
                                  if any(word in line for word in ("contents:", "actions:", "pages:", "id-token:"))][:50],
             "artifact_lines": [line.strip() for line in source.splitlines()
                                if "upload-artifact" in line or "download-artifact" in line][:50],
+            "candidate_k_stages": candidate_stages(item["path"]),
+            "stage_mapping_reviewed": False,
             "behavioral_parity_verified": False,
         })
-    report = {"source_repository": REPO, "source_branch": BRANCH, "source_tree_sha": tree.get("sha"), "source_workflow_count": 99,
+    if len({row["path"] for row in rows}) != 99:
+        raise ValueError("Duplicate workflow paths")
+    report = {"candidate_mapping_only": True, "source_repository": REPO, "source_branch": BRANCH, "source_tree_sha": tree.get("sha"), "source_workflow_count": 99,
               "behavioral_parity_verified_count": 0, "production_writes": False, "workflows": rows}
     path = Path(output)
     if path.exists():

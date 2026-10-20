@@ -1,10 +1,5 @@
 name: Madsc55-Tv Eski Kaynaklardan Genis Turkce TV Kesfi
 on:
-  push:
-    branches: [main]
-    paths:
-      - madsc/legacy_multisource_discovery.py
-      - .github/workflows/madsc-k2-legacy-multisource.yml
   workflow_dispatch:
 permissions:
   contents: read

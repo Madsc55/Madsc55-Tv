@@ -1,5 +1,5 @@
 import unittest
-from madsc.write_path_audit import audit_write_paths, enforce_write_paths, ProtectedWriteRejected
+from madsc.write_path_audit import audit_write_paths, enforce_write_paths, enforce_local_output_path, ProtectedWriteRejected
 
 class WritePathAuditTests(unittest.TestCase):
     def test_protected_paths_blocked(self):
@@ -90,3 +90,39 @@ class WritePathAuditTests(unittest.TestCase):
     def test_enforcement_rejects_duplicate_paths(self):
         with self.assertRaises(ProtectedWriteRejected):
             enforce_write_paths(["reports/a.json", "reports/A.json"])
+
+
+class LocalOutputGuardTests(unittest.TestCase):
+    def test_safe_absolute_output_is_only_preflight(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "reports"
+            path.mkdir()
+            result = enforce_local_output_path(path / "evidence.json")
+            self.assertTrue(result["path_checked"])
+            self.assertFalse(result["production_write_allowed"])
+            self.assertFalse((path / "evidence.json").exists())
+
+    def test_protected_ancestor_and_existing_target_blocked(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            protected = root / "YEDEKLER"
+            protected.mkdir()
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(protected / "evidence.json")
+            existing = root / "existing.json"
+            existing.write_text("original")
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(existing)
+            self.assertEqual(existing.read_text(), "original")
+
+    def test_symlinked_parent_and_root_boundary_blocked(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            real = root / "real"
+            real.mkdir()
+            linked = root / "linked"
+            linked.symlink_to(real, target_is_directory=True)
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(linked / "evidence.json")
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(root / "elsewhere.json", allowed_root=real)

@@ -82,6 +82,22 @@ class VerifiedHistoryPipelineTests(unittest.TestCase):
                     token="test-token", verify_origin=verify, download=download)
             self.assertEqual(output.read_text(encoding="utf-8"), "ORIGINAL")
 
+    def test_k1_rejects_protected_output_before_network(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps({"mode": "VERIFIED_SOURCE"}))
+            calls = []
+            def verify(*args, **kwargs):
+                calls.append("network")
+                raise AssertionError("Network verification must not run")
+            with self.assertRaises(PermissionError):
+                produce_verified_history(manifest, root / "playlist.m3u8",
+                                         current_sha=B, run_id="789", token="test",
+                                         verify_origin=verify)
+            self.assertEqual(calls, [])
+            self.assertFalse((root / "playlist.m3u8").exists())
+
     def test_fixture_workflow_cannot_be_real_source_origin(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

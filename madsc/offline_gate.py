@@ -27,7 +27,7 @@ def main():
         if isinstance(stderr, bytes):
             stderr = stderr.decode("utf-8", errors="replace")
     # unittest can exit 0 after discovering zero tests: never accept that as green.
-    matches = re.findall(r"Ran (\\d+) tests? in", stderr + "\\n" + stdout)
+    matches = re.findall(r"Ran (\d+) tests? in", stderr + "\n" + stdout)
     test_count = int(matches[-1]) if matches else 0
     if exit_code == 0 and test_count == 0:
         exit_code = 2

@@ -9,6 +9,7 @@ from pathlib import Path
 
 from madsc.history_pair_bridge import import_legacy_pair
 from madsc.history_pair_store import KEYS
+from madsc.write_path_audit import enforce_write_paths
 
 
 def publish_source(folder, output):

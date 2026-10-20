@@ -953,3 +953,9 @@ Sonraki is: 45 arşiv notunun icinden ilgili kurallari ve tamamlanmis isleri onc
 - Önceki K2 SHA256 regresyon CI https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350031190 SUCCESS (commit 5ce005bccd4e9924be9330c87554b6dd2f1f9fd5). Kod koşusu https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350021463 SUCCESS.
 - Ek kod commit 340a37a6e10353e37c2829a86c9f98c5acba3f89: gerçek geçmiş kaynağı doğrulama ile yayınlama arasında değişirse fail-closed reddet; kaynak dosyaları veya üretim listeleri değiştirilmez. Yeni commitin CI sonucu ayrıca kontrol edilmeli.
 - Hâlâ gerçek kaynak doğrulaması yok; 92 davranışsal eşdeğerlik 0/92 ve runtime güvenlik kabulü 0/26. Önceki kaynak araştırmasını tekrar etmeden gerçek uygulama/kabul adımlarına devam et.
+
+
+### 20 Ekim 2026 — K2 kaynak değişimi olumsuz senaryo testi
+- Commit 3256d9ab4f2a265b91cd7ccd67e57549b6d2ffb9: tests/test_history_real_source_publish.py içine, kaynak okuma arasında gecmis.json baytlarının değişmesini taklit eden regresyon testi eklendi. Beklenti: ValueError ve hiçbir çıktı dizini oluşmaması.
+- Test GitHub Actions koşusu https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350454947. Bu not yazılırken koşu queued; SUCCESS iddiası yapılmaz.
+- Kaynak değişimi kontrolünün kod commit'i 340a37a6e10353e37c2829a86c9f98c5acba3f89; gerçek geçmiş kaynağı ve üretim doğrulaması halen eksik.

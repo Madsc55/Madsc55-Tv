@@ -1085,3 +1085,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - K4 komut akisinin izole rapor uretimi ve mevcut raporu ezmeme regresyonu commit 6e7ea5e8d2b695211ebb2e60aa2f529beeab396f.
 - Onceki K1-K5 CI 39406887334 SUCCESS. Yeni K4 CI 39407380313 son kontrolde in_progress; sonuc kesinlesmeden basarili sayilmaz.
 - K3 ve K5 gercek komut cagrilari ortak guvenlik arayuzune henuz bagli degil. K4 modu istege baglidir, tum uretim yazmalarini kapsamaz. Eski depo ve korunan listeler degismedi. Genel referans %47/%53.
+
+
+## 20 Ekim 2026 - K3 ve K5 gercek degerlendiricilerinin K1 korumali rapora baglanmasi
+- madsc/stage_report_cli.py: K3 icin summarize_offline_probe_evidence, K5 icin summarize_batch gercek mevcut degerlendiricilerini cagirir; izole raporlari write_stage_report ile K1 kapisindan yazar. Canli ag testi, uretim yazmasi veya uretim kabulu yapmaz. Commit 6d4e716a71b94b2229914b8df8f6ba2e61141232.
+- K3/K5 CLI gercek islev, izole yazma ve ustune yazmama testleri: 3e8169ca3616ab718a7656ce601ae524b6e26743. Actions 39407853563 son kontrolde pending; basarili iddiasi yok.
+- Onceki K4 CLI entegrasyon test run 39407395209 SUCCESS. K3/K5 CLI yeni bir opt-in giris noktasi; mevcut Actions workflow'larinin otomatik olarak bu komutu kullandigi henuz kanitlanmadi.
+- Korunan kanal listeleri, EPG, favoriler, yedekler ve eski depo degistirilmedi. 20+1 calisma kurali gecerlidir. Genel referans %47/%53, davranissal kabul 0/92, runtime guvenlik kabul 0/26.
+- Siradaki: CI workflow giris noktalarini inceleyip K3/K4/K5 gercek calistirma baglantilarini kanitla; bekleyen run sonucunu dogrula, butun K'lerin bagli etkilerini birlikte test et.

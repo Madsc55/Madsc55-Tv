@@ -1,4 +1,5 @@
 """Real-source producer cannot fabricate fixture history."""
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -32,6 +33,10 @@ class RealSourcePublisherTests(unittest.TestCase):
             report = publish_source(source, target)
             self.assertFalse(report["real_source_independently_authenticated"])
             self.assertFalse(report["production_writes"])
+            self.assertTrue(report["byte_integrity_verified"])
+            self.assertEqual(report["source_sha256"], {
+                name: hashlib.sha256(data).hexdigest() for name, data in files.items()
+            })
             for name, data in files.items():
                 self.assertEqual((target / name).read_bytes(), data)
             with self.assertRaises(ValueError):

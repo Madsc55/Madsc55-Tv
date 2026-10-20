@@ -995,3 +995,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 18. Kaynaklarin tumunun goruldugu veya sohbetlerin eksiksiz aktarildigi varsayilmaz. Bilinmeyen, eksik, dogrulanmamis veya bloke isler acikca yazilir; hicbir eski kaynak silinmez.
 19. Degisikliklerin kaniti GitHub commit SHA, ilgili Actions run sonucu, artifact ve test kapsamidir. Calisan/queued CI icin SUCCESS iddia edilmez. Tekrarlayan kucuk testler asil entegrasyonun yerine gecmez.
 20. Proje sahibi onayi olmadan canli yayin listeleri, EPG/gecmis, korunan kaynaklar veya uretim sistemleri degistirilmez. Once salt okunur ve izole dogrulama, sonra izinli kontrollu gecis uygulanir.
+
+
+## 20 Ekim 2026 — Birleşik kalıcı çalışma sözleşmesi
+- Kullanıcının kesin vurgusu: eski ve yeni TÜM ilgili notları sadece arşivlemek değil; sistem kurulurken önce okuyup geçmiş hataları, eksikleri, alınan kararları ve yapılacak/yapılmayacak işleri anlayarak uygulamak. Sohbetler arası kayıp ve tekrar inceleme kabul edilemez.
+- Tek çalışma kuralı giriş dosyası: BIRLESIK_KALICI_CALISMA_KURALLARI.md (commit 8aad8b00ff77a093bf2ef3bfef1d3fe4de7ad44d). Eski ve yeni notları silmez veya onların yerini almaz. Önce bunu, sonra göreve ilgili özgün notları oku.
+- Kontrol edilen kaynak girişleri: PROJE_HAFIZASI.md, ESKI_SISTEM_NOTLARI.md, SOHBET_DEVIR_NOTU_2026-10-20.md. Eski arşivdeki her dosyanın baştan sona okunduğu iddia edilmez; tüm notların fiziksel tek dosyada birleştirilmesi hâlâ açık iştir.
+- Öncelik: geçmiş hata/eksik analizi + K1–K5 etki matrisi + gerçek entegrasyon/kabul. Sadece kural yazmayı sistem kurma başarısı sayma.

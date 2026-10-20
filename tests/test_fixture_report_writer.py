@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from madsc.fixture_report_writer import write_fixture_report
+from madsc.fixture_report_writer import write_fixture_report, write_stage_report
 from madsc.history_pair_store import write_isolated_history_pair, decode_pair
 
 
@@ -72,3 +72,21 @@ class FixtureReportWriterTests(unittest.TestCase):
             for path in ("reports/../gecmis.json", "gecmis.json", "reports/test.m3u8"):
                 with self.subTest(path=path), self.assertRaises(PermissionError):
                     write_isolated_history_pair(root, path, pair)
+
+    def test_k3_k4_k5_shared_k1_gate(self):
+        import json
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for stage in ("k3", "k4", "k5"):
+                payload = {"category": stage, "production_writes": False,
+                           "production_ready": False, "status": "fixture"}
+                result = write_stage_report(root, stage, payload)
+                self.assertEqual(result["stage"], stage)
+                self.assertEqual(json.loads((root / result["relative_path"]).read_text()), payload)
+                with self.assertRaises(FileExistsError):
+                    write_stage_report(root, stage, payload)
+            for stage in ("k3", "k4", "k5"):
+                with self.assertRaises(ValueError):
+                    write_stage_report(root, stage, {"category": stage, "production_writes": True})
+            with self.assertRaises(ValueError):
+                write_stage_report(root, "k6", {"category": "k6", "production_writes": False})

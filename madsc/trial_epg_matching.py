@@ -25,7 +25,7 @@ def playlist_entries(playlist):
         if not line.startswith("#EXTINF:"):
             continue
         title = line.split(",", 1)[-1].strip()
-        match = re.search(r'\\btvg-id="([^"]*)"', line)
+        match = re.search(r'\btvg-id="([^"]*)"', line)
         entries.append((title, match.group(1) if match else ""))
     return entries
 

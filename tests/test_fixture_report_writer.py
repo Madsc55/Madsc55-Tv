@@ -41,3 +41,11 @@ class FixtureReportWriterTests(unittest.TestCase):
                     write_fixture_report(root, "reports/rejected.json", "forbidden")
             guard.assert_called_once_with(["reports/rejected.json"])
             self.assertFalse((root / "reports").exists())
+
+    def test_existing_report_evidence_cannot_be_overwritten(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            write_fixture_report(root, "reports/evidence.json", "first")
+            with self.assertRaises(FileExistsError):
+                write_fixture_report(root, "reports/evidence.json", "second")
+            self.assertEqual((root / "reports/evidence.json").read_text(), "first")

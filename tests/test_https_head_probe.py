@@ -52,7 +52,7 @@ class HTTPSHeadProbeTests(unittest.TestCase):
             with self.assertRaises(TimeoutError):
                 observe_https_headers(self.url, self.envelope, self.run, self.sha,
                                       authorized=True, timeout=5)
-            connect.assert_called_once()
+            connect.assert_not_called()
 
     def test_non_ascii_path_rejected_before_socket(self):
         url = "https://video.example.com/ç.m3u8"

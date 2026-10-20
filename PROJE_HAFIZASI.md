@@ -1078,3 +1078,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - K3/K4/K5 yazim ve reddetme regresyonlari eklendi: b2b35889dfb8425b566e63de699f251b1234a71b. Toplu CI 39406887334 son kontrolde queued; henuz basarili sayilmaz.
 - K1-K2 onceki toplu CI 39406192839 SUCCESS. Yeni arayuz mevcut K3/K4/K5 uretim cagrilarina henuz baglanmadi; bu eksik acik kalacak.
 - 20 calisma ilkesi ve ek depo kimligi kurali, eski depo salt okunurlugu ve korunan verilerin degistirilmemesi suruyor. 99 YAML aynen tasinmayacak; islevleri besli sistemde gelistirilecek. Genel referans %47/%53.
+
+
+## 20 Ekim 2026 - K4 gercek komut akisina K1 rapor korumasi
+- K4 restore_drill.py CLI icin istege bagli --isolated-report-root eklendi. Bu modda rapor sadece reports/k4-isolated-evidence.json hedefine, write_stage_report uzerinden ortak K1 denetimiyle yazilir. Eski CLI kullanim yolu korunur. Commit 2352fe0c772f7aa0598f208338d0615772634332.
+- K4 komut akisinin izole rapor uretimi ve mevcut raporu ezmeme regresyonu commit 6e7ea5e8d2b695211ebb2e60aa2f529beeab396f.
+- Onceki K1-K5 CI 39406887334 SUCCESS. Yeni K4 CI 39407380313 son kontrolde in_progress; sonuc kesinlesmeden basarili sayilmaz.
+- K3 ve K5 gercek komut cagrilari ortak guvenlik arayuzune henuz bagli degil. K4 modu istege baglidir, tum uretim yazmalarini kapsamaz. Eski depo ve korunan listeler degismedi. Genel referans %47/%53.

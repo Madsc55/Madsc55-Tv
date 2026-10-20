@@ -1054,3 +1054,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `tests/test_fixture_report_writer.py` regresyonu, kapı hata verdiğinde `reports/` klasörü bile oluşturulmadığını ve dosyaya yazılmadığını denetliyor. Commit `80ad0ec924f618c1de9eea6c3ff782252b2da6ef`.
 - Önceki K1-K5 izole test #39355945113 SUCCESS. Yeni entegrasyon testi #39356267666 sonuç bekliyor; henüz kabul sayılmaz.
 - Bu yalnız izole fixture raporu yazma yolu için gerçek çağrı noktasıdır; GitHub push veya tüm üretim yazma yollarını yakaladığı iddia edilmez. 26/26 runtime kabul 0/26; 92/92 eşdeğerlik 0/92. Genel referans %47/%53.
+
+
+## 20 Ekim 2026 — Eski 20 ilkeye bağlı K1–K5 görev yerleştirme
+- Kullanıcı kararı: yeni kabul yöntemi kurmadan, eski 20 çalışma ilkesi ve ek depo kimliği kuralına göre 99 workflow ile 26 güvenlik görevini ait oldukları K1–K5 yerlerine ve sıraya entegre et. Gereksiz küçük test döngülerini ana iş diye sunma.
+- 99 kaynak denetimine geçici `candidate_k_stages` ve `stage_mapping_reviewed: false` alanları eklendi; eşleşmeyenler `UNCLASSIFIED`. Kaynak kodu: commit `941171a2bf9e83b740c9f3c7d84baf176e4fa2ff`. Bu yalnız dosya adına dayalı ilk yönlendirmedir, gerçek görev çözümlemesi ve davranış kabulü değildir.
+- 99 kaynak regresyonu ve workflow CI kapısı commit `15371971e923d4c389823b073be3724208b2b999`, `5c276f7d13bfec29dc4c556aa8d77e829ba7ec7a`. Actions #39356612285 henüz sonuçlanmadı.
+- Önceki K1–K5 izole güvenlik entegrasyon testi #39356267666 SUCCESS. Gerçek üretim/IBO/harici restore onayı değildir.
+- Sıradaki büyük iş: geçici K sınıflamasını 99 dosyanın komut, tetik, izin, çıktı, bağımlılık ve yan etki kaynaklarıyla doğrula; 26 kuralın onaylı kaynak metnini belirle; beşli sistemde gerçek görev çağrı noktalarına bağla. Korunan veriye ve eski depoya yazma yok. 92/92 ve 26/26 kabul hâlâ 0; genel referans %47/%53.

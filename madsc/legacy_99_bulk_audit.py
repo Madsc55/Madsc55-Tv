@@ -30,6 +30,25 @@ def candidate_stages(path):
               if any(term in name for term in terms)]
     return stages or ["UNCLASSIFIED"]
 
+def summarize_blockers(rows):
+    """Report evidence work by type without treating inventory as parity."""
+    required = ("legacy_execution", "new_execution", "input_output_comparison",
+                "side_effect_comparison", "failure_timeout_comparison",
+                "reviewer_approval")
+    if not isinstance(rows, list):
+        raise ValueError("Invalid workflow audit rows")
+    counts = {name: 0 for name in required}
+    for row in rows:
+        if not isinstance(row, dict) or row.get("behavioral_parity_verified") is not False:
+            raise ValueError("Unexpected accepted workflow")
+        missing = row.get("evidence_missing")
+        if not isinstance(missing, list) or len(set(missing)) != len(missing) or set(missing) != set(required):
+            raise ValueError("Invalid evidence blocker set")
+        for name in missing:
+            counts[name] += 1
+    return counts
+
+
 def github(url, token):
     headers = {"Accept": "application/vnd.github+json", "User-Agent": "madsc-source-audit"}
     if token:
@@ -83,9 +102,11 @@ def run(output, token):
         })
     if len({row["path"] for row in rows}) != 99:
         raise ValueError("Duplicate workflow paths")
+    blocker_counts = summarize_blockers(rows)
     report = {"candidate_mapping_only": True, "source_repository": REPO, "source_branch": BRANCH, "source_tree_sha": tree.get("sha"), "source_workflow_count": 99,
               "behavioral_parity_verified_count": 0,
               "blocked_workflow_count": len(rows),
+              "missing_evidence_by_type": blocker_counts,
               "production_writes": False, "workflows": rows}
     path = Path(output)
     if path.exists():

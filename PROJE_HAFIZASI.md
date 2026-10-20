@@ -1293,3 +1293,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/probe_target_gate.py` ters eğik çizgi içeren belirsiz URL'leri reddeder; `getaddrinfo` içinde yaygın tekrarlı güvenli IP yanıtlarını önce bütün IP'leri denetleyip sonra sıralı tekilleştirir. Karma özel/genel DNS yanıtı hâlâ fail-closed. Commit a643d06290501978cac4794b0f51b4c73d1b9ca4.
 - `tests/test_probe_target_gate.py` güvenli tekrarlı DNS yanıtını ve backslash URL reddini test eder. Commit a9d2461dbeb73aa93b6a0e46235206348d91a5ce. Actions #39422624033 ilk kontrolde queued; SUCCESS henüz iddia edilmez.
 - Bu güvenlik regresyonları canlı yayın/IBO/gerçek üretim kabulü değildir. Ağ hedefleri tetiklenmedi, korunan listeler ve eski depo değişmedi; 0/92 ve 0/26.
+
+
+## 20 Ekim 2026 — K5 HEAD rapor içerik parmak izi
+- Actions #39422624033 (SHA a9d2461dbeb73aa93b6a0e46235206348d91a5ce) completed SUCCESS; önceki ara koşu #39422599261 FAILURE idi, güncel başarılı koşu onun yerini aldı.
+- `madsc/k5_channel_gate.py`: kabul edilen HEAD gözleminin sıralı/kanonik JSON içeriği SHA-256 olarak `observation_sha256` alanına bağlanır. Bu içerik bütünlüğü için referans parmak izidir; imza veya bağımsız ağ gözlem kanıtı değildir. Commit 3f7a90e9965bdffdd7a5365441cfea6c994dc8a6.
+- `tests/test_k5_head_observation.py`: deterministik SHA-256 ve 200→204 değişince parmak izi değişimi sınanır. Commit 79fc82dee145bc4c03389f50172c4fd4479e05de. Actions #39423176530 ilk kontrolde pending; CI sonucu henüz doğrulanmadı.
+- Gerçek ağ probe çalıştırılmadı; üretim, EPG, IBO, yedekler ve eski depo değişmedi. 0/92 eski otomasyon davranışsal eşdeğerliği ve 0/26 güvenlik runtime kabulü devam ediyor.

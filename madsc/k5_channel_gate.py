@@ -128,6 +128,17 @@ def evaluate_k3_head_observation(observation: dict, k2_envelope: dict,
                 "ibo_device_verified", "production_writes", "production_ready"):
         if observation.get(key) is not False:
             raise ValueError("Unsafe HEAD observation claim: " + key)
+    # Explicitly reject approval-like extensions; a caller-supplied JSON report
+    # must not smuggle a live/production claim through this review gate.
+    approval_flags = ("actual_network_measurements_verified",
+                      "actual_stream_measurements_verified",
+                      "live_continuity_verified", "candidate_identity_verified",
+                      "channel_identity_verified", "production_change_allowed",
+                      "production_approved", "ibo_approved",
+                      "head_transport_independently_verified")
+    if any(observation.get(key) is not False
+           for key in approval_flags if key in observation):
+        raise ValueError("Untrusted live approval in HEAD observation")
     status = observation.get("http_status")
     if type(status) is not int or not 100 <= status <= 599 or 300 <= status < 400:
         raise ValueError("Invalid or redirected HTTP status")
@@ -135,6 +146,7 @@ def evaluate_k3_head_observation(observation: dict, k2_envelope: dict,
             "url_sha256": digest, "http_status": status,
             "head_transport_claim_validated": True,
             "head_transport_independently_verified": False,
+            "http_success_status": 200 <= status < 300,
             "actual_stream_measurements_verified": False,
             "live_continuity_verified": False, "ibo_device_verified": False,
             "production_ready": False}

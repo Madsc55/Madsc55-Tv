@@ -1,0 +1,31 @@
+name: Madsc55-Tv K2 Gercek Kanal Kesif Pilotu
+on:
+  push:
+    branches: [main]
+    paths:
+      - madsc/live_discovery_pilot.py
+      - .github/workflows/madsc-k2-live-pilot.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch public Turkish channel candidate source (read only)
+        run: python -m madsc.live_discovery_pilot
+      - name: Publish redacted candidate inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k2-real-channel-discovery-pilot
+          path: reports/k2-live-pilot.json
+          if-no-files-found: warn
+          retention-days: 14

@@ -1451,3 +1451,8 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Güncel `main` kaynağı yeniden okununca `madsc/history_verified_pipeline.py` çağrısında `output_path.absolute()` normalizasyonunun `..` bileşenlerini K1'e ulaşmadan gizleyebileceği görüldü. Ham bileşenleri koruyan `Path.cwd() / output_path` biçimiyle düzeltildi (`6432d44d5d819ef60c252303ee0fc5d18d7f5800`).
 - Önceden eklendiği bildirilen mutlak yol traversal testinin güncel GitHub dosyasında olmadığı saptandı; `tests/test_write_path_audit.py` içine gerçekten eklendi (`dc68f29853b4c68efa13ced590e68b541652d2c1`).
 - Yerel eski kaynak kopyalarında güncel `main` için geçerli test kanıtı yok. GitHub Actions çalıştırılmadı. K1 tam-yol kontrolü yalnız çağıran akışları kapsar; TOCTOU ve tüm bağımsız yazıcılar açık. 0/92 ve 0/26 kabul değerleri korunuyor.
+
+
+## 20 Ekim 2026 gece — Yeni sohbete devir
+- Son calisma kurallari, dogru Madsc55-Tv repo/dal kimligi, K1–K5 durumlari, son commitler, eksikler ve siradaki somut isler `SOHBET_DEVIR_NOTU_2026-10-20.md` dosyasina eklendi (commit `df0f0487be70fc08587e5c54b4cf5171d4b27eed`).
+- Yeni sohbet ilk is: BIRLESIK_KALICI_CALISMA_KURALLARI.md, PROJE_HAFIZASI.md, ESKI_SISTEM_NOTLARI.md ve SOHBET_DEVIR_NOTU_2026-10-20.md dosyalarini oku; guncel main kaynaklarini dogrula; offline toplu regresyonu gercekten calistirmaya odaklan. Eski repo salt okunur, Actions calistirma, korunan canli veriye yazma. 0/92 ve 0/26 kabul degismedi.

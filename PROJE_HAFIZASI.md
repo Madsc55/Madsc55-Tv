@@ -1252,3 +1252,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/https_head_probe.py` DNS getaddrinfo işlemini kill edilebilir izole Python subprocess içine taşıdı; subprocess.run timeout ortak monotonic deadline'dan kalan süreyi kullanıyor, çıktı boyutu sınırlı, tüm IP yanıtları önceki fail-closed gate ile doğrulanıyor. Commit cff69db346d2374cea3369f62c2112d021b316dd.
 - `tests/test_https_head_probe.py` DNS subprocess mock'larına uyarlandı; DNS timeout halinde socket açılmaması regresyonu eklendi. Commit d675d38c8f4ed7ffb973bcd79b89a6be5ec57704. Actions #39419786552 ilk kontrolde pending; SUCCESS henüz doğrulanmadı.
 - Bu yalnız opt-in HTTPS HEAD gözlemidir; gerçek yayın ffprobe/ffmpeg, IBO, 30 saniye süreklilik ve K5 canlı kanıt zinciri henüz yok. Ağ testi gerçek hedefte çalıştırılmadı; korunan üretim ve eski depo değişmedi. Kabul sayaçları 0/92 ve 0/26.
+
+
+## 20 Ekim 2026 — İki başarısız DNS CI koşusunun kök nedeni ve düzeltme
+- Actions #39419767071 (cff69db3) ve #39419786552 (d675d38c) completed FAILURE. #39419786552 Güvenlik job logu: `test_shared_deadline_blocks_socket_after_dns` içinde DNS deadline kaynaklı `TimeoutError`, `except (..., OSError)` tarafından `ValueError('DNS resolution failed')` olarak maskelenmiş; 321 regresyondan 1 error. K2/K3/K4/K5 işlerinin skip/failure zinciri güvenlik jobuna bağımlı; bağımsız canlı kabul sonucu değil.
+- `madsc/https_head_probe.py` DNS exception sırası düzeltildi: `except TimeoutError: raise` genel `OSError` yakalamadan önce geldi. Commit 48961554ed27612bea1ffaee627ba456f253fcec.
+- Yeni Actions #39419973232 ilk kontrolde queued; SUCCESS henüz doğrulanmadı. Canlı ağ isteği yapılmadı, üretim dosyaları ve eski depo değişmedi. 0/92 davranışsal ve 0/26 runtime kabul değişmedi.

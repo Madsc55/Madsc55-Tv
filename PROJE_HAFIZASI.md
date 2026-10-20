@@ -1165,3 +1165,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - madsc/k5_channel_gate.py artik K3 technical_samples_supplied/probed sayisi, preliminary_passes+needs_review, benzersiz url_sha256 ve her kanal icin technical_status/stream_continuity_verified/channel_identity_verified/ibo_device_verified/production_change_allowed alanlarini fail-closed denetler. Commit aff33890f95c28e225fed46022bae6f052093737.
 - tests/test_k5_channel_gate.py tutarsiz teknik sayi ve sahte ornek bayragi regresyonlari eklendi. Commit e57f5908cf296cf59f6a06f70fb7f06dc85f6aaf. Son CI 39412256597 ilk kontrol aninda in_progress (onceki commit); yeni test commit run'i henuz gorunmemisti. Kabul iddiasi yok.
 - Bu paket gercek ffprobe olcumunu toplamaz; yalniz getirilen teknik kanitin tutarliligini korur. Gercek ffprobe kayitlarini kaynak kimligi, guvenilir toplama ortami ve K2 fingerprint ile iliskilendirme sonraki is. Korunan dosyalar degismedi. %47/%53; 0/92, 0/26.
+
+
+## 20 Ekim 2026 - K5 K2-K3 orijinal envelope ile teknik kanit capraz baglantisi
+- 39412256597 ara kod commit FAIL; 39412276145 test commit SUCCESS. K5 kanal gate kodu onceki calisan kabulden devam etti.
+- madsc/k5_channel_gate.py K5 raporlamadan once orijinal K2 envelope'i unpack ederek run_id, commit_sha, source_digest, aday sayisi ve her K3 probe URL fingerprint'inin K2 adaylarina aidiyetini yeniden denetler. Kod 25a6d774130eca52350134cc9a62d626d377741a.
+- madsc-05-bakim.yml K5 adimi ayni kosudan indirdigi K2 kanitini ve GitHub run/sha bilgisini bu kapidan gecirir. Commit fd79f41dc4c4d58ee8a862281ec750fd3338e53c. Testler yanlis run, digest, sayi icin 6f1d0a4a4a0f44dc2ec58b3d860069867cdd46e0.
+- Son Actions 39412769302 pending; sonucu dogrulanmadi. Fixture disinda canli network/IBO kaniti yok, production_ready false. Korunan dosyalar ve eski depo degismedi. %47/%53, 0/92, 0/26.

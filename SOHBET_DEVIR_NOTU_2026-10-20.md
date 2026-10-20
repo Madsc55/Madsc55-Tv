@@ -113,3 +113,8 @@ Kullanici eski sistemdeki AGENTS, 810 ana/alt notlari ve diger tum notlarin yeni
 ## KALICI ÇALIŞMA KURALI — Eski ve yeni notları birlikte esas al (20 Ekim 2026)
 
 **Kullanıcının kesin talimatı:** Yeni MADSC TV sistemi kurulurken, geliştirilirken, değiştirilirken ve test edilirken **hem eski sistemden aktarılmış bütün notlar hem de yeni sistemin güncel notları birlikte incelenerek** ilerlenir. Sadece yeni notlara bakıp eski kararları, geçmiş hataları, incelemeleri, 810 dosya notlarını, AGENTS yönergelerini, alt notları, güvenlik ve kabul kayıtlarını görmezden gelmek yasaktır. İlgili işe başlamadan önce `ESKI_SISTEM_NOTLARI.md` ana girişini, gerekirse `docs/eski_depo_not_arsivi/` altındaki özgün tam metinleri, `PROJE_HAFIZASI.md`, bu devir notunu ve konuya ilişkin yeni notları oku. Eski notlarda yer alan tarihsel bilgi/kararları mevcut kod ve gerçek testlerle karşılaştır; çelişkide en yeni açık kullanıcı kararı ve koruma kuralları önceliklidir. Okunmayan notları okunmuş gibi, test edilmeyen işleri tamamlanmış gibi gösterme. Eski notların tek dosyada fiziksel birleştirilmesi tamamlanana kadar kaynak arşivden yararlanmaya devam et. **Bu kural bütün sonraki sohbetler ve iş aşamaları için geçerlidir.**
+
+
+## KESİN DEPO ADLANDIRMA DÜZELTMESİ — 20 Ekim 2026
+
+**Kullanıcının açık düzeltmesi:** `Madsc55/madsc-tv` = **ESKİ SİSTEM** (yalnız tarihsel kaynak, salt okunur); `Madsc55/Madsc55-Tv` = **YENİ SİSTEM** (geliştirilecek asıl sistem). Yeni sisteme yanlışlıkla "MADSC TV" ya da eski deponun adını verme. Yeni sistemden söz ederken **Madsc55-Tv** adını kullan. Eski sistem notları yeni sistemin notlarıyla birlikte incelenerek iş yürütülür. Bu ayrım tüm sonraki sohbetlerde ve GitHub işlemlerinde korunmalıdır.

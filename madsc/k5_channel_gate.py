@@ -24,9 +24,29 @@ def evaluate_k3_evidence(report: dict) -> dict:
                 evidence["untested_candidates"]) < 0 or
             evidence["probed_candidates"] + evidence["untested_candidates"] != evidence["candidate_count"]):
         raise ValueError("Inconsistent K3 candidate counts")
+    if evidence.get("technical_samples_supplied") is not (evidence["probed_candidates"] > 0):
+        raise ValueError("K3 sample flag does not match candidate counts")
+    if (type(evidence.get("preliminary_passes")) is not int or
+            type(evidence.get("needs_review")) is not int or
+            evidence["preliminary_passes"] < 0 or evidence["needs_review"] < 0 or
+            evidence["preliminary_passes"] + evidence["needs_review"] != evidence["probed_candidates"]):
+        raise ValueError("K3 technical status counts do not match probes")
     results = evidence.get("results")
     if not isinstance(results, list) or len(results) != evidence["probed_candidates"]:
         raise ValueError("Invalid K3 results")
+    fingerprints = [item.get("url_sha256") for item in results if isinstance(item, dict)]
+    if (len(fingerprints) != len(results) or len(set(fingerprints)) != len(results) or
+            any(not isinstance(d, str) or len(d) != 64 or
+                any(c not in "0123456789abcdef" for c in d) for d in fingerprints)):
+        raise ValueError("Invalid or repeated K3 channel fingerprints")
+    if any(item.get("technical_status") not in ("PRELIMINARY_PASS", "NEEDS_REVIEW") or
+           item.get("stream_continuity_verified") is not False or
+           item.get("channel_identity_verified") is not False or
+           item.get("ibo_device_verified") is not False or
+           item.get("production_change_allowed") is not False for item in results):
+        raise ValueError("Unsafe K3 technical result")
+    if sum(item["technical_status"] == "PRELIMINARY_PASS" for item in results) != evidence["preliminary_passes"]:
+        raise ValueError("Inconsistent preliminary K3 pass count")
     return {"schema": "madsc-k5-k3-safety-gate-v1",
             "candidate_count": evidence["candidate_count"],
             "probed_candidates": evidence["probed_candidates"],

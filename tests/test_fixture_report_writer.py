@@ -99,5 +99,13 @@ class FixtureReportWriterTests(unittest.TestCase):
             for stage in ("k3", "k4", "k5"):
                 with self.assertRaises(ValueError):
                     write_stage_report(root, stage, {"category": stage, "production_writes": True})
+            for invalid in (None, "false", 0, 1, True):
+                with self.subTest(production_ready=invalid), self.assertRaises(ValueError):
+                    write_stage_report(root, "k3", {
+                        "category": "k3", "production_writes": False,
+                        "production_ready": invalid})
+            with self.assertRaises(ValueError):
+                write_stage_report(root, "k3", {
+                    "category": "k3", "production_writes": False})
             with self.assertRaises(ValueError):
                 write_stage_report(root, "k6", {"category": "k6", "production_writes": False})

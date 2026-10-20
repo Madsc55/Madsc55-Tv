@@ -1445,3 +1445,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - K1 `enforce_local_output_path` mutlak yolda `.` / `..` geçişlerini fail-closed reddediyor (`03ec9f4e79c99c9d50df49f0f6cbf78497c8768b`), negatif regresyon `tests/test_write_path_audit.py` eklendi (`27a21ac7c75502a78f6a0bdbd2fef453a11c42a4`).
 - K2 `history_real_source_publish.py` artık yalnız çıktı dizininin adını değil tam çıktı yolunu K1 denetimine sokuyor (`34c2cae4661e75ed0d982e8f23c7bf6b2e511876`).
 - Yerel çalışma ortamında önceki kaynak kopyaları var, ancak GitHub güncel main doğrudan klonlanamadı (github.com DNS çözümlenemiyor). Bu yüzden güncel main regresyonu yürütüldü veya geçti denmedi. Actions kotası nedeniyle CI tetiklenmedi. Kabul 0/92 ve 0/26. Sıradaki: GitHub kaynaklarının güncel çalışma kopyasını doğrulanmış şekilde oluşturup ücretsiz offline toplu regresyonu çalıştırmak; bağımsız dosya yazıcılarının K1 denetimini tamamlamak.
+
+
+## 20 Ekim 2026 — K1/K2 traversal kontrolü doğrulaması
+- Güncel `main` kaynağı yeniden okununca `madsc/history_verified_pipeline.py` çağrısında `output_path.absolute()` normalizasyonunun `..` bileşenlerini K1'e ulaşmadan gizleyebileceği görüldü. Ham bileşenleri koruyan `Path.cwd() / output_path` biçimiyle düzeltildi (`6432d44d5d819ef60c252303ee0fc5d18d7f5800`).
+- Önceden eklendiği bildirilen mutlak yol traversal testinin güncel GitHub dosyasında olmadığı saptandı; `tests/test_write_path_audit.py` içine gerçekten eklendi (`dc68f29853b4c68efa13ced590e68b541652d2c1`).
+- Yerel eski kaynak kopyalarında güncel `main` için geçerli test kanıtı yok. GitHub Actions çalıştırılmadı. K1 tam-yol kontrolü yalnız çağıran akışları kapsar; TOCTOU ve tüm bağımsız yazıcılar açık. 0/92 ve 0/26 kabul değerleri korunuyor.

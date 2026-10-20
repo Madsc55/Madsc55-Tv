@@ -41,6 +41,10 @@ def evaluate_k3_evidence(report: dict, k2_envelope: dict | None = None,
             any(not isinstance(d, str) or len(d) != 64 or
                 any(c not in "0123456789abcdef" for c in d) for d in fingerprints)):
         raise ValueError("Invalid or repeated K3 channel fingerprints")
+    if any(item.get("actual_network_measurements_verified") is True or
+           item.get("network_probed") is True or
+           item.get("production_ready") is True for item in results):
+        raise ValueError("Unexpected live approval in offline evidence")
     if any(item.get("technical_status") not in ("PRELIMINARY_PASS", "NEEDS_REVIEW") or
            item.get("stream_continuity_verified") is not False or
            item.get("channel_identity_verified") is not False or

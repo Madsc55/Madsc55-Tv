@@ -33,6 +33,17 @@ class FixtureReportWriterTests(unittest.TestCase):
                 write_fixture_report(root, "reports/data.json", "no")
             self.assertFalse((root / "outside" / "data.json").exists())
 
+    def test_nested_symlink_does_not_create_outside_directories(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            outside = root / "outside"
+            outside.mkdir()
+            (root / "reports").mkdir()
+            (root / "reports" / "linked").symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(PermissionError):
+                write_fixture_report(root, "reports/linked/new/sub/report.json", "{}")
+            self.assertFalse((outside / "new").exists())
+
     def test_runtime_gate_is_invoked_before_any_report_write(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

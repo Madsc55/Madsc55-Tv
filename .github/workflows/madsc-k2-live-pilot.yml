@@ -1,10 +1,5 @@
 name: Madsc55-Tv K2 Gercek Kanal Kesif Pilotu
 on:
-  push:
-    branches: [main]
-    paths:
-      - madsc/live_discovery_pilot.py
-      - .github/workflows/madsc-k2-live-pilot.yml
   workflow_dispatch:
 permissions:
   contents: read

@@ -1,5 +1,5 @@
 import unittest
-from madsc.write_path_audit import audit_write_paths
+from madsc.write_path_audit import audit_write_paths, enforce_write_paths, ProtectedWriteRejected
 
 class WritePathAuditTests(unittest.TestCase):
     def test_protected_paths_blocked(self):
@@ -58,3 +58,27 @@ class WritePathAuditTests(unittest.TestCase):
         result = audit_write_paths(["reports/safe.json", "reports/safe.json"])
         self.assertTrue(result["blocked"])
         self.assertEqual(result["rejected"], ["reports/safe.json"])
+
+    def test_enforcement_rejects_protected_write_before_side_effect(self):
+        for path in ("CALISANLAR.m3u", "epg/guide.xml", "FAVORILER/list.txt",
+                     "nested/../reports/output.json", "reports/x.m3u8"):
+            with self.subTest(path=path):
+                called = []
+                with self.assertRaises(ProtectedWriteRejected):
+                    enforce_write_paths([path])
+                    called.append("write")
+                self.assertEqual(called, [])
+
+    def test_enforcement_allows_only_unprotected_report_paths(self):
+        result = enforce_write_paths(["reports/legacy-audit.json"])
+        self.assertTrue(result["runtime_gate_enforced"])
+        self.assertFalse(result["write_performed"])
+        self.assertEqual(result["checked_paths"], ["reports/legacy-audit.json"])
+
+    def test_enforcement_fails_closed_on_mixed_paths(self):
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["reports/ok.json", "logos/channel.png"])
+
+    def test_enforcement_rejects_duplicate_paths(self):
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["reports/a.json", "reports/A.json"])

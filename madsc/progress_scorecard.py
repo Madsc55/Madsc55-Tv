@@ -17,6 +17,8 @@ def scorecard(accepted_behaviors=0, accepted_security=0, verified_ci=False):
             or not 0 <= accepted_behaviors <= 92 or not 0 <= accepted_security <= 26
             or type(verified_ci) is not bool):
         raise ValueError("Invalid progress evidence")
+    behavior_percent = round(100 * accepted_behaviors / 92, 2)
+    security_percent = round(100 * accepted_security / 26, 2)
     return {
         "schema": "madsc-evidence-scorecard-v1",
         "reference": dict(BASELINE),
@@ -24,6 +26,16 @@ def scorecard(accepted_behaviors=0, accepted_security=0, verified_ci=False):
         "acceptance": {
             "legacy_behavioral_equivalence": {"accepted": accepted_behaviors, "total": 92},
             "runtime_security_rules": {"accepted": accepted_security, "total": 26},
+        },
+        "measured_progress": {
+            "legacy_yaml_initial_review_percent": 100.0,
+            "legacy_python_source_inventory_percent": 100.0,
+            "legacy_python_test_inventory_percent": 100.0,
+            "legacy_behavioral_acceptance_percent": behavior_percent,
+            "runtime_security_acceptance_percent": security_percent,
+            "combined_acceptance_percent": round(100 * (accepted_behaviors + accepted_security) / 118, 2),
+            "combined_acceptance_denominator": 118,
+            "scope": "Only 92 behavioral and 26 runtime security acceptances; not overall project completion",
         },
         "five_system_ci": {"last_run_success_verified": verified_ci,
                            "scope": "offline workflow integration, not production acceptance"},

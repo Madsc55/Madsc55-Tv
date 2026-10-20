@@ -9,6 +9,14 @@ class WritePathAuditTests(unittest.TestCase):
         self.assertFalse(report["write_performed"])
         self.assertFalse(report["runtime_gate_enforced"])
 
+    def test_main_xmltv_and_playlist_are_protected_at_any_depth(self):
+        paths = ["xmltv.xml", "XMLTV.XML", "nested/xmltv.xml",
+                 "playlist.m3u8", "nested/PLAYLIST.M3U8"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths)
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["reports/ok.json", "xmltv.xml"])
+
     def test_unprotected_report_path(self):
         report = audit_write_paths(["reports/sample.json"])
         self.assertFalse(report["blocked"])

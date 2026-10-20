@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 from madsc.fixture_report_writer import write_fixture_report
 
 
@@ -30,3 +31,13 @@ class FixtureReportWriterTests(unittest.TestCase):
             with self.assertRaises(PermissionError):
                 write_fixture_report(root, "reports/data.json", "no")
             self.assertFalse((root / "outside" / "data.json").exists())
+
+    def test_runtime_gate_is_invoked_before_any_report_write(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            with patch("madsc.fixture_report_writer.enforce_write_paths",
+                       side_effect=PermissionError("policy rejected")) as guard:
+                with self.assertRaises(PermissionError):
+                    write_fixture_report(root, "reports/rejected.json", "forbidden")
+            guard.assert_called_once_with(["reports/rejected.json"])
+            self.assertFalse((root / "reports").exists())

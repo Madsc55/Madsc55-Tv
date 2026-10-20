@@ -1093,3 +1093,10 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - Onceki K4 CLI entegrasyon test run 39407395209 SUCCESS. K3/K5 CLI yeni bir opt-in giris noktasi; mevcut Actions workflow'larinin otomatik olarak bu komutu kullandigi henuz kanitlanmadi.
 - Korunan kanal listeleri, EPG, favoriler, yedekler ve eski depo degistirilmedi. 20+1 calisma kurali gecerlidir. Genel referans %47/%53, davranissal kabul 0/92, runtime guvenlik kabul 0/26.
 - Siradaki: CI workflow giris noktalarini inceleyip K3/K4/K5 gercek calistirma baglantilarini kanitla; bekleyen run sonucunu dogrula, butun K'lerin bagli etkilerini birlikte test et.
+
+
+## 20 Ekim 2026 - Besli Actions K3/K4/K5 K1 korumali komut entegrasyonu
+- .github/workflows/madsc-05-bakim.yml icindeki K3/K4/K5 islerine yeni K1 korumali izole kanit komutlari ve ayri artifact yukleme adimlari eklendi. K3 offline fixture ffprobe raporu, K4 izole restore tatbikati, K5 fixture toplu ozeti; her biri reports/reports altinda ve korumali yazar uzerinden. Commit 3a45ba8e3e43ae18aa38ddd54e5677bf87c07d00.
+- Onceki stage_report_cli test CI 39407853563 SUCCESS. Yeni workflow CI 39408633114 son kontrolde queued; yeni zincirin tam basarisi henuz kanitlanmadi.
+- Bu islem mevcut beşli workflow'u degistirdi, ancak eski depo, korunan kanal listeleri, EPG, favoriler, yedekler ve PR #71 degismedi. Fixture verisi canli test/IBO/harici backup veya 92/26 kabulune esit degildir. Referans %47/%53.
+- Sonraki adim: 39408633114 alt islerini kontrol et; basarisizlik varsa ayni K1-K5 etkileriyle duzelt; gercek kaynakla davranissal kaniti ayrica tamamla.

@@ -143,6 +143,15 @@ def evaluate_k3_head_observation(observation: dict, k2_envelope: dict,
     status = observation.get("http_status")
     if type(status) is not int or not 100 <= status <= 599 or 300 <= status < 400:
         raise ValueError("Invalid or redirected HTTP status")
+    # Closed schema: unexpected fields may carry covert approvals or change
+    # audit meaning. Require exactly the K3 producer's documented fields.
+    expected_fields = {
+        "schema", "url_sha256", "k2_source_digest", "run_id", "commit_sha",
+        "http_status", "tls_verified", "dns_pinned", "redirects_followed",
+        "network_probed", "stream_continuity_verified", "ibo_device_verified",
+        "production_writes", "production_ready"}
+    if set(observation) != expected_fields:
+        raise ValueError("Unexpected or missing HEAD observation fields")
     # Stable digest binds the exact accepted report content for later audit.
     # It is NOT a signature or independent proof that a network request occurred.
     observation_digest = hashlib.sha256(

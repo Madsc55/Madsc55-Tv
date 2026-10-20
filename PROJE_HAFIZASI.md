@@ -1431,3 +1431,11 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 - `madsc/history_verified_pipeline.py`: önceki turda eklenen fakat import edilmeyen `enforce_write_paths` çağrısı düzeltildi; yeni tam-yol kontrolü kullanılıyor. Commit `8e8c2c32f16c103bc8b81bcbc4ff08b7568a1268`.
 - `tests/test_write_path_audit.py`: güvenli hedef, korunan ata, mevcut dosya, symlink üst dizin ve izinli kök dışına çıkma negatif senaryoları eklendi. Commit `1613ab312cef78f928bba5757603e1274778b345`.
 - Henüz test yürütülmedi. GitHub Actions kotası dolu olduğundan tetiklenmedi. Gerçek üretim ve tüm yazma noktaları kabul edilmedi; 0/92 ve 0/26 değişmedi. Sonraki öncelik: yerel toplu regresyon, diğer gerçek yazıcılar için tam-yol K1 entegrasyonu ve olası symlink/TOCTOU sınırlarının güçlendirilmesi.
+
+
+## 20 Ekim 2026 — Kritik import onarımları (çalıştırma öncesi)
+- Önceki K1 tam-yol denetimi kodunda `Path` importu eksikti: `madsc/write_path_audit.py` düzeltildi (`370608e65094c66cb575373bbb65a03ea92372e0`).
+- `madsc/history_verified_pipeline.py` içindeki `enforce_local_output_path` importu eksikti: düzeltildi (`bddf8f95dfdfa809457c2aaaf25c255e8325f182`).
+- `madsc/history_real_source_publish.py` içindeki `enforce_write_paths` importu eksikti: düzeltildi (`ccdb25760fc87976c8c4521023586eec3bccdf39`).
+- `tests/test_write_path_audit.py` yeni testlerin `tempfile` ve `Path` importları eksikti: düzeltildi (`9c63d291b9421197afda780d5d13a5feb13927a6`).
+- Bu hatalar önceki kodun çalışabilirliğini engelliyordu; GitHub Actions veya güncel tam depo regresyonu çalıştırılmadı. Kabul 0/92, 0/26; üretim ve eski depo değiştirilmedi. Yerelde bulunan eski kopyalar güncel GitHub main ile eşdeğer sayılmamalı. Sonraki: güncel main kaynaklarını bağımsız yerel çalışma dizinine alıp tam offline regresyon.

@@ -118,3 +118,36 @@ Kullanici eski sistemdeki AGENTS, 810 ana/alt notlari ve diger tum notlarin yeni
 ## KESİN DEPO ADLANDIRMA DÜZELTMESİ — 20 Ekim 2026
 
 **Kullanıcının açık düzeltmesi:** `Madsc55/madsc-tv` = **ESKİ SİSTEM** (yalnız tarihsel kaynak, salt okunur); `Madsc55/Madsc55-Tv` = **YENİ SİSTEM** (geliştirilecek asıl sistem). Yeni sisteme yanlışlıkla "MADSC TV" ya da eski deponun adını verme. Yeni sistemden söz ederken **Madsc55-Tv** adını kullan. Eski sistem notları yeni sistemin notlarıyla birlikte incelenerek iş yürütülür. Bu ayrım tüm sonraki sohbetlerde ve GitHub işlemlerinde korunmalıdır.
+
+
+## YENI SOHBETE KESIN DEVIR — 20 Ekim 2026 (son guncelleme)
+Kullanici istegi: Bu sohbetin tum onemli taleplerini, kararlarini, yapilanlari, yapilacaklari ve hatalardan cikarilan dersleri yeni sohbette kaybetmeden devam ettir. Kullanici, tekrar tekrar anlatmak zorunda kalmasindan ve besli sistemin parca parca gelistirilmesinden rahatsiz. Bu devir ozetidir; butun sohbetlerin kelimesi kelimesine kopyasi oldugu iddia edilmez.
+
+### Ilk okunacaklar ve baglayici kurallar
+1. BIRLESIK_KALICI_CALISMA_KURALLARI.md — 20 maddelik ilkelerle birlikte eski/yeni kaynak inceleme, besli capraz entegrasyon, notlardan gecmis hata ogrenme, veri koruma ve kanit disiplini. Olusturma commit 8aad8b00ff77a093bf2ef3bfef1d3fe4de7ad44d.
+2. PROJE_HAFIZASI.md — merkezi tarihli karar ve ilerleme defteri; ilk 8 kural commit 3ccb0a4e3ed0f1ba744d1b963240d844ddc7ad2a; 12 ek kural commit 3d5ceb5867e139f3bb713dddb05e33710eccc341; birlesik belge indeksi commit ce1ea123c1bd667afaa8a89740915f8d13efea51.
+3. ESKI_SISTEM_NOTLARI.md ve docs/eski_depo_not_arsivi/ altindaki ilgili ozgun notlar; AGENTS.md, DEVAM_NOTU.md, 810 dosya notu.md, GUVENLIK_KURALLARI.md, BES_SISTEM_TOPLU_IS_DEFTERI.md, BES_SISTEM_92_WORKFLOW_TETIK_ENVANTERI.md ve gorevle ilgili tum diger eski/yeni notlar.
+4. Bu SOHBET_DEVIR_NOTU_2026-10-20.md ve mevcut kod, test, Actions kayitlari.
+
+### Kullanici kararlarinin ozeti
+- Yeni sistemin adi ve deposu YALNIZ Madsc55-Tv / Madsc55/Madsc55-Tv. Eski Madsc55/madsc-tv salt okunur kaynak. Isimleri karistirma.
+- Her gorevde etkilenen K1 guvenlik, K2 kesif/gecmis, K3 kanal test/IBO/EPG, K4 yedek/restore, K5 bakim/koordinasyon islerini BIRLIKTE uygula ve birlikte dogrula. Sadece bir K'de minik test yapmak veya bes CI isinin yesil olmasi gercek capraz entegrasyon degildir.
+- Her ise ilgili ESKI VE YENI notlari okuyarak basla. Notlarin asil amaci gecmis eksikleri, yanlislari, tekrar eden isleri ve alinmis kararlari anlamak ve yeni sistemde bunlari duzeltmektir. Onceden yapilan incelemeleri tekrarlama. Okunmamis belgeyi okunmus gosterme.
+- Sohbetten sohbete karar, talep, yapilan/yapilacak/yapilmayacak, risk, kanit ve siradaki somut isleri tasiyacak notlari tut. Her sohbetin otomatik eksiksiz goruldugunu iddia etme.
+- Kullanici toplu, gercek uygulama ve kabul istiyor; tekrar tekrar kucuk test/commit ve sadece plan/soz istemiyor. 'Soz degil kanit' — commit SHA, Actions sonucu, artifact, davranissal kabul ayrimini goster.
+- Korunan playlist, EPG, logo, arsiv, cihaz favorileri ve kullanici IBO calisiyor kararlarini koru; izinsiz canli yazma/silme yapma.
+- Eski sistemin TUM gercek notlarini ve kararlarini yeni sistemde ESKI_SISTEM_NOTLARI.md adli TEK TAM METIN dosyada birlestirme ACIK ONCELIKLI IS. Simdiki dosya indeks; tam fiziksel birlesme degil. 45 metin + 25 JSON/CSV arsiv kaynagi SHA ile korunuyor; kalan yapilandirilmis kayitlar siniflandirilacak, kaynak butunlugu kanitlanacak; dogrulanmadan kaynak silinmeyecek. Onceki buyuk GitHub dosyasi engellerini guvenli parcalama ile coz.
+
+### En son teknik ilerleme ve kanit
+- K1 write_path_audit.py casefold-duplicate korumasi; commit f4b7e83ff829e18c7d2335b806508e0e1fdfc7cb; CI 39349540574 SUCCESS. Gercek yazma kapisina tam baglandigi kanitlanmadi.
+- K2 history_real_source_publish.py SHA256 kaynak/cikti dogrulama ve kaynak degisirse fail-closed; commitler 0fbd349849e047191119f52407efe64f40542a76 ve 340a37a6e10353e37c2829a86c9f98c5acba3f89; test 3256d9ab4f2a265b91cd7ccd67e57549b6d2ffb9; CI 39350454947 SUCCESS. Gercek bagimsiz dogrulanmis kaynak yok; uretim kabul yok.
+- K4 madsc/restore_drill.py gercek izole backup + restore + SHA256 dogrulama; commit 5f88dd9e4e1b50d2e7dcf61affcd8b386a45a51a; test ff0be3425165faf7bcce075e42974d3cd4aad624; madsc-05-bakim.yml entegrasyon commit 51b8730cca605dacbdeec7ab16fed065f029ca20. Actions 39350699732 COMPLETED SUCCESS, https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350699732. Bu yalniz izole CI restore tatbikatidir; harici depolama veya gercek uretim restore kaniti degildir.
+- Eski 99 YAML ilk kaynak envanteri var; 92 davranissal esdegerlik KABUL 0/92; 26 guvenlik runtime kabul 0/26. Yesil fixture CI bu sayilari degistirmez.
+- Eski notlar birlestirme artifact'i 70 kaynagi kapsamis, fakat main'deki ESKI_SISTEM_NOTLARI.md tek tam metin degil. Birlestirme hala ACIK.
+
+### Yeni sohbetin somut is sirasi
+1. Yukaridaki belgeleri, ilgili ozgun eski/yeni notlari ve kodu oku; gecmis hata ve eksik matrisini cikar, daha once tamamlanan arastirmayi yeniden baslatma.
+2. K1–K5 etkilerini birlikte kapsayan tek bir gercek orkestrasyon/entegrasyon is paketi uygula; K1 yazma kapisi, K2 kesif/gecmis, K3 test/IBO korumasi, K4 gercek izole restore, K5 fail-closed toplu kabul arasindaki baglantilari somut kod ve toplu testle kanitla. Gercek uretim kaniti olmayan noktalari ayri acik tut.
+3. Eski notlarin tam metin tek dosya birlestirmesini, kalan JSON/CSV karar kayitlarini ve kaynak hash/tamlik kontrolunu bitir; arsiv kaynaklarini silme.
+4. 92 davranissal esdegerlik ve 26 runtime guvenlik kabulunu gercek kanitlarla ilerlet; kanit olmadan tamamlandi deme.
+5. Tum ilerlemeyi PROJE_HAFIZASI.md'ye kaydet ve bir sonraki sohbete tekrar devret.

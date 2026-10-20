@@ -298,6 +298,20 @@ jobs:
           path: reports/k5-cross-handoff-verification.json
           if-no-files-found: error
           retention-days: 14
+      - name: K3 bagli offline teknik kanitini K5 icin indir
+        uses: actions/download-artifact@v4
+        with:
+          name: madsc-k3-guarded-evidence
+          path: reports/k3-technical-evidence
+      - name: K5 K3 offline kanit guvenlik kapisi
+        run: python -m madsc.k5_channel_gate --k3 reports/k3-technical-evidence/k3-isolated-evidence.json --output reports/k5-k3-safety-gate.json
+      - name: K5 K3 guvenlik kapisi kanitini sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k5-k3-safety-gate
+          path: reports/k5-k3-safety-gate.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K1-K4 gercek kategori kanitlarini indir
         uses: actions/download-artifact@v4
         with:

@@ -76,11 +76,17 @@ def run(output, token):
             "candidate_k_stages": candidate_stages(item["path"]),
             "stage_mapping_reviewed": False,
             "behavioral_parity_verified": False,
+            "behavioral_evidence_status": "BLOCKED_NEEDS_BEHAVIOR_EVIDENCE",
+            "evidence_missing": ["legacy_execution", "new_execution",
+                                 "input_output_comparison", "side_effect_comparison",
+                                 "failure_timeout_comparison", "reviewer_approval"],
         })
     if len({row["path"] for row in rows}) != 99:
         raise ValueError("Duplicate workflow paths")
     report = {"candidate_mapping_only": True, "source_repository": REPO, "source_branch": BRANCH, "source_tree_sha": tree.get("sha"), "source_workflow_count": 99,
-              "behavioral_parity_verified_count": 0, "production_writes": False, "workflows": rows}
+              "behavioral_parity_verified_count": 0,
+              "blocked_workflow_count": len(rows),
+              "production_writes": False, "workflows": rows}
     path = Path(output)
     if path.exists():
         raise ValueError("Will not overwrite evidence")

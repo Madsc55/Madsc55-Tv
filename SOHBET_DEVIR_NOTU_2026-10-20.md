@@ -151,3 +151,10 @@ Kullanici istegi: Bu sohbetin tum onemli taleplerini, kararlarini, yapilanlari, 
 3. Eski notlarin tam metin tek dosya birlestirmesini, kalan JSON/CSV karar kayitlarini ve kaynak hash/tamlik kontrolunu bitir; arsiv kaynaklarini silme.
 4. 92 davranissal esdegerlik ve 26 runtime guvenlik kabulunu gercek kanitlarla ilerlet; kanit olmadan tamamlandi deme.
 5. Tum ilerlemeyi PROJE_HAFIZASI.md'ye kaydet ve bir sonraki sohbete tekrar devret.
+
+
+## 20 Ekim 2026 — YENI SOHBET DEPO KIMLIGI EK KURALI (KALICI)
+- Kullanici eski ve yeni depolarin karistirilmasina kesin olarak itiraz etti. **Yeni yazilabilir proje yalniz `Madsc55/Madsc55-Tv` / `main`**. Eski `Madsc55/madsc-tv` / `madsc/bes-sistem-toplu-birlestirme` salt-okunur kaynak; acik izin olmadan eski depoda test/commit/workflow tetikleme yasak.
+- `BIRLESIK_KALICI_CALISMA_KURALLARI.md` dosyasina mevcut 20 ilkeyi koruyan **EK KALICI KURAL 21** commit `67fc2135f80c7d82ae5a8764125e20af7cf6e97f` ile eklendi.
+- Yeni sohbetin ilk islemi dogru depo/dal kimligini ve dort merkezi notu okumak; eski Actions testini yeni sistem kaniti diye sunmamak. Yeni sistem K1–K5'i eski notlar ve yeni notlarla birlikte gelistirmek, toplu kanitlamak. 0/92 davranissal esdegerlik ve 0/26 runtime guvenlik kabul sayaci kanitsiz degistirilmeyecek.
+- Onceki hatanin kaydi: asistan yanlislikla eski `Madsc55/madsc-tv` dalina `87397714bd88ee02d75c51a22c2b8152b6ddd5b6` test commit'i yazdi. Bu **yeni sistem ilerlemesi degildir**; eski depoda yeni islem yapilmayacak.

@@ -20,7 +20,7 @@ def produce_verified_history(manifest_path, output_path, *, current_sha, run_id,
                              download=download_verified_history_artifact):
     manifest_path, output_path = Path(manifest_path), Path(output_path)
     # K1 guards the destination before network verification or artifact download.
-    enforce_local_output_path(output_path.absolute())
+    enforce_local_output_path(output_path if output_path.is_absolute() else Path.cwd() / output_path)
     if manifest_path.is_symlink() or not manifest_path.is_file() or output_path.is_symlink():
         raise ValueError("Unsafe manifest or output path")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))

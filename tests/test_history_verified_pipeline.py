@@ -82,5 +82,29 @@ class VerifiedHistoryPipelineTests(unittest.TestCase):
                     token="test-token", verify_origin=verify, download=download)
             self.assertEqual(output.read_text(encoding="utf-8"), "ORIGINAL")
 
+    def test_fixture_workflow_cannot_be_real_source_origin(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps({
+                "schema": 1, "mode": "VERIFIED_SOURCE",
+                "source_run_id": "123", "source_commit_sha": A,
+                "production_writes": False,
+                "hashes": {n: hashlib.sha256(v).hexdigest() for n, v in FILES.items()}
+            }))
+            seen = []
+            def verify(*args, **kwargs):
+                seen.append(kwargs["workflow_path"])
+                if kwargs["workflow_path"] == ".github/workflows/madsc-05-bakim.yml":
+                    raise AssertionError("Fixture CI must never be a verified real source")
+                raise ValueError("No independent real source producer exists yet")
+            output = root / "handoff.json"
+            with self.assertRaisesRegex(ValueError, "No independent real source"):
+                produce_verified_history(
+                    manifest, output, current_sha=B, run_id="789",
+                    token="test-token", verify_origin=verify)
+            self.assertEqual(seen, [".github/workflows/madsc-k2-real-history-source.yml"])
+            self.assertFalse(output.exists())
+
 if __name__ == "__main__":
     unittest.main()

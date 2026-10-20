@@ -6,6 +6,8 @@ from madsc.write_path_audit import enforce_write_paths
 def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
     if not isinstance(relative_path, str) or not relative_path.startswith("reports/"):
         raise PermissionError("Only isolated reports are permitted")
+    if not isinstance(content, str):
+        raise TypeError("Report content must be text")
     enforce_write_paths([relative_path])
     root = Path(root)
     if root.is_symlink() or not root.is_dir():

@@ -15,6 +15,15 @@ class FixtureReportWriterTests(unittest.TestCase):
             self.assertFalse(result["production_write_allowed"])
             self.assertEqual((root / "reports/result.json").read_text(), "{}")
 
+    def test_nontext_content_creates_no_empty_evidence(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for value in (None, b"binary", 7, {"result": "ok"}):
+                with self.subTest(value=value), self.assertRaises(TypeError):
+                    write_fixture_report(root, "reports/evidence.json", value)
+                self.assertFalse((root / "reports/evidence.json").exists())
+            self.assertFalse((root / "reports").exists())
+
     def test_protected_and_traversal_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

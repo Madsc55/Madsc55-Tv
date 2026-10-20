@@ -35,3 +35,12 @@ Tarih: 20 Ekim 2026. Bu belge eski ve yeni notlardan çıkarılmış çalışma 
 - Her önemli işin sonunda yapılanlar, yapılacaklar, yapılmayacaklar, başarısızlıklar, bağımlılıklar, riskler, kanıt linkleri ve sıradaki somut adım `PROJE_HAFIZASI.md` içine işlenir.
 - Her yeni sohbette önce bu sözleşme ve kaynak notlar okunur. Kullanıcıya eski kararları tekrar anlattırma.
 - Kanıtı olmayan iş 'tamamlandı' diye sunulmaz; queued/running test SUCCESS değildir.
+
+
+## EK KALICI KURAL 21 — Yeni sohbetlerde Madsc55-Tv kimligini asla karistirma (20 Ekim 2026)
+- **Aktif ve tek yazilabilir yeni proje:** `Madsc55/Madsc55-Tv`, dal `main`; proje adi **Madsc55-Tv**.
+- **Eski, salt-okunur referans:** `Madsc55/madsc-tv` (ozellikle `madsc/bes-sistem-toplu-birlestirme`). Kullanici acikca istemedikce eski depoda test, commit, workflow tetikleme veya kod degisikligi YAPMA.
+- Yeni sohbet baslangicinda, kod veya GitHub isleminden **once** depo sahibi/adi ve dali dogrula; `BIRLESIK_KALICI_CALISMA_KURALLARI.md`, `PROJE_HAFIZASI.md`, `ESKI_SISTEM_NOTLARI.md`, `SOHBET_DEVIR_NOTU_2026-10-20.md` dosyalarini ve ilgili kaynak notlarini oku.
+- Eski depodaki Actions run/commit/test basarisi yeni Madsc55-Tv sisteminin ilerlemesi veya kabulu olarak sunulamaz. Her kanit icin dogru repo, dal, commit SHA ve run ID birlikte dogrulanir.
+- Eski sistemin notlari, hatalari ve kazanilmis islevleri yeni K1–K5 sistemine bilgi kaynagidir; yeni sistemin gelistirmesi yalniz yeni depoda yapilir. Tamamlanan incelemeleri ve testleri gereksiz tekrarlama.
+- Bu madde mevcut **20 calisma ilkesine ek** baglayici kuraldir; onceki ilkeleri kaldirmaz veya degistirmez. Yeni sohbet devir notuna da aktarilir.

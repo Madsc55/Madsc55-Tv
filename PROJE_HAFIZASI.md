@@ -959,3 +959,11 @@ Sonraki is: 45 arşiv notunun icinden ilgili kurallari ve tamamlanmis isleri onc
 - Commit 3256d9ab4f2a265b91cd7ccd67e57549b6d2ffb9: tests/test_history_real_source_publish.py içine, kaynak okuma arasında gecmis.json baytlarının değişmesini taklit eden regresyon testi eklendi. Beklenti: ValueError ve hiçbir çıktı dizini oluşmaması.
 - Test GitHub Actions koşusu https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350454947. Bu not yazılırken koşu queued; SUCCESS iddiası yapılmaz.
 - Kaynak değişimi kontrolünün kod commit'i 340a37a6e10353e37c2829a86c9f98c5acba3f89; gerçek geçmiş kaynağı ve üretim doğrulaması halen eksik.
+
+
+### 20 Ekim 2026 — K4 uçtan uca izole geri yükleme uygulaması
+- K4 kodu 5f88dd9e4e1b50d2e7dcf61affcd8b386a45a51a: madsc/restore_drill.py, izinli dosyaları geçici yedek klasörüne kopyalar, ayrı geçici geri yükleme klasörüne taşır, üç bağımsız ağaç SHA256 manifestlerini karşılaştırır ve kaynak değişmediyse drill_executed=true kanıtı üretir. Kaynak veya üretim dosyalarını değiştirmez.
+- K4 testleri ff0be3425165faf7bcce075e42974d3cd4aad624: tests/test_restore_drill.py, iç içe dosya geri yükleme, kaynak korunumu, geçersiz/tekrarlanan yollar ve symlink reddini sınar.
+- CI entegrasyonu 51b8730cca605dacbdeec7ab16fed065f029ca20: .github/workflows/madsc-05-bakim.yml K4 işinde izole geri yükleme tatbikatı yürütür ve madsc-k4-restore-drill artifact'ını yükler. CI https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350699732 ilk sorguda pending; sonucu doğrulamadan başarılı ilan etme.
+- K2 kaynak değişimi test koşusu https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350454947 SUCCESS; K2 kod koşusu https://github.com/Madsc55/Madsc55-Tv/actions/runs/39350369959 SUCCESS.
+- Bu K4 tatbikatı harici depolama ya da gerçek üretim restore kanıtı değildir. 92 davranışsal eşdeğerlik ve 26 runtime kural kabul sayaçları hâlâ sıfır.

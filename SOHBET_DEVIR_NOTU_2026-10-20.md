@@ -242,3 +242,9 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/k4_restore_gate.py commit 43940302fccf516d8c19eb4b1540f2743687436b: uc farkli mevcut sandbox klasorunde source/backup/restored hash ve byte boyutu karsilastirmasini madsc.backup.verify_independent_restore ile yapar, mismatch halinde HALT_AND_INVESTIGATE verir. Uretime yazmaz, gercek dis depolama kaniti ve production restore onayi vermez.
 - tests/test_k4_restore_gate.py commit 02a8931c769a0bc53b76bd8e4a3b6dc7a0c338c6: eslesen kopya, bozuk kopya, ic ice klasor red senaryolari. Dosya commitleri gercektir; testler henuz calistirilmis sayilmaz.
 - Devam: ucretsiz guncel main offline toplu regresyon, K4 gercek bagimsiz harici depolama ve restore kabul kaniti, K1 runtime 26 kural ve eski 92 davranis esdegerlik matrisi. Actions tetikleme, uretim listelerini degistirme.
+
+
+## 21 Ekim 2026 — K4 manifest güvenlik onarımı
+- madsc/backup.py, control karakterli ve supheli kaynak dosya yollarini reddeder; verify_manifest ayni path'in tekrarini kabul etmez. Commit d170404c44a8a4d64cf2f4825e733003999bdfca.
+- tests/test_backup_manifest_hardening.py: kontrol karakteri, tekrar eden manifest girdisi, normal manifest kabul testi. Commit 36be2ea87c0778141eabe6ea14b588c3d40958cc.
+- Bunlar gercek main commitleridir. GitHub Actions calistirilmadi, guncel main toplu offline test sonucu henuz yok. Eski repo ve uretim listeleri degistirilmedi. K4 gercek harici restore ve 92/92 esdegerlik hala tamamlanmadi.

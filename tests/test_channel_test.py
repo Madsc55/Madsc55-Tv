@@ -59,6 +59,14 @@ class ChannelTests(unittest.TestCase):
         self.assertIn('sorted(found.items(), key=lambda item: item[0])[:MAX_PROBES]', source)
         self.assertIn('"selected_candidate_sha256"', source)
 
+
+    def test_bulk_discovery_retains_source_provenance(self):
+        from pathlib import Path
+        source = Path("madsc/turkish_tv_batch_validation.py").read_text(encoding="utf-8")
+        self.assertIn('source_by_digest.setdefault(key, set()).add(name)', source)
+        self.assertIn('"source_names": sorted(source_by_digest[digest])', source)
+        self.assertIn('"source_provenance_declared_only": True', source)
+
     def test_success_is_not_device_approval(self):
         result = evaluate_probe({"url_sha256":"a"*64,"http_status":200,"video":True,
                                  "audio":True,"duration_seconds":60})

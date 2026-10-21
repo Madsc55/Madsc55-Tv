@@ -1479,3 +1479,11 @@ Kullanici 12 gunde GitHub Actions 2000 dakikalik kotasinin tukendigini ve K1-K5 
 - tests/test_channel_catalog.py commit 36a6c73: staged evidence mevcut fakat current probe olmayan kanal icin regression testi eklendi. Onceki test current probe fail ile staged pass catismasini reddetmeye devam eder.
 - #408 ve #409 otomatik GitHub Actions tetiklendi; sonuclari kontrol edilmeden basarili sayilmaz.
 - Oncelik: sadece yeni Madsc55-Tv K1-K5 sistemini tamamlamak; eski sistem 92 workflow parity ve kapatma daha sonraya ertelendi. Canli ag/cihaz/dis servis testleri veya korunan uretim listelerine yazma yapilmadi.
+
+## 21 Ekim 2026 — Eski kategori ve kanal duzeni yeni sisteme guvenli metadata aktarimi
+- Kullanici eski CALISANLAR, CALISMAYANLAR, YABANCI, YENILER, YEDEKLER, FAVORILER, onayli logolar, tvg kimlikleri ve kategori sirasinin yeni sisteme aynen alinmasini istedi; yeni bulunan kanallar once YENILER/TEST BEKLIYOR asamasinda test edilecek.
+- Eski depoda salt okunur kontrol: CALISANLAR.m3u 1039, YABANCI_KANALLAR.m3u 740, YENILER.m3u 58, CALISMAYANLAR.txt 97 = 1934 kaynak kaydi (benzersiz kanal sayisi degil).
+- config/legacy_category_order_snapshot.json commit 8ce4d58: kaynak dosya SHA, dosya ici ordinal sira, kanal adi, eski kategori, tvg-id, tvg-name ve guvenli logo referanslari aktarildi. Herkese acik yeni repoya eski akislardaki olasi credential iceren URL'ler KESINLIKLE kopyalanmadi. Bu bir metadata snapshot; yayin testi ya da tam calisir playlist aktarimi DEGIL.
+- madsc/legacy_category_order.py commit a1cf854: 1934 kaydin sirasi/sayisi dogrulanir; yeni kesif adaylari izole YENILER_TEST_BEKLIYOR kuyruguna gider, uretime yazilmaz. tests/test_legacy_category_order.py commit 69b016c: kaynak sira ve aday karantina regresyon testleri eklendi.
+- #409 success; yeni #410 ve #411 Actions sonucunu bekliyor. Ana listeler, favoriler, EPG, logos, cihaz ve eski repo degistirilmedi.
+- Kalan: korunmus orijinal yayin URL'lerini guvenli gizli depolama/izinli is akisi ile eslestirmek; gercek kanal testleri, kullanici IBO onayi ve YEDEKLER'in bagimsiz kaynaklari icin tam kanit. Mevcut snapshot tek basina kullanilabilir IPTV listesi degildir.

@@ -115,10 +115,7 @@ class MigratedOptInContractTests(unittest.TestCase):
                     (filename, line),
                 )
             if filename == "madsc-05-bakim.yml":
-                self.assertIn("  push:\n    branches: [main]\n", data)
-                self.assertIn("      - 'madsc/**'", data)
-                self.assertIn("      - 'tests/**'", data)
-                self.assertIn("      - '.github/workflows/madsc-05-bakim.yml'", data)
+                self.assertNotIn("  push:", data)
 
 
 if __name__ == "__main__":

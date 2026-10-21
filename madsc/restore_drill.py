@@ -13,6 +13,7 @@ from pathlib import Path
 
 from madsc.backup import snapshot_manifest, verify_independent_restore
 from madsc.fixture_report_writer import write_stage_report
+from madsc.write_path_audit import enforce_local_output_path
 
 
 def run_drill(source: Path, names: list[str]) -> dict:
@@ -58,10 +59,10 @@ def main() -> None:
                            {**report, "category": "k4", "production_ready": False})
         print(json.dumps(report, sort_keys=True))
         return
-    if args.output.exists() or args.output.is_symlink():
-        raise ValueError("Refusing to overwrite drill evidence")
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    destination = args.output if args.output.is_absolute() else Path.cwd() / args.output
+    enforce_local_output_path(destination)
+    with destination.open("x", encoding="utf-8") as handle:
+        handle.write(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(json.dumps(report, sort_keys=True))
 
 

@@ -63,6 +63,16 @@ class FixtureReportWriterTests(unittest.TestCase):
             guard.assert_called_once_with(["reports/rejected.json"])
             self.assertFalse((root / "reports").exists())
 
+    def test_local_output_runtime_gate_is_invoked_before_write(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            with patch("madsc.fixture_report_writer.enforce_local_output_path",
+                       side_effect=PermissionError("runtime gate rejected")) as gate:
+                with self.assertRaises(PermissionError):
+                    write_fixture_report(root, "reports/rejected.json", "forbidden")
+            gate.assert_called_once_with(root / "reports/rejected.json", allowed_root=root)
+            self.assertFalse((root / "reports/rejected.json").exists())
+
     def test_existing_report_evidence_cannot_be_overwritten(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

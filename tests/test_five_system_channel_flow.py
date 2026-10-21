@@ -104,6 +104,26 @@ class FiveSystemChannelFlowTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_offline_channel_previews(rows, three_stage={"0" * 64: []})
 
+    def test_explicit_null_evidence_rejected_before_preview(self):
+        rows = [{"name": "kanal", "url": "https://example.org/stream"}]
+        digest = sha256(b"https://example.org/stream").hexdigest()
+        for evidence in ({"probes": {digest: None}},
+                         {"three_stage": {digest: None}}):
+            with self.subTest(evidence=evidence):
+                with self.assertRaises(ValueError):
+                    build_offline_channel_previews(rows, **evidence)
+
+    def test_invalid_probe_fields_rejected_before_preview(self):
+        rows = [{"name": "kanal", "url": "https://example.org/stream"}]
+        digest = sha256(b"https://example.org/stream").hexdigest()
+        valid = {"url_sha256": digest, "http_status": 200,
+                 "video": True, "audio": True, "duration_seconds": 31}
+        for bad in ({"video": "yes"}, {"audio": 1}, {"duration_seconds": True}):
+            with self.subTest(bad=bad):
+                with self.assertRaises(ValueError):
+                    build_offline_channel_previews(
+                        rows, probes={digest: {**valid, **bad}})
+
     def test_bad_probe_rejected_before_any_preview(self):
         rows = [{"name": "kanal", "url": "https://example.org/stream"}]
         with self.assertRaises(ValueError):

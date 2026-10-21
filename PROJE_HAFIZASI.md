@@ -1654,3 +1654,8 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Kaynak YAML incelemesi: K2 ana workflow legacy multisource, live pilot, real history publish ve verified history komutlarini zaten opt-in olarak iceriyor. K3 ana workflow live manifest, video probe ve 1000-aday batch komutlarini opt-in olarak iceriyor. K5 99-source audit ve not birlestirme komutlarini opt-in olarak iceriyor. Yardimci workflow artifact isimleri ana is akisi ile farkli; bu tek basina davranissal esdegersizlik kaniti degildir. Kaynaklarda farkli hata halinde yukleme semantigi mevcut; ayri kanit gerekli.
 - 2cfa6b6 commit: 10 yardimci workflow raporunda requires_manual_behavior_review alani eklendi. [skip ci], bu commit test edilmedi.
 - Gercek dis ag probe, 75 aday 6 saatlik olcum, IBO cihaz, harici backup restore ve 92 legacy parity kaniti halen eksik; kabul 0/22. Korunan canli dosyalar degismedi.
+
+## 21 Ekim 2026 - Toplu hata kaniti saklama paketi
+- K1, K2, K3 bagimsiz workflow'larinda Upload isolated evidence adimlari always() && !cancelled() kosuluna baglandi. Bir onceki adim fail olsa bile olusan raporlar yuklenmeye calisilir; eksik dosya ve uretim kabul otomatik basarili sayilmaz. Commitler 307ef3e, 06da9cb, a811002.
+- tests/test_workflow_consolidation.py gercek K1/K2/K3 YAML'larinda hata sonrasi artifact yukleme regresyonu eklendi, commit 82d5f4b. Otomatik Actions run 39649951753 basladi, sonuc henuz bu not aninda dogrulanmadi.
+- Son kesin yesil run 39648796704: 6/6. 22 kabul gorevi ve 92 legacy parity kanitlari hala tamamlanmadi. Canli liste, EPG, logo, yedek ve favoriler korunuyor.

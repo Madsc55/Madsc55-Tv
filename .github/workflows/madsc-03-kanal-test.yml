@@ -1,6 +1,12 @@
 name: MADSC K3 — Kanal Testi
 on:
   workflow_dispatch:
+    inputs:
+      allow_live_probes:
+        description: 'Opt-in bounded live stream probes (no production writes)'
+        type: boolean
+        required: true
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -9,7 +15,7 @@ concurrency:
 jobs:
   isolated:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -21,9 +27,21 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Isolated report
         run: python -m madsc.core --category k3 --output reports/k3.json
+      - name: Bounded live manifest probe (explicit opt-in only)
+        if: ${{ inputs.allow_live_probes == true }}
+        run: python -m madsc.k3_live_manifest_pilot
+      - name: Bounded Turkish TV video probe (explicit opt-in only)
+        if: ${{ inputs.allow_live_probes == true }}
+        run: |
+          ffprobe -version | head -n 1
+          python -m madsc.k3_turkish_tv_video_pilot
       - name: Upload isolated evidence
         uses: actions/upload-artifact@v4
         with:
           name: madsc-k3-isolated-evidence
-          path: reports/k3.json
+          path: |
+            reports/k3.json
+            reports/k3-real-manifest-pilot.json
+            reports/k3-turkish-tv-video-pilot.json
+          if-no-files-found: error
           retention-days: 14

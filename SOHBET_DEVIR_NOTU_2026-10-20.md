@@ -215,3 +215,11 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - Korumalar: Eski depo salt okunur; canlı M3U listeleri, IBO onaylı kanallar, EPG, logo klasörleri, arşiv ve yedekler değiştirilmeyecek. Üretime yalnızca açık onay ve gerçek kabul kanıtıyla geçilecek.
 - Dürüst ilerleme: 22 görev defterinde 5 in_progress, 17 pending, 0 completed. 92 davranışsal eşdeğerlik 0/92, 26 runtime güvenlik kabulü 0/26. Güncel main toplu regresyonu henüz doğrulanmadı. 12 günlük hedef kullanıcı isteği; teslim garantisi değildir.
 - SONRAKİ ADIM: Yeni kanal sunum modülünü K2 discovery ve K3 probe/IBO akışına bağla; gerçek logo kaynak eşleştirmesi, kategori dönüşümü ve salt okunur ayrı M3U taslaklarını uygula. Eski kategori sıralamasını gerçek eski sistem dosyalarından doğrula; varsayma.
+
+
+## 21 Ekim 2026 — beş otomasyon sınırı ve K2/K3 ilerlemesi
+- KULLANICI KARARI: Sistem yalnızca BEŞ ana otomasyondan oluşacak (K1 güvenlik, K2 kanal keşfi/logo adayları, K3 kanal test/EPG/IBO doğrulama, K4 yedekleme, K5 bakım/koordinasyon/liste taslakları). Yardımcı Python modülleri bağımsız workflow veya altıncı otomasyon değildir. 92 eski görevin işlevleri bu beş ana yapıya aktarılacak; davranışsal eşdeğerlik henüz doğrulanmadı.
+- Kanal adları Türkçe İ/I kurallarıyla büyük harf: madsc/channel_presentation.py commit 5defd45884bd241fafca2c1f165b85786522da03, test b2cbc6945417dcadf9708bca8cebad7182042cfa.
+- madsc/channel_catalog.py K2 discovery -> kanal sunumu/IBO/logo/ölçüm bağlantısı commit c525bba6a276dba7d553a4fae398a096a3269301; test f6da4ed99f68566234bc195ba217d7cdc4c71e5d.
+- K3 evaluate_probe üzerinden doğrulanmış teknik durum entegrasyonu commit 181e51d5b2b322aacff51d3b9e2bd1b727c74440; test d20cea8b4e54c871b6565594250cbc06c8f0264a. Teknik durum sadece verilen probe kanıtından gelir; kod canlı test YAPMAZ. IBO kullanıcı onayı ayrı ve korunur.
+- Açık işler: gerçek eski kategori isim/sıra kaynaklarıyla tam eşleştirme, gerçek logo arama/kimlik doğrulama, 3 aşamalı zamana yayılmış teknik test, ayrı M3U taslakları, beşli workflow bağları ve tüm main için ücretsiz offline toplu regresyon. Actions çalıştırma, canlı listelere yazma.

@@ -1543,3 +1543,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - tests/test_legacy_category_order.py: dort ayni kaynak kaydi iceren bozuk manifest icin negatif regresyon eklendi. Commit ea724e291c1e570b7be31e9de7189fe74ec29f10.
 - Container git ls-remote DNS github.com cozumleyemedi; bu nedenle tum depo offline testi gerceklestirilemedi. Yeni testler henuz calistirilmadi; CI Actions tetiklenmedi ([skip ci]).
 - K1-K5 genel kabul acik; eski repo, korunan playlist/EPG/logo/kategori/siralama/favori/YENILER/YEDEKLER degistirilmedi.
+
+## 21 Ekim 2026 — K2 tarihsel kaynak repository/ref sabitleme
+- config/legacy_category_order_snapshot.json okundu: 1934 kayit, kaynaklar CALISANLAR 1039, YABANCI_KANALLAR 740, YENILER 58, CALISMAYANLAR 97; source_repository=Madsc55/madsc-tv ve source_ref=main.
+- madsc/legacy_category_order.py kaynak repository/ref alanlari onayli sabit degerlerle eslesmezse fail-closed reddeder. Commit 72a62b615abcf0777e977e23b3ea60245d18cc5e.
+- tests/test_legacy_category_order.py: yanlis repo ve yanlis ref icin regresyon eklendi. Commit 339f8503031f63d5bee6c92c0cd93ec76fa01f23.
+- Bu yalniz metadata provenance kontroludur; eski depo SHA bloblari canli olarak yeniden hash dogrulanmadi. Testler calistirilmadi, Actions tetiklenmedi [skip ci]. Eski repo, canli kanal listeleri, EPG, logolar, favoriler, YENILER ve YEDEKLER degismedi.

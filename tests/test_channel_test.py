@@ -102,6 +102,14 @@ class ChannelTests(unittest.TestCase):
         self.assertIn('title.replace("\\r", " ").replace("\\n", " ")', source)
         self.assertNotIn('title.replace("\\\\r", " ").replace("\\\\n", " ")', source)
 
+
+    def test_bulk_playlist_is_sha256_bound_to_json_report(self):
+        from pathlib import Path
+        source = Path("madsc/turkish_tv_batch_validation.py").read_text(encoding="utf-8")
+        self.assertIn('playlist_out.write_bytes(playlist_bytes)', source)
+        self.assertIn('report["test_playlist_sha256"] = hashlib.sha256(playlist_bytes).hexdigest()', source)
+        self.assertIn('report["test_playlist_path"] = str(playlist_out)', source)
+
     def test_success_is_not_device_approval(self):
         result = evaluate_probe({"url_sha256":"a"*64,"http_status":200,"video":True,
                                  "audio":True,"duration_seconds":60})

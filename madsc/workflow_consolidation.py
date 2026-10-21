@@ -57,7 +57,10 @@ def consolidation_plan(root: Path) -> dict:
         data = path.read_text(encoding="utf-8")
         if "workflow_dispatch:" not in data or "permissions:" not in data:
             raise ValueError("Missing manual trigger or permissions: " + name)
-        if command not in data:
+        if not any(
+            command in line and not line.lstrip().startswith("#")
+            for line in data.splitlines()
+        ):
             raise ValueError("Mapped behavior command absent from source: " + name)
         if any(line.lstrip().startswith(("push:", "pull_request:", "schedule:", "workflow_call:"))
                for line in data.splitlines()):

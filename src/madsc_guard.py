@@ -24,8 +24,11 @@ def validate_manifest(manifest: dict) -> None:
     paths = manifest.get("output_paths")
     if not isinstance(paths, list) or not paths:
         raise ValueError("explicit nonempty output_paths required")
-    if len(paths) != len(set(paths)) if all(isinstance(p, str) for p in paths) else True:
-        raise ValueError("Duplicate or invalid output paths")
+    if not all(isinstance(p, str) for p in paths):
+        raise ValueError("Output paths must be strings")
+    normalized = [p.replace("\\", "/").casefold() for p in paths]
+    if len(normalized) != len(set(normalized)):
+        raise ValueError("Duplicate output paths")
     if any(not isinstance(p, str) or not safe_relative_path(p) or not p.replace("\\", "/").startswith("artifacts/") for p in paths):
         raise ValueError("outputs must stay under artifacts/ and outside protected paths")
 

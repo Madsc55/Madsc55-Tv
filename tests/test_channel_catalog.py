@@ -54,6 +54,11 @@ class ChannelCatalogTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             prepare_channel_catalog(rows, measurements={"x" * 64: {"verified": True}})
 
+    def test_orphan_probe_evidence_rejected(self):
+        with self.assertRaises(ValueError):
+            prepare_channel_catalog([{"name": "A", "url": "https://example.org/a"}],
+                                    probes={"0" * 64: {}})
+
     def test_no_evidence_does_not_claim_live_checks(self):
         out = prepare_channel_catalog([{"name": "A", "url": "https://example.org/a"}])
         self.assertEqual(out["channels"][0]["bucket"], "TEST_BEKLIYOR")

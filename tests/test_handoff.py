@@ -38,6 +38,28 @@ class HandoffTests(unittest.TestCase):
         self.assertEqual(alternative["technical_status"], "UNTESTED")
         self.assertFalse(alternative["production_change_allowed"])
 
+
+    def test_k2_alternative_relation_survives_k3_handoff(self):
+        discovery = classify_candidates([
+            {"name": "TRT 1", "url": "https://example.org/a", "tvg_id": "trt1"},
+            {"name": "TRT 1 HD", "url": "https://example.org/b", "tvg_id": "trt1"},
+        ])
+        report = assess_candidates(discovery, {})
+        first, second = report["assessed"]
+        self.assertIsNone(first["alternative_to_sha256"])
+        self.assertEqual(second["alternative_to_sha256"], first["url_sha256"])
+        self.assertEqual(second["technical_status"], "UNTESTED")
+        self.assertFalse(second["production_change_allowed"])
+
+    def test_orphan_alternative_relation_fails_closed(self):
+        discovery = classify_candidates([{"name": "TRT 1", "url": "https://example.org/a"}])
+        discovery["alternatives"] = [{
+            "url_sha256": "f" * 64,
+            "alternative_to_sha256": discovery["candidates"][0]["url_sha256"],
+        }]
+        with self.assertRaises(ValueError):
+            assess_candidates(discovery, {})
+
     def test_unprobed_candidate_is_untested(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         result = assess_candidates(discovery, {})

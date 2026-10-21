@@ -60,6 +60,23 @@ class HandoffTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             assess_candidates(discovery, {})
 
+
+    def test_k2_duplicate_provenance_is_explicit(self):
+        rows = [
+            {"name": "A", "url": "https://example.org/a"},
+            {"name": "A again", "url": "https://example.org/a"},
+            {"name": "B", "url": "https://example.org/b"},
+        ]
+        result = classify_candidates(rows, known_urls={"https://example.org/b"})
+        self.assertEqual(len(result["candidates"]), 1)
+        self.assertEqual([item["duplicate_reason"] for item in result["duplicates"]],
+                         ["same_batch", "already_known"])
+        self.assertFalse(result["production_playlist_modified"])
+
+    def test_k2_invalid_known_url_container_fails_closed(self):
+        with self.assertRaises(ValueError):
+            classify_candidates([], known_urls=["https://example.org/a"])
+
     def test_unprobed_candidate_is_untested(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         result = assess_candidates(discovery, {})

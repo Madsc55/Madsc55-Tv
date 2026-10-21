@@ -1609,3 +1609,8 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - madsc/five_system_installation.py AST envanteri yalnizca okuma yapan open() cagrisini yazma adayi saymiyor; write/append/create/update kiplerini yazma, dinamik kipleri inceleme gerektiren olarak sinifliyor. Commit 7cdc4845e28c28c3d3e625d613a10b88249735f5.
 - tests/test_five_system_channel_flow.py tek senaryoda salt okuma, yazma ve dinamik open kiplerini dogrulayan regresyon eklendi. Commit d6efdccb0e2c18b03457f3a95247342e8a688104.
 - [skip ci] kullanildi, Actions calistirilmadi. Testler bu turda gercekten kosulmadi; kod/testler kabul edilmis sayilmiyor. Toplu K1-K5 gercek islevsel kapanis, 26 runtime kural ve 92 parity hala acik. Korunan dosyalar degismedi.
+
+## 21 Ekim 2026 — K1-K5 toplu writer risk envanteri
+- madsc/five_system_installation.py writer cagri noktalarini modul bazinda write/dynamic_mode_review olarak sayiyor ve dinamik kipleri topluca raporluyor. Commit d46690f87e95bceea95b8c87541affa3cb267a2e.
+- tests/test_five_system_channel_flow.py modul bazli sayaclar icin regresyon beklentileri eklendi. Commit bcce2f843cfe229be7b7e024c713fcbeba3fab5d.
+- [skip ci] nedeniyle Actions baslatilmadi. Bu turda test kosulmadi. K1-K5 kabul 0/22, gercek writer entegrasyonu, 26 runtime ve 92 eski davranis kaniti halen acik. Bu envanter yalniz risk haritalama ve sonraki toplu uygulama icin hazirliktir.

@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from madsc.workflow_consolidation import AUXILIARY, MAIN, consolidation_plan
+from madsc.workflow_consolidation import AUXILIARY, MAIN, consolidation_plan, auxiliary_behavior_matrix
 
 
 class WorkflowConsolidationTests(unittest.TestCase):
@@ -21,6 +21,25 @@ class WorkflowConsolidationTests(unittest.TestCase):
                 encoding="utf-8",
             )
         return folder
+
+
+    def test_bulk_contract_matrix_flags_missing_timeout_and_artifact(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            source = folder / "madsc-k2-live-pilot.yml"
+            source.write_text(source.read_text(encoding="utf-8") +
+                              "    timeout-minutes: 5\\n"
+                              "      - uses: actions/upload-artifact@v4\\n"
+                              "        with:\\n"
+                              "          name: madsc-k2-real-channel-discovery-pilot\\n",
+                              encoding="utf-8")
+            result = auxiliary_behavior_matrix(Path(d))
+            row = next(x for x in result["rows"] if x["source"] == source.name)
+            self.assertEqual(result["auxiliary_count"], 10)
+            self.assertTrue(row["command_present"])
+            self.assertIn("timeout", row["static_contract_gaps"])
+            self.assertIn("artifact_name", row["static_contract_gaps"])
+            self.assertFalse(result["behavioral_parity_verified"])
 
     def test_all_ten_mapped_to_five_without_claiming_parity(self):
         with tempfile.TemporaryDirectory() as d:

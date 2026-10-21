@@ -260,3 +260,9 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/k4_evidence.py artik kanit dosyasinin ust klasorlerinde symlink olmasini da reddeder; commit 26288a26904103e9e0dfe4d2ba3a833efbb7ccdb.
 - tests/test_k4_report_output_safety.py symlink ust klasor testini kapsar; commit d5d37aaef6554fb8c5c00bc8d1abb92cfba54ee7.
 - Bu iki commit testleri CALISTIRMAZ; guncel main offline toplu regresyon hala calistirilmis degildir. K1 26 runtime kabul ve 92 legacy davranissal esdegerlik tamamlanmadi. GitHub Actions ve canli yayin dosyalari degismedi.
+
+
+## 21 Ekim 2026 — K3 uc asamali test kaniti
+- madsc/k3_three_stage_gate.py commit 3c0b5a7377e669d755cea3c6cd0fee7b1326d945: tek kanal fingerprint'i icin tam uc supplied probe, UTC zaman damgasi ve ardarda >=6 saat fark kosulu; tum uc sample preliminary pass degilse uc asamali preliminary kabul yok.
+- tests/test_k3_three_stage_gate.py commit 3ba405dc4b278f6f935493885813e165c9fd1b74: normal uc ornek, yetersiz sure, farkli kanal, basarisiz test, timezone olmayan timestamp senaryolari.
+- Modul CANLI yayin test ETMEZ, cihaz IBO onayi vermez, timestamp kaynagini bagimsiz dogrulamaz, zamanlayici veya yeni otomasyon olusturmaz. Guncel main toplu offline regresyonu hala CALISTIRILMADI; gercek 92/92 ve 26/26 kabul 0.

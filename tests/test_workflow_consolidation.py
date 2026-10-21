@@ -29,10 +29,10 @@ class WorkflowConsolidationTests(unittest.TestCase):
             folder = self.make_root(Path(d))
             source = folder / "madsc-k2-live-pilot.yml"
             source.write_text(source.read_text(encoding="utf-8") +
-                              "    timeout-minutes: 5\\n", encoding="utf-8")
+                              "    timeout-minutes: 5\n", encoding="utf-8")
             target = folder / MAIN["K2"]
             target.write_text(target.read_text(encoding="utf-8") +
-                              "    timeout-minutes: 10\\n", encoding="utf-8")
+                              "    timeout-minutes: 10\n", encoding="utf-8")
             result = auxiliary_behavior_matrix(Path(d))
             row = next(x for x in result["rows"] if x["source"] == source.name)
             self.assertNotIn("timeout", row["static_contract_gaps"])
@@ -42,10 +42,10 @@ class WorkflowConsolidationTests(unittest.TestCase):
             folder = self.make_root(Path(d))
             source = folder / "madsc-k2-live-pilot.yml"
             source.write_text(source.read_text(encoding="utf-8") +
-                              "    timeout-minutes: 5\\n"
-                              "      - uses: actions/upload-artifact@v4\\n"
-                              "        with:\\n"
-                              "          name: madsc-k2-real-channel-discovery-pilot\\n",
+                              "    timeout-minutes: 5\n"
+                              "      - uses: actions/upload-artifact@v4\n"
+                              "        with:\n"
+                              "          name: madsc-k2-real-channel-discovery-pilot\n",
                               encoding="utf-8")
             result = auxiliary_behavior_matrix(Path(d))
             row = next(x for x in result["rows"] if x["source"] == source.name)

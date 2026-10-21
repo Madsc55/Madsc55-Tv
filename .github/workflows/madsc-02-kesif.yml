@@ -37,7 +37,7 @@ jobs:
         if: ${{ inputs.allow_network_discovery == true }}
         run: python -m madsc.legacy_multisource_discovery
       - name: Public candidate discovery (explicit opt-in only)
-        if: ${{ inputs.allow_network_discovery == true }}
+        if: ${{ success() && inputs.allow_network_discovery == true }}
         run: python -m madsc.live_discovery_pilot
       - name: Validate independent real history pair (explicit opt-in only)
         if: ${{ inputs.allow_verified_history == true }}

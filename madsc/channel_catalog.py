@@ -32,7 +32,7 @@ def prepare_channel_catalog(rows: list[dict], measurements: dict | None = None,
         digest = candidate["url_sha256"]
         source = rows[candidate["source_index"]]
         probe = probes.get(digest)
-        if probe is not None:
+        if digest in probes:
             if not isinstance(probe, dict) or probe.get("url_sha256") != digest:
                 raise ValueError("Probe fingerprint mismatch")
             status = evaluate_probe(probe)["technical_status"]
@@ -40,7 +40,7 @@ def prepare_channel_catalog(rows: list[dict], measurements: dict | None = None,
             status = "UNTESTED"
         staged = three_stage.get(digest)
         staged_result = None
-        if staged is not None:
+        if digest in three_stage:
             staged_result = assess_three_stage_probes(staged)
             if staged_result["url_sha256"] != digest:
                 raise ValueError("Three-stage fingerprint mismatch")

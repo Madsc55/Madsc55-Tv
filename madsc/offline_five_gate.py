@@ -21,6 +21,9 @@ def assess_all(executor=None):
             reports.append({"category": category, "status": "failure",
                             "production_writes": False, "fixture_checks": {}})
     summary = verify_fixture_evidence(reports)
+    required = set(CATEGORIES)
+    if len(CATEGORIES) != 5 or len(required) != 5 or required != {"k1", "k2", "k3", "k4", "k5"}:
+        errors["inventory"] = "invalid_five_stage_inventory"
     return {"categories_checked": len(reports),
             "categories": {item["category"]: item["status"] for item in reports},
             "fixture_gate_passed": not errors and summary["fixture_evidence_verified"],

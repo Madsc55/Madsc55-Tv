@@ -59,6 +59,13 @@ class OfflineFiveGateTests(unittest.TestCase):
         self.assertIs(checks["k4_corruption_blocks_k5_review"], True)
         self.assertIs(checks["k1_guards_k5_report_write"], True)
 
+    def test_stage_inventory_is_exact_five(self):
+        from unittest.mock import patch
+        with patch("madsc.offline_five_gate.CATEGORIES", ("k1", "k2", "k3", "k4", "k4")):
+            result = assess_all(lambda category: {"isolated": True})
+        self.assertFalse(result["fixture_gate_passed"])
+        self.assertEqual(result["errors"]["inventory"], "invalid_five_stage_inventory")
+
     def test_missing_checks_block_batch(self):
         result = assess_all(lambda category: {})
         self.assertFalse(result["fixture_gate_passed"])

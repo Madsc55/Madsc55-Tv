@@ -273,3 +273,9 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/five_system_channel_flow.py three_stage parametresini K2/K3 kataloga aktarir; commit f7a0398f469ef82950c6d7ef5d572c2877db0371.
 - tests/test_five_system_channel_flow.py iki entegrasyon senaryosu: uc asamali preliminary sonuc uretim kabulune donusmez; yanlis kanal fingerprint reddedilir. Commit 2dccf629fff2b44362f8820dcd5436ec1fed60af.
 - Gercek uc asamali CANLI testler, IBO cihaz onayi ve main offline toplu regresyon henuz yapilmadi. 5 otomasyon siniri korundu; Actions ve canli listeler degistirilmedi.
+
+
+## 21 Ekim 2026 — K1-K2 URL kontrol karakteri engeli
+- madsc/discovery.py normalize_url, ham URL'deki ASCII kontrol karakterlerini urlsplit/strip oncesi reddeder; commitler bf1c967b4089868d696c6a61ff3ba12ed30e95d3 ve 2746cbf9a61051a94cbee1bb5e3cbc8c17a6ea6c.
+- tests/test_discovery.py M3U satir enjeksiyonu, CR/LF/TAB ve katalog reddi regresyonlarini kapsar; commit a917cce0b7e64c6d236384488bd6e7060b743522.
+- Kod commitleri gercektir; guncel main toplu offline test calistirilmadi. 92 eski davranis esdegerligi, 26 runtime guvenlik kabul ve harici restore aciktir. Actions calistirilmadi, uretim listelerine dokunulmadi.

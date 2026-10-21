@@ -173,7 +173,7 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
                 if stripped.startswith("- ") and ("uses:" in stripped or "name:" in stripped):
                     upload = False
                     path_block_indent = None
-                if stripped.startswith("uses: actions/upload-artifact@"):
+                if stripped.startswith(("uses: actions/upload-artifact@", "- uses: actions/upload-artifact@")):
                     upload = True
                 if not upload:
                     continue

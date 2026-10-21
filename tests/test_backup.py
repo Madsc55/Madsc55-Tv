@@ -415,3 +415,41 @@ class BackupTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 restore_to_new_sandbox(backup, target, ["file.txt"])
             self.assertFalse((real_parent / "nested" / "restore").exists())
+
+    def test_real_sandbox_backup_restore_roundtrip(self):
+        from madsc.backup import backup_to_new_sandbox, restore_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            source, backup, restored = (base / name for name in ("source", "backup", "restored"))
+            source.mkdir()
+            (source / "nested").mkdir()
+            (source / "nested" / "channel.txt").write_bytes(b"channel-bytes")
+            (source / "guide.xml").write_bytes(b"<tv/>")
+            names = ["nested/channel.txt", "guide.xml"]
+            backup_report = backup_to_new_sandbox(source, backup, names)
+            restore_report = restore_to_new_sandbox(backup, restored, names)
+            self.assertTrue(backup_report["sandbox_backup_matches"])
+            self.assertTrue(restore_report["sandbox_restore_matches"])
+            audit = verify_independent_restore(source, backup, restored, names)
+            self.assertTrue(audit["independent_sandbox_restore_matches"])
+            self.assertEqual(audit["files_checked"], 2)
+            self.assertFalse(audit["external_storage_proven"])
+            self.assertFalse(backup_report["production_writes"])
+            self.assertEqual((source / "guide.xml").read_bytes(), b"<tv/>")
+
+    def test_real_sandbox_backup_never_overwrites_or_nests(self):
+        from madsc.backup import backup_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            source = base / "source"
+            source.mkdir()
+            (source / "file.txt").write_text("source")
+            existing = base / "existing"
+            existing.mkdir()
+            (existing / "file.txt").write_text("keep")
+            with self.assertRaises(ValueError):
+                backup_to_new_sandbox(source, existing, ["file.txt"])
+            self.assertEqual((existing / "file.txt").read_text(), "keep")
+            with self.assertRaises(ValueError):
+                backup_to_new_sandbox(source, source / "nested", ["file.txt"])
+            self.assertFalse((source / "nested").exists())

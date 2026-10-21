@@ -93,6 +93,17 @@ class FixtureReportWriterTests(unittest.TestCase):
             with self.assertRaises(PermissionError):
                 write_isolated_history_pair(root, "reports/history-pair.json", pair)
 
+    def test_k2_history_uses_local_output_guard(self):
+        pair = {"gecmis.json": {"history": {}},
+                "ana_liste_test_gecmisi.json": {"channels": {}}}
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            with patch("madsc.write_path_audit.enforce_local_output_path") as guard:
+                write_isolated_history_pair(root, "reports/history-pair.json", pair)
+            guard.assert_called_once_with(
+                root / "reports/history-pair.json", allowed_root=root)
+
     def test_k2_history_rejects_traversal_and_protected_paths(self):
         pair = {"gecmis.json": {"history": {}},
                 "ana_liste_test_gecmisi.json": {"channels": {}}}

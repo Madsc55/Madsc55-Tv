@@ -1,6 +1,6 @@
 import unittest
 
-from madsc.discovery_batch import parse_m3u, corroborate_sources
+from madsc.discovery_batch import parse_m3u, corroborate_sources, build_m3u8_preview
 
 
 class DiscoveryBatchTests(unittest.TestCase):
@@ -36,3 +36,16 @@ class DiscoveryBatchTests(unittest.TestCase):
         report = corroborate_sources({"a": "#EXTM3U\n#EXTINF:-1,Test\nhttps://example.org/a\n"})
         self.assertEqual(report["identity_candidates"][0]["status"], "REVIEW_REQUIRED_NOT_LIVE_VERIFIED")
         self.assertFalse(report["production_writes"])
+
+    def test_m3u8_preview_integrates_k2_k3_k5_without_live_publishing(self):
+        feeds = {"a": '#EXTM3U\n#EXTINF:-1 tvg-id="news.tv" group-title="Haber",News TV\nhttps://example.org/news.m3u8\n',
+                 "b": '#EXTM3U\n#EXTINF:-1 tvg-id="news.tv" group-title="Haber",News TV\nhttps://example.org/news.m3u8\n'}
+        result = build_m3u8_preview(feeds)
+        self.assertEqual(result["filename"], "playlist.m3u8")
+        self.assertEqual(result["channel_count"], 1)
+        self.assertEqual(result["duplicates"], 1)
+        self.assertIn('tvg-id="news.tv"', result["content"])
+        self.assertIn("https://example.org/news.m3u8", result["content"])
+        self.assertTrue(result["content"].startswith("#EXTM3U\n"))
+        self.assertFalse(result["production_writes"])
+        self.assertFalse(result["ibo_device_verified"])

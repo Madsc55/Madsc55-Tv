@@ -48,6 +48,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         errors.append({"line": len(lines), "reason": "missing_url"})
     classified = classify_candidates(candidates)
     return {"source": source, "entries": len(candidates),
+            "candidate_rows": [candidates[item["source_index"]] for item in classified["candidates"]],
             "candidates": classified["candidates"],
             "duplicates": classified["duplicates"],
             "alternatives": classified["alternatives"],
@@ -85,3 +86,31 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
     return {"sources_checked": len(reports), "source_reports": reports,
             "identity_candidates": output, "known_urls_supplied": len(known),
             "production_writes": False, "live_verified": False}
+
+
+def build_m3u8_preview(sources: dict[str, str]) -> dict:
+    """K2 -> K3 -> K5: in-memory UTF-8 M3U8 draft, all channels untested."""
+    from madsc.channel_catalog import prepare_channel_catalog
+    from madsc.playlist_previews import render_playlist_previews
+
+    if not isinstance(sources, dict) or not sources or len(sources) > 200:
+        raise ValueError("Require 1-200 named M3U sources")
+    rows = []
+    rejected_count = 0
+    for source, body in sorted(sources.items()):
+        parsed = parse_m3u(body, source)
+        rows.extend(parsed["candidate_rows"])
+        rejected_count += len(parsed["rejected"]) + len(parsed["parse_errors"])
+    catalog = prepare_channel_catalog(rows)
+    previews = render_playlist_previews(catalog, rows)
+    draft = previews["drafts"]["TEST_BEKLIYOR"]
+    if not draft.startswith("#EXTM3U\n"):
+        raise ValueError("Invalid M3U8 preview")
+    draft.encode("utf-8", errors="strict")
+    return {"filename": "playlist.m3u8", "content": draft,
+            "channel_count": previews["counts"]["TEST_BEKLIYOR"],
+            "duplicates": len(catalog["duplicates"]),
+            "rejected": rejected_count + len(catalog["rejected"]),
+            "status": "SANDBOX_PREVIEW_ONLY",
+            "production_writes": False, "production_ready": False,
+            "ibo_device_verified": False}

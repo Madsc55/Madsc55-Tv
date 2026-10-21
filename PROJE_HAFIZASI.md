@@ -1822,3 +1822,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Eski kaynak_kesfet.py GitHub search (5 query, 60 repo, 120 source, 90 gun), M3U baslik ve guncellik kontrolu kullaniyor; tools/genis_kaynak_taramasi.py 8 worker, haftalik/aylik kaynak, degisen digest, bilinen URL ve review queue kullaniyor. Eski repo salt okunur incelendi.
 - Yeni madsc/discovery_batch.py salt okunur M3U parser, metadata, gecersiz URL reddi, kanal tvg-id/name-group kimligi, birden fazla kaynakta bagimsiz destek sayimi ve K3 oncesi review-only raporu ekler. tests/test_discovery_batch.py ile tek toplu commit.
 - K1 kurallari ve gercek K2 ag dogrulamasi henuz tamamlanmadi; otomatik kabul ve production yazma yok. Sonraki is: parser ve discovery koruma testlerini genislet, K1 26 runtime kuralini somutlastir, tek manuel K1-K5 CI calistir.
+
+
+## 21 Ekim 2026 - K1 K2 K3 K5 toplu M3U8 entegrasyonu
+- K2 parse_m3u yalniz guvenli kabul edilmis adaylarin kaynak satirlarini candidate_rows ile K3 kataloguna tasiyor; build_m3u8_preview kaynaklarin tumunu birlestirip prepare_channel_catalog ve render_playlist_previews uzerinden TEST_BEKLIYOR grubunun bellekteki UTF-8 playlist.m3u8 taslagini uretiyor. Kaynak tekrarlarini atiyor, IBO veya production kabul iddia etmiyor.
+- K1 guard korunan playlist.m3u8 ve xmltv.xml adlarini engelliyor, artifacts dizinine ters slash bypassini ve kontrol karakterlerini reddediyor. Testler birlikte eklendi.
+- K4 yedek/restore bagimsizligi korunuyor; yeni onizleme production dosyalarina yazmaz. K5 final CI sadece manuel toplu tetiklenir. 26 runtime security, 92 parity, 75 canli kabul hala acik.

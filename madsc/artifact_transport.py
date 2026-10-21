@@ -6,6 +6,7 @@ from pathlib import Path
 from madsc.artifact_handoff import pack, unpack
 from madsc.discovery import classify_candidates
 from madsc.handoff import assess_candidates
+from madsc.write_path_audit import enforce_local_output_path
 
 def main():
     p = argparse.ArgumentParser()
@@ -39,12 +40,14 @@ def main():
             if args.output.is_symlink():
                 raise ValueError("Invalid report output")
             args.output.parent.mkdir(parents=True, exist_ok=True)
+            enforce_local_output_path(args.output.absolute())
             args.output.write_text(json.dumps({"schema": "madsc-handoff-verification-v1", "run_id": args.run_id,
                 "commit_sha": args.commit_sha, "source_digest": envelope["digest"],
                 "candidate_count": result["candidate_count"], "read_only": True,
                 "network_probed": False, "production_ready": False}, sort_keys=True) + "\n", encoding="utf-8")
     if args.mode == "produce":
         args.path.parent.mkdir(parents=True, exist_ok=True)
+        enforce_local_output_path(args.path.absolute())
         args.path.write_text(json.dumps(result, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"mode": args.mode, "source_mode": "read_only_m3u" if args.mode == "produce" and args.source is not None else ("synthetic_fixture" if args.mode == "produce" else "verified_artifact"), "production_ready": False, "verified": True}))
 if __name__ == "__main__":

@@ -1472,3 +1472,10 @@ Kullanici 12 gunde GitHub Actions 2000 dakikalik kotasinin tukendigini ve K1-K5 
 - Kullanici emri: once yalniz yeni K1 guvenlik, K2 kesif, K3 kanal/EPG/IBO, K4 yedek ve K5 merkezi bakim sistemini tamamla.
 - Eski sistemin 92 davranissal esdegerligi, eski workflow kaldirma/kapatma ve eski-yeni gecis kabulu yeni sistem bittikten sonraya ertelendi. Eski depoya dokunma.
 - Yeni sistemin kendi test, guvenlik, kanit ve eksik kod gelistirmelerine devam et; gercek kanit olmadan tamamlandi deme. Korunan canli listeler, favoriler, EPG ve yedekler degistirilmez.
+
+## 21 Ekim 2026 — Yeni besli sistem K2-K3 regresyon ve hata duzeltmesi
+- Actions #406 success. #407 failure: 444 unittest icinde tek ERROR, tests/test_five_system_channel_flow.py staged evidence without current probe. K1 fail oldugu icin sonraki K isleri skipped; toplu kabul de fail.
+- madsc/channel_catalog.py commit 4df00a8: K3 uc-asamali gecmis basarisi yalniz mevcut probe varsa ve o probe basarisizsa catismali kabul edilir. Guncel probe yoksa kanal UNTESTED kalir, staged kanit korunur, uretim onayi verilmez.
+- tests/test_channel_catalog.py commit 36a6c73: staged evidence mevcut fakat current probe olmayan kanal icin regression testi eklendi. Onceki test current probe fail ile staged pass catismasini reddetmeye devam eder.
+- #408 ve #409 otomatik GitHub Actions tetiklendi; sonuclari kontrol edilmeden basarili sayilmaz.
+- Oncelik: sadece yeni Madsc55-Tv K1-K5 sistemini tamamlamak; eski sistem 92 workflow parity ve kapatma daha sonraya ertelendi. Canli ag/cihaz/dis servis testleri veya korunan uretim listelerine yazma yapilmadi.

@@ -1,12 +1,5 @@
 name: Madsc55-Tv - Besli Toplu Guvenlik ve Kabul
 on:
-  push:
-    branches: [main]
-    paths:
-      - "madsc/**"
-      - "src/**"
-      - "tests/**"
-      - ".github/workflows/madsc-05-bakim.yml"
   workflow_dispatch:
     inputs:
       allow_legacy_source_audit:

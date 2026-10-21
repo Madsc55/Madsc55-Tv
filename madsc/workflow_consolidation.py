@@ -69,9 +69,18 @@ def consolidation_plan(root: Path) -> dict:
         body = path.read_text(encoding="utf-8")
         if "workflow_dispatch:" not in body or "permissions:" not in body:
             raise ValueError("Missing manual trigger or permissions in main: " + name)
-        if any(line.lstrip().startswith(("push:", "pull_request:", "schedule:", "workflow_call:"))
-               for line in body.splitlines()):
-            raise ValueError("Automatic trigger in main: " + name)
+        forbidden = ("pull_request:", "schedule:", "workflow_call:")
+        if stage != "K5":
+            forbidden += ("push:",)
+        if any(line.lstrip().startswith(forbidden) for line in body.splitlines()):
+            raise ValueError("Unsafe automatic trigger in main: " + name)
+        if stage == "K5":
+            expected_push = ("  push:\n    branches: [main]\n"
+                             "    paths:\n      - 'madsc/**'\n"
+                             "      - 'tests/**'\n"
+                             "      - '.github/workflows/madsc-05-bakim.yml'\n")
+            if expected_push not in body:
+                raise ValueError("K5 auto regression trigger is not restricted")
     entries = []
     for name, (stage, command, external) in AUXILIARY.items():
         path = folder / name

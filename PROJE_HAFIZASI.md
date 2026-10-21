@@ -1592,3 +1592,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - tests/test_history_pair_hls.py korunan dosya adlari, Unicode esdeger yol ve symlink ust klasor reddi icin negatif testler eklendi. Test commit 6f55c7f9bcaf964751eb29841b5fcbd6f480dba1.
 - Her iki commit [skip ci] ile kaydedildi; yeni Actions baslatilmadi. Bu turda offline toplu test calistirilmadi. K1-03 in_progress, 26 runtime ve 92 eski otomasyon kabul sayaclari degismedi. Diger gercek yazma noktalarinin tam envanteri ve runtime entegrasyonu bekliyor.
 - Etki: K1 guvenlik, K2 history, K4 butunluk, K5 kabul. Eski repo ve korunan canli dosyalar degismedi.
+
+## 21 Ekim 2026 — K1 Unicode normalize yol gecisi ve uzanti guvenligi
+- madsc/write_path_audit.py normalize edilmis NFKC path parcalarinda '.', '..', bos parcayi, sonda nokta/boslugu ve .m3u/.m3u8 uzanti taklitlerini reddedecek sekilde guclendirildi. Commit dea98023472f7006027f087ce389f33b461b5362.
+- tests/test_write_path_audit.py normalize Unicode traversal, dosya uzantisi ve ayirici taklitleri icin negatif testler eklendi. Commit 2dc317827516992799ceb56eeba81dfcfdb787f6.
+- [skip ci] kullanildi; Actions baslatilmadi, offline regresyon bu turda calistirilamadi. Kod degisikligi test edilmis/kabul edilmis sayilmiyor. 0/26 runtime ve 0/92 parity ayni. K1-03 acik, tum writer noktalarinin envanteri eksik.
+- Korunan listeler, IBO cihaz favorileri, EPG/logo ve eski repo degistirilmedi.

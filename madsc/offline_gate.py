@@ -60,6 +60,8 @@ def main():
         acceptance_plan = assess_task_evidence(ledger)
         inventory_passed = (workflow_plan["auxiliary_count"] == 10
                             and len(workflow_plan["main_workflows"]) == 5
+                            and workflow_plan["commands_integrated_in_main"] == 10
+                            and workflow_plan["all_ten_commands_integrated_in_main"] is True
                             and acceptance_plan["total"] == 22
                             and acceptance_plan["production_ready"] is False)
     except Exception as exc:
@@ -82,6 +84,7 @@ def main():
         "all_offline_gates_passed": unittest_passed and five_stage_passed and inventory_passed,
         "workflow_and_task_inventory_passed": inventory_passed,
         "auxiliary_workflows_mapped": workflow_plan.get("auxiliary_count"),
+        "auxiliary_commands_integrated_in_main": workflow_plan.get("commands_integrated_in_main"),
         "task_requirements_inventoried": acceptance_plan.get("total"),
         "workflow_inventory_error": workflow_plan.get("error"),
         "task_inventory_error": acceptance_plan.get("error"),

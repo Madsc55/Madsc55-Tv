@@ -59,19 +59,28 @@ def inspect_installation(root: Path) -> dict:
                 target = node.func
                 name = target.attr if isinstance(target, ast.Attribute) else (target.id if isinstance(target, ast.Name) else "")
                 operations = {"write_text", "write_bytes", "replace", "mkdir",
-                              "NamedTemporaryFile", "mkstemp", "unlink", "rename", "copyfile", "copy2"}
-                if name == "open":
+                              "NamedTemporaryFile", "TemporaryFile", "mkstemp", "unlink",
+                              "rename", "copyfile", "copy2", "copy", "move", "rmtree",
+                              "makedirs", "remove", "rmdir", "touch", "chmod",
+                              "symlink_to", "hardlink_to", "link", "truncate", "writelines",
+                              "write", "dump", "dumps_to_file", "to_csv", "to_json"}
+                if name in ("open", "fdopen"):
                     mode_node = next((kw.value for kw in node.keywords if kw.arg == "mode"), None)
                     if mode_node is None and len(node.args) >= (2 if isinstance(target, ast.Name) else 1):
                         mode_node = node.args[1] if isinstance(target, ast.Name) else node.args[0]
                     if mode_node is None:
-                        continue  # Default open() is read-only.
-                    if not isinstance(mode_node, ast.Constant) or not isinstance(mode_node.value, str):
+                        if name == "fdopen":
+                            classification = "dynamic_mode_review"
+                        else:
+                            continue  # Default open() is read-only.
+                    elif not isinstance(mode_node, ast.Constant) or not isinstance(mode_node.value, str):
                         classification = "dynamic_mode_review"
                     elif any(flag in mode_node.value for flag in "wax+"):
                         classification = "write"
                     else:
                         continue
+                elif name == "Popen" or name in ("run", "call", "check_call", "check_output", "system"):
+                    classification = "dynamic_mode_review"
                 elif name in operations:
                     classification = "write"
                 else:
@@ -79,6 +88,7 @@ def inspect_installation(root: Path) -> dict:
                 writer_calls.append({"file": module.relative_to(root).as_posix(),
                                      "line": node.lineno, "operation": name,
                                      "classification": classification})
+                continue
     writer_calls.sort(key=lambda row: (row["file"], row["line"], row["operation"]))
     writer_by_module = {}
     for row in writer_calls:

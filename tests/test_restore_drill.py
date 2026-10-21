@@ -16,6 +16,8 @@ class RestoreDrillTests(unittest.TestCase):
             before = {p: (root / p).read_bytes() for p in ("nested/history.json", "channels.m3u")}
             result = run_drill(root, list(before))
             self.assertTrue(result["drill_executed"])
+            self.assertTrue(result["sandbox_backup_matches"])
+            self.assertTrue(result["sandbox_restore_matches"])
             self.assertTrue(result["independent_sandbox_restore_matches"])
             self.assertTrue(result["source_unchanged"])
             self.assertFalse(result["external_storage_proven"])
@@ -30,15 +32,14 @@ class RestoreDrillTests(unittest.TestCase):
             source.mkdir()
             (source / "safe.txt").write_bytes(b"ORIGINAL")
             from madsc import restore_drill
-            original_copy = restore_drill.shutil.copyfile
+            original_backup = restore_drill.backup_to_new_sandbox
 
-            def corrupt_copy(src, dst, *args, **kwargs):
-                result = original_copy(src, dst, *args, **kwargs)
-                if Path(dst).parent.name == "backup":
-                    Path(dst).write_bytes(b"CORRUPTED")
+            def corrupt_backup(src, dst, names):
+                result = original_backup(src, dst, names)
+                (Path(dst) / "safe.txt").write_bytes(b"CORRUPTED")
                 return result
 
-            with patch.object(restore_drill.shutil, "copyfile", side_effect=corrupt_copy):
+            with patch.object(restore_drill, "backup_to_new_sandbox", side_effect=corrupt_backup):
                 with self.assertRaises(ValueError):
                     run_drill(source, ["safe.txt"])
             self.assertEqual((source / "safe.txt").read_bytes(), b"ORIGINAL")

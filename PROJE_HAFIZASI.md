@@ -1777,3 +1777,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Yeni backup_to_new_sandbox kaynak dosyalari yeni ayri sandbox'a gercekten kopyalar, SHA256 manifest ile kaynak/kopya butunlugunu dogrular, var olan hedefe yazmaz, hata halinde yalniz yeni klasoru temizler. Kod 1a55fbce787f9d5f85748de4f7425af348cd6121.
 - Davranissal test 1fb9e21d0e8ed6ed0109436877d814950bc2635b: kaynak -> yeni backup -> yeni restore -> verify_independent_restore ile uc agac gercek dosya roundtrip ve overwrite/nesting reddi. Yeni Actions sonucu henuz kontrol edilmedi.
 - Bu yalniz sandbox fixture ispatidir; dis storage ve production restore accepted degildir. 75 canli, 92 parity, 26 runtime security kabulleri degismedi. Korunan listeler ve eski depo degistirilmedi.
+
+
+## 21 Ekim 2026 - K4 CI restore drill gercek uygulamaya baglandi
+- Actions #39679773526 success; #39679793343 son kontrol in_progress, ancak tum kategori job'lari ve regresyon testi success; toplu final bekleniyor.
+- madsc/restore_drill.py artik elle shutil.copyfile kullanmak yerine backup_to_new_sandbox -> restore_to_new_sandbox -> verify_independent_restore zincirini calistiriyor; CI'daki K4 drill ayni fonksiyonu kullaniyor. Kod 07db91624781c42060edba5e14ce588f139a1b41.
+- tests/test_restore_drill.py mevcut corruption injection testini yeni API'ye uyarladi; gercek iki sonuc alanini denetliyor: ef2906125e4e96511be196b6764a7f6ee38fdb3b. Yeni CI sonucunu kontrol et.
+- Gercek dis depolama veya production restore kabul edilmedi; 75 canli, 92 parity ve 26 runtime security kabul sayilari degismedi. Korunan yollar ve eski repo degistirilmedi.

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from madsc.discovery import normalize_url
+from hashlib import sha256
 
 BUCKETS = ("IBO_ONAYLI_CALISAN", "CALISAN_ADAY", "CALISMAYAN_ADAY",
            "YABANCI", "TEST_BEKLIYOR")
@@ -31,6 +32,8 @@ def render_playlist_previews(catalog: dict, source_rows: list[dict]) -> dict:
         if not isinstance(source, dict):
             raise ValueError("Invalid source row")
         url = normalize_url(source["url"])
+        if sha256(url.encode("utf-8")).hexdigest() != entry.get("url_sha256"):
+            raise ValueError("Catalog and source fingerprint mismatch")
         for key in ("display_name", "tvg_id", "group_title"):
             if not isinstance(entry.get(key), str):
                 raise ValueError("Invalid channel metadata")
@@ -38,7 +41,8 @@ def render_playlist_previews(catalog: dict, source_rows: list[dict]) -> dict:
         if any(ord(ch) < 32 or ord(ch) == 127 for ch in name):
             raise ValueError("Unsafe channel name")
         logo = entry.get("logo_url") or ""
-        if logo and (not isinstance(logo, str) or not logo.startswith("https://")):
+        if logo and (entry.get("logo_verified") is not True or
+                     not isinstance(logo, str) or not logo.startswith("https://")):
             raise ValueError("Unverified logo")
         attrs = (f'tvg-id="{_attribute(entry["tvg_id"])}" '
                  f'tvg-logo="{_attribute(logo)}" '

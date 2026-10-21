@@ -1568,3 +1568,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - 4/4 bagimsiz offline test PASS (0.024 sn): aday izolasyonu/sirasi, bos isim fail-closed, gecersiz aday listesi, 1934 sentetik kayitla manifest kaynak/ref/SHA bicimi/tekrar korumasi ve metadata salt okunur raporlama.
 - Bunlar sentetik fixture ile yerel alt-kume testidir; tam GitHub unittest paketi, gercek 1934 snapshot uzerinde tam kabul, K1-K5 toplu regresyon, 75 canli aday, IBO/EPG cihaz, harici restore, 26 runtime kural veya 92 davranis esdegerligi kaniti DEGILDIR.
 - Test icin Github Actions tetiklenmedi, uretim/korunan listeler/eskidepo degistirilmedi. Sonraki: tam repo offline test erisimi veya GitHub Actions icin calistirma yetkisi ve sonra toplu kabul.
+
+## 21 Ekim 2026 — Actions #414 K1 regresyon hatasi duzeltildi; otomatik CI aktif
+- #414 run 39620800578 manual workflow_dispatch completed/failure, 451 testte 3 error. Hepsi madsc.legacy_category_order.load_historical_categories() icindeki source_ref == main yanlis beklentisinden kaynaklandi; gercek snapshot source_ref=madsc/bes-sistem-toplu-birlestirme.
+- Eski kaynak/snapshot/kanal listeleri degistirilmeden validator gercek onayli tarihsel ref'e sabitlendi. Kod commit 0568501a8a8c3512c10975a86616d2ad02892360. [skip ci] KULLANILMADI.
+- Otomatik main push tetiklemeli Actions #416 run 39621532611 bu commit icin queued goruldu. #415 run 39621498388 onceki 21d37bc commit icin queued goruldu. Bu an itibariyle yeni sonuc bilinmiyor; basari iddia edilmez.
+- Otomatik testleri durduran [skip ci] kod commitlerinde kullanilmayacak; docs-only not commitleri K5 paths filtresi geregi tetiklemiyor. CI kota/izin kosullari ayrica takip edilecek.

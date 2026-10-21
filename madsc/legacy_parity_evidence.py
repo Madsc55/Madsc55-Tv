@@ -105,3 +105,35 @@ def compare_execution_snapshots(legacy, replacement):
                 differences[field] = {"legacy": legacy[field], "replacement": replacement[field]}
     return {"snapshot_fields_match": not differences, "differences": differences,
             "behavioral_parity_accepted": False, "provenance_verified": False}
+
+
+def compare_snapshot_batch(inventory, snapshots):
+    """Compare provided execution pairs for all 99 inventoried workflows.
+
+    Unsubmitted pairs remain blocked; even matching pairs cannot prove origin
+    or authorize production acceptance.
+    """
+    rows = validate_inventory(inventory)
+    paths = {row["path"] for row in rows}
+    if not isinstance(snapshots, dict) or set(snapshots) - paths:
+        raise ValueError("Unknown snapshot workflow")
+    results = []
+    for row in rows:
+        path = row["path"]
+        if path not in snapshots:
+            results.append({"path": path, "status": "missing_execution_pair",
+                            "behavioral_parity_accepted": False})
+            continue
+        pair = snapshots[path]
+        if not isinstance(pair, dict) or set(pair) != {"legacy", "replacement"}:
+            raise ValueError("Incomplete execution pair")
+        comparison = compare_execution_snapshots(pair["legacy"], pair["replacement"])
+        results.append({"path": path,
+                        "status": ("snapshot_match_unverified" if comparison["snapshot_fields_match"]
+                                   else "snapshot_mismatch"),
+                        **comparison})
+    return {"total": len(rows), "pairs_supplied": len(snapshots),
+            "snapshot_matches": sum(r["status"] == "snapshot_match_unverified" for r in results),
+            "snapshot_mismatches": sum(r["status"] == "snapshot_mismatch" for r in results),
+            "missing_pairs": sum(r["status"] == "missing_execution_pair" for r in results),
+            "behavioral_parity_accepted": 0, "rows": results}

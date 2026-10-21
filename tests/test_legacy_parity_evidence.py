@@ -129,5 +129,25 @@ class EvidenceLedgerTest(unittest.TestCase):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 compare_execution_snapshots(good, invalid)
 
+
+    def test_batch_reports_missing_matching_and_mismatching_pairs(self):
+        from madsc.legacy_parity_evidence import compare_snapshot_batch
+        good = {"exit_code": 0, "timed_out": False, "outputs": {}, "side_effects": {}}
+        bad = {**good, "exit_code": 1}
+        report = compare_snapshot_batch(inventory(), {
+            ".github/workflows/w00.yml": {"legacy": good, "replacement": dict(good)},
+            ".github/workflows/w01.yml": {"legacy": good, "replacement": bad},
+        })
+        self.assertEqual((report["total"], report["pairs_supplied"],
+                          report["snapshot_matches"], report["snapshot_mismatches"],
+                          report["missing_pairs"], report["behavioral_parity_accepted"]),
+                         (99, 2, 1, 1, 97, 0))
+
+    def test_batch_rejects_unknown_or_incomplete_pairs(self):
+        from madsc.legacy_parity_evidence import compare_snapshot_batch
+        for payload in ({"unknown": {}}, {".github/workflows/w00.yml": {"legacy": {}}}):
+            with self.assertRaises(ValueError):
+                compare_snapshot_batch(inventory(), payload)
+
 if __name__ == "__main__":
     unittest.main()

@@ -38,6 +38,8 @@ class FiveSystemChannelFlowTests(unittest.TestCase):
             self.assertEqual(report["writer_callsite_candidates_count"], 4)
             self.assertEqual(report["writer_callsite_candidates"][0]["operation"], "write_text")
             self.assertEqual(sum(row["classification"] == "dynamic_mode_review" for row in report["writer_callsite_candidates"]), 1)
+            self.assertEqual(report["writer_dynamic_mode_review_count"], 1)
+            self.assertEqual(report["writer_callsite_modules"]["madsc/writer.py"], {"write": 3, "dynamic_mode_review": 1})
             self.assertFalse(report["all_writer_callsites_manually_verified"])
             self.assertFalse(report["production_ready"])
 

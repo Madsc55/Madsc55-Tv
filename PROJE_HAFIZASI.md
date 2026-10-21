@@ -1828,3 +1828,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - K2 parse_m3u yalniz guvenli kabul edilmis adaylarin kaynak satirlarini candidate_rows ile K3 kataloguna tasiyor; build_m3u8_preview kaynaklarin tumunu birlestirip prepare_channel_catalog ve render_playlist_previews uzerinden TEST_BEKLIYOR grubunun bellekteki UTF-8 playlist.m3u8 taslagini uretiyor. Kaynak tekrarlarini atiyor, IBO veya production kabul iddia etmiyor.
 - K1 guard korunan playlist.m3u8 ve xmltv.xml adlarini engelliyor, artifacts dizinine ters slash bypassini ve kontrol karakterlerini reddediyor. Testler birlikte eklendi.
 - K4 yedek/restore bagimsizligi korunuyor; yeni onizleme production dosyalarina yazmaz. K5 final CI sadece manuel toplu tetiklenir. 26 runtime security, 92 parity, 75 canli kabul hala acik.
+
+
+## K1-K2-K3-K5 toplu sertlestirme
+- K2 M3U girdi boyutu sinirlandi; bilinen URL filtrelemesinde eslestirme indeks yerine zip ile deterministik hale getirildi.
+- K1 manifest nesne tipi, yinelenen cikti yolları, kontrol karakteri ve drive/colon yollarini reddeder.
+- K3 m3u8 sandbox onizlemesi disinda production listesine yazma yok; K4 yedekleme akisi degistirilmedi.
+- Gercek kanal testleri, K1 runtime 26 kural ve K5 eski otomasyon esdegerligi bu commit ile tamamlanmis sayilmaz.

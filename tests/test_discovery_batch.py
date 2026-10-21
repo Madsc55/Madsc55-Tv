@@ -71,3 +71,12 @@ class DiscoveryBatchTests(unittest.TestCase):
                     corroborate_sources(feed)
                 with self.assertRaises(ValueError):
                     build_m3u8_preview(feed)
+
+    def test_known_url_excluded_from_ranking(self):
+        feed = "#EXTM3U\n#EXTINF:-1,News\nhttps://example.org/news.m3u8\n"
+        result = corroborate_sources({"a": feed}, known_urls={"https://example.org/news.m3u8"})
+        self.assertEqual(result["identity_candidates"], [])
+
+    def test_large_source_fails_closed(self):
+        with self.assertRaises(ValueError):
+            parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

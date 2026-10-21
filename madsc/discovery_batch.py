@@ -14,7 +14,7 @@ ATTR = re.compile(r'([\w-]+)="([^"]*)"')
 
 
 def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
-    if not isinstance(text, str) or not isinstance(source, str) or not source.strip():
+    if not isinstance(text, str) or not isinstance(source, str) or not source.strip() or len(text) > 8_000_000:
         raise ValueError("Source and M3U text are required")
     if not 1 <= max_entries <= 20000:
         raise ValueError("Invalid candidate limit")
@@ -72,8 +72,7 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         reports[source] = {"entries": report["entries"], "rejected": len(report["rejected"]),
                            "parse_errors": len(report["parse_errors"])}
         # Keep one vote per independent source, regardless of repeated entries.
-        for entry in report["candidates"]:
-            original = report["candidate_rows"][report["candidates"].index(entry)]
+        for entry, original in zip(report["candidates"], report["candidate_rows"]):
             if normalize_url(original["url"]) in known:
                 continue
             identity = ("tvg", entry["tvg_id"].casefold()) if entry["tvg_id"] else (

@@ -12,10 +12,12 @@ from madsc.playlist_previews import render_playlist_previews
 def build_offline_channel_previews(rows: list[dict], *, probes: dict | None = None,
                                    measurements: dict | None = None,
                                    logos: dict | None = None,
-                                   ibo_results: dict | None = None) -> dict:
+                                   ibo_results: dict | None = None,
+                                   three_stage: dict | None = None) -> dict:
     """Build candidate-only previews without network or GitHub Actions."""
     catalog = prepare_channel_catalog(rows, probes=probes, measurements=measurements,
-                                      logos=logos, ibo_results=ibo_results)
+                                      logos=logos, ibo_results=ibo_results,
+                                      three_stage=three_stage)
     previews = render_playlist_previews(catalog, rows)
     return {
         "catalog": catalog,

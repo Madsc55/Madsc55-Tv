@@ -481,3 +481,26 @@ class BackupTests(unittest.TestCase):
                     restore_to_new_sandbox(backup, restored, ["safe.txt"])
             self.assertFalse(restored.exists())
             self.assertEqual((backup / "safe.txt").read_bytes(), b"original")
+
+    def test_copy_audit_rejects_traversal_before_inode_probe(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            source, destination = base / "source", base / "destination"
+            source.mkdir()
+            destination.mkdir()
+            with patch("pathlib.Path.stat", side_effect=AssertionError("unexpected stat")):
+                with self.assertRaises(ValueError):
+                    compare_copy(source, destination, ["../outside"])
+
+    def test_three_tree_restore_rejects_traversal_before_inode_probe(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+            # The invalid name must be rejected by the manifest validator,
+            # not by an unvalidated file metadata lookup.
+            with self.assertRaises(ValueError):
+                verify_independent_restore(*roots, ["../outside"])

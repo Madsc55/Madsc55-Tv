@@ -1,5 +1,5 @@
 import unittest
-from madsc.legacy_category_order import load_historical_categories, route_discovered_candidates
+from madsc.legacy_category_order import load_historical_categories, route_discovered_candidates, audit_historical_metadata
 
 
 class LegacyCategoryOrderTests(unittest.TestCase):
@@ -28,6 +28,26 @@ class LegacyCategoryOrderTests(unittest.TestCase):
             with self.subTest(name=name):
                 with self.assertRaises(ValueError):
                     route_discovered_candidates([{"name": name}])
+
+    def test_metadata_audit_reports_embedded_attributes_without_repair(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        original = load_historical_categories()
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "snapshot.json"
+            sample = dict(original)
+            sample["entries"] = [dict(row) for row in original["entries"]]
+            sample["entries"][0]["name"] = "bad group-title=INJECTED"
+            path.write_text(json.dumps(sample), encoding="utf-8")
+            before = path.read_bytes()
+            report = audit_historical_metadata(path)
+            self.assertEqual(report["records_checked"], 1934)
+            self.assertIn({"file": "CALISANLAR.m3u", "order": 0,
+                           "issue": "embedded_m3u_attributes_in_name"}, report["issues"])
+            self.assertFalse(report["production_writes"])
+            self.assertFalse(report["auto_repairs"])
+            self.assertEqual(before, path.read_bytes())
 
     def test_new_candidates_are_isolated_and_ordered(self):
         result = route_discovered_candidates([{"name": "Yeni A"}, {"name": "Yeni B"}])

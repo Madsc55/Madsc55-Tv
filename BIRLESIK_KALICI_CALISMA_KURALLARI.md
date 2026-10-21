@@ -52,3 +52,14 @@ Tarih: 20 Ekim 2026. Bu belge eski ve yeni notlardan çıkarılmış çalışma 
 - **Madsc55/madsc-tv** eski depodur; **madsc/bes-sistem-toplu-birlestirme** dali da dahil kesinlikle salt okunur. Kullanici acik izin vermedikce eski depoda commit, dosya degisikligi, Actions tetikleme veya workflow duzenlemesi YASAK.
 - HER YENI SOHBETTE ilk GitHub yazma isleminden ONCE hedef repository_full_name=Madsc55/Madsc55-Tv ve branch=main oldugunu acikca dogrula. Adlar birbirine benziyor diye eski depoya yazma. Yanlis hedef saptanirsa yazma islemini durdur.
 - Bu madde mevcut 21 kurali guclendirir; onceki korumalari kaldirmaz. Yeni sohbete devirde aynen korunur.
+
+
+## BAGLAYICI TOPLU CALISMA VE ACTIONS KOTA SOZU — 21 Ekim 2026
+- Kullanici onceki 12 gunluk parcali GitHub Actions surecinde 2.000 dakikalik aylik kotanin tuketilmesinden ve K1-K5 isinin bitmemesinden sikayet etti. Ayni yontem KESINLIKLE tekrarlanmayacak.
+- Kullanici ACİK ve AYRI izin vermedikce GitHub Actions workflow_dispatch, rerun, otomatik tetikleme veya kota tuketen herhangi bir Actions calistirmasi YASAK. CI tetikleyebilen commitlerde [skip ci] kullan; workflow'lar manual workflow_dispatch-only kalmali. Bu kural kullanicinin "devam", "bitirelim", "testleri yap" sozleriyle izin verilmis sayilmaz.
+- GitHub Actions dakikasi ile test sayisi farklidir: 2.000 dakika, 2.000 test demek degildir. Tek uzun job da kota tuketebilir. Izin verilen son dogrulamada dahi sure, job sayisi ve maliyet riski once aciklanir.
+- Tum K1-K5 kaynaklari, bagimliliklari ve testleri guncel Madsc55/Madsc55-Tv main commit SHA ve dosya SHA'lariyla dogrulanarak yerelde toplanir. Python unit, guvenlik, K1-K5 entegrasyon ve fixture testleri mumkun oldugunca TEK TOPLU offline regresyonda calistirilir. Tek tek GitHub Actions calistirma, her duzeltmeden sonra CI baslatma ve yesil fixture'i production kabulu gibi gosterme YASAK.
+- Toplu regresyonda hatalar bir arada listelenir, baglantili duzeltmeler birlikte yapilir, sonra yerel toplu regresyon tekrar edilir. Gereksiz mikro-gorevler, tekrar tekrar izin isteme ve kullaniciyi kucuk testlerle ugrastirma yerine gercek K1-K5 bitis kriterleri onceliklendirilir.
+- Guvenli kaynak inceleme, main uzerinde izinli kod/test/not duzeltmeleri ve offline testler icin her adimda onay isteme; ama canli yayin/EPG/logo listelerine yazma, eski depoda degisiklik, canli ag testleri, kota veya dis sistem etkisi olan calistirmalar icin onceden acik onay gerekir. Bu kurallar mevcut korumalari gevsetmez.
+- 92 eski otomasyon davranissal esdegerligi, 26 runtime guvenlik kurali ve bes sistemin tam kabulunu yalniz gercek kanitla bildir. 0/92 ve 0/26 mevcut kabul sayilari dogrulanmadan artirilmaz.
+- YENI SOHBETTE bu bolum, bu sozler, onceki kullanici sikayeti, test/kota politikasi ve kaldigimiz somut durum mutlaka ilk once okunup uygulanir. Yeni sohbette yeniden ayni tartisma ve izin dongusu baslatilmaz.

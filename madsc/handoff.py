@@ -10,6 +10,19 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         raise ValueError("Invalid discovery evidence")
     assessed = []
     seen = set()
+    alternative_map = {}
+    alternatives = discovery.get("alternatives", [])
+    if not isinstance(alternatives, list):
+        raise ValueError("Invalid alternative evidence")
+    for alternative in alternatives:
+        if not isinstance(alternative, dict):
+            raise ValueError("Invalid alternative evidence")
+        digest = alternative.get("url_sha256")
+        parent = alternative.get("alternative_to_sha256")
+        if (not isinstance(digest, str) or not isinstance(parent, str)
+                or digest == parent or digest in alternative_map):
+            raise ValueError("Invalid alternative mapping")
+        alternative_map[digest] = parent
     identity_primary = {}
     if ibo_results is not None and not isinstance(ibo_results, dict):
         raise ValueError("Invalid IBO evidence")
@@ -46,10 +59,13 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
             identity_primary[identity] = digest
         decision = classify_channel(status, ibo_results.get(digest, "UNKNOWN"))
         assessed.append({"url_sha256": digest, "name": name, "tvg_id": tvg_id,
+                         "alternative_to_sha256": alternative_map.get(digest),
                          "alternative_to_sha256": alternative_to,
                          "tvg_logo": logo, "group_title": group, **decision,
                          "ibo_device_verified": False,
                          "ibo_result_supplied": decision["ibo_result"] != "UNKNOWN"})
+    if any(key not in seen or parent not in seen for key, parent in alternative_map.items()):
+        raise ValueError("Unlinked alternative fingerprint")
     if any(key not in seen for key in probes) or any(key not in seen for key in ibo_results):
         raise ValueError("Unlinked handoff evidence fingerprint")
     return {"assessed": assessed, "candidate_count": len(assessed),

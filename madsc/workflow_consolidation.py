@@ -187,6 +187,8 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
             _command_in_run_step(body, command) for body in main_sources),
             "source_contract": src, "main_contracts": destinations,
             "missing_artifact_paths": missing_paths,
+            "artifact_paths_declared_only": True,
+            "artifact_files_produced_verified": False,
             "static_contract_gaps": gaps,
             "requires_manual_behavior_review": bool(gaps) or external,
             "artifact_renamed_in_consolidation": "artifact_name" in gaps,
@@ -209,6 +211,7 @@ def contract_gate(root: Path) -> dict:
         "missing_commands": matrix["missing_commands"],
         "pass": not matrix["missing_commands"],
         "static_gaps_total": matrix["static_gaps_total"],
+        "artifact_files_produced_verified": False,
         "behavioral_parity_verified": False,
         "production_writes": False,
     }

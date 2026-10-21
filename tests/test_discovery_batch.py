@@ -62,3 +62,12 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(result["rejected"], 1)
         self.assertEqual(result["status"], "SANDBOX_PREVIEW_ONLY")
         self.assertFalse(result["production_writes"])
+
+    def test_bad_feed_keys_fail_closed_in_both_entrypoints(self):
+        for invalid in (None, 17, ""):
+            with self.subTest(invalid=invalid):
+                feed = {invalid: "#EXTM3U"}
+                with self.assertRaises(ValueError):
+                    corroborate_sources(feed)
+                with self.assertRaises(ValueError):
+                    build_m3u8_preview(feed)

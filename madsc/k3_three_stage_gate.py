@@ -14,6 +14,7 @@ def assess_three_stage_probes(samples: list[dict]) -> dict:
     if not isinstance(samples, list) or len(samples) != 3:
         raise ValueError("Exactly three test samples required")
     records = []
+    now = datetime.now(timezone.utc)
     for sample in samples:
         if not isinstance(sample, dict) or not isinstance(sample.get("captured_at"), str):
             raise ValueError("Timestamp required")
@@ -23,6 +24,8 @@ def assess_three_stage_probes(samples: list[dict]) -> dict:
             raise ValueError("Invalid timestamp") from exc
         if when.tzinfo is None or when.utcoffset() != timedelta(0):
             raise ValueError("UTC timestamps required")
+        if when > now:
+            raise ValueError("Future-dated test evidence is invalid")
         evidence = evaluate_probe(sample.get("probe"))
         records.append((when.astimezone(timezone.utc), evidence))
     records.sort(key=lambda item: item[0])

@@ -74,8 +74,15 @@
     "id": "K3-10",
     "stage": "K3",
     "title": "Üç aşama ve altı saat süreklilik değerlendirmesi",
-    "status": "pending",
-    "evidence": []
+    "status": "in_progress",
+    "evidence": [
+      "73e552c: timestamped 3-stage >=6h evaluation",
+      "e6380c3: chronological and insufficient-window regression tests",
+      "39667687055: 6/6 offline CI success",
+      "f374e55: K2-to-K3 continuity evidence integration",
+      "e9bc3db: candidate fingerprint mismatch regression"
+    ],
+    "note": "Değerlendirme mantığı ve handoff kodu mevcut. Gerçek ağ ölçümleri 6+ saat ve köken kanıtı henüz yok; üretim kabulü değil."
   },
   {
     "id": "K3-11",

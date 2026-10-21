@@ -47,6 +47,13 @@ class K3ThreeStageGateTests(unittest.TestCase):
                 sample("2099-01-01T06:00:00Z"),
                 sample("2099-01-01T12:00:00Z")])
 
+    def test_implausibly_old_evidence_rejected(self):
+        with self.assertRaises(ValueError):
+            assess_three_stage_probes([
+                sample("2001-01-01T00:00:00Z"),
+                sample("2001-01-01T06:00:00Z"),
+                sample("2001-01-01T12:00:00Z")])
+
     def test_naive_timestamp_rejected(self):
         with self.assertRaises(ValueError):
             assess_three_stage_probes([

@@ -77,6 +77,16 @@ class WorkflowConsolidationTests(unittest.TestCase):
             result = consolidation_plan(Path(d))
             self.assertEqual(result["commands_integrated_in_main"], 0)
 
+    def test_multiline_shell_comment_does_not_count_as_migration(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            command = AUXILIARY["madsc-k2-live-pilot.yml"][1]
+            with (folder / MAIN["K2"]).open("a", encoding="utf-8") as out:
+                out.write("      - run: |\n")
+                out.write("          echo fixture # " + command + "\n")
+            result = consolidation_plan(Path(d))
+            self.assertEqual(result["commands_integrated_in_main"], 0)
+
     def test_list_style_multiline_run_is_migrated(self):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))

@@ -33,11 +33,10 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
         try:
             url = normalize_url(item["url"])
             name = item["name"]
-            # Escaped newlines are unsafe in playlist metadata too.
-            if "\\" in name:
-                raise ValueError("Backslash escapes in channel names are forbidden")
             if not isinstance(name, str) or any(ord(ch) < 32 or ord(ch) == 127 for ch in name):
                 raise ValueError("Candidate name must be safe text")
+            if "\\" in name:
+                raise ValueError("Backslash escapes in channel names are forbidden")
             name = name.strip()
             if not name:
                 raise ValueError("Empty name")

@@ -17,8 +17,9 @@
     "id": "K1-03",
     "stage": "K1",
     "title": "Tüm yazma noktalarının merkezi güvenlik kapısına bağlanması",
-    "status": "pending",
-    "evidence": []
+    "status": "in_progress",
+    "evidence": [],
+    "note": "Yerel güvenli yazma entegrasyonu geliştirildi; main bütün yazma yolları ve tam regresyon kabulü eksik."
   },
   {
     "id": "K1-04",
@@ -45,8 +46,9 @@
     "id": "K2-07",
     "stage": "K2",
     "title": "Gerçek geçmiş artifact köken ve SHA256 doğrulaması",
-    "status": "pending",
-    "evidence": []
+    "status": "in_progress",
+    "evidence": [],
+    "note": "Geçmiş kaynak üretici/doğrulayıcı kodu var; bağımsız gerçek artifact ve SHA kanıtı bekleniyor."
   },
   {
     "id": "K2-08",
@@ -87,8 +89,9 @@
     "id": "K3-13",
     "stage": "K3",
     "title": "EPG XMLTV tvg-id ve Pages yayın zinciri",
-    "status": "pending",
-    "evidence": []
+    "status": "in_progress",
+    "evidence": [],
+    "note": "XMLTV/EPG kontrol modülleri mevcut; IBO/Pages canlı zincir kabulü bekleniyor."
   },
   {
     "id": "K3-14",
@@ -108,8 +111,9 @@
     "id": "K4-16",
     "stage": "K4",
     "title": "Harici yedekten gerçek izole geri yükleme",
-    "status": "pending",
-    "evidence": []
+    "status": "in_progress",
+    "evidence": [],
+    "note": "İzole restore fixture'ı mevcut; haricî kaynaktan gerçek restore yok."
   },
   {
     "id": "K4-17",
@@ -129,8 +133,9 @@
     "id": "K5-19",
     "stage": "K5",
     "title": "92 eski otomasyonun gerçek davranışsal kabulü",
-    "status": "pending",
-    "evidence": []
+    "status": "in_progress",
+    "evidence": [],
+    "note": "99 YAML kaynak envanteri var; 92 davranışsal eşdeğerlik kabulü henüz 0."
   },
   {
     "id": "K5-20",

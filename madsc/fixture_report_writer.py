@@ -9,7 +9,7 @@ def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
     if not isinstance(content, str):
         raise TypeError("Report content must be text")
     enforce_write_paths([relative_path])
-    root = Path(root)
+    root = Path(root).absolute()
     if root.is_symlink() or not root.is_dir():
         raise PermissionError("Invalid fixture root")
     destination = root.joinpath(*relative_path.split("/"))

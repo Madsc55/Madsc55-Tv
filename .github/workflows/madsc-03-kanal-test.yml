@@ -32,6 +32,9 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Isolated report
         run: python -m madsc.core --category k3 --output reports/k3.json
+      - name: Prepare video probe dependency (opt-in only)
+        if: ${{ inputs.allow_live_probes == true || inputs.allow_bulk_turkish_tv == true }}
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Bounded live manifest probe (explicit opt-in only)
         if: ${{ inputs.allow_live_probes == true }}
         run: python -m madsc.k3_live_manifest_pilot

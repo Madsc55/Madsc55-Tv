@@ -1460,3 +1460,9 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 
 ## 21 Ekim 2026 — Actions kotasi ve toplu bitirme taahhudu
 Kullanici 12 gunde GitHub Actions 2000 dakikalik kotasinin tukendigini ve K1-K5 tamamlanmadigini vurguladi. Artik acik ayri onay olmadan Actions yok; [skip ci], manual-only workflow, canli sistem korumasi suruyor. Her dosyadan sonra CI degil, SHA-dogrulanmis guncel main tum K1-K5 testleri icin tek yerel offline regresyon, toplu hata listesi ve toplu duzeltme. 2000 dakika 2000 test degildir. Kullanici guvenli rutin adimlar icin tekrar tekrar onayla ugrastirilmamali. Yalniz Actions/kota/canli test/production yazmasi/eski repo degisikligi oncesinde acik onay istenir. Kabul 0/92 ve 0/26; gercek tam regresyon henuz yok. Ayrintili BAGLAYICI kural BIRLESIK_KALICI_CALISMA_KURALLARI.md ve yeni sohbet devri SOHBET_DEVIR_NOTU_2026-10-20.md icinde.
+
+## 21 Ekim 2026 — 21. kural ve proje adi teyidi
+- Yeni sistemin kesin adi Madsc55-Tv; yazilabilir depo Madsc55/Madsc55-Tv, dal main.
+- Eski Madsc55/madsc-tv deposu yalniz referans icindir.
+- BIRLESIK_KALICI_CALISMA_KURALLARI.md dosyasindaki 21. kural aynen gecerlidir. Yanlis ad kullanilmayacak.
+- Son Actions #405 basarili; 92 eski davranis ve 26 runtime kural icin gercek kabul kanitlari henuz tamamlanmadi.

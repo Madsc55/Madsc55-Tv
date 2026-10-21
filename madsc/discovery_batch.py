@@ -73,6 +73,9 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
                            "parse_errors": len(report["parse_errors"])}
         # Keep one vote per independent source, regardless of repeated entries.
         for entry in report["candidates"]:
+            original = report["candidate_rows"][report["candidates"].index(entry)]
+            if normalize_url(original["url"]) in known:
+                continue
             identity = ("tvg", entry["tvg_id"].casefold()) if entry["tvg_id"] else (
                 "name", entry["name"].casefold(), entry["group_title"].casefold())
             row = grouped[identity]

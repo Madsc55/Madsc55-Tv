@@ -11,7 +11,7 @@ class OfflineGateTests(unittest.TestCase):
     def test_success(self, run):
         run.return_value.returncode = 0
         run.return_value.stdout = ""
-        run.return_value.stderr = "Ran 73 tests in 0.123s\\n\\nOK"
+        run.return_value.stderr = "Ran 73 tests in 0.123s\n\nOK"
         self.assertEqual(main(), 0)
         self.assertTrue(run.call_args.kwargs["capture_output"])
         self.assertFalse(run.call_args.kwargs["check"])
@@ -20,7 +20,7 @@ class OfflineGateTests(unittest.TestCase):
     def test_five_stage_failure_blocks_green_unittest(self, run, five):
         run.return_value.returncode = 0
         run.return_value.stdout = ""
-        run.return_value.stderr = "Ran 73 tests in 0.123s\\n\\nOK"
+        run.return_value.stderr = "Ran 73 tests in 0.123s\n\nOK"
         five.return_value = {"fixture_gate_passed": False, "categories": {"k3": "failure"},
                              "errors": {"k3": "invalid_fixture_evidence"}}
         output = io.StringIO()
@@ -38,7 +38,7 @@ class OfflineGateTests(unittest.TestCase):
     def test_both_gates_required_for_success(self, run, five):
         run.return_value.returncode = 0
         run.return_value.stdout = ""
-        run.return_value.stderr = "Ran 73 tests in 0.123s\\n\\nOK"
+        run.return_value.stderr = "Ran 73 tests in 0.123s\n\nOK"
         five.return_value = {"fixture_gate_passed": True, "categories_checked": 5,
                              "production_ready": False, "production_writes": False, "categories": {
             key: "success" for key in ("k1", "k2", "k3", "k4", "k5")}, "errors": {}}
@@ -55,7 +55,7 @@ class OfflineGateTests(unittest.TestCase):
     def test_incomplete_five_stage_evidence_fails_closed(self, run, five):
         run.return_value.returncode = 0
         run.return_value.stdout = ""
-        run.return_value.stderr = "Ran 73 tests in 0.123s\\n\\nOK"
+        run.return_value.stderr = "Ran 73 tests in 0.123s\n\nOK"
         five.return_value = {"fixture_gate_passed": True, "categories_checked": 4,
                              "categories": {key: "success" for key in ("k1", "k2", "k3", "k4")},
                              "production_ready": False, "production_writes": False}
@@ -68,7 +68,7 @@ class OfflineGateTests(unittest.TestCase):
     def test_zero_discovered_tests_never_pass(self, run):
         run.return_value.returncode = 0
         run.return_value.stdout = ""
-        run.return_value.stderr = "Ran 0 tests in 0.000s\\n\\nOK"
+        run.return_value.stderr = "Ran 0 tests in 0.000s\n\nOK"
         output = io.StringIO()
         with redirect_stdout(output):
             self.assertEqual(main(), 1)

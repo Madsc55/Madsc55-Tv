@@ -1816,3 +1816,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Kullanici istegiyle K5 madsc-05-bakim.yml otomatik push tetiklemesi kaldirildi; workflow_dispatch korundu. K1-K5 tek manuel batch calismasi olarak baslatilabilir; her kod/test push'u artik bu workflow'u otomatik kuyruga koymaz.
 - workflow_consolidation.py guvenlik kontrati K5 dahil tum ana workflow'larda push tetikleyicisini reddeder; test fixture ve gercek YAML testi uyumlu guncellendi.
 - Degisiklikler tek git commit'inde toplandi. K1-K5 otomatik kabul edilmedi; 92 legacy parity ve 26 runtime security kabulleri degismedi. Kullanici onayi olmadan production veya live probe yok.
+
+
+## 21 Ekim 2026 - K1/K2 toplu ilerleme, eski kaynak arama analizi
+- Eski kaynak_kesfet.py GitHub search (5 query, 60 repo, 120 source, 90 gun), M3U baslik ve guncellik kontrolu kullaniyor; tools/genis_kaynak_taramasi.py 8 worker, haftalik/aylik kaynak, degisen digest, bilinen URL ve review queue kullaniyor. Eski repo salt okunur incelendi.
+- Yeni madsc/discovery_batch.py salt okunur M3U parser, metadata, gecersiz URL reddi, kanal tvg-id/name-group kimligi, birden fazla kaynakta bagimsiz destek sayimi ve K3 oncesi review-only raporu ekler. tests/test_discovery_batch.py ile tek toplu commit.
+- K1 kurallari ve gercek K2 ag dogrulamasi henuz tamamlanmadi; otomatik kabul ve production yazma yok. Sonraki is: parser ve discovery koruma testlerini genislet, K1 26 runtime kuralini somutlastir, tek manuel K1-K5 CI calistir.

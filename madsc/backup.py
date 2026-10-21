@@ -26,9 +26,14 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
         candidate = candidate.resolve(strict=True)
         if not candidate.is_relative_to(base) or not candidate.is_file():
             raise ValueError("Backup source must be a regular file within root")
-        raw = candidate.read_bytes()
+        digest = hashlib.sha256()
+        size = 0
+        with candidate.open("rb") as source:
+            for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                digest.update(chunk)
+                size += len(chunk)
         entries.append({"path": candidate.relative_to(base).as_posix(),
-                        "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()})
+                        "bytes": size, "sha256": digest.hexdigest()})
     return {"entries": entries, "mode": "manifest_only", "external_backup_verified": False,
             "restore_verified": False, "production_writes": False}
 

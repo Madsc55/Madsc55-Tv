@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 from madsc.batch_acceptance import _unique_json_pairs
+from madsc.write_path_audit import enforce_local_output_path
 
 REQUIRED_TRUE = ("drill_executed", "temporary_backup_created",
                  "temporary_restore_created", "source_unchanged",
@@ -32,10 +33,10 @@ def main():
         raise ValueError("Invalid K4 evidence file")
     report = json.loads(args.report.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
     result = verify(report)
-    if args.output.exists() or args.output.is_symlink():
-        raise ValueError("Refusing to overwrite K4 acceptance evidence")
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, sort_keys=True) + "\n", encoding="utf-8")
+    destination = args.output if args.output.is_absolute() else Path.cwd() / args.output
+    enforce_local_output_path(destination)
+    with destination.open("x", encoding="utf-8") as handle:
+        handle.write(json.dumps(result, sort_keys=True) + "\n")
     print(json.dumps(result, sort_keys=True))
 
 if __name__ == "__main__":

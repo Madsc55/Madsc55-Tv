@@ -74,7 +74,10 @@ def consolidation_plan(root: Path) -> dict:
                 if run_indent is not None and stripped and indent <= run_indent:
                     run_indent = None
                 if stripped.startswith(("run: ", "- run: ")):
-                    if command in stripped and not stripped.startswith("#"):
+                    value = stripped.split("run:", 1)[1].strip()
+                    # A command in an inline YAML comment is not executable.
+                    value = value.split(" #", 1)[0].rstrip()
+                    if command in value:
                         return True
                 if stripped in ("run: |", "run: >"):
                     run_indent = indent

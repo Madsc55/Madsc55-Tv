@@ -31,20 +31,22 @@ def run():
                     continue
                 key = hashlib.sha256(url.encode()).hexdigest()
                 found.setdefault(key, (title, url))
-    chosen = list(found.items())[:MAX_PROBES]
+    chosen = sorted(found.items(), key=lambda item: item[0])[:MAX_PROBES]
     by_digest = dict(chosen)
     def test(item):
         digest, (title, url) = item
         try:
             video, audio, reason = verify_av(url)
-        except Exception as exc:
+        except Exception:
             video, audio, reason = False, False, "blocked_or_unreachable"
         return {"name": title[:100], "sha256": digest, "video": video, "reason": reason,
                 "audio": audio, "turkish_audio": "not_verified"}
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
         results = list(pool.map(test, chosen))
     reasons = {k: sum(x["reason"] == k for x in results) for k in sorted(set(x["reason"] for x in results))}
-    report = {"stage": "BATCH_DISCOVER_VALIDATE", "sources_checked": len(SOURCES),
+    report = {"stage": "BATCH_DISCOVER_VALIDATE",
+              "selection_policy": "sha256_ascending_stable",
+              "selected_candidate_sha256": [digest for digest, _ in chosen], "sources_checked": len(SOURCES),
               "sources_ok": sources_ok, "entries_in_turkish_feeds": total,
               "unique_https_nonradio_candidates": len(found), "tested": len(results),
               "video_verified": sum(x["video"] for x in results),

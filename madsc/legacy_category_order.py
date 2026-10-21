@@ -43,3 +43,16 @@ def route_discovered_candidates(candidates: list[dict]) -> dict:
                        "requires_k3_probe": True, "requires_user_ibo_decision": True,
                        "production_change_allowed": False})
     return {"queued": queued, "production_writes": False, "existing_order_modified": False}
+
+def audit_historical_metadata(path: str | Path = SNAPSHOT) -> dict:
+    """Read-only metadata quality audit; never silently repair approved channel data."""
+    data = load_historical_categories(path)
+    issues = []
+    for row in data["entries"]:
+        name = row.get("name")
+        if not isinstance(name, str) or not name.strip():
+            issues.append({"file": row["file"], "order": row["order"], "issue": "blank_name"})
+        elif "tvg-logo=" in name or "group-title=" in name:
+            issues.append({"file": row["file"], "order": row["order"], "issue": "embedded_m3u_attributes_in_name"})
+    return {"records_checked": len(data["entries"]), "issues": issues,
+            "production_writes": False, "auto_repairs": False}

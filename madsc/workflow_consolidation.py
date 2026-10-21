@@ -157,10 +157,14 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
             gaps.append("actions_permission")
         if src["always_upload"] and not any(dst["always_upload"] for dst in destinations):
             gaps.append("always_upload")
+        # A consolidated artifact may intentionally have a different name; report
+        # that difference without treating it as proven behavioral failure.
         rows.append({"source": name, "stages": stages, "command_present": any(
             _command_in_run_step(body, command) for body in main_sources),
             "source_contract": src, "main_contracts": destinations,
-            "static_contract_gaps": gaps, "behavioral_parity_verified": False,
+            "static_contract_gaps": gaps,
+            "requires_manual_behavior_review": bool(gaps) or external,
+            "behavioral_parity_verified": False,
             "external_evidence_required": external})
     return {"auxiliary_count": len(rows), "rows": rows,
             "static_gaps_total": sum(len(row["static_contract_gaps"]) for row in rows),

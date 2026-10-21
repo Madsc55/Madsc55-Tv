@@ -65,7 +65,7 @@ def consolidation_plan(root: Path) -> dict:
         targets = [MAIN[key] for key in stage.split("+")]
         main_contents = [ (folder / target).read_text(encoding="utf-8") for target in targets ]
         migrated = any(
-            any(line.lstrip().startswith(("run: ", "- run: ")) and command in line
+            any(command in line and not line.lstrip().startswith("#")
                 for line in content.splitlines())
             for content in main_contents
         )

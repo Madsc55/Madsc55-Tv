@@ -1699,3 +1699,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - 2276c76: workflow matrix her yardimci satirinda artifact_paths_declared_only=true, artifact_files_produced_verified=false; contract_gate de false raporlar. YAML path listesi hicbir zaman dosyanin uretildigi ya da dogru oldugu kaniti degildir.
 - 8ddc50c: fixture regresyonu bu ayrimi zorunlu tutar; yeni CI #39659707243 basladi, sonucu bekleniyor.
 - Sonraki gercek is: opt-in real run artifact'lerini indirip dogrulama, kaynak bazli davranis kabul kriterleri. Canli korunan yollar degismedi; 0/22 kabul, 0/92 parity.
+
+## 21 Ekim 2026 - Artifact parser regresyonu kapandi
+- #39662952159 K1 unittest `test_artifact_report_path_gap_detected_even_when_name_differs` FAIL: list-style `- uses: actions/upload-artifact@v4` taninmiyordu; diger isler dependency sebebiyle skipped.
+- `24c0a309874a1de8ef9e37971faef2a3f3fa581d` parser hem `uses:` hem `- uses:` upload adimini tanir.
+- #39663724064 completed success, 6/6 (Guvenlik, Kesif, Kanal, Arsiv/Yedek, Bakim, toplu kanit).
+- Kabul durumu degismedi: statik/izole CI != canli kaynak ve 92 workflow davranissal parity; 0/92 dogrulanmis. K2/K3 manual opt-in gercek ag calistirmalari bekliyor.

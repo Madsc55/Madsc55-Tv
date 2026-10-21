@@ -38,3 +38,15 @@ class DiscoveryTests(unittest.TestCase):
             "name": "A", "url": "https://example.org/live\\n#EXTINF:-1,Injected"}])
         self.assertEqual(result["candidates"], [])
         self.assertEqual(len(result["rejected"]), 1)
+
+    def test_metadata_control_characters_rejected_per_candidate(self):
+        fields = ("name", "tvg_id", "tvg_logo", "group_title")
+        for field in fields:
+            with self.subTest(field=field):
+                rows = [{"name": "Safe", "url": "https://example.org/safe"},
+                        {"name": "Injected", "url": "https://example.org/unsafe",
+                         field: "bad\\n#EXTINF:-1,Injected"}]
+                result = classify_candidates(rows)
+                self.assertEqual(len(result["candidates"]), 1)
+                self.assertEqual(len(result["rejected"]), 1)
+                self.assertFalse(result["production_playlist_modified"])

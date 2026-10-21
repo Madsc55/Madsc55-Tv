@@ -1,3 +1,4 @@
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -21,6 +22,20 @@ class BackupManifestHardeningTests(unittest.TestCase):
             manifest["entries"].append(dict(manifest["entries"][0]))
             with self.assertRaises(ValueError):
                 verify_manifest(root, manifest)
+
+    def test_multichunk_file_hash_and_tamper_detection(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            payload = b"test-pattern-" * 200000
+            (root / "large.bin").write_bytes(payload)
+            manifest = snapshot_manifest(root, ["large.bin"])
+            self.assertEqual(manifest["entries"][0]["bytes"], len(payload))
+            self.assertEqual(manifest["entries"][0]["sha256"], hashlib.sha256(payload).hexdigest())
+            self.assertTrue(verify_manifest(root, manifest))
+            with (root / "large.bin").open("r+b") as handle:
+                handle.seek(1024 * 1024 + 7)
+                handle.write(b"!")
+            self.assertFalse(verify_manifest(root, manifest))
 
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:

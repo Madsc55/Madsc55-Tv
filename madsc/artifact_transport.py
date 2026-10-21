@@ -6,7 +6,7 @@ from pathlib import Path
 from madsc.artifact_handoff import pack, unpack
 from madsc.discovery import classify_candidates
 from madsc.handoff import assess_candidates
-from madsc.write_path_audit import enforce_local_output_path
+from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
 def main():
     p = argparse.ArgumentParser()
@@ -39,6 +39,7 @@ def main():
         if args.output is not None:
             if args.output.is_symlink():
                 raise ValueError("Invalid report output")
+            enforce_write_paths([args.output.name])
             args.output.parent.mkdir(parents=True, exist_ok=True)
             enforce_local_output_path(args.output.absolute())
             with args.output.open("x", encoding="utf-8") as handle:
@@ -47,6 +48,7 @@ def main():
                 "candidate_count": result["candidate_count"], "read_only": True,
                 "network_probed": False, "production_ready": False}, sort_keys=True) + "\n")
     if args.mode == "produce":
+        enforce_write_paths([args.path.name])
         args.path.parent.mkdir(parents=True, exist_ok=True)
         enforce_local_output_path(args.path.absolute())
         with args.path.open("x", encoding="utf-8") as handle:

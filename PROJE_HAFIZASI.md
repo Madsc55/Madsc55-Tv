@@ -1764,3 +1764,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Son Actions #39678146430 ve #39677831373 completed/success; daha eski ara commitler concurrency ile cancelled.
 - Yeni restore_to_new_sandbox(backup,destination,names) yalniz daha once var olmayan ayri sandbox klasorune gercek bayt kopyaliyor; manifest SHA256 ile backup ve restore dogrulaniyor; hata durumunda sadece yeni sandbox temizleniyor. Kod 6069217b33301085403f9a3adb175c65e58b9a91, davranissal test 8426b6c30ea3ccd9eeeed3b22c69284bb3e3e353.
 - Uretim dosyalari, korunan listeler ve eski depo degistirilmedi. Bu harici depolama kaniti degildir; K4 production restore accepted degil. 75 canli, 92 parity, 26 runtime security kabulleri halen acik. Yeni Actions sonucu kontrol edilecek.
+
+
+## 21 Ekim 2026 - K4 sandbox restore symlink ust dizin korumasi
+- Actions #39678650056 ve #39678677401 completed/success: gercek sandbox restore fixture testleri gecti.
+- Yeni sandbox restore hedefinin tum ust dizinlerinde symlink reddi: kod 8d7e1441596352768d4d1e5477d3e261e4da1e01; alias ust dizin uzerinden yazma girisimini engelleyen test 61da348fc66eb679416c906537057b568e02a2b8. Bu commitler icin Actions sonucu henuz dogrulanmadi.
+- K4 harici storage kaniti yok; 75 canli, 92 parity, 26 runtime security kabulleri degismedi. Eski depo/korunan yayin listeleri degistirilmedi.

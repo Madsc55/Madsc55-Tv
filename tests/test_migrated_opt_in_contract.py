@@ -56,10 +56,9 @@ class MigratedOptInContractTests(unittest.TestCase):
                     ]
                     self.assertEqual(len(containing_steps), 1, (filename, command))
                     step = containing_steps[0]
-                    self.assertRegex(
-                        step,
-                        r"if: \\$\\{\\{ (?:success\\(\\) && )?inputs\\." +
-                        re.escape(input_name) + r" == true \\}\\}",
+                    self.assertTrue(
+                        ("if: ${{ inputs." + input_name + " == true }}") in step or
+                        ("if: ${{ success() && inputs." + input_name + " == true }}") in step,
                         (filename, command),
                     )
 

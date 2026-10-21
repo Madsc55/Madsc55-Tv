@@ -320,3 +320,9 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - Ayni yerel ortamda python -m unittest discover -s tests -v tekrar CALISTIRILDI: Ran 9 tests in 0.020s; OK. K3 5/5, K4 4/4. Ilgili diger 4 modul/test blob SHA'lari onceki devir notunda dogrulanmisti. Test kapsaminda sadece bu 9 test var; tum 81 test dosyasini iceren guncel main tam regresyonu degil.
 - Ayrica main katalogdaki orphan three_stage reddi kod/test commitleri 04393d734333aaa1a211d6182312866c65e0ad98 ve 7e35123973169f721643e09b2e06b3958bcdbffa. Bu yeni test 9 testin arasinda DEGILDIR.
 - Gercek 92 legacy davranis kabul 0/92 ve 26 runtime guvenlik kabul 0/26. Actions, production playlist, eski repo degistirilmedi. Sonraki hedef tam main SHA-verified offline regresyon; eksik kaynaklar GitHub connector ile alinabilir ama container git clone DNS engeli suruyor.
+
+
+## 21 Ekim 2026 — K1-K2-K5 metadata enjeksiyonu erken reddi
+- madsc/discovery.py classify_candidates artik name, tvg_id, tvg_logo, group_title alanlarindaki ASCII control karakterlerini aday kabulunden ONCE reddeder; tek bozuk aday tum M3U preview islemini durdurmak yerine rejected'a girer. Commit d012589c33d030a94aa531701a3a105e4f599e96.
+- tests/test_discovery.py dort metadata alani icin enjeksiyon reddi ve guvenli diger adayin kalmasi testi eklendi. Commit 18e168f18f9470516ecd0200f18d28f51e974dae.
+- Son iki commit icin yeni testler HENUZ CALISTIRILMADI; tam main offline regresyonu hala yok. 92/92 behavioral acceptance 0, 26/26 runtime security acceptance 0. Actions ve canli liste yazmasi yok. Oncelik: eksiksiz SHA-dogrulanmis main kopyasi ve K1-K5 tum testleri topluca calistirmak.

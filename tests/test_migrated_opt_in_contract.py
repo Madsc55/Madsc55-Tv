@@ -61,6 +61,16 @@ class MigratedOptInContractTests(unittest.TestCase):
                         step, (filename, command),
                     )
 
+    def test_video_dependency_only_installs_when_approved(self):
+        data = (ROOT / "madsc-03-kanal-test.yml").read_text(encoding="utf-8")
+        steps = re.split(r"(?=^      - name: )", data, flags=re.MULTILINE)
+        installers = [step for step in steps if "apt-get install -y -qq ffmpeg" in step]
+        self.assertEqual(len(installers), 1)
+        self.assertIn(
+            "if: ${{ inputs.allow_live_probes == true || inputs.allow_bulk_turkish_tv == true }}",
+            installers[0],
+        )
+
     def test_all_five_main_workflows_are_manual_only(self):
         for filename in (
             "madsc-01-guvenlik.yml", "madsc-02-kesif.yml",

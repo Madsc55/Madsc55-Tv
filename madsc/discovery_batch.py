@@ -16,7 +16,7 @@ ATTR = re.compile(r'([\w-]+)="([^"]*)"')
 def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     if not isinstance(text, str) or not isinstance(source, str) or not source.strip() or len(text) > 8_000_000:
         raise ValueError("Source and M3U text are required")
-    if not 1 <= max_entries <= 20000:
+    if type(max_entries) is not int or not 1 <= max_entries <= 20000:
         raise ValueError("Invalid candidate limit")
     lines = text.lstrip("\ufeff").splitlines()
     if not lines or lines[0].strip() != "#EXTM3U":
@@ -68,6 +68,8 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Require 1-200 named M3U sources")
     if known_urls is not None and not isinstance(known_urls, (set, frozenset)):
         raise ValueError("Known URLs must be a set")
+    if known_urls is not None and any(not isinstance(url, str) for url in known_urls):
+        raise ValueError("Known URLs must contain strings")
     known = {normalize_url(url) for url in (known_urls or set())}
     grouped = defaultdict(lambda: {"sources": set(), "urls": set(), "names": set()})
     reports = {}

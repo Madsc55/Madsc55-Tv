@@ -87,6 +87,13 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual([e["reason"] for e in report["parse_errors"]],
                          ["orphan_url", "empty_channel_name", "orphan_url"])
 
+    def test_invalid_limits_and_known_url_types_fail_closed(self):
+        for limit in (True, 1.5, "10", None):
+            with self.subTest(limit=limit), self.assertRaises(ValueError):
+                parse_m3u("#EXTM3U", "fixture", max_entries=limit)
+        with self.assertRaises(ValueError):
+            corroborate_sources({"a": "#EXTM3U"}, known_urls={None})
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

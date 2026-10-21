@@ -49,6 +49,7 @@ jobs:
           MADSC_MAX_PROBES: '1000'
         run: python -m madsc.turkish_tv_batch_validation
       - name: Upload isolated evidence
+        if: ${{ always() && !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: madsc-k3-isolated-evidence

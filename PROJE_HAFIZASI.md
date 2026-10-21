@@ -1796,3 +1796,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - #39680249100 Guvenlik, Kesif, Kanal Testleri, Arsiv ve Yedek, Genel Bakim job'lari success; Besli toplu kanit final job'u son kontrol in_progress.
 - tests/test_backup.py: backup_to_new_sandbox ve restore_to_new_sandbox SHA256 manifest verify_manifest False verdiginde yeni hedef klasoru temizlerken kaynak/backup baytlarini koruyor mu iki yeni regresyon testi ile denetlendi. Test commit 5f3dd39bf5d86c27a23c789def95e54be4ac5323. Yeni CI sonucu bekleniyor.
 - Dis storage kaniti, 75 canli kanal, 92 eski workflow davranissal parity, 26 runtime security kabulleri halen acik. Korunan listelere ve eski repoya dokunulmadi.
+
+
+## 21 Ekim 2026 - K4 path validation before inode lookup
+- #39680484339 completed/success: backup ve restore integrity-failure rollback regresyonlari gecti.
+- compare_copy ve verify_independent_restore artik once snapshot_manifest ile yol guvenligi ve kaynak manifestini dogrulayip sonra inode metadata bakiyor; onceki sirada gecersiz path icin erken stat() cagrisi vardi. Kod e61fc028e737f3804a79c5596f45f0fd4beea542.
+- Traversal isimlerini reddeden regresyonlar 7b2214ee4be2aa2523fc18f56b4d8b250b0b8756; testte tum Path.stat'i mock etmenin klasor kontrollerini bozabilecegi fark edilip 97c86cc9dd42e21a8e9d50f809c43d98e6f0b403 ile duzeltildi. Son CI sonucunu kontrol et.
+- Production backup/restore ve dis storage kabulu hala acik; 75 canli, 92 parity, 26 runtime security kabul sayilari degismedi. Korunan dosyalara dokunulmadi.

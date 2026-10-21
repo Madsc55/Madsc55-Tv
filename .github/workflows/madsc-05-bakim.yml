@@ -48,7 +48,16 @@ jobs:
         shell: bash
         run: |
           mkdir -p reports
-          python -m madsc.offline_gate
+          python -m madsc.offline_gate > reports/offline-gate.json
+          cat reports/offline-gate.json
+      - name: Offline kapi raporunu sakla
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-offline-five-stage-gate
+          path: reports/offline-gate.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Regresyon hatalarını otomatik sınıflandır
         if: ${{ always() && !cancelled() }}
         run: python -m madsc.ci_diagnostics --log reports/regression.log --output reports/regression-diagnostics.json --summary "$GITHUB_STEP_SUMMARY"

@@ -41,7 +41,7 @@ class WorkflowConsolidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))
             (folder / "madsc-k2-live-pilot.yml").write_text(
-                "on:\\n  workflow_dispatch:\\npermissions:\\n  contents: read\\n",
+                "on:\n  workflow_dispatch:\npermissions:\n  contents: read\n",
                 encoding="utf-8",
             )
             with self.assertRaises(ValueError):
@@ -51,7 +51,7 @@ class WorkflowConsolidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))
             (folder / MAIN["K1"]).write_text(
-                "on:\\n  workflow_dispatch:\\n  schedule:\\npermissions:\\n  contents: read\\n",
+                "on:\n  workflow_dispatch:\n  schedule:\npermissions:\n  contents: read\n",
                 encoding="utf-8",
             )
             with self.assertRaises(ValueError):

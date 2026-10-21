@@ -283,3 +283,10 @@ class BackupTests(unittest.TestCase):
             self.assertTrue(verify_manifest(root, manifest))
             manifest["entries"].reverse()
             self.assertFalse(verify_manifest(root, manifest))
+
+    def test_empty_manifest_never_verifies_as_backup(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            empty = snapshot_manifest(root, [])
+            self.assertEqual(empty["entries"], [])
+            self.assertFalse(verify_manifest(root, empty))

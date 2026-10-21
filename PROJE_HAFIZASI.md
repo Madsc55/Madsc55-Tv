@@ -1456,3 +1456,7 @@ Bu kurallar onceki sekiz maddeyi tamamlar; kullanici talepleriyle celisirse kull
 ## 20 Ekim 2026 gece — Yeni sohbete devir
 - Son calisma kurallari, dogru Madsc55-Tv repo/dal kimligi, K1–K5 durumlari, son commitler, eksikler ve siradaki somut isler `SOHBET_DEVIR_NOTU_2026-10-20.md` dosyasina eklendi (commit `df0f0487be70fc08587e5c54b4cf5171d4b27eed`).
 - Yeni sohbet ilk is: BIRLESIK_KALICI_CALISMA_KURALLARI.md, PROJE_HAFIZASI.md, ESKI_SISTEM_NOTLARI.md ve SOHBET_DEVIR_NOTU_2026-10-20.md dosyalarini oku; guncel main kaynaklarini dogrula; offline toplu regresyonu gercekten calistirmaya odaklan. Eski repo salt okunur, Actions calistirma, korunan canli veriye yazma. 0/92 ve 0/26 kabul degismedi.
+
+
+## 21 Ekim 2026 — Actions kotasi ve toplu bitirme taahhudu
+Kullanici 12 gunde GitHub Actions 2000 dakikalik kotasinin tukendigini ve K1-K5 tamamlanmadigini vurguladi. Artik acik ayri onay olmadan Actions yok; [skip ci], manual-only workflow, canli sistem korumasi suruyor. Her dosyadan sonra CI degil, SHA-dogrulanmis guncel main tum K1-K5 testleri icin tek yerel offline regresyon, toplu hata listesi ve toplu duzeltme. 2000 dakika 2000 test degildir. Kullanici guvenli rutin adimlar icin tekrar tekrar onayla ugrastirilmamali. Yalniz Actions/kota/canli test/production yazmasi/eski repo degisikligi oncesinde acik onay istenir. Kabul 0/92 ve 0/26; gercek tam regresyon henuz yok. Ayrintili BAGLAYICI kural BIRLESIK_KALICI_CALISMA_KURALLARI.md ve yeni sohbet devri SOHBET_DEVIR_NOTU_2026-10-20.md icinde.

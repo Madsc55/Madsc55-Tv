@@ -126,6 +126,46 @@ def consolidation_plan(root: Path) -> dict:
     }
 
 
+
+def auxiliary_behavior_matrix(root: Path) -> dict:
+    """Read-only comparison of workflow operational contracts, not parity acceptance."""
+    import re
+    folder = Path(root) / ".github" / "workflows"
+    rows = []
+    for name, (stages, command, external) in AUXILIARY.items():
+        source = (folder / name).read_text(encoding="utf-8")
+        targets = [MAIN[stage] for stage in stages.split("+")]
+        main_sources = [(folder / target).read_text(encoding="utf-8") for target in targets]
+        def contracts(body):
+            timeout = [int(n) for n in re.findall(r"^\\s*timeout-minutes:\\s*(\\d+)\\s*$", body, re.M)]
+            artifacts = re.findall(r"^\\s*name:\\s*(madsc-[a-z0-9-]+|turkish-tv-batch-validation)\\s*$", body, re.M)
+            return {"timeout_minutes": timeout, "artifact_names": artifacts,
+                    "actions_read": bool(re.search(r"^\\s*actions:\\s*read\\s*$", body, re.M)),
+                    "always_upload": bool(re.search(r"^\\s*if:\\s*(?:\\$\\{\\{\\s*)?always\\(\\)", body, re.M))}
+        src = contracts(source)
+        destinations = [contracts(body) for body in main_sources]
+        gaps = []
+        if src["timeout_minutes"] and not any(
+                t in dst["timeout_minutes"] for t in src["timeout_minutes"] for dst in destinations):
+            gaps.append("timeout")
+        if src["artifact_names"] and not all(
+                any(a in dst["artifact_names"] for dst in destinations)
+                for a in src["artifact_names"]):
+            gaps.append("artifact_name")
+        if src["actions_read"] and not all(dst["actions_read"] for dst in destinations):
+            gaps.append("actions_permission")
+        if src["always_upload"] and not any(dst["always_upload"] for dst in destinations):
+            gaps.append("always_upload")
+        rows.append({"source": name, "stages": stages, "command_present": any(
+            _command_in_run_step(body, command) for body in main_sources),
+            "source_contract": src, "main_contracts": destinations,
+            "static_contract_gaps": gaps, "behavioral_parity_verified": False,
+            "external_evidence_required": external})
+    return {"auxiliary_count": len(rows), "rows": rows,
+            "static_gaps_total": sum(len(row["static_contract_gaps"]) for row in rows),
+            "behavioral_parity_verified": False, "production_writes": False}
+
+
 def main() -> None:
     root = Path(__file__).resolve().parent.parent
     print(json.dumps(consolidation_plan(root), ensure_ascii=False, indent=2))

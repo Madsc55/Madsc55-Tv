@@ -54,8 +54,14 @@
     "id": "K2-08",
     "stage": "K2",
     "title": "Aday alternatif ve tekrar ayrımı",
-    "status": "pending",
-    "evidence": []
+    "status": "in_progress",
+    "evidence": [
+      "ae5a546: alternative streams by tvg-id/name-group",
+      "ec921f7: K2-to-K3 alternative mapping",
+      "3e1718e: known-source versus same-batch duplicate reasons",
+      "39666693465: prior 6/6 CI; latest duplicate-reason test awaiting CI"
+    ],
+    "note": "Statik/fixture kod entegrasyonu mevcut; gercek kaynak veri setinde davranissal kabul ve yeni test CI sonucu bekleniyor. Tamamlandi sayilmaz."
   },
   {
     "id": "K3-09",

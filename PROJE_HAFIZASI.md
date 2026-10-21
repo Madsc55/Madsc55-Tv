@@ -1733,3 +1733,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - K4 `verify_manifest` sirasi degistirilmis manifesti reddeder: b639c94126eed3ce1bc0fa8fc079b906ba0169dd. Davranissal regresyon testi: a7943b03430e085560b56d3883830036480d37ff.
 - Yeni commitlerin Actions sonucu henuz dogrulanmadi. K4 harici yedek/restore, 75 canli kanal, 92 parity ve 26 runtime guvenlik kabulu halen acik; kabul sayilari artirilmadi.
 - Eski repo, PR #71, korunan yayin listeleri ve favoriler degistirilmedi. Uretim yazma yetkisi acilmadi.
+
+
+## 21 Ekim 2026 gece - K4 bos manifest fail-closed
+- Actions #39676588920 ve #39676602145 completed/success; onceki K4 siralama duzeltmesi ve regresyon testi CI'dan gecti.
+- K4 bos manifest artik verify_manifest ile basarili kabul edilmez: bf7de7b6f79d2edf121cdace81bf1f795a7fc177. Regresyon testi: 5d2210b0288b768982067625e0d1fd54cca17c21.
+- Bu iki yeni commit icin Actions sonucu henuz kontrol edilmedi. Harici backup/restore gercek kabul, 75 kanal canli, 92 workflow davranissal esdegerlik ve 26 runtime kural halen bekliyor. Kabul sayilari degismedi.
+- Eski depo, PR #71 ve korunan listeler degistirilmedi.

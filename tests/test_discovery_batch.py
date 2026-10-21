@@ -98,6 +98,12 @@ class DiscoveryBatchTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             parse_m3u("\n#EXTM3U\n#EXTINF:-1,Channel\nhttps://example.org/live", "fixture")
 
+    def test_ambiguous_source_names_rejected(self):
+        feeds = {"Source": "#EXTM3U", " source ": "#EXTM3U"}
+        for entrypoint in (corroborate_sources, build_m3u8_preview):
+            with self.subTest(entrypoint=entrypoint.__name__), self.assertRaises(ValueError):
+                entrypoint(feeds)
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

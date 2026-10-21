@@ -66,6 +66,10 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
     """Rank independent feed corroboration without treating it as playback proof."""
     if not isinstance(sources, dict) or not sources or len(sources) > 200:
         raise ValueError("Require 1-200 named M3U sources")
+    if any(not isinstance(name, str) or not name.strip() for name in sources):
+        raise ValueError("Invalid source name")
+    if len({name.strip().casefold() for name in sources}) != len(sources):
+        raise ValueError("Ambiguous duplicate source names")
     if known_urls is not None and not isinstance(known_urls, (set, frozenset)):
         raise ValueError("Known URLs must be a set")
     if known_urls is not None and any(not isinstance(url, str) for url in known_urls):

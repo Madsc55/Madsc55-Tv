@@ -235,3 +235,10 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/five_system_channel_flow.py: build_offline_channel_previews() K2 discovery, K3 supplied probe/IBO/logo/olcum kanitlari ve K5 bellek ici M3U taslaklarini TEK cagriyla birlestirir. Commit 06a154f7554e0b6dce2a96765998f6e7a837422e; entegrasyon testleri tests/test_five_system_channel_flow.py commit ba7c17dbd557727275cd9633bd052286eb611584.
 - Beş ANA otomasyon siniri korunur. Bu Python fonksiyonu yeni workflow degildir. K1 uretim yazma yasagi, K4 onizlemede yedekleme baslatmama, IBO onayli kanali teknik hataya ragmen koruma, eski group-title metadata'sini saklama ve test bekleyenleri ayri tutma test dosyasina islendi.
 - Test dosyalari GitHub main'e eklendi ancak offline toplu regresyonun CALISTIGI/GECTIGI henüz kanitlanmadi. Gercek kaynak logo aramasi, EPG ve eski kategori tam esdegerligi, canli 3 asamali test ve IBO cihaz onayi bekliyor. GitHub Actions tetiklenmedi, uretim listelerine dokunulmadi.
+
+
+## 21 Ekim 2026 — az calisilan K4/K1 geri yukleme guvenlik baglantisi
+- Kullanici ekran goruntusundeki 5 kademe tablosuna gore en az ilerlenen isi, bagli gorevleriyle birlikte bitirmeyi istedi. K4 bagimsiz restore kaniti ve 92 eski davranis esdegerligi en buyuk aciklar arasindadir. 92/92 HEDEF, gecerli kabul 0/92.
+- madsc/k4_restore_gate.py commit 43940302fccf516d8c19eb4b1540f2743687436b: uc farkli mevcut sandbox klasorunde source/backup/restored hash ve byte boyutu karsilastirmasini madsc.backup.verify_independent_restore ile yapar, mismatch halinde HALT_AND_INVESTIGATE verir. Uretime yazmaz, gercek dis depolama kaniti ve production restore onayi vermez.
+- tests/test_k4_restore_gate.py commit 02a8931c769a0bc53b76bd8e4a3b6dc7a0c338c6: eslesen kopya, bozuk kopya, ic ice klasor red senaryolari. Dosya commitleri gercektir; testler henuz calistirilmis sayilmaz.
+- Devam: ucretsiz guncel main offline toplu regresyon, K4 gercek bagimsiz harici depolama ve restore kabul kaniti, K1 runtime 26 kural ve eski 92 davranis esdegerlik matrisi. Actions tetikleme, uretim listelerini degistirme.

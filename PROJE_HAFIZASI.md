@@ -1625,3 +1625,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - madsc/fixture_report_writer.py: K3/K4/K5 ortak rapor yazma yolunda enforce_write_paths kontrolune ek olarak mkdir sonrasi ve open('x') oncesi enforce_local_output_path(destination, allowed_root=root) zorunlu; mevcut rapor icin FileExistsError korunuyor. Commitler 71542fc0edf99ffbbe8a2727c8f50ce39e96cd8d ve f41a8970766319153ada5c02f3f86280b235edb4.
 - tests/test_fixture_report_writer.py: yerel runtime guard reddinin dosya yazimini durdurdugu mock regresyonu eklendi. Commit 5a792a17d10a3f145b32daa6d93b66119180d261.
 - Kapsam sadece ortak izole rapor yazicisi; tum repository writer callsite'lari runtime ile korunmus DEGIL. Yeni testler henuz calistirilmadi; [skip ci] kullanildi. Kabul 0/22, runtime 0/26 ve eski davranis 0/92 ayni. Canli listeler/EPG/logo/IBO/eski repo degismedi.
+
+## 21 Ekim 2026 — K1 runtime guard K2/K5 kanit yazicilarina genisletildi
+- K2 izole history pair output preflight: d0ba8e7a7ab92f7fe69b065dc6a4f3855dcf2b9f; cagrim regresyonu 44e04782cb5cc2e9c0e2ca09e414cd02b7415b77.
+- K2 candidate artifact produce/consume raporlarinda enforce_local_output_path: 9cdc5fff2ea9a29c9ee56a53964b35c23c0c6697.
+- K2/K3/K5 history transport outputunda enforce_local_output_path: 739e123bd78941780cf009c1ddbf292b2ccf332a.
+- Bunlar izinli izole raporlar icin preflight, tum repository writer noktalarini korumaz. Testler bu turda kosulmadi; [skip ci] ile Actions baslatilmadi. Kabul 0/22, 26 runtime kural ve 92 davranissal parity acik. Korunan canli dosyalar degismedi.

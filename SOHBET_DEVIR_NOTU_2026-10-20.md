@@ -279,3 +279,10 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/discovery.py normalize_url, ham URL'deki ASCII kontrol karakterlerini urlsplit/strip oncesi reddeder; commitler bf1c967b4089868d696c6a61ff3ba12ed30e95d3 ve 2746cbf9a61051a94cbee1bb5e3cbc8c17a6ea6c.
 - tests/test_discovery.py M3U satir enjeksiyonu, CR/LF/TAB ve katalog reddi regresyonlarini kapsar; commit a917cce0b7e64c6d236384488bd6e7060b743522.
 - Kod commitleri gercektir; guncel main toplu offline test calistirilmadi. 92 eski davranis esdegerligi, 26 runtime guvenlik kabul ve harici restore aciktir. Actions calistirilmadi, uretim listelerine dokunulmadi.
+
+
+## 21 Ekim 2026 — gercek yerel K3 offline test yurutu
+- Container /mnt/data/madsc_current_k3 icinde K3 uc-asama modulunun kaynak kopyasi ile bes unittest gercekten calistirildi: Ran 5 tests, OK (5/5).
+- madsc/k3_three_stage_gate.py yerel git hash-object fe33fbc5f43d1b4eec5900767ac5edd5f5591b3c; GitHub main tree SHA ayni. Diger kopyalanan kaynak/test dosyalarinin SHA'lari main ile esit oldugu kanitlanmadi; bu nedenle tum main testi veya tam K3 test kabul sonucu DEGILDIR.
+- GitHub'a dogrudan git clone DNS basarisiz (github.com host resolve edilemiyor). Testler yalniz izole yerel K3 kopyasinda, Actions/network probe/production yazmasi olmadan calistirildi.
+- Siradaki kritik is: guncel main'in eksiksiz kaynak ve test kopyasini olusturup SHA eslesmesini dogrulamak; python -m madsc.offline_gate ile tam regresyonu calistirmak. 92/92 ve 26/26 kabul degismedi.

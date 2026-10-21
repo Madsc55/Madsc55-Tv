@@ -5,7 +5,7 @@ from pathlib import Path
 
 from madsc.history_handoff import load_history, pack_history, unpack_history, verify_history_chain
 from madsc.history_pair_bridge import import_legacy_pair
-from madsc.write_path_audit import enforce_local_output_path
+from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
 
 def main():
@@ -33,6 +33,7 @@ def main():
                                       load_history(a.k5), a.run_id, a.commit_sha)
     if a.output.is_symlink():
         raise ValueError("Symlinked output")
+    enforce_write_paths([a.output.name])
     a.output.parent.mkdir(parents=True, exist_ok=True)
     enforce_local_output_path(a.output.absolute())
     with a.output.open("x", encoding="utf-8") as handle:

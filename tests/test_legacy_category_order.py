@@ -58,6 +58,7 @@ class LegacyCategoryOrderTests(unittest.TestCase):
             path = Path(folder) / "snapshot.json"
             for bad in ([], {"schema": "madsc55-legacy-order-v1", "entries": []},
                         {**original, "source_files": []},
+                        {**original, "source_files": [original["source_files"][0]] * 4},
                         {**original, "source_files": [
                             {**entry, "sha": "invalid"} if index == 0 else entry
                             for index, entry in enumerate(original["source_files"])]}):

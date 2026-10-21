@@ -1,6 +1,12 @@
 name: MADSC K2 — Kesif
 on:
   workflow_dispatch:
+    inputs:
+      allow_network_discovery:
+        description: 'Opt-in public network discovery (no production writes)'
+        type: boolean
+        required: true
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -9,7 +15,7 @@ concurrency:
 jobs:
   isolated:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -21,9 +27,19 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Isolated report
         run: python -m madsc.core --category k2 --output reports/k2.json
+      - name: Legacy multisource discovery (explicit opt-in only)
+        if: ${{ inputs.allow_network_discovery == true }}
+        run: python -m madsc.legacy_multisource_discovery
+      - name: Public candidate discovery (explicit opt-in only)
+        if: ${{ inputs.allow_network_discovery == true }}
+        run: python -m madsc.live_discovery_pilot
       - name: Upload isolated evidence
         uses: actions/upload-artifact@v4
         with:
           name: madsc-k2-isolated-evidence
-          path: reports/k2.json
+          path: |
+            reports/k2.json
+            reports/k2-legacy-multisource.json
+            reports/k2-live-pilot.json
+          if-no-files-found: error
           retention-days: 14

@@ -26,7 +26,7 @@ def load_historical_categories(path: str | Path = SNAPSHOT) -> dict:
     if not isinstance(sources, list) or len(sources) != len(EXPECTED):
         raise ValueError("Historical source manifest missing or incomplete")
     source_map = {item.get("file"): item for item in sources if isinstance(item, dict)}
-    if len(source_map) != len(EXPECTED) or set(source_map) != set(EXPECTED):
+    if len(source_map) != len(sources) or len(source_map) != len(EXPECTED) or set(source_map) != set(EXPECTED):
         raise ValueError("Historical source manifest mismatch")
     for filename, count in EXPECTED.items():
         source = source_map[filename]

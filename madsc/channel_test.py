@@ -151,6 +151,8 @@ def summarize_candidate_continuity(candidate_fingerprints: list[str],
            or any(ch not in "0123456789abcdef" for ch in key)
            for key in candidate_fingerprints):
         raise ValueError("Invalid candidate fingerprint")
+    if any(not isinstance(key, str) for key in measurements):
+        raise ValueError("Invalid measurement fingerprint")
     if any(key not in candidate_fingerprints for key in measurements):
         raise ValueError("Orphan continuity measurements")
     results = {}

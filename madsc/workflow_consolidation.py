@@ -168,7 +168,12 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
 
 def main() -> None:
     root = Path(__file__).resolve().parent.parent
-    print(json.dumps(consolidation_plan(root), ensure_ascii=False, indent=2))
+    import argparse
+    parser = argparse.ArgumentParser(description="Read-only workflow consolidation audit")
+    parser.add_argument("--behavior-matrix", action="store_true", help="Compare auxiliary workflow contracts")
+    args = parser.parse_args()
+    report = auxiliary_behavior_matrix(root) if args.behavior_matrix else consolidation_plan(root)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

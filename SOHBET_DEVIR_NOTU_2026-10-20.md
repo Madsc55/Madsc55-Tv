@@ -362,3 +362,10 @@ Kullanici 17 pending gorevin topluca en fazla UC calisma turunda bitirilmesini i
 - tests/test_workflow_consolidation.py fixture YAML'larina beklenen komutlar eklendi ve eksik komut ile ana workflow otomatik schedule regresyonu eklendi; commit dc8c5dd57a2cb3e3ea368d88b55960dddca3268c.
 - Bu iki yeni degisikligin testleri HENUZ CALISTIRILMADI. GitHub Actions tetiklenmedi. Yerel ortam /mnt/data/madsc55_offline eski K1 zip/patch paketleri iceriyor; tam main checkout YOK, container git github.com DNS basarisiz. Zip paketleri guncel main degil ve tam regresyon diye sunulamaz.
 - 17 pending + 5 in progress + 0 complete, legacy parity 0/92, runtime security 0/26. Yardimci workflow gercek davranis aktarimi tamamlanmadi. Oncelik toplu kaynak/fixture ve davranissal entegrasyon; eski depoya ve canli dosyalara dokunma, izinsiz Actions calistirma.
+
+
+## 21 Ekim 2026 — kullanicinin 17 isi toplu bitirme talebi
+- Kucuk duzeltme yerine GERCEK ana workflow entegrasyonuna gecildi: .github/workflows/madsc-01-guvenlik.yml ana K1 isine eski 01-guvenlik.yml'deki shadow_manifest guvenlik komutu baglandi; commit ecffd6d226666180901c5d9ffd3eff0570dcd68a.
+- .github/workflows/madsc-05-bakim.yml ana K5 asamasina python -m madsc.workflow_consolidation ve python -m madsc.k1_k5_acceptance_requirements rapor uretimi ve artifact saklama eklendi; commit f8a16ab9df57c502f30d2593b1d4db6689cbde5c.
+- Bu iki dosya degisikligi GitHub Actions tetiklemedi (commitler [skip ci]), offline tam test henuz yapilmadi; bu nedenle K1/K5 kabul durumu tamamlandi degil. 17 pending, 5 in_progress, 0 completed; 0/92 davranis, 0/26 runtime security.
+- Siradaki esas hedef: K2/K3 kalan yardimci islevlerinin offline izinli kismi gercek bes ana sisteme tasinmali; ag, yayin, cihaz, harici yedek isleri icin izin ve kanit ayrimi korunmali. Kullanici mini test ve rapor tekrari istemiyor.

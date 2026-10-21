@@ -1710,3 +1710,8 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - #39664555035 K1-K5 toplu Actions 6/6 success. K2 alternatif URL / ayni kanal kimligi ayrimi kod `ae5a546`, test `6635c27`.
 - K3 handoff `ec921f7`: K2 alternatives iliskisini fingerprint ile bagli olarak tasir; bagimsiz veya bilinmeyen fingerprint fail-closed. Test `5ad78c1`: aktarim ve orphan reddi.
 - Yeni Actions #39666693465 queued (son kontrol); basarili denemez. K2-08 gercek kaynak kabulunu tamamlamadi. 0/92 davranissal parity, 0/26 runtime guvenlik kabulu ve korunan dosyalara yazma yok.
+
+## 21 Ekim 2026 - K3 toplu sureklilik
+- #39668703362 6/6 basarili (onceki kod). `61ef36a`: K3 toplu aday sureklilik ozetleyici; olcumu olmayan adaylar MISSING_MEASUREMENTS, orphan kayitlar red, hicbir uretim onayi yok.
+- `25cd016`: eksik aday/orphan regresyon testleri; `fdeeae0`: hashlenemeyen aday fingerprint korumasi. Bu yeni kodun CI sonucunu ayrica kontrol et.
+- 75 adayin gercek olcumleri, 6+ saat gozlem kokeni, IBO cihaz ve 92 davranissal kabul halen bekliyor; gorev tamamlandi iddiasi yok.

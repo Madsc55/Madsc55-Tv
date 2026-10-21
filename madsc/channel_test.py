@@ -5,7 +5,7 @@ import math
 def evaluate_probe(probe: dict) -> dict:
     """Classify supplied ffprobe-like evidence without assuming IBO approval."""
     required = {"url_sha256", "http_status", "video", "audio", "duration_seconds"}
-    if not required.issubset(probe):
+    if not isinstance(probe, dict) or not required.issubset(probe):
         raise ValueError("Missing probe evidence")
     digest = probe["url_sha256"]
     if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
@@ -14,6 +14,8 @@ def evaluate_probe(probe: dict) -> dict:
     duration = probe["duration_seconds"]
     if type(status) is not int or type(duration) not in (int, float) or not math.isfinite(duration) or duration < 0:
         raise ValueError("Invalid probe measurements")
+    if type(probe["video"]) is not bool or type(probe["audio"]) is not bool:
+        raise ValueError("Invalid video/audio evidence")
     technical = (200 <= status < 300 and probe["video"] is True
                  and probe["audio"] is True and duration >= 30)
     return {

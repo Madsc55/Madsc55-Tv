@@ -286,3 +286,9 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/k3_three_stage_gate.py yerel git hash-object fe33fbc5f43d1b4eec5900767ac5edd5f5591b3c; GitHub main tree SHA ayni. Diger kopyalanan kaynak/test dosyalarinin SHA'lari main ile esit oldugu kanitlanmadi; bu nedenle tum main testi veya tam K3 test kabul sonucu DEGILDIR.
 - GitHub'a dogrudan git clone DNS basarisiz (github.com host resolve edilemiyor). Testler yalniz izole yerel K3 kopyasinda, Actions/network probe/production yazmasi olmadan calistirildi.
 - Siradaki kritik is: guncel main'in eksiksiz kaynak ve test kopyasini olusturup SHA eslesmesini dogrulamak; python -m madsc.offline_gate ile tam regresyonu calistirmak. 92/92 ve 26/26 kabul degismedi.
+
+
+## 21 Ekim 2026 — K4 buyuk dosya bellek siniri
+- madsc/backup.py snapshot_manifest: read_bytes ile tum dosyayi RAM'e alma kaldirildi; 1 MiB bloklar ile streaming SHA256 ve byte sayimi yapiliyor. Commit 830e7aa3fb470314873aa77bb6a66df07f54c3df.
+- tests/test_backup_manifest_hardening.py: 1 MiB'den buyuk dosyada hash/byte eslesmesi ve sonradan degisen baytin tespiti. Commit 4c658fc2e7c105418361edc520e8a7f173ba154e.
+- Testler GitHub main'e yazildi fakat guncel main K4 testleri veya toplu offline regresyon henuz CALISTIRILMADI. Eski 92 davranis kabul 0/92, 26 guvenlik runtime kabul 0/26. GitHub Actions yok, eski repo ve canli playlist degisikligi yok.

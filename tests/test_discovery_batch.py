@@ -77,6 +77,16 @@ class DiscoveryBatchTests(unittest.TestCase):
         result = corroborate_sources({"a": feed}, known_urls={"https://example.org/news.m3u8"})
         self.assertEqual(result["identity_candidates"], [])
 
+    def test_empty_name_and_orphan_url_are_reported(self):
+        feed = ("#EXTM3U\nhttps://example.org/orphan\n"
+                "#EXTINF:-1,   \nhttps://example.org/unnamed\n"
+                "#EXTINF:-1,Valid\nhttps://example.org/valid\n")
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(len(report["candidates"]), 1)
+        self.assertEqual([e["reason"] for e in report["parse_errors"]],
+                         ["orphan_url", "empty_channel_name", "orphan_url"])
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

@@ -33,6 +33,10 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 errors.append({"line": number, "reason": "missing_channel_name"})
                 continue
             meta, title = line.split(",", 1)
+            if not title.strip():
+                pending = None
+                errors.append({"line": number, "reason": "empty_channel_name"})
+                continue
             attrs = dict(ATTR.findall(meta))
             pending = {"name": title.strip(), "tvg_id": attrs.get("tvg-id", ""),
                        "tvg_logo": attrs.get("tvg-logo", ""),
@@ -44,6 +48,8 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 raise ValueError("Source exceeds bounded candidate limit")
             candidates.append({**pending, "url": line, "source": source})
             pending = None
+        else:
+            errors.append({"line": number, "reason": "orphan_url"})
     if pending is not None:
         errors.append({"line": len(lines), "reason": "missing_url"})
     classified = classify_candidates(candidates)

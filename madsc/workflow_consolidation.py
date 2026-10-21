@@ -29,6 +29,27 @@ MAIN = {
 }
 
 
+def _command_in_run_step(content: str, command: str) -> bool:
+    """Find commands in YAML run steps; reject comments and non-run metadata."""
+    run_indent = None
+    for line in content.splitlines():
+        stripped = line.lstrip()
+        indent = len(line) - len(stripped)
+        if run_indent is not None and stripped and indent <= run_indent:
+            run_indent = None
+        if stripped.startswith(("run: ", "- run: ")):
+            value = stripped.split("run:", 1)[1].strip()
+            value = value.split(" #", 1)[0].rstrip()
+            if command in value:
+                return True
+        if stripped in ("run: |", "run: >", "- run: |", "- run: >"):
+            run_indent = indent
+        if run_indent is not None and indent > run_indent:
+            if command in stripped and not stripped.startswith("#"):
+                return True
+    return False
+
+
 def consolidation_plan(root: Path) -> dict:
     """Validate exact inventory and map every auxiliary behavior to main stages."""
     root = Path(root)
@@ -57,11 +78,10 @@ def consolidation_plan(root: Path) -> dict:
         data = path.read_text(encoding="utf-8")
         if "workflow_dispatch:" not in data or "permissions:" not in data:
             raise ValueError("Missing manual trigger or permissions: " + name)
-        if not any(
-            command in line and not line.lstrip().startswith("#")
-            for line in data.splitlines()
-        ):
-            raise ValueError("Mapped behavior command absent from source: " + name)
+        # Reuse executable-step validation for both source and destination.
+        # Presence in a YAML comment or metadata is not execution evidence.
+        if not _command_in_run_step(data, command):
+            raise ValueError("Mapped behavior command absent from source run step: " + name)
         if any(line.lstrip().startswith(("push:", "pull_request:", "schedule:", "workflow_call:"))
                for line in data.splitlines()):
             raise ValueError("Automatic trigger found: " + name)
@@ -69,27 +89,7 @@ def consolidation_plan(root: Path) -> dict:
         main_contents = [ (folder / target).read_text(encoding="utf-8") for target in targets ]
         # Only count commands inside a YAML run step, never comments,
         # descriptions, env values, or arbitrary quoted strings.
-        def in_run_step(content: str) -> bool:
-            run_indent = None
-            for line in content.splitlines():
-                stripped = line.lstrip()
-                indent = len(line) - len(stripped)
-                if run_indent is not None and stripped and indent <= run_indent:
-                    run_indent = None
-                if stripped.startswith(("run: ", "- run: ")):
-                    value = stripped.split("run:", 1)[1].strip()
-                    # A command in an inline YAML comment is not executable.
-                    value = value.split(" #", 1)[0].rstrip()
-                    if command in value:
-                        return True
-                if stripped in ("run: |", "run: >", "- run: |", "- run: >"):
-                    run_indent = indent
-                if run_indent is not None and indent > run_indent:
-                    if command in stripped and not stripped.startswith("#"):
-                        return True
-            return False
-
-        migrated = any(in_run_step(content) for content in main_contents)
+        migrated = any(_command_in_run_step(content, command) for content in main_contents)
         entries.append({
             "command_present_in_main": migrated,
             "workflow": name,

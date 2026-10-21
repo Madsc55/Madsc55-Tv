@@ -122,3 +122,44 @@ def verify_independent_restore(source: Path, backup: Path, restored: Path,
             "restore_verified_against_backup": backed_up["entries"] == recovered["entries"],
             "external_storage_proven": False, "production_restore_verified": False,
             "production_writes": False}
+
+
+def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) -> dict:
+    """Restore a verified backup into a newly created sandbox, never production.
+
+    The destination must not exist. A failed copy removes only this new tree.
+    """
+    import shutil
+
+    backup = Path(backup)
+    destination = Path(destination)
+    if not isinstance(names, list) or not names:
+        raise ValueError("Sandbox restore requires a nonempty file list")
+    original = snapshot_manifest(backup, names)
+    if destination.is_symlink() or destination.exists():
+        raise ValueError("Restore destination must not exist")
+    parent = destination.parent
+    if parent.is_symlink() or not parent.is_dir():
+        raise ValueError("Restore parent must be a real directory")
+    source_root = backup.resolve(strict=True)
+    target_root = destination.resolve(strict=False)
+    if target_root == source_root or target_root.is_relative_to(source_root):
+        raise ValueError("Restore destination must be outside backup tree")
+    if source_root.is_relative_to(target_root):
+        raise ValueError("Restore destination must not contain backup tree")
+    destination.mkdir()
+    try:
+        for entry in original["entries"]:
+            relative = Path(entry["path"])
+            target = destination / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with (backup / relative).open("rb") as reader, target.open("xb") as writer:
+                shutil.copyfileobj(reader, writer, length=1024 * 1024)
+        if not verify_manifest(backup, original) or not verify_manifest(destination, original):
+            raise ValueError("Backup changed or sandbox restore failed integrity verification")
+    except BaseException:
+        shutil.rmtree(destination)
+        raise
+    return {"sandbox_restore_matches": True, "files_restored": len(original["entries"]),
+            "external_storage_proven": False, "production_restore_verified": False,
+            "production_writes": False}

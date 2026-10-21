@@ -77,6 +77,34 @@ class HandoffTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             classify_candidates([], known_urls=["https://example.org/a"])
 
+
+    def test_k3_continuity_is_attached_to_candidate_without_production_approval(self):
+        discovery = classify_candidates([{"name": "A", "url": "https://example.org/a"}])
+        digest = discovery["candidates"][0]["url_sha256"]
+        base = {"url_sha256": digest, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": stamp} for stamp in
+                   ("2026-10-21T10:00:00Z", "2026-10-21T13:00:00Z",
+                    "2026-10-21T16:00:00Z")]
+        report = assess_candidates(discovery, {}, continuity_samples={digest: samples})
+        item = report["assessed"][0]
+        self.assertTrue(item["continuity"]["three_stage_six_hour_preliminary"])
+        self.assertFalse(item["continuity"]["observation_provenance_verified"])
+        self.assertFalse(item["production_change_allowed"])
+
+    def test_k3_continuity_rejects_orphan_and_mismatched_fingerprints(self):
+        discovery = classify_candidates([{"name": "A", "url": "https://example.org/a"}])
+        digest = discovery["candidates"][0]["url_sha256"]
+        base = {"url_sha256": "f" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": stamp} for stamp in
+                   ("2026-10-21T10:00:00Z", "2026-10-21T13:00:00Z",
+                    "2026-10-21T16:00:00Z")]
+        with self.assertRaises(ValueError):
+            assess_candidates(discovery, {}, continuity_samples={digest: samples})
+        with self.assertRaises(ValueError):
+            assess_candidates(discovery, {}, continuity_samples={"f" * 64: samples})
+
     def test_unprobed_candidate_is_untested(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         result = assess_candidates(discovery, {})

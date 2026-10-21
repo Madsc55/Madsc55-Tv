@@ -1614,3 +1614,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - madsc/five_system_installation.py writer cagri noktalarini modul bazinda write/dynamic_mode_review olarak sayiyor ve dinamik kipleri topluca raporluyor. Commit d46690f87e95bceea95b8c87541affa3cb267a2e.
 - tests/test_five_system_channel_flow.py modul bazli sayaclar icin regresyon beklentileri eklendi. Commit bcce2f843cfe229be7b7e024c713fcbeba3fab5d.
 - [skip ci] nedeniyle Actions baslatilmadi. Bu turda test kosulmadi. K1-K5 kabul 0/22, gercek writer entegrasyonu, 26 runtime ve 92 eski davranis kaniti halen acik. Bu envanter yalniz risk haritalama ve sonraki toplu uygulama icin hazirliktir.
+
+## 21 Ekim 2026 — K2-K3-K5 kanit girdi zinciri sertlestirme
+- madsc/channel_test.py: probe None/dict disi ve video/audio bool disi kanit reddediliyor; c1fa5744dfa0adf4f19da0d02c6886ecd09fc8fc.
+- madsc/channel_catalog.py: explicit null probes/three_stage girdisi artik sessizce kanit yok sayilmiyor; 140d26fbd925972085773109a2866925c44f3acd.
+- tests/test_five_system_channel_flow.py: K2-K3-K5 entegre onizleme null ve bozuk kanit regresyonlari eklendi; 02937d220fdc09a84876c9b63107125a11738777.
+- Tum commitler [skip ci]; Actions kotasi harcanmadi. Yerel toplu regresyon bu turda yapilmadi; kod/test degisikligi production kabul kaniti degildir. 0/22, 0/26, 0/92 acik. Canli M3U/EPG/logo/IBO/favoriler ve eski depo degismedi.

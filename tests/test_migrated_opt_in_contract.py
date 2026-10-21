@@ -79,11 +79,19 @@ class MigratedOptInContractTests(unittest.TestCase):
         ):
             data = (ROOT / filename).read_text(encoding="utf-8")
             self.assertIn("workflow_dispatch:", data)
+            forbidden = ("pull_request", "schedule", "workflow_call")
+            if filename != "madsc-05-bakim.yml":
+                forbidden += ("push",)
             for line in data.splitlines():
                 self.assertFalse(
-                    re.match(r"^\s*(push|pull_request|schedule|workflow_call):", line),
+                    re.match(r"^\s*(" + "|".join(forbidden) + r"):", line),
                     (filename, line),
                 )
+            if filename == "madsc-05-bakim.yml":
+                self.assertIn("  push:\n    branches: [main]\n", data)
+                self.assertIn("      - 'madsc/**'", data)
+                self.assertIn("      - 'tests/**'", data)
+                self.assertIn("      - '.github/workflows/madsc-05-bakim.yml'", data)
 
 
 if __name__ == "__main__":

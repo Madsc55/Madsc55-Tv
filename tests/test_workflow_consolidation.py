@@ -104,6 +104,22 @@ class WorkflowConsolidationTests(unittest.TestCase):
             self.assertFalse(result["behavioral_parity_verified"])
 
 
+
+    def test_artifact_report_path_gap_detected_even_when_name_differs(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            source = folder / "madsc-k2-live-pilot.yml"
+            source.write_text(source.read_text(encoding="utf-8") +
+                              "      - uses: actions/upload-artifact@v4" + chr(10) +
+                              "        with:" + chr(10) +
+                              "          name: madsc-old-pilot" + chr(10) +
+                              "          path: reports/k2-live-pilot.json" + chr(10),
+                              encoding="utf-8")
+            matrix = auxiliary_behavior_matrix(Path(d))
+            row = next(r for r in matrix["rows"] if r["source"] == source.name)
+            self.assertIn("artifact_path", row["static_contract_gaps"])
+            self.assertEqual(row["missing_artifact_paths"], ["reports/k2-live-pilot.json"])
+
     def test_contract_gate_rejects_missing_commands(self):
         with tempfile.TemporaryDirectory() as d:
             self.make_root(Path(d))

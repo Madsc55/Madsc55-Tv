@@ -107,6 +107,18 @@ class WorkflowConsolidationTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 consolidation_plan(Path(d))
 
+    def test_commented_source_command_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            command = AUXILIARY["madsc-k2-live-pilot.yml"][1]
+            (folder / "madsc-k2-live-pilot.yml").write_text(
+                "on:\n  workflow_dispatch:\npermissions:\n  contents: read\n"
+                "jobs:\n  isolated:\n    steps:\n      # " + command + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                consolidation_plan(Path(d))
+
     def test_main_automatic_trigger_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))

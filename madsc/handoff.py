@@ -1,9 +1,10 @@
 """Read-only K2 to K3 handoff; no network or playlist writes."""
 from __future__ import annotations
-from madsc.channel_test import evaluate_probe
+from madsc.channel_test import evaluate_probe, evaluate_three_stage_continuity
 from madsc.ibo_policy import classify_channel
 
-def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dict[str, str] | None = None) -> dict:
+def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dict[str, str] | None = None,
+                      continuity_samples: dict[str, list[dict]] | None = None) -> dict:
     if not isinstance(probes, dict):
         raise ValueError("Probe evidence must be a dictionary")
     if not isinstance(discovery, dict) or not isinstance(discovery.get("candidates"), list):
@@ -23,6 +24,9 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
                 or digest == parent or digest in alternative_map):
             raise ValueError("Invalid alternative mapping")
         alternative_map[digest] = parent
+    if continuity_samples is not None and not isinstance(continuity_samples, dict):
+        raise ValueError("Invalid continuity evidence")
+    continuity_samples = continuity_samples or {}
     identity_primary = {}
     if ibo_results is not None and not isinstance(ibo_results, dict):
         raise ValueError("Invalid IBO evidence")
@@ -57,15 +61,21 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         alternative_to = identity_primary.get(identity)
         if alternative_to is None:
             identity_primary[identity] = digest
+        continuity = (evaluate_three_stage_continuity(continuity_samples[digest])
+                      if digest in continuity_samples else None)
+        if continuity is not None and continuity["url_sha256"] != digest:
+            raise ValueError("Continuity fingerprint mismatch")
         decision = classify_channel(status, ibo_results.get(digest, "UNKNOWN"))
         assessed.append({"url_sha256": digest, "name": name, "tvg_id": tvg_id,
-                         "alternative_to_sha256": alternative_map.get(digest),
-                         "alternative_to_sha256": alternative_to,
+                         "alternative_to_sha256": alternative_map.get(digest, alternative_to),
+                         "continuity": continuity,
                          "tvg_logo": logo, "group_title": group, **decision,
                          "ibo_device_verified": False,
                          "ibo_result_supplied": decision["ibo_result"] != "UNKNOWN"})
     if any(key not in seen or parent not in seen for key, parent in alternative_map.items()):
         raise ValueError("Unlinked alternative fingerprint")
+    if any(key not in seen for key in continuity_samples):
+        raise ValueError("Unlinked continuity evidence fingerprint")
     if any(key not in seen for key in probes) or any(key not in seen for key in ibo_results):
         raise ValueError("Unlinked handoff evidence fingerprint")
     return {"assessed": assessed, "candidate_count": len(assessed),

@@ -76,6 +76,11 @@ def enforce_local_output_path(destination: Path, *, allowed_root: Path | None = 
 
     Does not authorize production writes or intercept unrelated callers.
     """
+    # Validate the caller's lexical path before pathlib normalizes dot segments.
+    raw = str(destination)
+    raw_parts = raw.replace(chr(92), "/").split("/")
+    if any(part in (".", "..") for part in raw_parts):
+        raise ProtectedWriteRejected("Ambiguous or traversing output path")
     path = Path(destination)
     if not path.is_absolute():
         raise ProtectedWriteRejected("Output must be an absolute path")

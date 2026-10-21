@@ -326,3 +326,14 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/discovery.py classify_candidates artik name, tvg_id, tvg_logo, group_title alanlarindaki ASCII control karakterlerini aday kabulunden ONCE reddeder; tek bozuk aday tum M3U preview islemini durdurmak yerine rejected'a girer. Commit d012589c33d030a94aa531701a3a105e4f599e96.
 - tests/test_discovery.py dort metadata alani icin enjeksiyon reddi ve guvenli diger adayin kalmasi testi eklendi. Commit 18e168f18f9470516ecd0200f18d28f51e974dae.
 - Son iki commit icin yeni testler HENUZ CALISTIRILMADI; tam main offline regresyonu hala yok. 92/92 behavioral acceptance 0, 26/26 runtime security acceptance 0. Actions ve canli liste yazmasi yok. Oncelik: eksiksiz SHA-dogrulanmis main kopyasi ve K1-K5 tum testleri topluca calistirmak.
+
+
+## 21 Ekim 2026 — KULLANICIYA VERILEN BAGLAYICI SOZLER / YENI SOHBETE ZORUNLU DEVIR
+Kullanici 12 gunluk parcali GitHub Actions denemeleri sonucu aylik 2000 dakika kotasinin tukendigini, buna ragmen sistemin bitmedigini ve her adimda ayri test/izin ile ugrastirilmak istemedigini belirtti. Asistan su sozleri verdi ve bu sozler BIRLESIK_KALICI_CALISMA_KURALLARI.md dosyasina da BAGLAYICI kural olarak yazildi:
+1. Kullanici acik izin vermeden GitHub Actions ASLA calistirilmayacak; "devam" onay degildir; [skip ci] kullan.
+2. K1-K5'in tum Python/guvenlik/entegrasyon testleri eksiksiz guncel main kaynagi ve bagimliliklari SHA ile dogrulandiktan sonra TEK TOPLU yerel offline regresyon olarak calistirilacak.
+3. Hatalar toplu listelenip topluca duzeltilecek; her dosya icin ayri Actions yok; gereksiz kucuk test/izin dongusu yok.
+4. CI ancak yerel testler gecip gercekten gerekiyorsa, kullanici acikca onaylarsa, job/sure/kota riski anlatilarak son asamada kullanilabilir.
+5. Canli IPTV stream probe, production list/EPG/logo yazmasi, eski repo degisikligi yok; bunlar ayri acik onay gerektirir.
+6. Kabul rakamlari uydurulmaz: 92 davranissal esdegerlik 0/92, 26 runtime guvenlik 0/26; K1-K5 bitmedi. Onceden gercekten calisan SHA-dogrulanmis K3-K4 9/9 offline test var; tam main 81 test dosyali regresyon CALISTIRILMADI. Son K2/K3/K5 orphan evidence ve metadata injection degisikliklerinin testleri HENUZ CALISTIRILMADI.
+Yeni sohbette ilk is kurallari ve bu devir notunu oku, Madsc55/Madsc55-Tv main hedefini teyit et, eksiksiz offline toplu regresyon engelini kaldir. Kullaniciya ayni sozleri yeniden verdirtme.

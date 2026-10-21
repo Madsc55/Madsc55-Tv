@@ -60,6 +60,16 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
 
 def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
     """Check independent sandbox copies without changing either directory."""
+    if not isinstance(names, list) or not names:
+        raise ValueError("Copy audit requires a nonempty file list")
+    roots = [Path(source), Path(destination)]
+    if any(root.is_symlink() or not root.is_dir() for root in roots):
+        raise ValueError("Copy audit requires real directories")
+    resolved = [root.resolve(strict=True) for root in roots]
+    if (resolved[0] == resolved[1] or
+            resolved[0].is_relative_to(resolved[1]) or
+            resolved[1].is_relative_to(resolved[0])):
+        raise ValueError("Copy audit requires independent nonnested directories")
     first = snapshot_manifest(source, names)
     second = snapshot_manifest(destination, names)
     return first["entries"] == second["entries"]

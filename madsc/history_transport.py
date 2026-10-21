@@ -5,6 +5,7 @@ from pathlib import Path
 
 from madsc.history_handoff import load_history, pack_history, unpack_history, verify_history_chain
 from madsc.history_pair_bridge import import_legacy_pair
+from madsc.write_path_audit import enforce_local_output_path
 
 
 def main():
@@ -33,6 +34,7 @@ def main():
     if a.output.is_symlink():
         raise ValueError("Symlinked output")
     a.output.parent.mkdir(parents=True, exist_ok=True)
+    enforce_local_output_path(a.output.absolute())
     a.output.write_text(json.dumps(result, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(result))
 

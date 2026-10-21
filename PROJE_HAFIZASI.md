@@ -1574,3 +1574,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Eski kaynak/snapshot/kanal listeleri degistirilmeden validator gercek onayli tarihsel ref'e sabitlendi. Kod commit 0568501a8a8c3512c10975a86616d2ad02892360. [skip ci] KULLANILMADI.
 - Otomatik main push tetiklemeli Actions #416 run 39621532611 bu commit icin queued goruldu. #415 run 39621498388 onceki 21d37bc commit icin queued goruldu. Bu an itibariyle yeni sonuc bilinmiyor; basari iddia edilmez.
 - Otomatik testleri durduran [skip ci] kod commitlerinde kullanilmayacak; docs-only not commitleri K5 paths filtresi geregi tetiklemiyor. CI kota/izin kosullari ayrica takip edilecek.
+
+## 21 Ekim 2026 — K2 metadata buyuk/kucuk harf duzeltmesi ve otomatik CI
+- Madsc55/Madsc55-Tv main madsc/legacy_category_order.py audit_historical_metadata() M3U attribute metinlerini casefold ile ariyor; salt okunur, kaynak playlist degistirmez. Commit e39bd868a5b6d36a95d2120af96e3de40d86488f.
+- tests/test_legacy_category_order.py buyuk harf TVG-LOGO senaryosu eklendi. Commit 3feb611f25ca276d422b29451ef78eba2329a49a.
+- [skip ci] kullanilmadi; otomatik push Actions #421 (39622721123) ve #422 (39622739172) queued goruldu. Onceki #416, #417, #418 success; #419/#420 queued. Yeni iki testin sonucu henuz bilinmiyor, basarili sayilmaz.
+- Eski Madsc55/madsc-tv deposu, canli kanallar, kategoriler, sira, logo, favoriler, YENILER, YEDEKLER degismedi. K1-K5 uretim kabul acik.

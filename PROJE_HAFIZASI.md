@@ -1648,3 +1648,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - madsc/workflow_consolidation.py --behavior-matrix CLI eklendi, commit d4b86dc. Timeout kontrolu kaynak limitini karsilayan daha uzun hedef limitini uygun sayacak sekilde duzeltildi, commit 289dfc9. Test regresyonu 3bdc210.
 - Onceki toplu GitHub Actions run 39645023901: 6/6 success. Yeni commitler [skip ci]; yeni kod test edilmedi. 0/22 kabul, 0/26 runtime, 0/92 davranis parity ayni.
 - Sonraki toplu is: artifact adi/if always farklarini kaynak-hedef bazinda gerekcelendir; mevcut is akisi davranisini bozmadan gerekli eksikleri entegre et, tek toplu regresyon yap. Canli playlist, EPG, favoriler, logo, arsiv, eski repo degismedi.
+
+## 21 Ekim 2026 - Toplu CI ve kalan gercek entegrasyon
+- GitHub Actions run 39648796704 basarili: K1,K2,K3,K4,K5,toplu kabul 6/6 success. Bu offline/fixture kanitidir.
+- Kaynak YAML incelemesi: K2 ana workflow legacy multisource, live pilot, real history publish ve verified history komutlarini zaten opt-in olarak iceriyor. K3 ana workflow live manifest, video probe ve 1000-aday batch komutlarini opt-in olarak iceriyor. K5 99-source audit ve not birlestirme komutlarini opt-in olarak iceriyor. Yardimci workflow artifact isimleri ana is akisi ile farkli; bu tek basina davranissal esdegersizlik kaniti degildir. Kaynaklarda farkli hata halinde yukleme semantigi mevcut; ayri kanit gerekli.
+- 2cfa6b6 commit: 10 yardimci workflow raporunda requires_manual_behavior_review alani eklendi. [skip ci], bu commit test edilmedi.
+- Gercek dis ag probe, 75 aday 6 saatlik olcum, IBO cihaz, harici backup restore ve 92 legacy parity kaniti halen eksik; kabul 0/22. Korunan canli dosyalar degismedi.

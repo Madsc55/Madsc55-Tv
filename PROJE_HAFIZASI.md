@@ -1635,3 +1635,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 ## 21 Ekim 2026 — K2/K5 kanit aktariminda overwrite engeli
 - madsc/history_transport.py ve madsc/artifact_transport.py cikti yazma islemleri write_text yerine exclusive open('x') kullaniyor; mevcut hedefin uzerine yazma reddedilir. Commitler 9493726c99eed41e96b28b20190a75d45e84121a ve bc46da1a866e37c1232321eefc49bb0ed29210dc.
 - Yeni Actions veya testler calistirilmadi ([skip ci]). Tum yazicilarin runtime korumasi tamamlanmadi. 0/22 kabul, 0/26 runtime, 0/92 legacy davranis ayni. Canli dosyalar degismedi.
+
+## 21 Ekim 2026 - Toplu yardimci workflow sozlesme denetimi
+- GitHub Actions 39645023901, main 881c791: 6/6 job completed success. Offline CI basarisi canli kabul degildir.
+- madsc/workflow_consolidation.py: 10 yardimci workflow icin salt-okunur operasyon sozlesmesi matrisi eklendi (komut, timeout, artifact adi, actions read, always upload); commit 9e228a0.
+- tests/test_workflow_consolidation.py: eksik timeout ve artifact farklarini tespit eden regresyon eklendi; commit bf0b213. Bu iki yeni commit icin [skip ci] kullanildi, test henuz calistirilmadi.
+- Resmi durum: 0/22 kabul, 5 devam eden, 17 bekleyen; 0/26 runtime, 0/92 legacy parity. Sonraki adim: matrisi tum workflow'larda calistirip farklari topluca gider; gercek davranis/harici kanit ayri kabul edilir.
+- Korunan canli dosyalar ve eski repo degismedi.

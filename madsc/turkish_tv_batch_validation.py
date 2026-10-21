@@ -25,7 +25,7 @@ def run():
                 sources_ok += 1
             else:
                 source_errors[name] = "source_scan_failed"
-            if not eligible_source(name):
+            if not eligible_source(name) or error is not None:
                 continue
             for title, url in entries:
                 total += 1
@@ -37,6 +37,7 @@ def run():
                 found.setdefault(key, (title, url))
                 source_by_digest.setdefault(key, set()).add(name)
     chosen = sorted(found.items(), key=lambda item: item[0])[:MAX_PROBES]
+    discovery_fingerprint = hashlib.sha256("\\n".join(sorted(found)).encode("ascii")).hexdigest()
     by_digest = dict(chosen)
     def test(item):
         digest, (title, url) = item
@@ -53,6 +54,7 @@ def run():
     reasons = {k: sum(x["reason"] == k for x in results) for k in sorted(set(x["reason"] for x in results))}
     report = {"stage": "BATCH_DISCOVER_VALIDATE",
               "selection_policy": "sha256_ascending_stable",
+              "discovery_fingerprint_sha256": discovery_fingerprint,
               "selected_candidate_sha256": [digest for digest, _ in chosen],
               "source_provenance_declared_only": True, "sources_checked": len(SOURCES),
               "sources_ok": sources_ok, "source_failures": source_errors,

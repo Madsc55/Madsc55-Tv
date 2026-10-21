@@ -11,6 +11,8 @@ EXPECTED = {"CALISANLAR.m3u": 1039, "YABANCI_KANALLAR.m3u": 740,
 
 def load_historical_categories(path: str | Path = SNAPSHOT) -> dict:
     data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("Historical snapshot must be an object")
     if data.get("schema") != "madsc55-legacy-order-v1":
         raise ValueError("Unexpected historical snapshot schema")
     entries = data.get("entries")
@@ -20,7 +22,17 @@ def load_historical_categories(path: str | Path = SNAPSHOT) -> dict:
         raise ValueError("Historical entries must contain objects")
     if any(row.get("file") not in EXPECTED for row in entries):
         raise ValueError("Unknown historical source file")
+    sources = data.get("source_files")
+    if not isinstance(sources, list) or len(sources) != len(EXPECTED):
+        raise ValueError("Historical source manifest missing or incomplete")
+    source_map = {item.get("file"): item for item in sources if isinstance(item, dict)}
+    if len(source_map) != len(EXPECTED) or set(source_map) != set(EXPECTED):
+        raise ValueError("Historical source manifest mismatch")
     for filename, count in EXPECTED.items():
+        source = source_map[filename]
+        if source.get("count") != count or not isinstance(source.get("sha"), str) or len(source["sha"]) != 40 or any(ch not in "0123456789abcdef" for ch in source["sha"]):
+            raise ValueError("Historical source manifest count or SHA invalid: " + filename)
+
         selected = [row for row in entries if row.get("file") == filename]
         if len(selected) != count or [row.get("order") for row in selected] != list(range(count)):
             raise ValueError("Historical channel order or count changed: " + filename)

@@ -23,6 +23,26 @@ class RestoreDrillTests(unittest.TestCase):
             self.assertFalse(result["production_writes"])
             self.assertEqual(before, {p: (root / p).read_bytes() for p in before})
 
+    def test_corrupted_backup_is_rejected_without_source_modification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            source.mkdir()
+            (source / "safe.txt").write_bytes(b"ORIGINAL")
+            from madsc import restore_drill
+            original_copy = restore_drill.shutil.copyfile
+
+            def corrupt_copy(src, dst, *args, **kwargs):
+                result = original_copy(src, dst, *args, **kwargs)
+                if Path(dst).parent.name == "backup":
+                    Path(dst).write_bytes(b"CORRUPTED")
+                return result
+
+            with patch.object(restore_drill.shutil, "copyfile", side_effect=corrupt_copy):
+                with self.assertRaises(ValueError):
+                    run_drill(source, ["safe.txt"])
+            self.assertEqual((source / "safe.txt").read_bytes(), b"ORIGINAL")
+
     def test_missing_and_traversal_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

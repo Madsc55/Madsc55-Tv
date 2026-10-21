@@ -1524,3 +1524,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - tests/test_legacy_category_order.py: bozuk snapshot satiri, bilinmeyen dosya ve bos aday regresyonlari eklendi; commit 8e451779ce0ca1e0da0225bae18782eb90906a42.
 - Iki commit [skip ci] ile yapildi. GitHub Actions veya tam offline regresyon CALISTIRILMADI; testlerin gectigi iddia edilmiyor. Korunan canli kategori/sira/logo/favoriler/YENILER/YEDEKLER ve eski depo degistirilmedi.
 - Siradaki: tam main kaynak checkout ve tek toplu offline K1-K5 test, sonucuna gore baglantili duzeltmeler. Canli ag, IBO cihaz ve harici restore kaniti hala eksik; eski 92 davranis aktarimi sonraya ertelendi.
+
+## 21 Ekim 2026 — K2 tarihsel metadata kalite denetimi (salt okunur)
+- GitHub main tree recursive envanteri truncated=false olarak okundu. Container github.com DNS erisimi basarisiz; eksiksiz checkout ve tum offline testler henuz yapilamadi.
+- config/legacy_category_order_snapshot.json icinde YENILER.m3u order 44 ad alaninda M3U attribute metni (tvg-logo/group-title) bulundugu kaynak incelemesinde goruldu. Tarihsel kayit degistirilmedi; otomatik onarim veya kategori tasimasi YOK.
+- madsc/legacy_category_order.py audit_historical_metadata() eklendi: tarihsel 1934 metadata kaydinda bos ad ve gomulu M3U attribute metnini raporlar, uretime yazmaz, kendiliginden onarmaz. Commit 73f5528e7bba60b89288b6ef5fa9ee1c3a325a6e.
+- tests/test_legacy_category_order.py salt okunur denetim regresyonu eklendi; commit 95a0851f5716b1a6d6058954d26c9368145eb055. Testler henüz CALISTIRILMADI, Actions tetiklenmedi; [skip ci].
+- Sonraki: tam main offline gate; ardindan K1 runtime koruma, K2 kaynak/aday, K3 IBO/EPG, K4 harici restore, K5 kanitli kabul. Eski 92 workflow gecisi sonraya ertelendi. Korunan YENILER/YEDEKLER/favoriler/logo/sira/playlist/EPG ve eski repo degistirilmedi.

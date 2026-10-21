@@ -313,3 +313,10 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - K2/K3 katalog denetiminde measurements/logos/ibo_results/probes icin bilinmeyen fingerprint reddi vardi, ancak three_stage haritasi kontrol disindaydi. madsc/channel_catalog.py bu besinci haritayi da ayni reddetme kuralina ekledi; commit 04393d734333aaa1a211d6182312866c65e0ad98. tests/test_five_system_channel_flow.py orphan three_stage regresyonu commit 7e35123973169f721643e09b2e06b3958bcdbffa.
 - Bu son degisiklik icin main toplu offline regresyonu CALISTIRILMADI. Yerel git clone github.com DNS hatasi devam ediyor; eski 9 test guncel tum main kapsaminda kabul sayilmaz. Bundan sonra hedef main tum kaynak/test dosyalarini SHA ile dogrulanmis yerel kopyaya aktarip python -m madsc.offline_gate calistirmak; K1-K5 toplu hata listesi cikarip beraber duzeltmek.
 - 92 legacy davranissal kabul 0/92, 26 runtime guvenlik kabul 0/26. Actions calistirma, eski repo ve production playlist yazma.
+
+
+## 21 Ekim 2026 — K3 bagimlilik SHA uyusmazligi giderildi ve 9/9 gercek test
+- /mnt/data/madsc_batch_verified/madsc/channel_test.py yerel kopyasi guncel main SHA fa2abdb2fe8b23805359b3312a65d30f468c4514 ile birebir eslendi (git hash-object dogrulandi).
+- Ayni yerel ortamda python -m unittest discover -s tests -v tekrar CALISTIRILDI: Ran 9 tests in 0.020s; OK. K3 5/5, K4 4/4. Ilgili diger 4 modul/test blob SHA'lari onceki devir notunda dogrulanmisti. Test kapsaminda sadece bu 9 test var; tum 81 test dosyasini iceren guncel main tam regresyonu degil.
+- Ayrica main katalogdaki orphan three_stage reddi kod/test commitleri 04393d734333aaa1a211d6182312866c65e0ad98 ve 7e35123973169f721643e09b2e06b3958bcdbffa. Bu yeni test 9 testin arasinda DEGILDIR.
+- Gercek 92 legacy davranis kabul 0/92 ve 26 runtime guvenlik kabul 0/26. Actions, production playlist, eski repo degistirilmedi. Sonraki hedef tam main SHA-verified offline regresyon; eksik kaynaklar GitHub connector ile alinabilir ama container git clone DNS engeli suruyor.

@@ -27,6 +27,26 @@ class WorkflowConsolidationTests(unittest.TestCase):
             self.assertFalse(result["legacy_behavioral_parity_verified"])
             self.assertFalse(result["github_actions_triggered"])
 
+    def test_all_ten_commands_detected_in_main_workflows(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            for name, (stage, command, _) in AUXILIARY.items():
+                main_name = MAIN[stage.split("+")[0]]
+                with (folder / main_name).open("a", encoding="utf-8") as out:
+                    out.write("      - run: " + command + "\\n")
+            result = consolidation_plan(Path(d))
+            self.assertEqual(result["commands_integrated_in_main"], 10)
+            self.assertTrue(result["all_ten_commands_integrated_in_main"])
+            self.assertTrue(all(item["command_present_in_main"] for item in result["auxiliary"]))
+            self.assertFalse(result["legacy_behavioral_parity_verified"])
+
+    def test_missing_main_command_not_reported_as_integrated(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.make_root(Path(d))
+            result = consolidation_plan(Path(d))
+            self.assertEqual(result["commands_integrated_in_main"], 0)
+            self.assertFalse(result["all_ten_commands_integrated_in_main"])
+
     def test_automatic_trigger_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))

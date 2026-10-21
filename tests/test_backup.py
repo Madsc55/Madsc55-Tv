@@ -273,3 +273,13 @@ class BackupTests(unittest.TestCase):
             self.assertEqual(result["files_checked"], 2)
             self.assertFalse(result["production_restore_verified"])
 
+
+    def test_manifest_rejects_reordered_entries_even_when_hashes_match(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "a.txt").write_text("A")
+            (root / "b.txt").write_text("B")
+            manifest = snapshot_manifest(root, ["b.txt", "a.txt"])
+            self.assertTrue(verify_manifest(root, manifest))
+            manifest["entries"].reverse()
+            self.assertFalse(verify_manifest(root, manifest))

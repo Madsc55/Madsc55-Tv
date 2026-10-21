@@ -2,6 +2,33 @@ import unittest
 from madsc.channel_test import evaluate_probe, evaluate_repeated_probes, evaluate_ffprobe_json
 
 class ChannelTests(unittest.TestCase):
+
+    def test_three_stage_six_hour_preliminary_window(self):
+        from madsc.channel_test import evaluate_three_stage_continuity
+        base = {"url_sha256": "a" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": t} for t in
+                   ("2026-10-21T10:00:00+00:00", "2026-10-21T13:00:00+00:00",
+                    "2026-10-21T16:00:00+00:00")]
+        result = evaluate_three_stage_continuity(samples)
+        self.assertTrue(result["three_stage_six_hour_preliminary"])
+        self.assertEqual(result["elapsed_hours"], 6)
+        self.assertFalse(result["observation_provenance_verified"])
+        self.assertFalse(result["stream_continuity_verified"])
+
+    def test_three_stage_rejects_short_or_out_of_order_evidence(self):
+        from madsc.channel_test import evaluate_three_stage_continuity
+        base = {"url_sha256": "a" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        times = ("2026-10-21T10:00:00Z", "2026-10-21T11:00:00Z",
+                 "2026-10-21T12:00:00Z")
+        samples = [{**base, "observed_at": t} for t in times]
+        self.assertFalse(evaluate_three_stage_continuity(samples)["three_stage_six_hour_preliminary"])
+        with self.assertRaises(ValueError):
+            evaluate_three_stage_continuity(list(reversed(samples)))
+        with self.assertRaises(ValueError):
+            evaluate_three_stage_continuity(samples[:2])
+
     def test_success_is_not_device_approval(self):
         result = evaluate_probe({"url_sha256":"a"*64,"http_status":200,"video":True,
                                  "audio":True,"duration_seconds":60})

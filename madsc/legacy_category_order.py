@@ -66,7 +66,7 @@ def audit_historical_metadata(path: str | Path = SNAPSHOT) -> dict:
         name = row.get("name")
         if not isinstance(name, str) or not name.strip():
             issues.append({"file": row["file"], "order": row["order"], "issue": "blank_name"})
-        elif "tvg-logo=" in name or "group-title=" in name:
+        elif "tvg-logo=" in name.casefold() or "group-title=" in name.casefold():
             issues.append({"file": row["file"], "order": row["order"], "issue": "embedded_m3u_attributes_in_name"})
     return {"records_checked": len(data["entries"]), "issues": issues,
             "production_writes": False, "auto_repairs": False}

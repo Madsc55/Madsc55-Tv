@@ -22,7 +22,7 @@ def load_historical_categories(path: str | Path = SNAPSHOT) -> dict:
         raise ValueError("Historical entries must contain objects")
     if any(row.get("file") not in EXPECTED for row in entries):
         raise ValueError("Unknown historical source file")
-    if data.get("source_repository") != "Madsc55/madsc-tv" or data.get("source_ref") != "main":
+    if data.get("source_repository") != "Madsc55/madsc-tv" or data.get("source_ref") != "madsc/bes-sistem-toplu-birlestirme":
         raise ValueError("Unexpected historical source repository or ref")
     sources = data.get("source_files")
     if not isinstance(sources, list) or len(sources) != len(EXPECTED):

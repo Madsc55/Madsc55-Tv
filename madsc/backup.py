@@ -167,3 +167,39 @@ def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) ->
     return {"sandbox_restore_matches": True, "files_restored": len(original["entries"]),
             "external_storage_proven": False, "production_restore_verified": False,
             "production_writes": False}
+
+
+def backup_to_new_sandbox(source: Path, destination: Path, names: list[str]) -> dict:
+    """Create a fresh, integrity-checked sandbox backup; never write to source."""
+    import shutil
+
+    source = Path(source)
+    destination = Path(destination)
+    if not isinstance(names, list) or not names:
+        raise ValueError("Sandbox backup requires a nonempty file list")
+    original = snapshot_manifest(source, names)
+    if destination.is_symlink() or destination.exists():
+        raise ValueError("Backup destination must not exist")
+    parent = destination.parent
+    if not parent.is_dir() or any(item.is_symlink() for item in (parent, *parent.parents)):
+        raise ValueError("Backup destination parent must be a real unaliased directory")
+    source_root = source.resolve(strict=True)
+    target_root = destination.resolve(strict=False)
+    if (target_root == source_root or target_root.is_relative_to(source_root)
+            or source_root.is_relative_to(target_root)):
+        raise ValueError("Backup destination must be independent from source")
+    destination.mkdir()
+    try:
+        for entry in original["entries"]:
+            relative = Path(entry["path"])
+            target = destination / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with (source / relative).open("rb") as reader, target.open("xb") as writer:
+                shutil.copyfileobj(reader, writer, length=1024 * 1024)
+        if not verify_manifest(source, original) or not verify_manifest(destination, original):
+            raise ValueError("Source changed or sandbox backup failed integrity verification")
+    except BaseException:
+        shutil.rmtree(destination)
+        raise
+    return {"sandbox_backup_matches": True, "files_backed_up": len(original["entries"]),
+            "external_storage_proven": False, "production_writes": False}

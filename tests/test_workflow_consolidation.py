@@ -11,8 +11,13 @@ class WorkflowConsolidationTests(unittest.TestCase):
         folder.mkdir(parents=True)
         for name in list(AUXILIARY) + list(MAIN.values()):
             command = AUXILIARY[name][1] if name in AUXILIARY else "echo fixture"
+            trigger = ("  push:\n    branches: [main]\n    paths:\n"
+                       "      - 'madsc/**'\n      - 'tests/**'\n"
+                       "      - '.github/workflows/madsc-05-bakim.yml'\n"
+                       if name == MAIN["K5"] else "")
             (folder / name).write_text(
-                "name: fixture\non:\n  workflow_dispatch:\npermissions:\n  contents: read\njobs:\n  isolated:\n    steps:\n      - run: " + command + "\n",
+                "name: fixture\non:\n" + trigger +
+                "  workflow_dispatch:\npermissions:\n  contents: read\njobs:\n  isolated:\n    steps:\n      - run: " + command + "\n",
                 encoding="utf-8",
             )
         return folder

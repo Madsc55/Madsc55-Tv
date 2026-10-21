@@ -72,8 +72,18 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
                          "tvg_logo": logo, "group_title": group, **decision,
                          "ibo_device_verified": False,
                          "ibo_result_supplied": decision["ibo_result"] != "UNKNOWN"})
-    if any(key not in seen or parent not in seen for key, parent in alternative_map.items()):
-        raise ValueError("Unlinked alternative fingerprint")
+    by_digest = {item["url_sha256"]: item for item in assessed}
+    for key, parent in alternative_map.items():
+        if key not in seen or parent not in seen:
+            raise ValueError("Unlinked alternative fingerprint")
+        child = by_digest[key]
+        primary = by_digest[parent]
+        child_identity = (("tvg_id", child["tvg_id"].casefold()) if child["tvg_id"]
+                          else ("name_group", child["name"].casefold(), child["group_title"].casefold()))
+        primary_identity = (("tvg_id", primary["tvg_id"].casefold()) if primary["tvg_id"]
+                            else ("name_group", primary["name"].casefold(), primary["group_title"].casefold()))
+        if child_identity != primary_identity or child["alternative_to_sha256"] != parent:
+            raise ValueError("Conflicting alternative channel identity")
     if any(key not in seen for key in continuity_samples):
         raise ValueError("Unlinked continuity evidence fingerprint")
     if any(key not in seen for key in probes) or any(key not in seen for key in ibo_results):

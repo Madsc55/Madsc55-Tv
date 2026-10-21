@@ -1631,3 +1631,7 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - K2 candidate artifact produce/consume raporlarinda enforce_local_output_path: 9cdc5fff2ea9a29c9ee56a53964b35c23c0c6697.
 - K2/K3/K5 history transport outputunda enforce_local_output_path: 739e123bd78941780cf009c1ddbf292b2ccf332a.
 - Bunlar izinli izole raporlar icin preflight, tum repository writer noktalarini korumaz. Testler bu turda kosulmadi; [skip ci] ile Actions baslatilmadi. Kabul 0/22, 26 runtime kural ve 92 davranissal parity acik. Korunan canli dosyalar degismedi.
+
+## 21 Ekim 2026 — K2/K5 kanit aktariminda overwrite engeli
+- madsc/history_transport.py ve madsc/artifact_transport.py cikti yazma islemleri write_text yerine exclusive open('x') kullaniyor; mevcut hedefin uzerine yazma reddedilir. Commitler 9493726c99eed41e96b28b20190a75d45e84121a ve bc46da1a866e37c1232321eefc49bb0ed29210dc.
+- Yeni Actions veya testler calistirilmadi ([skip ci]). Tum yazicilarin runtime korumasi tamamlanmadi. 0/22 kabul, 0/26 runtime, 0/92 legacy davranis ayni. Canli dosyalar degismedi.

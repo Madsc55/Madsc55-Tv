@@ -64,6 +64,15 @@ class WritePathAuditTests(unittest.TestCase):
         with self.assertRaises(ProtectedWriteRejected):
             enforce_write_paths(["reports/．．/safe.json"])
 
+    def test_nul_and_control_characters_are_rejected(self):
+        paths = ["reports/bad" + chr(0) + ".json",
+                 "reports/bad" + chr(10) + ".json",
+                 "reports/safe.json"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths[:2])
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths([paths[0]])
+
     def test_mixed_safe_and_unsafe_paths_do_not_clear_block(self):
         result = audit_write_paths(["reports/safe.json", "EPG/guide.xml"])
         self.assertTrue(result["blocked"])

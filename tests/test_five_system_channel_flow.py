@@ -16,17 +16,17 @@ class FiveSystemChannelFlowTests(unittest.TestCase):
             workflows = root / ".github" / "workflows"
             workflows.mkdir(parents=True)
             for name in MAIN.values():
-                (workflows / name).write_text("name: offline\\n", encoding="utf-8")
+                (workflows / name).write_text("name: offline\n", encoding="utf-8")
             (root / "docs").mkdir()
             (root / "madsc").mkdir()
             (root / "madsc" / "writer.py").write_text(
-                "from pathlib import Path\\n"
-                "Path('example').write_text('x')\\n"
-                "Path('read').open('r')\\n"
-                "Path('write').open('w')\\n"
-                "open('default-read')\\n"
-                "open('explicit-write', mode='a')\\n"
-                "open('dynamic', mode=mode)\\n",
+                "from pathlib import Path\n"
+                "Path('example').write_text('x')\n"
+                "Path('read').open('r')\n"
+                "Path('write').open('w')\n"
+                "open('default-read')\n"
+                "open('explicit-write', mode='a')\n"
+                "open('dynamic', mode=mode)\n",
                 encoding="utf-8")
             tasks = [{"id": key, "stage": key[:2], "status": "pending"}
                      for key in REQUIREMENTS]

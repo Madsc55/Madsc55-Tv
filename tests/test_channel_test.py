@@ -88,6 +88,13 @@ class ChannelTests(unittest.TestCase):
         for field in ("production_approved", "three_stage_six_hour_verified", "device_verified"):
             self.assertIn('report["' + field + '"] = False', source)
 
+
+    def test_bulk_report_tracks_candidate_counts_by_source(self):
+        from pathlib import Path
+        source = Path("madsc/turkish_tv_batch_validation.py").read_text(encoding="utf-8")
+        self.assertIn('source_candidate_counts[name] += 1', source)
+        self.assertIn('"eligible_source_candidate_counts": source_candidate_counts', source)
+
     def test_success_is_not_device_approval(self):
         result = evaluate_probe({"url_sha256":"a"*64,"http_status":200,"video":True,
                                  "audio":True,"duration_seconds":60})

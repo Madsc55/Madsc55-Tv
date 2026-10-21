@@ -1740,3 +1740,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - K4 bos manifest artik verify_manifest ile basarili kabul edilmez: bf7de7b6f79d2edf121cdace81bf1f795a7fc177. Regresyon testi: 5d2210b0288b768982067625e0d1fd54cca17c21.
 - Bu iki yeni commit icin Actions sonucu henuz kontrol edilmedi. Harici backup/restore gercek kabul, 75 kanal canli, 92 workflow davranissal esdegerlik ve 26 runtime kural halen bekliyor. Kabul sayilari degismedi.
 - Eski depo, PR #71 ve korunan listeler degistirilmedi.
+
+
+## 21 Ekim 2026 - K4 bagimsiz kopya denetimi
+- #39677049091 ve #39677061945 GitHub Actions completed/success; bos manifest reddi CI'da gecti.
+- compare_copy artik ayni, ic ice veya sembolik bagli kok dizinleri bagimsiz kopya gibi kabul etmez; bos dosya kapsaminda denetim basarili sayilmaz. Kod 8eeb8b3df8f0a12e51633455dbf15299aa375cd8, davranissal test 3644a54630af189e5bf5ea91154ab6baa42f0d69. Yeni CI sonucu bekleniyor.
+- K4 gercek dis depolama/restore kabul edilmedi; 75 canli kanal, 92 parity, 26 runtime security kabul sayilari degismedi. Korunan yollar ve eski repo degistirilmedi.

@@ -3,10 +3,12 @@ from __future__ import annotations
 
 from madsc.discovery import classify_candidates
 from madsc.channel_presentation import present_channel
+from madsc.channel_test import evaluate_probe
 
 
 def prepare_channel_catalog(rows: list[dict], measurements: dict | None = None,
-                            logos: dict | None = None, ibo_results: dict | None = None) -> dict:
+                            logos: dict | None = None, ibo_results: dict | None = None,
+                            probes: dict | None = None) -> dict:
     """Inputs are externally supplied evidence keyed by stream SHA256.
 
     Does not fetch logos, probe streams, certify devices, or write playlists.
@@ -14,7 +16,8 @@ def prepare_channel_catalog(rows: list[dict], measurements: dict | None = None,
     measurements = {} if measurements is None else measurements
     logos = {} if logos is None else logos
     ibo_results = {} if ibo_results is None else ibo_results
-    if any(not isinstance(x, dict) for x in (measurements, logos, ibo_results)):
+    probes = {} if probes is None else probes
+    if any(not isinstance(x, dict) for x in (measurements, logos, ibo_results, probes)):
         raise ValueError("Evidence maps must be dictionaries")
     discovery = classify_candidates(rows)
     digests = {c["url_sha256"] for c in discovery["candidates"]}
@@ -25,13 +28,25 @@ def prepare_channel_catalog(rows: list[dict], measurements: dict | None = None,
     for candidate in discovery["candidates"]:
         digest = candidate["url_sha256"]
         source = rows[candidate["source_index"]]
+        probe = probes.get(digest)
+        if probe is not None:
+            if not isinstance(probe, dict) or probe.get("url_sha256") != digest:
+                raise ValueError("Probe fingerprint mismatch")
+            status = evaluate_probe(probe)["technical_status"]
+        else:
+            status = "UNTESTED"
+        supplied_measurement = measurements.get(digest, {})
+        if not isinstance(supplied_measurement, dict):
+            raise ValueError("Invalid measurement")
+        # Technical classification must come from validated probe evidence, not a caller claim.
+        measurement = {**supplied_measurement, "technical_status": status}
         presentation = present_channel(
             {**candidate, "foreign": source.get("foreign") is True},
-            measurement=measurements.get(digest),
+            measurement=measurement,
             logo_evidence=logos.get(digest),
             ibo_result=ibo_results.get(digest, "UNKNOWN"))
         entries.append({"url_sha256": digest, "source_index": candidate["source_index"],
-                        **presentation})
+                        "technical_status": status, **presentation})
     return {"channels": entries, "duplicates": discovery["duplicates"],
             "rejected": discovery["rejected"], "category_order": list(dict.fromkeys(
                 entry["group_title"] for entry in entries)),

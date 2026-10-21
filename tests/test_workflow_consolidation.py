@@ -106,6 +106,27 @@ class WorkflowConsolidationTests(unittest.TestCase):
 
 
 
+
+    def test_unrelated_report_lines_do_not_count_as_uploaded_paths(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            source = folder / "madsc-k2-live-pilot.yml"
+            source.write_text(source.read_text(encoding="utf-8") +
+                              "      - uses: actions/upload-artifact@v4\\n"
+                              "        with:\\n"
+                              "          path: reports/actual.json\\n"
+                              "      - name: unrelated step\\n"
+                              "        run: |\\n"
+                              "          reports/not-uploaded.json\\n", encoding="utf-8")
+            target = folder / MAIN["K2"]
+            target.write_text(target.read_text(encoding="utf-8") +
+                              "      - uses: actions/upload-artifact@v4\\n"
+                              "        with:\\n"
+                              "          path: reports/actual.json\\n", encoding="utf-8")
+            row = next(x for x in auxiliary_behavior_matrix(Path(d))["rows"]
+                       if x["source"] == source.name)
+            self.assertEqual(row["missing_artifact_paths"], [])
+
     def test_declared_paths_never_count_as_produced_artifacts(self):
         with tempfile.TemporaryDirectory() as d:
             self.make_root(Path(d))

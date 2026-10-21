@@ -141,6 +141,10 @@ def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) ->
     parent = destination.parent
     if parent.is_symlink() or not parent.is_dir():
         raise ValueError("Restore parent must be a real directory")
+    # Never traverse an aliased ancestor (e.g. a symlinked sandbox parent).
+    for ancestor in (parent, *parent.parents):
+        if ancestor.is_symlink():
+            raise ValueError("Restore destination ancestors must not be symlinks")
     source_root = backup.resolve(strict=True)
     target_root = destination.resolve(strict=False)
     if target_root == source_root or target_root.is_relative_to(source_root):

@@ -1665,3 +1665,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - madsc/workflow_consolidation.py: 10 yardimci workflow icin komut ana YAML run adiminda bulunmazsa command_missing ve missing_commands listesi uretir (2f5ceb7). Test fixture eksik komutu ve blocker listesini denetler (9e66945). Bu iki commit [skip ci], henuz test edilmedi.
 - 22 kabul gorevi 0 tamam, 5 devam, 17 bekleme; 92 legacy parity 0 dogrulama. Bu sayaclar fixture yesil diye artmaz. Kalan: gercek dis kaynak, 75 aday icin 3 ayri >=6 saat probe, IBO cihaz, backup/restore ve kalan davranis farklari.
 - Canli M3U, XMLTV, logolar, favoriler, yedekler, arsiv, eski repo degismedi. Sonraki toplu paket: on ana besli YAML ile on yardimci workflow farklarini davranissal kanitla kapat, fixture regresyon ve kabul kanitlarini bagla.
+
+## 21 Ekim 2026 - On yardimci workflow icin zorunlu komut kapisi
+- madsc.workflow_consolidation --contract-gate eksik executable ana komut varsa exit 1; yoksa exit 0, ama behavioral_parity_verified=false (7943d2b).
+- Fixture tabanli iki regresyon eklendi: eksik 10 komut reddi, 10 komut varliginda parity iddiasi olmadan gecis (eb57f2e).
+- K5 ana toplu YAML artik reports/workflow-contract-gate.json olusturur ve artifact icinde saklar; eksik komut olursa K5 fail (9349421). GitHub Actions #39652296086 basladi, sonuc henuz bu not aninda bilinmiyor.
+- Son kesin yesil #39650954707 6/6. 22 kabul gorevi 0 tamam; 92 eski workflow davranissal esdegerlik 0. Canli veri ve korunan yollar degismedi.

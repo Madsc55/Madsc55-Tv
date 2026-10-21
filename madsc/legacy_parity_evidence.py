@@ -40,9 +40,22 @@ def ledger(inventory, evidence=None):
         # Evidence metadata alone cannot certify behavior. An independent
         # verifier must supply a future approval token; this ledger is blocked.
         accepted = False
+        invalid = [k for k in REQUIRED if k in proofs and not (
+            isinstance(proofs[k], dict)
+            and isinstance(proofs[k].get("sha256"), str)
+            and len(proofs[k]["sha256"]) == 64
+            and all(ch in "0123456789abcdef" for ch in proofs[k]["sha256"])
+            and type(proofs[k].get("run_id")) is int
+            and proofs[k]["run_id"] > 0
+        )]
         output.append({"path": path, "stages": row.get("candidate_k_stages", []),
                        "accepted": accepted, "evidence_metadata_complete": valid_proofs,
                        "missing": [k for k in REQUIRED if k not in proofs],
+                       "invalid": invalid,
                        "independent_verification": "not_implemented"})
-    return {"total": len(rows), "accepted": sum(r["accepted"] for r in output),
+    return {"total": len(rows),
+            "metadata_complete": sum(r["evidence_metadata_complete"] for r in output),
+            "missing_evidence_fields": sum(len(r["missing"]) for r in output),
+            "invalid_evidence_fields": sum(len(r["invalid"]) for r in output),
+            "accepted": sum(r["accepted"] for r in output),
             "blocked": sum(not r["accepted"] for r in output), "rows": output}

@@ -1,0 +1,156 @@
+[
+  {
+    "id": "K1-01",
+    "stage": "K1",
+    "title": "26 güvenlik kuralının gerçek çalışma zamanı kabulü",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K1-02",
+    "stage": "K1",
+    "title": "Korunan üretim dosyalarının değişmezlik kanıtı",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K1-03",
+    "stage": "K1",
+    "title": "Tüm yazma noktalarının merkezi güvenlik kapısına bağlanması",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K1-04",
+    "stage": "K1",
+    "title": "18 görev denetiminin eksik 10 görevi",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K2-05",
+    "stage": "K2",
+    "title": "Gerçek kaynak mutabakatı ve lisans doğrulaması",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K2-06",
+    "stage": "K2",
+    "title": "Günlük keşif üretim döngüsü ve tetik eşdeğerliği",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K2-07",
+    "stage": "K2",
+    "title": "Gerçek geçmiş artifact köken ve SHA256 doğrulaması",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K2-08",
+    "stage": "K2",
+    "title": "Aday alternatif ve tekrar ayrımı",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K3-09",
+    "stage": "K3",
+    "title": "75 adayın saatlere yayılan yeniden testleri",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K3-10",
+    "stage": "K3",
+    "title": "Üç aşama ve altı saat süreklilik değerlendirmesi",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K3-11",
+    "stage": "K3",
+    "title": "Gerçek ffprobe/ffmpeg yayın kanıtı",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K3-12",
+    "stage": "K3",
+    "title": "IBO cihazda kullanıcı kabulü",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K3-13",
+    "stage": "K3",
+    "title": "EPG XMLTV tvg-id ve Pages yayın zinciri",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K3-14",
+    "stage": "K3",
+    "title": "Logo görsel ve kanal kimliği doğrulaması",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K4-15",
+    "stage": "K4",
+    "title": "Bağımsız harici yedek oluşturma kanıtı",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K4-16",
+    "stage": "K4",
+    "title": "Harici yedekten gerçek izole geri yükleme",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K4-17",
+    "stage": "K4",
+    "title": "Korunan arşivler ve VOD eşdeğerliği",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K4-18",
+    "stage": "K4",
+    "title": "Ayın 1 ve 15'i yedek davranış eşdeğerliği",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K5-19",
+    "stage": "K5",
+    "title": "92 eski otomasyonun gerçek davranışsal kabulü",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K5-20",
+    "stage": "K5",
+    "title": "K1-K5 uçtan uca gerçek veri kanıt zinciri",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K5-21",
+    "stage": "K5",
+    "title": "Hata, timeout, retry ve artifact eşdeğerliği",
+    "status": "pending",
+    "evidence": []
+  },
+  {
+    "id": "K5-22",
+    "stage": "K5",
+    "title": "Tek Türkçe kapanış ve üretim kabul raporu",
+    "status": "pending",
+    "evidence": []
+  }
+]

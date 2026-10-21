@@ -290,7 +290,7 @@ class WorkflowConsolidationTests(unittest.TestCase):
             folder = self.make_root(Path(d))
             path = folder / MAIN["K5"]
             content = path.read_text(encoding="utf-8")
-            content = content.replace("    branches: [main]", "    branches: ['**']")
+            content = content.replace("  workflow_dispatch:", "  push:\n    branches: ['**']\n  workflow_dispatch:")
             path.write_text(content, encoding="utf-8")
             with self.assertRaises(ValueError):
                 consolidation_plan(Path(d))

@@ -65,7 +65,7 @@ class MigratedOptInContractTests(unittest.TestCase):
     def test_automatic_batch_has_read_only_permissions_and_no_sensitive_defaults(self):
         data = (ROOT / "madsc-05-bakim.yml").read_text(encoding="utf-8")
         header = data.split("\njobs:", 1)[0]
-        self.assertIn("  push:\n    branches: [main]\n", header)
+        self.assertNotIn("  push:", header)
         self.assertIn("permissions:\n  contents: read\n  actions: read\n", header)
         self.assertNotIn("contents: write", data)
         self.assertNotIn("actions: write", data)

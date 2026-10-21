@@ -6,8 +6,8 @@ from urllib.parse import urlsplit, urlunsplit
 def normalize_url(value: str) -> str:
     if not isinstance(value, str):
         raise ValueError("Candidate URL must be text")
-    if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
-        raise ValueError("Control characters are forbidden in candidate URLs")
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in value) or "\\" in value:
+        raise ValueError("Control characters or backslash escapes are forbidden in candidate URLs")
     value = value.strip()
     parts = urlsplit(value)
     if parts.scheme.lower() not in ("http", "https") or not parts.netloc or parts.username or parts.password:
@@ -33,6 +33,9 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
         try:
             url = normalize_url(item["url"])
             name = item["name"]
+            # Escaped newlines are unsafe in playlist metadata too.
+            if "\\" in name:
+                raise ValueError("Backslash escapes in channel names are forbidden")
             if not isinstance(name, str) or any(ord(ch) < 32 or ord(ch) == 127 for ch in name):
                 raise ValueError("Candidate name must be safe text")
             name = name.strip()
@@ -46,7 +49,7 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
             group = item.get("group_title", "")
             if not isinstance(logo, str) or not isinstance(group, str):
                 raise ValueError("Invalid logo or group metadata")
-            if any(ord(ch) < 32 or ord(ch) == 127 for value in (tvg_id, logo, group)
+            if any(ord(ch) < 32 or ord(ch) == 127 or ch == "\\" for value in (tvg_id, logo, group)
                    for ch in value):
                 raise ValueError("Control characters in channel metadata")
             entry = {"name": name, "tvg_id": tvg_id.strip(), "tvg_logo": logo.strip(),

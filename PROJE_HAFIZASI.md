@@ -1803,3 +1803,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - compare_copy ve verify_independent_restore artik once snapshot_manifest ile yol guvenligi ve kaynak manifestini dogrulayip sonra inode metadata bakiyor; onceki sirada gecersiz path icin erken stat() cagrisi vardi. Kod e61fc028e737f3804a79c5596f45f0fd4beea542.
 - Traversal isimlerini reddeden regresyonlar 7b2214ee4be2aa2523fc18f56b4d8b250b0b8756; testte tum Path.stat'i mock etmenin klasor kontrollerini bozabilecegi fark edilip 97c86cc9dd42e21a8e9d50f809c43d98e6f0b403 ile duzeltildi. Son CI sonucunu kontrol et.
 - Production backup/restore ve dis storage kabulu hala acik; 75 canli, 92 parity, 26 runtime security kabul sayilari degismedi. Korunan dosyalara dokunulmadi.
+
+
+## 21 Ekim 2026 - K5 legacy parity evidence ledger gelistirildi
+- K4 #39680730866 ve #39680763119 completed/success.
+- K5 madsc/legacy_parity_evidence.py 99 kaynak workflow icin eksik/bozuk kanit alanlarini ayri raporluyor, metadata_complete ve alan toplamlarini veriyor; bagimsiz dogrulama olmadigindan kabul halen 0. Kod 80cd133c68f4879c6146a0c4b0377e9ae07564fb.
+- tests/test_legacy_parity_evidence.py eksik SHA, boolean run_id, tam gorunen sahte metadata ve 99 satir toplamlari icin testler eklendi: e7c9d8c46ab903c3200fd6b4f0b5f505a159114a. Son Actions sonucunu kontrol et.
+- 92 eski workflow davranissal parity gercek kabul 0/92; 99 kaynak envanter ayri kavramdir. Production korunan listeler degismedi.

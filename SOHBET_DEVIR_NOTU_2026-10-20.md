@@ -403,3 +403,9 @@ Kullanici 17 pending gorevin topluca en fazla UC calisma turunda bitirilmesini i
 - madsc/workflow_consolidation.py yorum satirini komut olarak saymiyor, cok satirli run shell komutlarini sayiyor; commit 95809843cadc2afea23c5eaa65038cbf47dc332c.
 - GitHub'dan bes ana YAML tekrar okunarak 10 yardimci komutun TAMAMININ yorum olmayan satirlarda bulundugu bagimsiz kaynak taramasi ile teyit edildi (10/10 command presence). Bu offline regression veya behavioral parity degildir.
 - GitHub Actions ve canli probe calistirilmadi, protected uretim dosyalarina dokunulmadi. 17 pending kabul gorevi acik; gercek test ve kanitlar sonraki is.
+
+
+## 21 Ekim 2026 — Migrasyon opt-in regresyon sozlesmesi
+- tests/test_migrated_opt_in_contract.py eklendi: K2/K3/K5'teki sekiz tasinmis riskli komutun dogru boolean input ile if: inputs.X == true korumasinda oldugunu ve input default false oldugunu; bes ana YAML'in manual-only kaldigini denetleyen statik unittest. Commit e25a42f05d859b5354e3f1bf51e5eb07c808de58.
+- Bu test henüz tam depoda CALISTIRILMADI. Yerel container'dan github.com/raw.githubusercontent.com DNS erisimi basarisiz, dolayisiyla tam checkout halen elde degil. GitHub Actions kota tuketilmedi.
+- 17 pending gorev kapanmadi; 92 davranissal parity ve 26 guvenlik kuralinin runtime kabul kaniti hala eksik.

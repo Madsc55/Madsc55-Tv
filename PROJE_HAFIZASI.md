@@ -1562,3 +1562,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - docs/K1_K5_KANITLI_GOREV_DEFTERI.json okundu: 22 gorev, 0 completed, 5 in_progress, 17 pending. 92 davranis ve 26 runtime guvenlik kabul kaniti yok. Kaynak okumak bu gorevleri tamamlamaz.
 - Bu tur yalnizca statik kaynak incelemesi yapildi, offline test ve Actions tetiklenmedi, eski depo ve korunan kanallar degismedi.
 - Siradaki toplu is: 10 yardimci YAML'in tetik/izin/komut/artifact/timeout farklarini ana 5 ile satir bazinda karsilastirip tek entegrasyon paketi hazirla; ardindan tum yeni kodu offline test et, gercek cihaz/offsite kanitlarini acik tut.
+
+## 21 Ekim 2026 — K2 bagimsiz yerel offline test sonucu
+- Container git ls-remote ve Python requests github.com/api.github.com DNS cozumleyemedi. GitHub connector ile main madsc/legacy_category_order.py kaynak metni okundu ve ayni kod yerel bagimsiz unittest harness'inde calistirildi.
+- 4/4 bagimsiz offline test PASS (0.024 sn): aday izolasyonu/sirasi, bos isim fail-closed, gecersiz aday listesi, 1934 sentetik kayitla manifest kaynak/ref/SHA bicimi/tekrar korumasi ve metadata salt okunur raporlama.
+- Bunlar sentetik fixture ile yerel alt-kume testidir; tam GitHub unittest paketi, gercek 1934 snapshot uzerinde tam kabul, K1-K5 toplu regresyon, 75 canli aday, IBO/EPG cihaz, harici restore, 26 runtime kural veya 92 davranis esdegerligi kaniti DEGILDIR.
+- Test icin Github Actions tetiklenmedi, uretim/korunan listeler/eskidepo degistirilmedi. Sonraki: tam repo offline test erisimi veya GitHub Actions icin calistirma yetkisi ve sonra toplu kabul.

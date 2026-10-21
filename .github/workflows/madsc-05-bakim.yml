@@ -49,6 +49,19 @@ jobs:
           cat reports/regression.log
           echo "exit_code=$sonuc" >> "$GITHUB_OUTPUT"
           exit "$sonuc"
+      - name: K1-K5 gercek kurulum, eksik kanit ve yazma noktasi envanteri
+        shell: bash
+        run: |
+          python -m madsc.five_system_installation > reports/k1-k5-installation-audit.json
+          python -m json.tool reports/k1-k5-installation-audit.json >/dev/null
+      - name: Toplu kurulum envanterini sakla
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k1-k5-installation-audit
+          path: reports/k1-k5-installation-audit.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Offline besli sistem ve 22 gorev kanit kapisi
         id: offline_gate
         shell: bash

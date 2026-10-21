@@ -60,7 +60,22 @@ def prepare_channel_catalog(rows: list[dict], measurements: dict | None = None,
                                                          if staged_result is not None else False),
                         "three_stage_evidence_supplied": staged_result is not None,
                         **presentation})
-    return {"channels": entries, "duplicates": discovery["duplicates"],
+    buckets = {}
+    for entry in entries:
+        bucket = entry["bucket"]
+        buckets[bucket] = buckets.get(bucket, 0) + 1
+    return {"summary": {
+                "candidate_count": len(entries),
+                "duplicate_count": len(discovery["duplicates"]),
+                "rejected_count": len(discovery["rejected"]),
+                "buckets": buckets,
+                "three_stage_evidence_count": sum(
+                    entry["three_stage_evidence_supplied"] for entry in entries),
+                "technical_probe_count": sum(
+                    entry["technical_status"] != "UNTESTED" for entry in entries),
+                "device_acceptance_proven": False,
+            },
+            "channels": entries, "duplicates": discovery["duplicates"],
             "rejected": discovery["rejected"], "category_order": list(dict.fromkeys(
                 entry["group_title"] for entry in entries)),
             "device_verified_by_this_function": False,

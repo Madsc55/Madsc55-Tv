@@ -405,6 +405,8 @@ jobs:
         run: |
           mkdir -p reports
           python -m madsc.workflow_consolidation > reports/workflow-consolidation.json
+          python -m madsc.workflow_consolidation --behavior-matrix > reports/workflow-contract-matrix.json
+          python -m json.tool reports/workflow-contract-matrix.json >/dev/null
           python -m madsc.k1_k5_acceptance_requirements > reports/k1-k5-evidence-requirements.json
       - name: K5 envanter ve eksik kanit raporlarini sakla
         uses: actions/upload-artifact@v4
@@ -412,6 +414,7 @@ jobs:
           name: madsc-k5-consolidation-and-task-evidence
           path: |
             reports/workflow-consolidation.json
+            reports/workflow-contract-matrix.json
             reports/k1-k5-evidence-requirements.json
           if-no-files-found: error
           retention-days: 14

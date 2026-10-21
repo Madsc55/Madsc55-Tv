@@ -26,7 +26,9 @@ def inspect_installation(root: Path) -> dict:
     ledger = root / "docs" / "K1_K5_KANITLI_GOREV_DEFTERI.json"
     if not workflows.is_dir() or not ledger.is_file() or ledger.is_symlink():
         raise ValueError("Missing workflow directory or task ledger")
-    tasks = json.loads(ledger.read_text(encoding="utf-8"))
+    ledger_bytes = ledger.read_bytes()
+    ledger_sha256 = hashlib.sha256(ledger_bytes).hexdigest()
+    tasks = json.loads(ledger_bytes)
     if not isinstance(tasks, list) or not tasks:
         raise ValueError("Invalid task ledger")
     ids = set()
@@ -94,6 +96,8 @@ def inspect_installation(root: Path) -> dict:
         "additional_workflows_requiring_consolidation_review": additional,
         "total_workflow_files": len(files),
         "task_counts": counts,
+        "ledger_sha256": ledger_sha256,
+        "source_modules_inspected": len(source_fingerprints),
         "evidence_requirements_missing_tasks": evidence["requirements_missing_tasks"],
         "external_evidence_required_tasks": evidence["requires_external_evidence_tasks"],
         "writer_callsite_candidates": writer_calls,

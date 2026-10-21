@@ -29,6 +29,9 @@ class ProgressScorecardTests(unittest.TestCase):
         result = scorecard(tasks=tasks)
         self.assertEqual(result["calculated_overall_percent"], 33.33)
         self.assertEqual(result["task_progress"]["remaining"], 2)
+        self.assertEqual(result["task_progress"]["in_progress"], 1)
+        self.assertEqual(result["task_progress"]["pending"], 1)
+        self.assertEqual(result["task_progress"]["by_stage"]["K2"]["in_progress"], 1)
         self.assertEqual(result["task_progress"]["by_stage"]["K1"]["completed"], 1)
         self.assertFalse(result["production_ready"])
 

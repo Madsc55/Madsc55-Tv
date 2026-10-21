@@ -321,3 +321,22 @@ class BackupTests(unittest.TestCase):
                 compare_copy(source, destination, [])
             with self.assertRaises(ValueError):
                 compare_copy(alias, destination, ["sample.txt"])
+
+    def test_three_tree_restore_rejects_hard_linked_backup_or_restore(self):
+        import os
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "sample.txt").write_text("fixture")
+            (roots[1] / "sample.txt").unlink()
+            os.link(roots[0] / "sample.txt", roots[1] / "sample.txt")
+            with self.assertRaises(ValueError):
+                verify_independent_restore(*roots, ["sample.txt"])
+            (roots[1] / "sample.txt").unlink()
+            (roots[1] / "sample.txt").write_text("fixture")
+            (roots[2] / "sample.txt").unlink()
+            os.link(roots[1] / "sample.txt", roots[2] / "sample.txt")
+            with self.assertRaises(ValueError):
+                verify_independent_restore(*roots, ["sample.txt"])

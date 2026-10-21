@@ -1705,3 +1705,8 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - `24c0a309874a1de8ef9e37971faef2a3f3fa581d` parser hem `uses:` hem `- uses:` upload adimini tanir.
 - #39663724064 completed success, 6/6 (Guvenlik, Kesif, Kanal, Arsiv/Yedek, Bakim, toplu kanit).
 - Kabul durumu degismedi: statik/izole CI != canli kaynak ve 92 workflow davranissal parity; 0/92 dogrulanmis. K2/K3 manual opt-in gercek ag calistirmalari bekliyor.
+
+## 21 Ekim 2026 - K2 alternatif adresler K3 handoff entegrasyonu
+- #39664555035 K1-K5 toplu Actions 6/6 success. K2 alternatif URL / ayni kanal kimligi ayrimi kod `ae5a546`, test `6635c27`.
+- K3 handoff `ec921f7`: K2 alternatives iliskisini fingerprint ile bagli olarak tasir; bagimsiz veya bilinmeyen fingerprint fail-closed. Test `5ad78c1`: aktarim ve orphan reddi.
+- Yeni Actions #39666693465 queued (son kontrol); basarili denemez. K2-08 gercek kaynak kabulunu tamamlamadi. 0/92 davranissal parity, 0/26 runtime guvenlik kabulu ve korunan dosyalara yazma yok.

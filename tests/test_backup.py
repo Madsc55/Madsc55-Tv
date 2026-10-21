@@ -357,3 +357,44 @@ class BackupTests(unittest.TestCase):
             (destination / "sample.txt").unlink()
             (destination / "sample.txt").write_text("fixture")
             self.assertTrue(compare_copy(source, destination, ["sample.txt"]))
+
+    def test_sandbox_restore_copies_bytes_and_preserves_backup(self):
+        from madsc.backup import restore_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            backup = base / "backup"
+            backup.mkdir()
+            (backup / "nested").mkdir()
+            (backup / "nested" / "channel.txt").write_bytes(b"channel-data")
+            destination = base / "restored"
+            report = restore_to_new_sandbox(backup, destination, ["nested/channel.txt"])
+            self.assertTrue(report["sandbox_restore_matches"])
+            self.assertEqual(report["files_restored"], 1)
+            self.assertEqual((destination / "nested" / "channel.txt").read_bytes(), b"channel-data")
+            self.assertFalse(report["production_writes"])
+            self.assertFalse(report["external_storage_proven"])
+            self.assertFalse(report["production_restore_verified"])
+            self.assertEqual((backup / "nested" / "channel.txt").read_bytes(), b"channel-data")
+
+    def test_sandbox_restore_never_overwrites_existing_destination(self):
+        from madsc.backup import restore_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            backup, destination = base / "backup", base / "existing"
+            backup.mkdir()
+            destination.mkdir()
+            (backup / "file.txt").write_text("backup")
+            (destination / "file.txt").write_text("untouched")
+            with self.assertRaises(ValueError):
+                restore_to_new_sandbox(backup, destination, ["file.txt"])
+            self.assertEqual((destination / "file.txt").read_text(), "untouched")
+
+    def test_sandbox_restore_rejects_nested_destination(self):
+        from madsc.backup import restore_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            backup = Path(d) / "backup"
+            backup.mkdir()
+            (backup / "file.txt").write_text("fixture")
+            with self.assertRaises(ValueError):
+                restore_to_new_sandbox(backup, backup / "nested", ["file.txt"])
+            self.assertFalse((backup / "nested").exists())

@@ -36,6 +36,9 @@ class FiveSystemChannelFlowTests(unittest.TestCase):
             self.assertEqual(report["tasks_total"], 22)
             self.assertEqual(report["evidence_requirements_missing_tasks"], 22)
             self.assertEqual(report["writer_callsite_candidates_count"], 4)
+            self.assertEqual(report["writer_source_sha256"]["madsc/writer.py"],
+                             sha256((root / "madsc" / "writer.py").read_bytes()).hexdigest())
+            self.assertEqual(len(report["writer_inventory_limitations"]), 2)
             self.assertEqual(report["writer_callsite_candidates"][0]["operation"], "write_text")
             self.assertEqual(sum(row["classification"] == "dynamic_mode_review" for row in report["writer_callsite_candidates"]), 1)
             self.assertEqual(report["writer_dynamic_mode_review_count"], 1)

@@ -13,6 +13,8 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
         raise ValueError("Backup paths must be unique nonempty strings")
     entries = []
     for name in sorted(paths):
+        if any(ord(c) < 32 or ord(c) == 127 for c in name) or ":" in name or name.startswith("~"):
+            raise ValueError("Unsafe backup source path")
         requested = Path(name)
         if (requested.is_absolute() or "\\" in name or
                 any(part in ("", ".", "..") for part in name.split("/"))):
@@ -39,7 +41,10 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
            or any(c not in "0123456789abcdef" for c in entry["sha256"])
            for entry in manifest["entries"]):
         raise ValueError("Invalid backup manifest entry")
-    current = snapshot_manifest(root, [entry["path"] for entry in manifest["entries"]])
+    paths = [entry["path"] for entry in manifest["entries"]]
+    if len(set(paths)) != len(paths):
+        raise ValueError("Duplicate backup manifest paths")
+    current = snapshot_manifest(root, paths)
     return current["entries"] == manifest["entries"]
 
 

@@ -1752,3 +1752,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Actions #39677814549 in_progress, #39677831373 pending (son gorulen); bunlara basari atfedilmedi.
 - K4 uc bagimsiz agac restore audit: kaynak, yedek veya geri yuklenen dosyalardan ikisi ayni inode/dev (hard link) paylasiyorsa reddediyor. Kod 6b3ac112cdaf0010115cdebdbe6694ab9aec5dce, regresyon testi 22b8f8cb9e7d95875d43d780894d5873fd4edcb4. Yeni CI bekleniyor.
 - Harici depolama ve production restore kaniti yok. 75 canli yayin, 92 parity, 26 runtime kural kabulleri degismedi. Eski repo ve korunan listeler degistirilmedi.
+
+
+## 21 Ekim 2026 - K4 iki agac hardlink kontrolu
+- compare_copy/verify_sandbox_restore iki farkli klasorde ayni inode'a bagli dosyayi artik bagimsiz kopya saymiyor. Kod 754f6eadf31bad17e498697b3365cc4b2d849cae, davranissal test 7909c19fa0514b73336e46538fa8f1a1ce80f83c.
+- Son gorulen Actions: #39677814549 success; #39677831373 in_progress; #39678038296 cancelled; #39678054199 pending. Iptal veya bekleyene basari atfedilmedi.
+- Harici backup/restore gercek kabul, 75 canli yayin, 92 parity ve 26 runtime guvenlik kuralinin kabul sayilari degismedi. Korunan yollar degistirilmedi.

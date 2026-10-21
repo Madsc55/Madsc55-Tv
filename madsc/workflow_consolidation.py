@@ -166,6 +166,8 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
             "source_contract": src, "main_contracts": destinations,
             "static_contract_gaps": gaps,
             "requires_manual_behavior_review": bool(gaps) or external,
+            "artifact_renamed_in_consolidation": "artifact_name" in gaps,
+            "timeout_insufficient": "timeout" in gaps,
             "behavioral_parity_verified": False,
             "external_evidence_required": external})
     return {"auxiliary_count": len(rows), "rows": rows,

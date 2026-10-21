@@ -7,11 +7,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import tempfile
 from pathlib import Path
 
-from madsc.backup import snapshot_manifest, verify_independent_restore
+from madsc.backup import (snapshot_manifest, verify_independent_restore,
+                          backup_to_new_sandbox, restore_to_new_sandbox)
 from madsc.fixture_report_writer import write_stage_report
 from madsc.write_path_audit import enforce_local_output_path
 
@@ -24,21 +24,17 @@ def run_drill(source: Path, names: list[str]) -> dict:
     with tempfile.TemporaryDirectory(prefix="madsc-k4-") as tmp:
         base = Path(tmp)
         backup, restored = base / "backup", base / "restored"
-        backup.mkdir()
-        restored.mkdir()
-        for entry in baseline["entries"]:
-            name = entry["path"]
-            for target in (backup, restored):
-                destination = target / name
-                destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source / name, backup / name)
-            shutil.copyfile(backup / name, restored / name)
+        backup_result = backup_to_new_sandbox(source, backup, names)
+        restore_result = restore_to_new_sandbox(backup, restored, names)
         report = verify_independent_restore(source, backup, restored, names)
         if not report["independent_sandbox_restore_matches"]:
             raise ValueError("Backup and restore drill integrity mismatch")
         if snapshot_manifest(source, names)["entries"] != baseline["entries"]:
             raise ValueError("Source changed during restore drill")
-        return {**report, "drill_executed": True, "temporary_backup_created": True,
+        return {**report, "drill_executed": True,
+                "sandbox_backup_matches": backup_result["sandbox_backup_matches"],
+                "sandbox_restore_matches": restore_result["sandbox_restore_matches"],
+                "temporary_backup_created": True,
                 "temporary_restore_created": True, "source_unchanged": True,
                 "external_storage_proven": False, "production_restore_verified": False}
 

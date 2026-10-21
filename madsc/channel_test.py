@@ -136,3 +136,39 @@ def evaluate_three_stage_continuity(samples: list[dict], minimum_hours: float = 
         "ibo_device_verified": False,
         "production_change_allowed": False,
     }
+
+
+def summarize_candidate_continuity(candidate_fingerprints: list[str],
+                                   measurements: dict[str, list[dict]]) -> dict:
+    """Batch-evaluate real-shaped evidence without inventing missing measurements."""
+    if not isinstance(candidate_fingerprints, list) or not isinstance(measurements, dict):
+        raise ValueError("Invalid continuity batch")
+    if len(set(candidate_fingerprints)) != len(candidate_fingerprints):
+        raise ValueError("Duplicate candidate fingerprint")
+    if any(not isinstance(key, str) or len(key) != 64
+           or any(ch not in "0123456789abcdef" for ch in key)
+           for key in candidate_fingerprints):
+        raise ValueError("Invalid candidate fingerprint")
+    if any(key not in candidate_fingerprints for key in measurements):
+        raise ValueError("Orphan continuity measurements")
+    results = {}
+    for key in candidate_fingerprints:
+        if key not in measurements:
+            results[key] = {"status": "MISSING_MEASUREMENTS"}
+            continue
+        report = evaluate_three_stage_continuity(measurements[key])
+        if report["url_sha256"] != key:
+            raise ValueError("Continuity fingerprint mismatch")
+        results[key] = {"status": ("PRELIMINARY_WINDOW_PASS"
+                                    if report["three_stage_six_hour_preliminary"]
+                                    else "NEEDS_REVIEW"), "evidence": report}
+    return {
+        "candidate_count": len(candidate_fingerprints),
+        "measured_count": len(measurements),
+        "missing_count": len(candidate_fingerprints) - len(measurements),
+        "preliminary_window_passes": sum(
+            x["status"] == "PRELIMINARY_WINDOW_PASS" for x in results.values()),
+        "results": results,
+        "actual_network_measurements_verified": False,
+        "production_change_allowed": False,
+    }

@@ -105,6 +105,19 @@ class HandoffTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             assess_candidates(discovery, {}, continuity_samples={"f" * 64: samples})
 
+
+    def test_cross_channel_alternative_relation_is_rejected(self):
+        discovery = classify_candidates([
+            {"name": "A", "url": "https://example.org/a", "tvg_id": "a"},
+            {"name": "B", "url": "https://example.org/b", "tvg_id": "b"},
+        ])
+        first, second = discovery["candidates"]
+        discovery["alternatives"] = [{
+            **second, "alternative_to_sha256": first["url_sha256"],
+        }]
+        with self.assertRaises(ValueError):
+            assess_candidates(discovery, {})
+
     def test_unprobed_candidate_is_untested(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         result = assess_candidates(discovery, {})

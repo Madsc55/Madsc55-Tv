@@ -26,7 +26,7 @@ class FiveSystemChannelFlowTests(unittest.TestCase):
                 "Path('write').open('w')\n"
                 "open('default-read')\n"
                 "open('explicit-write', mode='a')\n"
-                "open('dynamic', mode=mode)\n"
+                "open('dynamic', mode=mode)\n",
                 encoding="utf-8")
             (root / "madsc" / "more_writers.py").write_text(
                 "import shutil, subprocess\n"

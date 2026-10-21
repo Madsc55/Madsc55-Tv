@@ -57,6 +57,8 @@ class LegacyCategoryOrderTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "snapshot.json"
             for bad in ([], {"schema": "madsc55-legacy-order-v1", "entries": []},
+                        {**original, "source_repository": "untrusted/repo"},
+                        {**original, "source_ref": "unreviewed-branch"},
                         {**original, "source_files": []},
                         {**original, "source_files": [original["source_files"][0]] * 4},
                         {**original, "source_files": [

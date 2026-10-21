@@ -17,6 +17,7 @@ def run():
     found = {}
     sources_ok = 0
     total = 0
+    source_by_digest = {}
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
         for name, entries, error in pool.map(scan, SOURCES.items()):
             if error is None:
@@ -31,6 +32,7 @@ def run():
                     continue
                 key = hashlib.sha256(url.encode()).hexdigest()
                 found.setdefault(key, (title, url))
+                source_by_digest.setdefault(key, set()).add(name)
     chosen = sorted(found.items(), key=lambda item: item[0])[:MAX_PROBES]
     by_digest = dict(chosen)
     def test(item):
@@ -39,14 +41,17 @@ def run():
             video, audio, reason = verify_av(url)
         except Exception:
             video, audio, reason = False, False, "blocked_or_unreachable"
-        return {"name": title[:100], "sha256": digest, "video": video, "reason": reason,
+        return {"name": title[:100], "sha256": digest,
+                "source_names": sorted(source_by_digest[digest]),
+                "video": video, "reason": reason,
                 "audio": audio, "turkish_audio": "not_verified"}
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
         results = list(pool.map(test, chosen))
     reasons = {k: sum(x["reason"] == k for x in results) for k in sorted(set(x["reason"] for x in results))}
     report = {"stage": "BATCH_DISCOVER_VALIDATE",
               "selection_policy": "sha256_ascending_stable",
-              "selected_candidate_sha256": [digest for digest, _ in chosen], "sources_checked": len(SOURCES),
+              "selected_candidate_sha256": [digest for digest, _ in chosen],
+              "source_provenance_declared_only": True, "sources_checked": len(SOURCES),
               "sources_ok": sources_ok, "entries_in_turkish_feeds": total,
               "unique_https_nonradio_candidates": len(found), "tested": len(results),
               "video_verified": sum(x["video"] for x in results),

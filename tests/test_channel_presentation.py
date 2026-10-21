@@ -8,6 +8,7 @@ class ChannelPresentationTests(unittest.TestCase):
         out = present_channel(row, measurement={"verified": True, "width": 1920, "height": 1080,
                                                  "technical_status": "PRELIMINARY_PASS"})
         self.assertEqual(out["display_name"], "İSTANBUL TV FHD")
+        self.assertEqual(present_channel({"name": "izmir ışık"})["display_name"], "İZMİR IŞIK")
         self.assertEqual(out["group_title"], "Yerel")
         self.assertEqual(out["bucket"], "CALISAN_ADAY")
         self.assertFalse(out["production_change_allowed"])

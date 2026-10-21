@@ -1,0 +1,26 @@
+name: Madsc55-Tv K3 Gercek Kanal Baglanti Pilotu
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  k3-real-manifest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Probe bounded real HTTPS manifests without modifying playlists
+        run: python -m madsc.k3_live_manifest_pilot
+      - name: Upload redacted network evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k3-real-manifest-pilot
+          path: reports/k3-real-manifest-pilot.json
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,26 @@
+name: Madsc55-Tv Toplu Kesif ve Yayin Dogrulama
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discover-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Discover and verify up to 1000 Turkish feed candidates in one run
+        env:
+          MADSC_MAX_PROBES: '1000'
+        run: python -m madsc.turkish_tv_batch_validation
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: turkish-tv-batch-validation
+          path: |
+            reports/turkish-tv-batch-validation.json
+            reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8
+          retention-days: 14

@@ -1,0 +1,164 @@
+import unittest
+import tempfile
+from pathlib import Path
+from madsc.write_path_audit import audit_write_paths, enforce_write_paths, enforce_local_output_path, ProtectedWriteRejected
+
+class WritePathAuditTests(unittest.TestCase):
+    def test_protected_paths_blocked(self):
+        report = audit_write_paths(["CALISANLAR.m3u", "epg/sample.xml", "logolar/a.png"])
+        self.assertTrue(report["blocked"])
+        self.assertEqual(len(report["rejected"]), 3)
+        self.assertFalse(report["write_performed"])
+        self.assertFalse(report["runtime_gate_enforced"])
+
+    def test_main_xmltv_and_playlist_are_protected_at_any_depth(self):
+        paths = ["xmltv.xml", "XMLTV.XML", "nested/xmltv.xml",
+                 "playlist.m3u8", "nested/PLAYLIST.M3U8"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths)
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["reports/ok.json", "xmltv.xml"])
+
+    def test_unprotected_report_path(self):
+        report = audit_write_paths(["reports/sample.json"])
+        self.assertFalse(report["blocked"])
+
+    def test_traversal_rejected(self):
+        for path in ("../CALISANLAR.m3u", "/tmp/a", "a/../b", "a\\b"):
+            with self.subTest(path=path):
+                self.assertTrue(audit_write_paths([path])["blocked"])
+
+    def test_legacy_exact_and_suffix_protection(self):
+        report = audit_write_paths(["AGENTS.md", "CALISMAYANLAR.txt",
+                                    "sample.m3u8", "nested/YENILER.m3u"])
+        self.assertEqual(len(report["rejected"]), 4)
+
+    def test_legacy_prefix_casefold_protection(self):
+        report = audit_write_paths(["YEDEKLER/a.txt", "LoGoS/a.png",
+                                    "ArSiV/sample.txt", "EPG/data.xml"])
+        self.assertEqual(len(report["rejected"]), 4)
+    def test_ambiguous_and_control_character_paths_blocked(self):
+        paths = ["reports/a\x00.json", "reports/a\n.json", "reports/a\t.json",
+                 "reports/file:stream", "reports/file. ", "reports/file.",
+                 "~/reports.json", "reports/dir /file.json"]
+        result = audit_write_paths(paths)
+        self.assertTrue(result["blocked"])
+        self.assertEqual(result["rejected"], paths)
+        self.assertFalse(result["runtime_gate_enforced"])
+
+    def test_unicode_compatibility_aliases_cannot_bypass_protection(self):
+        paths = ["ＦＡＶＯＲＩＬＥＲ/channel.txt", "ＥＰＧ/guide.xml",
+                 "reports/ＣＡＬＩＳＡＮＬＡＲ.m3u",
+                 "reports/ＳＡＦＥ.json", "reports/SAFE.json"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths[:3] + paths[4:])
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["ＦＡＶＯＲＩＬＥＲ/channel.txt"])
+
+    def test_unicode_normalized_traversal_and_suffix_blocked(self):
+        paths = ["reports/．．/safe.json", "reports/．/safe.json",
+                 "reports/file．m3u8", "reports/file．m3u",
+                 "reports/file．", "reports/dir／../safe.json"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths)
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["reports/．．/safe.json"])
+
+    def test_nul_and_control_characters_are_rejected(self):
+        paths = ["reports/bad" + chr(0) + ".json",
+                 "reports/bad" + chr(10) + ".json",
+                 "reports/safe.json"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths[:2])
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths([paths[0]])
+
+    def test_mixed_safe_and_unsafe_paths_do_not_clear_block(self):
+        result = audit_write_paths(["reports/safe.json", "EPG/guide.xml"])
+        self.assertTrue(result["blocked"])
+        self.assertEqual(result["rejected"], ["EPG/guide.xml"])
+    def test_nested_protected_exact_names_blocked(self):
+        paths = ["docs/AGENTS.md", "nested/GUVENLIK_KURALLARI.md",
+                 "reports/CALISMAYANLAR.txt", "nested/YENILER.m3u"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths)
+        self.assertTrue(result["blocked"])
+
+
+    def test_duplicate_paths_rejected_fail_closed(self):
+        result = audit_write_paths(["reports/safe.json", "reports/SAFE.json"])
+        self.assertTrue(result["blocked"])
+        self.assertEqual(result["rejected"], ["reports/SAFE.json"])
+        self.assertFalse(result["write_performed"])
+
+    def test_identical_paths_rejected_fail_closed(self):
+        result = audit_write_paths(["reports/safe.json", "reports/safe.json"])
+        self.assertTrue(result["blocked"])
+        self.assertEqual(result["rejected"], ["reports/safe.json"])
+
+    def test_enforcement_rejects_protected_write_before_side_effect(self):
+        for path in ("CALISANLAR.m3u", "epg/guide.xml", "FAVORILER/list.txt",
+                     "nested/../reports/output.json", "reports/x.m3u8"):
+            with self.subTest(path=path):
+                called = []
+                with self.assertRaises(ProtectedWriteRejected):
+                    enforce_write_paths([path])
+                    called.append("write")
+                self.assertEqual(called, [])
+
+    def test_enforcement_allows_only_unprotected_report_paths(self):
+        result = enforce_write_paths(["reports/legacy-audit.json"])
+        self.assertTrue(result["runtime_gate_enforced"])
+        self.assertFalse(result["write_performed"])
+        self.assertEqual(result["checked_paths"], ["reports/legacy-audit.json"])
+
+    def test_enforcement_fails_closed_on_mixed_paths(self):
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["reports/ok.json", "logos/channel.png"])
+
+    def test_enforcement_rejects_duplicate_paths(self):
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["reports/a.json", "reports/A.json"])
+
+
+class LocalOutputGuardTests(unittest.TestCase):
+    def test_safe_absolute_output_is_only_preflight(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "reports"
+            path.mkdir()
+            result = enforce_local_output_path(path / "evidence.json")
+            self.assertTrue(result["path_checked"])
+            self.assertFalse(result["production_write_allowed"])
+            self.assertFalse((path / "evidence.json").exists())
+
+    def test_protected_ancestor_and_existing_target_blocked(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            protected = root / "YEDEKLER"
+            protected.mkdir()
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(protected / "evidence.json")
+            existing = root / "existing.json"
+            existing.write_text("original")
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(existing)
+            self.assertEqual(existing.read_text(), "original")
+
+    def test_absolute_traversal_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(root / "nested" / ".." / "evidence.json")
+            self.assertFalse((root / "evidence.json").exists())
+
+    def test_symlinked_parent_and_root_boundary_blocked(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            real = root / "real"
+            real.mkdir()
+            linked = root / "linked"
+            linked.symlink_to(real, target_is_directory=True)
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(linked / "evidence.json")
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(root / "elsewhere.json", allowed_root=real)

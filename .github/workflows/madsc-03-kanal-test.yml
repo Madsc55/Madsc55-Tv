@@ -1,0 +1,63 @@
+name: MADSC K3 — Kanal Testi
+on:
+  workflow_dispatch:
+    inputs:
+      allow_bulk_turkish_tv:
+        description: 'Explicit opt-in for up to 1000 public Turkish TV A/V probes'
+        type: boolean
+        required: true
+        default: false
+      allow_live_probes:
+        description: 'Opt-in bounded live stream probes (no production writes)'
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: madsc-k3-isolated
+  cancel-in-progress: false
+jobs:
+  isolated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Isolated report
+        run: python -m madsc.core --category k3 --output reports/k3.json
+      - name: Prepare video probe dependency (opt-in only)
+        if: ${{ inputs.allow_live_probes == true || inputs.allow_bulk_turkish_tv == true }}
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Bounded live manifest probe (explicit opt-in only)
+        if: ${{ inputs.allow_live_probes == true }}
+        run: python -m madsc.k3_live_manifest_pilot
+      - name: Bounded Turkish TV video probe (explicit opt-in only)
+        if: ${{ success() && inputs.allow_live_probes == true }}
+        run: |
+          ffprobe -version | head -n 1
+          python -m madsc.k3_turkish_tv_video_pilot
+      - name: Large public Turkish TV candidate batch (explicit opt-in only)
+        if: ${{ inputs.allow_bulk_turkish_tv == true }}
+        env:
+          MADSC_MAX_PROBES: '1000'
+        run: python -m madsc.turkish_tv_batch_validation
+      - name: Upload isolated evidence
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k3-isolated-evidence
+          path: |
+            reports/k3.json
+            reports/k3-real-manifest-pilot.json
+            reports/k3-turkish-tv-video-pilot.json
+            reports/turkish-tv-batch-validation.json
+            reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8
+          if-no-files-found: error
+          retention-days: 14

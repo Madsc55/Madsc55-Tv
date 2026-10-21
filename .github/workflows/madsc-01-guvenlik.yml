@@ -1,0 +1,32 @@
+name: MADSC K1 — Guvenlik
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: madsc-k1-isolated
+  cancel-in-progress: false
+jobs:
+  isolated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: K1 legacy shadow security guard (read-only)
+        run: python -m src.madsc_guard config/shadow_manifest.json
+      - name: Isolated report
+        run: python -m madsc.core --category k1 --output reports/k1.json
+      - name: Upload isolated evidence
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k1-isolated-evidence
+          path: reports/k1.json
+          retention-days: 14

@@ -1682,3 +1682,8 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - GitHub Actions #39653476180 6/6 success (offline fixture). K2 Public candidate discovery ve K3 Bounded Turkish TV video probe adimlarinda success() && ilgili opt-in flag acikca zorunlu hale getirildi. Commitler 7f96b4f, 462656e.
 - tests/test_workflow_consolidation.py: bu iki adim icin success/opt-in ve continue-on-error bulunmamasi regresyonla kontrol ediliyor, commit a510e93. CI run #39657348060 basladi, bu not aninda in_progress.
 - 22 gorev kabul ve 92 legacy davranissal parity halen kanitsiz; sayaclar artirilmadi. Canli listeler/EPG/favoriler/yedekler degismedi.
+
+## 21 Ekim 2026 - K1 opt-in regresyonu hatasi ve duzeltme
+- GitHub Actions #39657348060 fail: tests/test_migrated_opt_in_contract.py eski tam if stringini bekliyordu; K2 success() && inputs.allow_network_discovery == true kosulunu yanlis reddetti. K2/K3 workflow islevsel fail kaniti yok, statik test uyumsuzlugu.
+- ac1430f ara denemesi ardindan be4e208 commit ile test yalniz iki acik fail-closed formu kabul edecek sekilde duzeltildi: inputs.FLAG == true veya success() && inputs.FLAG == true. En guncel run #39658173167 kuyrukta; sonucu dogrulanmadan basarili denmez. Aradaki #39658143312 sonucu esas alinmaz.
+- Korunan dosyalar degismedi; kabul 0/22 ve legacy parity 0/92.

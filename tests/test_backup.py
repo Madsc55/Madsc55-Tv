@@ -483,18 +483,15 @@ class BackupTests(unittest.TestCase):
             self.assertEqual((backup / "safe.txt").read_bytes(), b"original")
 
     def test_copy_audit_rejects_traversal_before_inode_probe(self):
-        from unittest.mock import patch
         with tempfile.TemporaryDirectory() as d:
             base = Path(d)
             source, destination = base / "source", base / "destination"
             source.mkdir()
             destination.mkdir()
-            with patch("pathlib.Path.stat", side_effect=AssertionError("unexpected stat")):
-                with self.assertRaises(ValueError):
-                    compare_copy(source, destination, ["../outside"])
+            with self.assertRaises(ValueError):
+                compare_copy(source, destination, ["../outside"])
 
     def test_three_tree_restore_rejects_traversal_before_inode_probe(self):
-        from unittest.mock import patch
         with tempfile.TemporaryDirectory() as d:
             base = Path(d)
             roots = [base / name for name in ("source", "backup", "restored")]

@@ -99,6 +99,13 @@ def verify_independent_restore(source: Path, backup: Path, restored: Path,
         raise ValueError("Source, backup and restored trees must be distinct")
     if any(a.is_relative_to(b) for a in locations for b in locations if a != b):
         raise ValueError("Nested trees are not independent")
+    # Distinct directories may still share inode-backed files via hard links.
+    # A backup must not be able to change when the source is modified.
+    for name in names:
+        stats = [(root / name).stat() for root in locations]
+        identities = [(item.st_dev, item.st_ino) for item in stats]
+        if len(set(identities)) != 3:
+            raise ValueError("Independent restore trees must not share hard-linked files")
     original = snapshot_manifest(source, names)
     backed_up = snapshot_manifest(backup, names)
     recovered = snapshot_manifest(restored, names)

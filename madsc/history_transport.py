@@ -35,7 +35,8 @@ def main():
         raise ValueError("Symlinked output")
     a.output.parent.mkdir(parents=True, exist_ok=True)
     enforce_local_output_path(a.output.absolute())
-    a.output.write_text(json.dumps(result, sort_keys=True) + "\n", encoding="utf-8")
+    with a.output.open("x", encoding="utf-8") as handle:
+        handle.write(json.dumps(result, sort_keys=True) + "\n")
     print(json.dumps(result))
 
 

@@ -26,23 +26,24 @@ class FiveSystemChannelFlowTests(unittest.TestCase):
                 "Path('write').open('w')\n"
                 "open('default-read')\n"
                 "open('explicit-write', mode='a')\n"
-                "open('dynamic', mode=mode)\n",
+                "open('dynamic', mode=mode)\n"
                 encoding="utf-8")
-            tasks = [{"id": key, "stage": key[:2], "status": "pending"}
+            (root / "madsc" / "more_writers.py").write_text(\n                "import shutil, subprocess\\n"\n                "shutil.copyfile(\'a\', \'b\')\\n"\n                "subprocess.run([\'echo\', \'x\'])\\n"\n                "stream.write(\'x\')\\n", encoding="utf-8")\n            tasks = [{"id": key, "stage": key[:2], "status": "pending"}
                      for key in REQUIREMENTS]
             (root / "docs" / "K1_K5_KANITLI_GOREV_DEFTERI.json").write_text(
                 json.dumps(tasks), encoding="utf-8")
             report = inspect_installation(root)
             self.assertEqual(report["tasks_total"], 22)
             self.assertEqual(report["evidence_requirements_missing_tasks"], 22)
-            self.assertEqual(report["writer_callsite_candidates_count"], 4)
+            self.assertEqual(report["writer_callsite_candidates_count"], 7)
             self.assertEqual(report["writer_source_sha256"]["madsc/writer.py"],
                              sha256((root / "madsc" / "writer.py").read_bytes()).hexdigest())
             self.assertEqual(len(report["writer_inventory_limitations"]), 2)
             self.assertEqual(report["writer_callsite_candidates"][0]["operation"], "write_text")
-            self.assertEqual(sum(row["classification"] == "dynamic_mode_review" for row in report["writer_callsite_candidates"]), 1)
-            self.assertEqual(report["writer_dynamic_mode_review_count"], 1)
+            self.assertEqual(sum(row["classification"] == "dynamic_mode_review" for row in report["writer_callsite_candidates"]), 2)
+            self.assertEqual(report["writer_dynamic_mode_review_count"], 2)
             self.assertEqual(report["writer_callsite_modules"]["madsc/writer.py"], {"write": 3, "dynamic_mode_review": 1})
+            self.assertEqual(report["writer_callsite_modules"]["madsc/more_writers.py"], {"write": 2, "dynamic_mode_review": 1})
             self.assertFalse(report["all_writer_callsites_manually_verified"])
             self.assertFalse(report["production_ready"])
 

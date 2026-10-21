@@ -163,18 +163,33 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
         # renamed consolidated bundles are valid only when they contain the
         # same report paths. This is static evidence, not runtime parity.
         def uploaded_paths(body):
+            """Collect only paths inside upload-artifact step's with.path field."""
             found = set()
-            in_upload = False
+            upload = False
+            path_block_indent = None
             for line in body.splitlines():
                 stripped = line.strip()
+                indent = len(line) - len(line.lstrip())
                 if stripped.startswith("- ") and ("uses:" in stripped or "name:" in stripped):
-                    in_upload = False
-                if "uses: actions/upload-artifact@" in stripped:
-                    in_upload = True
-                if in_upload and stripped.startswith("reports/"):
-                    found.add(stripped)
-                if in_upload and stripped.startswith("path: reports/"):
-                    found.add(stripped.split("path:", 1)[1].strip())
+                    upload = False
+                    path_block_indent = None
+                if stripped.startswith("uses: actions/upload-artifact@"):
+                    upload = True
+                if not upload:
+                    continue
+                if path_block_indent is not None:
+                    if stripped and indent <= path_block_indent:
+                        path_block_indent = None
+                    elif stripped and not stripped.startswith("#"):
+                        if stripped.startswith("reports/"):
+                            found.add(stripped)
+                        continue
+                if stripped.startswith("path:"):
+                    value = stripped.split(":", 1)[1].strip().strip("'\\\"")
+                    if value in ("|", "|-", ">", ">-"):
+                        path_block_indent = indent
+                    elif value.startswith("reports/"):
+                        found.add(value)
             return found
         source_paths = uploaded_paths(source)
         target_paths = set().union(*(uploaded_paths(body) for body in main_sources))

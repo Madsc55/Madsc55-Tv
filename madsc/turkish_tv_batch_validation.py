@@ -87,8 +87,11 @@ def run():
         exported += 1
     playlist_out = Path("reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8")
     playlist_out.parent.mkdir(parents=True, exist_ok=True)
-    playlist_out.write_text("\n".join(playlist) + "\n", encoding="utf-8")
+    playlist_bytes = ("\n".join(playlist) + "\n").encode("utf-8")
+    playlist_out.write_bytes(playlist_bytes)
+    report["test_playlist_sha256"] = hashlib.sha256(playlist_bytes).hexdigest()
     report["test_playlist_candidates"] = exported
+    report["test_playlist_path"] = str(playlist_out)
     report["production_approved"] = False
     report["three_stage_six_hour_verified"] = False
     report["device_verified"] = False

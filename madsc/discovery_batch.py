@@ -66,6 +66,8 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
     grouped = defaultdict(lambda: {"sources": set(), "urls": set(), "names": set()})
     reports = {}
     for source, text in sorted(sources.items()):
+        if not isinstance(source, str) or not source.strip():
+            raise ValueError("Invalid source name")
         report = parse_m3u(text, source)
         reports[source] = {"entries": report["entries"], "rejected": len(report["rejected"]),
                            "parse_errors": len(report["parse_errors"])}

@@ -254,3 +254,9 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - Repo tree incelemesinde madsc/restore_drill.py ve madsc/k4_evidence.py rapor cikisinda mkdir ve write_text kullaniyordu. K1 enforce_local_output_path + open('x') on kontrol/ozel yeni dosya olusturma eklendi. Commitler e9dc9103805a81908a872d10e0de5b29a85ae521, 5ff86c1f2861778c1310126908237d42c46b43be.
 - tests/test_k4_report_output_safety.py: mevcut restore raporunu ezmeme ve CALISANLAR.m3u korumali hedefini reddetme senaryolari. Commit cfee0332b3e3bd43c5bf15b6ca89cff4e5d7b460.
 - On kontroller TOCTOU/tum bagimsiz yazicilar icin tam guvence degildir; global 26 runtime kabul ve 92 davranissal esdegerlik tamamlanmadi. Testler commit edildi, fakat guncel main toplu offline regresyonu calistirilmis degildir. Actions tetiklenmedi; uretim listelerine dokunulmadi.
+
+
+## 21 Ekim 2026 — K4 kanit girisi symlink guvenligi
+- madsc/k4_evidence.py artik kanit dosyasinin ust klasorlerinde symlink olmasini da reddeder; commit 26288a26904103e9e0dfe4d2ba3a833efbb7ccdb.
+- tests/test_k4_report_output_safety.py symlink ust klasor testini kapsar; commit d5d37aaef6554fb8c5c00bc8d1abb92cfba54ee7.
+- Bu iki commit testleri CALISTIRMAZ; guncel main offline toplu regresyon hala calistirilmis degildir. K1 26 runtime kabul ve 92 legacy davranissal esdegerlik tamamlanmadi. GitHub Actions ve canli yayin dosyalari degismedi.

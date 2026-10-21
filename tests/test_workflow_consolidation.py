@@ -32,8 +32,8 @@ class WorkflowConsolidationTests(unittest.TestCase):
                 body = (root / ".github" / "workflows" / MAIN[stage]).read_text(
                     encoding="utf-8")
                 self.assertIn(
-                    "      - name: Upload isolated evidence\\n"
-                    "        if: ${{ always() && !cancelled() }}\\n"
+                    "      - name: Upload isolated evidence\n"
+                    "        if: ${{ always() && !cancelled() }}\n"
                     "        uses: actions/upload-artifact@v4", body)
                 self.assertIn("workflow_dispatch:", body)
                 self.assertNotIn("  schedule:", body)

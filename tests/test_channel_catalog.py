@@ -65,6 +65,22 @@ class ChannelCatalogTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             prepare_channel_catalog(rows, probes={digest: {"url_sha256": "0" * 64}})
 
+    def test_three_stage_pass_without_current_probe_remains_untested(self):
+        rows = [{"name": "kanal", "url": "https://example.org/check"}]
+        digest = sha256(b"https://example.org/check").hexdigest()
+        stage = [
+            {"captured_at": f"2026-10-20T{hour:02d}:00:00Z",
+             "probe": {"url_sha256": digest, "http_status": 200,
+                       "video": True, "audio": True, "duration_seconds": 31}}
+            for hour in (0, 6, 12)
+        ]
+        out = prepare_channel_catalog(rows, three_stage={digest: stage})
+        channel = out["channels"][0]
+        self.assertTrue(channel["three_stage_preliminary_pass"])
+        self.assertEqual(channel["technical_status"], "UNTESTED")
+        self.assertEqual(channel["bucket"], "TEST_BEKLIYOR")
+        self.assertFalse(out["production_ready"])
+
     def test_three_stage_pass_cannot_override_failed_current_probe(self):
         rows = [{"name": "kanal", "url": "https://example.org/check"}]
         digest = sha256(b"https://example.org/check").hexdigest()

@@ -1770,3 +1770,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Actions #39678650056 ve #39678677401 completed/success: gercek sandbox restore fixture testleri gecti.
 - Yeni sandbox restore hedefinin tum ust dizinlerinde symlink reddi: kod 8d7e1441596352768d4d1e5477d3e261e4da1e01; alias ust dizin uzerinden yazma girisimini engelleyen test 61da348fc66eb679416c906537057b568e02a2b8. Bu commitler icin Actions sonucu henuz dogrulanmadi.
 - K4 harici storage kaniti yok; 75 canli, 92 parity, 26 runtime security kabulleri degismedi. Eski depo/korunan yayin listeleri degistirilmedi.
+
+
+## 21 Ekim 2026 - K4 gercek sandbox backup -> restore roundtrip
+- Actions #39679317888 ve #39679333045 completed/success (symlink ust dizin korumasi).
+- Yeni backup_to_new_sandbox kaynak dosyalari yeni ayri sandbox'a gercekten kopyalar, SHA256 manifest ile kaynak/kopya butunlugunu dogrular, var olan hedefe yazmaz, hata halinde yalniz yeni klasoru temizler. Kod 1a55fbce787f9d5f85748de4f7425af348cd6121.
+- Davranissal test 1fb9e21d0e8ed6ed0109436877d814950bc2635b: kaynak -> yeni backup -> yeni restore -> verify_independent_restore ile uc agac gercek dosya roundtrip ve overwrite/nesting reddi. Yeni Actions sonucu henuz kontrol edilmedi.
+- Bu yalniz sandbox fixture ispatidir; dis storage ve production restore accepted degildir. 75 canli, 92 parity, 26 runtime security kabulleri degismedi. Korunan listeler ve eski depo degistirilmedi.

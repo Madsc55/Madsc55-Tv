@@ -81,6 +81,13 @@ class ChannelTests(unittest.TestCase):
         self.assertIn('discovery_fingerprint_sha256', source)
         self.assertIn('if not eligible_source(name) or error is not None:', source)
 
+
+    def test_bulk_report_never_implies_production_approval(self):
+        from pathlib import Path
+        source = Path("madsc/turkish_tv_batch_validation.py").read_text(encoding="utf-8")
+        for field in ("production_approved", "three_stage_six_hour_verified", "device_verified"):
+            self.assertIn('report["' + field + '"] = False', source)
+
     def test_success_is_not_device_approval(self):
         result = evaluate_probe({"url_sha256":"a"*64,"http_status":200,"video":True,
                                  "audio":True,"duration_seconds":60})

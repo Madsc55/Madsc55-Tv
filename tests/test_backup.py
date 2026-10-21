@@ -398,3 +398,20 @@ class BackupTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 restore_to_new_sandbox(backup, backup / "nested", ["file.txt"])
             self.assertFalse((backup / "nested").exists())
+
+    def test_restore_rejects_symlinked_ancestor_without_writing(self):
+        from madsc.backup import restore_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            backup = base / "backup"
+            backup.mkdir()
+            (backup / "file.txt").write_text("fixture")
+            real_parent = base / "real"
+            real_parent.mkdir()
+            alias = base / "alias"
+            alias.symlink_to(real_parent, target_is_directory=True)
+            target = alias / "nested" / "restore"
+            (real_parent / "nested").mkdir()
+            with self.assertRaises(ValueError):
+                restore_to_new_sandbox(backup, target, ["file.txt"])
+            self.assertFalse((real_parent / "nested" / "restore").exists())

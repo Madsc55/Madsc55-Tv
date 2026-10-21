@@ -69,3 +69,39 @@ def ledger(inventory, evidence=None):
             "invalid_evidence_fields": sum(len(r["invalid"]) for r in output),
             "accepted": sum(r["accepted"] for r in output),
             "blocked": sum(not r["accepted"] for r in output), "rows": output}
+
+
+def compare_execution_snapshots(legacy, replacement):
+    """Compare independently captured, bounded execution facts without running either workflow.
+
+    Caller supplies snapshots from separate executions. Matching snapshots are
+    comparison evidence only, never approval or proof of execution provenance.
+    """
+    required = ("exit_code", "timed_out", "outputs", "side_effects")
+    for snapshot in (legacy, replacement):
+        if not isinstance(snapshot, dict) or set(snapshot) != set(required):
+            raise ValueError("Incomplete execution snapshot")
+        if type(snapshot["exit_code"]) is not int or not -255 <= snapshot["exit_code"] <= 255:
+            raise ValueError("Invalid exit code")
+        if type(snapshot["timed_out"]) is not bool:
+            raise ValueError("Invalid timeout flag")
+        for field in ("outputs", "side_effects"):
+            values = snapshot[field]
+            if not isinstance(values, dict) or len(values) > 1000:
+                raise ValueError("Invalid snapshot field")
+            if any(not isinstance(key, str) or not key or len(key) > 512
+                   or not isinstance(value, str) or len(value) != 64
+                   or any(char not in "0123456789abcdef" for char in value)
+                   for key, value in values.items()):
+                raise ValueError("Snapshot values must be SHA256 digests")
+    differences = {}
+    for field in required:
+        if legacy[field] != replacement[field]:
+            if field in ("outputs", "side_effects"):
+                keys = sorted(set(legacy[field]) | set(replacement[field]))
+                differences[field] = [key for key in keys
+                                      if legacy[field].get(key) != replacement[field].get(key)]
+            else:
+                differences[field] = {"legacy": legacy[field], "replacement": replacement[field]}
+    return {"snapshot_fields_match": not differences, "differences": differences,
+            "behavioral_parity_accepted": False, "provenance_verified": False}

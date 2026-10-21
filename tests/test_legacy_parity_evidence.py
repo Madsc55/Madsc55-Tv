@@ -94,5 +94,40 @@ class EvidenceLedgerTest(unittest.TestCase):
         self.assertEqual(report["accepted"], 0)
         self.assertEqual(report["blocked"], 99)
 
+
+    def test_snapshot_comparison_detects_behavioral_differences(self):
+        from madsc.legacy_parity_evidence import compare_execution_snapshots
+        legacy = {"exit_code": 0, "timed_out": False,
+                  "outputs": {"report": "a" * 64}, "side_effects": {}}
+        replacement = {"exit_code": 1, "timed_out": True,
+                       "outputs": {"report": "b" * 64}, "side_effects": {"write": "c" * 64}}
+        result = compare_execution_snapshots(legacy, replacement)
+        self.assertFalse(result["snapshot_fields_match"])
+        self.assertEqual(set(result["differences"]),
+                         {"exit_code", "timed_out", "outputs", "side_effects"})
+        self.assertFalse(result["behavioral_parity_accepted"])
+
+    def test_matching_snapshots_never_imply_acceptance(self):
+        from madsc.legacy_parity_evidence import compare_execution_snapshots
+        snapshot = {"exit_code": 0, "timed_out": False,
+                    "outputs": {"report": "a" * 64}, "side_effects": {}}
+        result = compare_execution_snapshots(snapshot, dict(snapshot))
+        self.assertTrue(result["snapshot_fields_match"])
+        self.assertFalse(result["provenance_verified"])
+        self.assertFalse(result["behavioral_parity_accepted"])
+
+    def test_snapshot_rejects_untrusted_shapes(self):
+        from madsc.legacy_parity_evidence import compare_execution_snapshots
+        good = {"exit_code": 0, "timed_out": False, "outputs": {}, "side_effects": {}}
+        for invalid in (
+            {**good, "exit_code": True},
+            {**good, "timed_out": 0},
+            {**good, "outputs": {"report": "not-a-digest"}},
+            {**good, "side_effects": {"write": 123}},
+            {**good, "unexpected": True},
+        ):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                compare_execution_snapshots(good, invalid)
+
 if __name__ == "__main__":
     unittest.main()

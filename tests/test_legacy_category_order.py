@@ -14,7 +14,7 @@ class LegacyCategoryOrderTests(unittest.TestCase):
     def test_new_candidates_are_isolated_and_ordered(self):
         result = route_discovered_candidates([{"name": "Yeni A"}, {"name": "Yeni B"}])
         self.assertEqual([x["name"] for x in result["queued"]], ["Yeni A", "Yeni B"])
-        self.assertTrue(all(x["destination"] == "YENILER_TEST_BEKLIYOR"
+        self.assertTrue(all(x["destination"] == "IZOLE_ADAY_TEST_KUYRUGU"
                             for x in result["queued"]))
         self.assertFalse(result["production_writes"])
         self.assertFalse(result["existing_order_modified"])

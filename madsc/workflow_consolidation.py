@@ -62,13 +62,17 @@ def consolidation_plan(root: Path) -> dict:
         if any(line.lstrip().startswith(("push:", "pull_request:", "schedule:", "workflow_call:"))
                for line in data.splitlines()):
             raise ValueError("Automatic trigger found: " + name)
+        targets = [MAIN[key] for key in stage.split("+")]
+        main_contents = [ (folder / target).read_text(encoding="utf-8") for target in targets ]
+        migrated = any(command in content for content in main_contents)
         entries.append({
+            "command_present_in_main": migrated,
             "workflow": name,
             "target_stage": stage,
             "legacy_command": command,
             "network_or_external_evidence_required": external,
             "behavioral_parity_verified": False,
-            "migration_status": "mapped_not_merged",
+            "migration_status": "command_integrated_unverified" if migrated else "mapped_not_merged",
         })
     return {
         "schema": "madsc-five-main-consolidation-v1",
@@ -76,6 +80,8 @@ def consolidation_plan(root: Path) -> dict:
         "auxiliary_count": len(entries),
         "auxiliary": entries,
         "unmapped_auxiliary": [],
+        "commands_integrated_in_main": sum(item["command_present_in_main"] for item in entries),
+        "all_ten_commands_integrated_in_main": all(item["command_present_in_main"] for item in entries),
         "five_main_only": False,
         "legacy_behavioral_parity_verified": False,
         "github_actions_triggered": False,

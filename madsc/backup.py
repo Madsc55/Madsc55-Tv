@@ -49,6 +49,9 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     paths = [entry["path"] for entry in manifest["entries"]]
     if len(set(paths)) != len(paths):
         raise ValueError("Duplicate backup manifest paths")
+    # A manifest is a canonical snapshot, not an arbitrary subset or reordered list.
+    if paths != sorted(paths):
+        return False
     current = snapshot_manifest(root, paths)
     return current["entries"] == manifest["entries"]
 

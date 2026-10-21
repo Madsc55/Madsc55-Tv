@@ -266,3 +266,10 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/k3_three_stage_gate.py commit 3c0b5a7377e669d755cea3c6cd0fee7b1326d945: tek kanal fingerprint'i icin tam uc supplied probe, UTC zaman damgasi ve ardarda >=6 saat fark kosulu; tum uc sample preliminary pass degilse uc asamali preliminary kabul yok.
 - tests/test_k3_three_stage_gate.py commit 3ba405dc4b278f6f935493885813e165c9fd1b74: normal uc ornek, yetersiz sure, farkli kanal, basarisiz test, timezone olmayan timestamp senaryolari.
 - Modul CANLI yayin test ETMEZ, cihaz IBO onayi vermez, timestamp kaynagini bagimsiz dogrulamaz, zamanlayici veya yeni otomasyon olusturmaz. Guncel main toplu offline regresyonu hala CALISTIRILMADI; gercek 92/92 ve 26/26 kabul 0.
+
+
+## 21 Ekim 2026 — K3 uc asamali kanit K2/K5 baglantisi
+- madsc/channel_catalog.py, istege bagli three_stage kanit haritasi alir, her kanal icin assess_three_stage_probes() ile dogrular, fingerprint karismasini reddeder. Teknik status hala bagimsiz tek probe kanitindan gelir; uc asamali supplied veri tek basina CALISAN yapmaz. Commit 0ef172394050f6429cdb0a95dc8f0631ad372f12.
+- madsc/five_system_channel_flow.py three_stage parametresini K2/K3 kataloga aktarir; commit f7a0398f469ef82950c6d7ef5d572c2877db0371.
+- tests/test_five_system_channel_flow.py iki entegrasyon senaryosu: uc asamali preliminary sonuc uretim kabulune donusmez; yanlis kanal fingerprint reddedilir. Commit 2dccf629fff2b44362f8820dcd5436ec1fed60af.
+- Gercek uc asamali CANLI testler, IBO cihaz onayi ve main offline toplu regresyon henuz yapilmadi. 5 otomasyon siniri korundu; Actions ve canli listeler degistirilmedi.

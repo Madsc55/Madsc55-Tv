@@ -453,3 +453,31 @@ class BackupTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 backup_to_new_sandbox(source, source / "nested", ["file.txt"])
             self.assertFalse((source / "nested").exists())
+
+    def test_sandbox_backup_rolls_back_when_integrity_check_fails(self):
+        from unittest.mock import patch
+        from madsc.backup import backup_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source, backup = root / "source", root / "backup"
+            source.mkdir()
+            (source / "safe.txt").write_bytes(b"original")
+            with patch("madsc.backup.verify_manifest", return_value=False):
+                with self.assertRaises(ValueError):
+                    backup_to_new_sandbox(source, backup, ["safe.txt"])
+            self.assertFalse(backup.exists())
+            self.assertEqual((source / "safe.txt").read_bytes(), b"original")
+
+    def test_sandbox_restore_rolls_back_when_integrity_check_fails(self):
+        from unittest.mock import patch
+        from madsc.backup import restore_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            backup, restored = root / "backup", root / "restored"
+            backup.mkdir()
+            (backup / "safe.txt").write_bytes(b"original")
+            with patch("madsc.backup.verify_manifest", return_value=False):
+                with self.assertRaises(ValueError):
+                    restore_to_new_sandbox(backup, restored, ["safe.txt"])
+            self.assertFalse(restored.exists())
+            self.assertEqual((backup / "safe.txt").read_bytes(), b"original")

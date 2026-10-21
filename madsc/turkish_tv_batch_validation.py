@@ -37,7 +37,7 @@ def run():
                 found.setdefault(key, (title, url))
                 source_by_digest.setdefault(key, set()).add(name)
     chosen = sorted(found.items(), key=lambda item: item[0])[:MAX_PROBES]
-    discovery_fingerprint = hashlib.sha256("\\n".join(sorted(found)).encode("ascii")).hexdigest()
+    discovery_fingerprint = hashlib.sha256("\n".join(sorted(found)).encode("ascii")).hexdigest()
     by_digest = dict(chosen)
     def test(item):
         digest, (title, url) = item
@@ -84,6 +84,9 @@ def run():
     playlist_out.parent.mkdir(parents=True, exist_ok=True)
     playlist_out.write_text("\n".join(playlist) + "\n", encoding="utf-8")
     report["test_playlist_candidates"] = exported
+    report["production_approved"] = False
+    report["three_stage_six_hour_verified"] = False
+    report["device_verified"] = False
     report["test_playlist_language_status"] = "unverified"
     out = Path("reports/turkish-tv-batch-validation.json")
     out.parent.mkdir(parents=True, exist_ok=True)

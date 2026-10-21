@@ -24,3 +24,17 @@ class DiscoveryTests(unittest.TestCase):
         result = classify_candidates([{"name": "A", "url": "https://example.org/live", "tvg_id": []}])
         self.assertEqual(len(result["rejected"]), 1)
         self.assertFalse(result["production_playlist_modified"])
+
+    def test_control_character_url_injection_rejected(self):
+        for url in ("https://example.org/live\\n#EXTINF:-1,Injected",
+                    "\\nhttps://example.org/live",
+                    "https://example.org/stream\\rmore",
+                    "https://example.org/stream\\tmore"):
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                normalize_url(url)
+
+    def test_url_injection_cannot_enter_candidate_catalog(self):
+        result = classify_candidates([{
+            "name": "A", "url": "https://example.org/live\\n#EXTINF:-1,Injected"}])
+        self.assertEqual(result["candidates"], [])
+        self.assertEqual(len(result["rejected"]), 1)

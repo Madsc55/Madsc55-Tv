@@ -174,14 +174,33 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
             "behavioral_parity_verified": False, "production_writes": False}
 
 
+
+def contract_gate(root: Path) -> dict:
+    """Fail only on missing executable migration; keep other differences visible."""
+    matrix = auxiliary_behavior_matrix(root)
+    return {
+        "schema": "madsc-contract-gate-v1",
+        "checked": matrix["auxiliary_count"],
+        "missing_commands": matrix["missing_commands"],
+        "pass": not matrix["missing_commands"],
+        "static_gaps_total": matrix["static_gaps_total"],
+        "behavioral_parity_verified": False,
+        "production_writes": False,
+    }
+
+
 def main() -> None:
     root = Path(__file__).resolve().parent.parent
     import argparse
     parser = argparse.ArgumentParser(description="Read-only workflow consolidation audit")
     parser.add_argument("--behavior-matrix", action="store_true", help="Compare auxiliary workflow contracts")
+    parser.add_argument("--contract-gate", action="store_true", help="Fail on missing executable migration")
     args = parser.parse_args()
-    report = auxiliary_behavior_matrix(root) if args.behavior_matrix else consolidation_plan(root)
+    report = (contract_gate(root) if args.contract_gate else
+              auxiliary_behavior_matrix(root) if args.behavior_matrix else consolidation_plan(root))
     print(json.dumps(report, ensure_ascii=False, indent=2))
+    if args.contract_gate and not report["pass"]:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

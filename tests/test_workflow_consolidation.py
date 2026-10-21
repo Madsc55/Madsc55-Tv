@@ -65,6 +65,8 @@ class WorkflowConsolidationTests(unittest.TestCase):
             row = next(x for x in result["rows"] if x["source"] == source.name)
             self.assertEqual(result["auxiliary_count"], 10)
             self.assertFalse(row["command_present"])
+            self.assertIn("command_missing", row["static_contract_gaps"])
+            self.assertIn(source.name, result["missing_commands"])
             self.assertIn("timeout", row["static_contract_gaps"])
             self.assertIn("artifact_name", row["static_contract_gaps"])
             self.assertFalse(result["behavioral_parity_verified"])

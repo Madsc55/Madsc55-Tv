@@ -369,3 +369,10 @@ Kullanici 17 pending gorevin topluca en fazla UC calisma turunda bitirilmesini i
 - .github/workflows/madsc-05-bakim.yml ana K5 asamasina python -m madsc.workflow_consolidation ve python -m madsc.k1_k5_acceptance_requirements rapor uretimi ve artifact saklama eklendi; commit f8a16ab9df57c502f30d2593b1d4db6689cbde5c.
 - Bu iki dosya degisikligi GitHub Actions tetiklemedi (commitler [skip ci]), offline tam test henuz yapilmadi; bu nedenle K1/K5 kabul durumu tamamlandi degil. 17 pending, 5 in_progress, 0 completed; 0/92 davranis, 0/26 runtime security.
 - Siradaki esas hedef: K2/K3 kalan yardimci islevlerinin offline izinli kismi gercek bes ana sisteme tasinmali; ag, yayin, cihaz, harici yedek isleri icin izin ve kanit ayrimi korunmali. Kullanici mini test ve rapor tekrari istemiyor.
+
+
+## 21 Ekim 2026 — K2/K3 ana workflow gercek entegrasyon
+- madsc/history_real_source_publish.py dosyasinda cagrilan fakat import edilmeyen enforce_local_output_path eklendi. Commit d380aba5e771b3b8e6801f322c9980b37287fe1d.
+- Ana K2 .github/workflows/madsc-02-kesif.yml artik madsc.legacy_multisource_discovery ve madsc.live_discovery_pilot komutlarini iceriyor; workflow_dispatch allow_network_discovery=false varsayilan, yalniz explicit opt-in. Commit 83486a6a1e6559e3ca6f9d4f25f6039f045e47fd.
+- Ana K3 .github/workflows/madsc-03-kanal-test.yml artik madsc.k3_live_manifest_pilot ve madsc.k3_turkish_tv_video_pilot komutlarini iceriyor; workflow_dispatch allow_live_probes=false varsayilan, yalniz explicit opt-in. Commit f69050837ae3ebc73dbdb28408180d5c9dfa6072.
+- Bu 4 eski islev ana YAML'a TASINDI ama 10 eski yardimci workflow henuz duruyor; tam parity ve acceptance kaniti yok. GitHub Actions ve canli probe CALISTIRILMADI, 17 pending gorev tamamlandi sayilmadi. Sonraki hedef geriye kalan yardimci islevleri kanitli tasimak, offline tek toplu test.

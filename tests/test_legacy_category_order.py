@@ -68,6 +68,22 @@ class LegacyCategoryOrderTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     load_historical_categories(path)
 
+    def test_actual_snapshot_metadata_audit_is_read_only(self):
+        from pathlib import Path
+        from madsc.legacy_category_order import SNAPSHOT
+        before = Path(SNAPSHOT).read_bytes()
+        report = audit_historical_metadata()
+        self.assertEqual(report["records_checked"], 1934)
+        self.assertFalse(report["production_writes"])
+        self.assertFalse(report["auto_repairs"])
+        self.assertEqual(before, Path(SNAPSHOT).read_bytes())
+        for issue in report["issues"]:
+            self.assertIn(issue["file"], {
+                "CALISANLAR.m3u", "YABANCI_KANALLAR.m3u",
+                "YENILER.m3u", "CALISMAYANLAR.txt"})
+            self.assertIn(issue["issue"], {
+                "blank_name", "embedded_m3u_attributes_in_name"})
+
     def test_new_candidates_are_isolated_and_ordered(self):
         result = route_discovered_candidates([{"name": "Yeni A"}, {"name": "Yeni B"}])
         self.assertEqual([x["name"] for x in result["queued"]], ["Yeni A", "Yeni B"])

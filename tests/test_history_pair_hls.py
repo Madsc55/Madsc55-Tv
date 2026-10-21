@@ -29,6 +29,21 @@ class HistoryPairStoreTests(unittest.TestCase):
             atomic_write_pair(dest, pair(2))
             self.assertEqual(decode_pair(dest.read_text()), pair(2))
 
+    def test_atomic_history_write_rejects_protected_filename_and_symlink_parent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name in ("CALISANLAR.m3u", "xmltv.xml", "ＹＥＮＩＬＥＲ.m3u"):
+                with self.subTest(name=name), self.assertRaises(PermissionError):
+                    atomic_write_pair(root / name, pair(1))
+                self.assertFalse((root / name).exists())
+            real = root / "real"
+            real.mkdir()
+            linked = root / "linked"
+            linked.symlink_to(real, target_is_directory=True)
+            with self.assertRaises(ValueError):
+                atomic_write_pair(linked / "history.json", pair(1))
+            self.assertFalse((real / "history.json").exists())
+
     def test_corrupt_envelope_and_symlink_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

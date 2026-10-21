@@ -26,6 +26,19 @@ class WorkflowConsolidationTests(unittest.TestCase):
 
 
 
+
+    def test_network_probe_steps_require_success_and_opt_in(self):
+        root = Path(__file__).resolve().parent.parent / ".github" / "workflows"
+        for stage, name, flag in (
+            ("K2", "Public candidate discovery", "allow_network_discovery"),
+            ("K3", "Bounded Turkish TV video probe", "allow_live_probes"),
+        ):
+            with self.subTest(stage=stage):
+                body = (root / MAIN[stage]).read_text(encoding="utf-8")
+                step = body.split("- name: " + name, 1)[1].split("- name:", 1)[0]
+                self.assertIn("success() && inputs." + flag + " == true", step)
+                self.assertNotIn("continue-on-error: true", step)
+
     def test_real_k2_k3_failure_uploads_cover_legacy_report_paths(self):
         root = Path(__file__).resolve().parent.parent / ".github" / "workflows"
         reports = {

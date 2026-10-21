@@ -29,6 +29,20 @@ class ChannelTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluate_three_stage_continuity(samples[:2])
 
+
+    def test_batch_continuity_reports_missing_candidates(self):
+        from madsc.channel_test import summarize_candidate_continuity
+        report = summarize_candidate_continuity(["a" * 64, "b" * 64], {})
+        self.assertEqual(report["candidate_count"], 2)
+        self.assertEqual(report["missing_count"], 2)
+        self.assertEqual(report["preliminary_window_passes"], 0)
+        self.assertFalse(report["production_change_allowed"])
+
+    def test_batch_continuity_rejects_orphan_fingerprint(self):
+        from madsc.channel_test import summarize_candidate_continuity
+        with self.assertRaises(ValueError):
+            summarize_candidate_continuity(["a" * 64], {"b" * 64: []})
+
     def test_success_is_not_device_approval(self):
         result = evaluate_probe({"url_sha256":"a"*64,"http_status":200,"video":True,
                                  "audio":True,"duration_seconds":60})

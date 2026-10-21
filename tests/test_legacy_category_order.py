@@ -49,6 +49,22 @@ class LegacyCategoryOrderTests(unittest.TestCase):
             self.assertFalse(report["auto_repairs"])
             self.assertEqual(before, path.read_bytes())
 
+    def test_rejects_invalid_snapshot_root_and_source_manifest(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        original = load_historical_categories()
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "snapshot.json"
+            for bad in ([], {"schema": "madsc55-legacy-order-v1", "entries": []},
+                        {**original, "source_files": []},
+                        {**original, "source_files": [
+                            {**entry, "sha": "invalid"} if index == 0 else entry
+                            for index, entry in enumerate(original["source_files"])]}):
+                path.write_text(json.dumps(bad), encoding="utf-8")
+                with self.assertRaises(ValueError):
+                    load_historical_categories(path)
+
     def test_new_candidates_are_isolated_and_ordered(self):
         result = route_discovered_candidates([{"name": "Yeni A"}, {"name": "Yeni B"}])
         self.assertEqual([x["name"] for x in result["queued"]], ["Yeni A", "Yeni B"])

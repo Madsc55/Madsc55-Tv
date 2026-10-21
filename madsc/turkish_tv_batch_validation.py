@@ -78,7 +78,7 @@ def run():
         if not (result["video"] and result["audio"]):
             continue
         title, url = by_digest[result["sha256"]]
-        safe_title = title.replace("\\r", " ").replace("\\n", " ").replace('"', "'")[:100]
+        safe_title = title.replace("\r", " ").replace("\n", " ").replace('"', "'")[:100]
         group = category(safe_title)
         if not group:
             continue

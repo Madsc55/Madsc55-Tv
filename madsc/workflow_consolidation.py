@@ -64,11 +64,26 @@ def consolidation_plan(root: Path) -> dict:
             raise ValueError("Automatic trigger found: " + name)
         targets = [MAIN[key] for key in stage.split("+")]
         main_contents = [ (folder / target).read_text(encoding="utf-8") for target in targets ]
-        migrated = any(
-            any(command in line and not line.lstrip().startswith("#")
-                for line in content.splitlines())
-            for content in main_contents
-        )
+        # Only count commands inside a YAML run step, never comments,
+        # descriptions, env values, or arbitrary quoted strings.
+        def in_run_step(content: str) -> bool:
+            run_indent = None
+            for line in content.splitlines():
+                stripped = line.lstrip()
+                indent = len(line) - len(stripped)
+                if run_indent is not None and stripped and indent <= run_indent:
+                    run_indent = None
+                if stripped.startswith(("run: ", "- run: ")):
+                    if command in stripped and not stripped.startswith("#"):
+                        return True
+                if stripped in ("run: |", "run: >"):
+                    run_indent = indent
+                if run_indent is not None and indent > run_indent:
+                    if command in stripped and not stripped.startswith("#"):
+                        return True
+            return False
+
+        migrated = any(in_run_step(content) for content in main_contents)
         entries.append({
             "command_present_in_main": migrated,
             "workflow": name,

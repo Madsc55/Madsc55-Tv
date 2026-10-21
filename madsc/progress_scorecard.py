@@ -76,7 +76,9 @@ def main():
     parser.add_argument("--tasks", type=Path, help="K1-K5 task evidence JSON list")
     parser.add_argument("--verified-ci", action="store_true")
     args = parser.parse_args()
-    tasks = json.loads(args.tasks.read_text(encoding="utf-8")) if args.tasks else None
+    default_ledger = Path(__file__).resolve().parent.parent / "docs" / "K1_K5_KANITLI_GOREV_DEFTERI.json"
+    ledger = args.tasks if args.tasks is not None else default_ledger
+    tasks = json.loads(ledger.read_text(encoding="utf-8")) if ledger.is_file() else None
     report = scorecard(verified_ci=args.verified_ci, tasks=tasks)
     if args.output.exists() or args.output.is_symlink():
         raise FileExistsError("Progress evidence cannot overwrite existing data")

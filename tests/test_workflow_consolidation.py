@@ -33,7 +33,7 @@ class WorkflowConsolidationTests(unittest.TestCase):
             for name, (stage, command, _) in AUXILIARY.items():
                 main_name = MAIN[stage.split("+")[0]]
                 with (folder / main_name).open("a", encoding="utf-8") as out:
-                    out.write("      - run: " + command + "\\n")
+                    out.write("      - run: " + command + "\n")
             result = consolidation_plan(Path(d))
             self.assertEqual(result["commands_integrated_in_main"], 10)
             self.assertTrue(result["all_ten_commands_integrated_in_main"])

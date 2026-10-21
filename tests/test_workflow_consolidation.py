@@ -12,7 +12,7 @@ class WorkflowConsolidationTests(unittest.TestCase):
         for name in list(AUXILIARY) + list(MAIN.values()):
             command = AUXILIARY[name][1] if name in AUXILIARY else "echo fixture"
             (folder / name).write_text(
-                "name: fixture\non:\n  workflow_dispatch:\npermissions:\n  contents: read\n" + command + "\n",
+                "name: fixture\non:\n  workflow_dispatch:\npermissions:\n  contents: read\njobs:\n  isolated:\n    steps:\n      - run: " + command + "\n",
                 encoding="utf-8",
             )
         return folder

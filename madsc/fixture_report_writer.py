@@ -30,6 +30,8 @@ def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
     if not destination.parent.resolve().is_relative_to(base):
         raise PermissionError("Escaping fixture root")
     destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.exists():
+        raise FileExistsError("Refusing to overwrite existing report evidence")
     enforce_local_output_path(destination, allowed_root=root)
     with destination.open("x", encoding="utf-8") as handle:
         handle.write(content)

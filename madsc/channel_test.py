@@ -96,3 +96,43 @@ def summarize_offline_probe_evidence(records: list[dict]) -> dict:
             "needs_review": sum(x["technical_status"] == "NEEDS_REVIEW" for x in results),
             "network_probed": False, "ibo_device_verified": False,
             "production_ready": False, "results": results}
+
+
+def evaluate_three_stage_continuity(samples: list[dict], minimum_hours: float = 6) -> dict:
+    """Evaluate three chronological offline samples, never certify their provenance."""
+    from datetime import datetime, timezone
+    if (not isinstance(samples, list) or len(samples) < 3
+            or type(minimum_hours) not in (int, float)
+            or not math.isfinite(minimum_hours) or minimum_hours < 6):
+        raise ValueError("Three stages and at least six hours are required")
+    parsed = []
+    for sample in samples:
+        if not isinstance(sample, dict) or not isinstance(sample.get("observed_at"), str):
+            raise ValueError("Timestamped sample required")
+        stamp = sample["observed_at"]
+        try:
+            instant = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+        except ValueError as exc:
+            raise ValueError("Invalid observation time") from exc
+        if instant.tzinfo is None or instant.utcoffset() is None:
+            raise ValueError("Timezone-aware observation required")
+        parsed.append((instant.astimezone(timezone.utc), evaluate_probe(sample)))
+    if any(a[0] >= b[0] for a, b in zip(parsed, parsed[1:])):
+        raise ValueError("Samples must be strictly chronological")
+    fingerprints = {item[1]["url_sha256"] for item in parsed}
+    if len(fingerprints) != 1:
+        raise ValueError("Mixed channel fingerprints")
+    elapsed = (parsed[-1][0] - parsed[0][0]).total_seconds() / 3600
+    passes = sum(item[1]["technical_status"] == "PRELIMINARY_PASS" for item in parsed)
+    return {
+        "url_sha256": parsed[0][1]["url_sha256"],
+        "stages_observed": len(parsed),
+        "elapsed_hours": round(elapsed, 6),
+        "preliminary_passes": passes,
+        "three_stage_six_hour_preliminary": elapsed >= minimum_hours and passes == len(parsed),
+        "observation_provenance_verified": False,
+        "actual_network_measurements_verified": False,
+        "stream_continuity_verified": False,
+        "ibo_device_verified": False,
+        "production_change_allowed": False,
+    }

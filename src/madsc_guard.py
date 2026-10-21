@@ -8,7 +8,9 @@ PROTECTED = {"calisanlar.m3u", "yeniler", "yedekler", "hepsi", "favoriler", "epg
 def safe_relative_path(raw: str) -> bool:
     if not isinstance(raw, str) or not raw or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw):
         return False
-    p = Path(raw.replace("\\", "/"))
+    if "\\" in raw:
+        return False
+    p = Path(raw)
     if p.is_absolute() or not p.parts or ".." in p.parts or any(part in ("", ".") for part in p.parts):
         return False
     parts = [x.casefold() for x in p.parts]

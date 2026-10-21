@@ -10,6 +10,7 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         raise ValueError("Invalid discovery evidence")
     assessed = []
     seen = set()
+    identity_primary = {}
     if ibo_results is not None and not isinstance(ibo_results, dict):
         raise ValueError("Invalid IBO evidence")
     ibo_results = ibo_results or {}
@@ -39,8 +40,13 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
             if probe.get("url_sha256") != digest:
                 raise ValueError("Probe fingerprint mismatch")
             status = evaluate_probe(probe)["technical_status"]
+        identity = ("tvg_id", tvg_id.casefold()) if tvg_id else ("name_group", name.casefold(), group.casefold())
+        alternative_to = identity_primary.get(identity)
+        if alternative_to is None:
+            identity_primary[identity] = digest
         decision = classify_channel(status, ibo_results.get(digest, "UNKNOWN"))
         assessed.append({"url_sha256": digest, "name": name, "tvg_id": tvg_id,
+                         "alternative_to_sha256": alternative_to,
                          "tvg_logo": logo, "group_title": group, **decision,
                          "ibo_device_verified": False,
                          "ibo_result_supplied": decision["ibo_result"] != "UNKNOWN"})

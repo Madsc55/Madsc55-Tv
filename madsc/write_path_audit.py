@@ -37,7 +37,7 @@ def audit_write_paths(paths: list[str]) -> dict:
             or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw)
             or any(part.endswith((" ", ".")) for part in parts)
             or ":" in name
-            or "\\x00" in name
+            or "\x00" in name
             or name.startswith("~")
             or folded in {item.casefold() for item in PROTECTED_EXACT}
             or any(part in {item.casefold() for item in PROTECTED_EXACT}

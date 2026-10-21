@@ -74,6 +74,13 @@ class ChannelTests(unittest.TestCase):
         self.assertIn('source_errors[name] = "source_scan_failed"', source)
         self.assertIn('"source_failures_count": len(source_errors)', source)
 
+
+    def test_bulk_discovery_has_fingerprint_and_excludes_failed_scans(self):
+        from pathlib import Path
+        source = Path("madsc/turkish_tv_batch_validation.py").read_text(encoding="utf-8")
+        self.assertIn('discovery_fingerprint_sha256', source)
+        self.assertIn('if not eligible_source(name) or error is not None:', source)
+
     def test_success_is_not_device_approval(self):
         result = evaluate_probe({"url_sha256":"a"*64,"http_status":200,"video":True,
                                  "audio":True,"duration_seconds":60})

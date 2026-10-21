@@ -1537,3 +1537,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - tests/test_legacy_category_order.py: bozuk kok, eksik kaynak manifesti, bozuk SHA senaryolari icin regresyon testleri yazildi. Commit dd2941040635adb4c69b6ef69058ed3ffdf7faa3.
 - Bunlar kaynak SHA'sinin gercek dosya icerigiyle eslesmesini kanitlamaz; testler henüz CALISTIRILMADI. [skip ci], Actions yok, eski depo/canli listeler/EPG/logo/favoriler/YENILER/YEDEKLER degismedi.
 - Siradaki ana hedef: tam main checkout ve tek offline K1-K5 regresyon; 22 gorev, 26 runtime guvenlik ve 92 eski davranis icin gercek kanit gereklilikleri acik.
+
+## 21 Ekim 2026 — K2 kaynak manifesti tekillik duzeltmesi
+- madsc/legacy_category_order.py: source_files icinde ayni file anahtarinin birden cok gorunmesi reddediliyor; onceki dict comprehension yinelenen kaydi gizleyebiliyordu. Commit d9514c5bac960f8e42aa6fc05c34797bf278c022.
+- tests/test_legacy_category_order.py: dort ayni kaynak kaydi iceren bozuk manifest icin negatif regresyon eklendi. Commit ea724e291c1e570b7be31e9de7189fe74ec29f10.
+- Container git ls-remote DNS github.com cozumleyemedi; bu nedenle tum depo offline testi gerceklestirilemedi. Yeni testler henuz calistirilmadi; CI Actions tetiklenmedi ([skip ci]).
+- K1-K5 genel kabul acik; eski repo, korunan playlist/EPG/logo/kategori/siralama/favori/YENILER/YEDEKLER degistirilmedi.

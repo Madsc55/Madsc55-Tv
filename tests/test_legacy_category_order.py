@@ -84,6 +84,22 @@ class LegacyCategoryOrderTests(unittest.TestCase):
             self.assertIn(issue["issue"], {
                 "blank_name", "embedded_m3u_attributes_in_name"})
 
+    def test_metadata_audit_detects_uppercase_embedded_attributes(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        original = load_historical_categories()
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "snapshot.json"
+            sample = dict(original)
+            sample["entries"] = [dict(row) for row in original["entries"]]
+            sample["entries"][0]["name"] = "Channel TVG-LOGO=unexpected"
+            path.write_text(json.dumps(sample), encoding="utf-8")
+            report = audit_historical_metadata(path)
+            self.assertIn("embedded_m3u_attributes_in_name",
+                          [item["issue"] for item in report["issues"]])
+            self.assertFalse(report["production_writes"])
+
     def test_new_candidates_are_isolated_and_ordered(self):
         result = route_discovered_candidates([{"name": "Yeni A"}, {"name": "Yeni B"}])
         self.assertEqual([x["name"] for x in result["queued"]], ["Yeni A", "Yeni B"])

@@ -23,6 +23,21 @@ class K4ReportOutputSafetyTests(unittest.TestCase):
                     restore_drill.main()
             self.assertEqual(output.read_text(), "original")
 
+    def test_k4_evidence_rejects_symlinked_input_parent(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            actual = root / "actual"
+            actual.mkdir()
+            report = actual / "report.json"
+            report.write_text("{}")
+            alias = root / "alias"
+            alias.symlink_to(actual, target_is_directory=True)
+            with patch("sys.argv", ["k4_evidence", "--report", str(alias / "report.json"),
+                                    "--output", str(root / "result.json")]):
+                with self.assertRaises(ValueError):
+                    k4_evidence.main()
+            self.assertFalse((root / "result.json").exists())
+
     def test_k4_evidence_rejects_protected_playlist_path(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

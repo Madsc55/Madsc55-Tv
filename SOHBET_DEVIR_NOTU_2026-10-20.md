@@ -389,3 +389,10 @@ Kullanici 17 pending gorevin topluca en fazla UC calisma turunda bitirilmesini i
 - madsc/workflow_consolidation.py artik her 10 eski yardimci YAML'daki kayitli komutun ilgili ana YAML'larin en az birinde bulunup bulunmadigini olcuyor: command_present_in_main, commands_integrated_in_main, all_ten_commands_integrated_in_main. Commit 46fa8c7fe68918d6075c00e8edca3af94f6b47ce.
 - 10 yardimci komutun hepsi ana K1-K5 YAML dosyalarina KOD DUZEYINDE aktarildi; ancak 10 eski YAML hala fiziksel olarak duruyor. Kaynak komutun bulunmasi tam behavior parity kaniti degil. Gercek tam offline regression henuz calistirilmadi; 92 eski davranissal kabul 0/92, 26 runtime kabul 0/26, 17 pending 5 in_progress 0 completed.
 - Ilerideki adim: eksiksiz main kopyasinda tek toplu offline test; kanitli davranissal parity ve dis bagimli testler icin izin. GitHub Actions, playlist, EPG, logo ve yedekler degistirilmedi.
+
+
+## 21 Ekim 2026 — Offline gate ve regresyon korumasi
+- tests/test_workflow_consolidation.py'ye on yardimci komutun ana workflow'da bulundugunu ve eksik entegrasyonun yakalandigini denetleyen iki test eklendi; commit 17df3b4138d6b370a468ff4890824d4f50b6e08e.
+- madsc/offline_gate.py artik on komutun ana workflow'da gercekten bulundugunu da zorunlu kilacak; commit 0c7126f3b033bd027ebbc9c6728e31caaa975236.
+- GitHub tree API ile src/madsc_guard.py ve config/shadow_manifest.json dosyalarinin mevcut oldugu ve 15 YAML workflow'un hala bulundugu dogrulandi.
+- Tum repo offline testleri henuz calistirilmadi; 17 pending gorev ve gercek kabul kaniti durumu degismedi. Actions calistirilmadi, uretim dosyalarina dokunulmadi.

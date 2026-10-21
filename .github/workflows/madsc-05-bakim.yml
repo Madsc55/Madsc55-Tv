@@ -329,6 +329,20 @@ jobs:
           name: madsc-k5-guarded-evidence
           path: reports/reports/k5-isolated-evidence.json
           retention-days: 14
+      - name: K5 on yardimci workflow ve 22 gorev kaynak envanteri
+        run: |
+          mkdir -p reports
+          python -m madsc.workflow_consolidation > reports/workflow-consolidation.json
+          python -m madsc.k1_k5_acceptance_requirements > reports/k1-k5-evidence-requirements.json
+      - name: K5 envanter ve eksik kanit raporlarini sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k5-consolidation-and-task-evidence
+          path: |
+            reports/workflow-consolidation.json
+            reports/k1-k5-evidence-requirements.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K5 kanita dayali proje ilerleme tablosunu olustur
         run: python -m madsc.progress_scorecard --output reports/progress-scorecard.json
       - name: K5 ilerleme kanitini sakla

@@ -19,6 +19,7 @@ def run():
     total = 0
     source_by_digest = {}
     source_errors = {}
+    source_candidate_counts = {}
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
         for name, entries, error in pool.map(scan, SOURCES.items()):
             if error is None:
@@ -27,6 +28,7 @@ def run():
                 source_errors[name] = "source_scan_failed"
             if not eligible_source(name) or error is not None:
                 continue
+            source_candidate_counts[name] = 0
             for title, url in entries:
                 total += 1
                 if any(w in title.casefold() for w in RADIO):
@@ -36,6 +38,7 @@ def run():
                 key = hashlib.sha256(url.encode()).hexdigest()
                 found.setdefault(key, (title, url))
                 source_by_digest.setdefault(key, set()).add(name)
+                source_candidate_counts[name] += 1
     chosen = sorted(found.items(), key=lambda item: item[0])[:MAX_PROBES]
     discovery_fingerprint = hashlib.sha256("\n".join(sorted(found)).encode("ascii")).hexdigest()
     by_digest = dict(chosen)
@@ -57,7 +60,9 @@ def run():
               "discovery_fingerprint_sha256": discovery_fingerprint,
               "selected_candidate_sha256": [digest for digest, _ in chosen],
               "source_provenance_declared_only": True, "sources_checked": len(SOURCES),
-              "sources_ok": sources_ok, "source_failures": source_errors,
+              "sources_ok": sources_ok,
+              "eligible_source_candidate_counts": source_candidate_counts,
+              "source_failures": source_errors,
               "source_failures_count": len(source_errors),
               "entries_in_turkish_feeds": total,
               "unique_https_nonradio_candidates": len(found), "tested": len(results),

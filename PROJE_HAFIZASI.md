@@ -1758,3 +1758,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - compare_copy/verify_sandbox_restore iki farkli klasorde ayni inode'a bagli dosyayi artik bagimsiz kopya saymiyor. Kod 754f6eadf31bad17e498697b3365cc4b2d849cae, davranissal test 7909c19fa0514b73336e46538fa8f1a1ce80f83c.
 - Son gorulen Actions: #39677814549 success; #39677831373 in_progress; #39678038296 cancelled; #39678054199 pending. Iptal veya bekleyene basari atfedilmedi.
 - Harici backup/restore gercek kabul, 75 canli yayin, 92 parity ve 26 runtime guvenlik kuralinin kabul sayilari degismedi. Korunan yollar degistirilmedi.
+
+
+## 21 Ekim 2026 - K4 gercek sandbox geri yukleme uygulamasi
+- Son Actions #39678146430 ve #39677831373 completed/success; daha eski ara commitler concurrency ile cancelled.
+- Yeni restore_to_new_sandbox(backup,destination,names) yalniz daha once var olmayan ayri sandbox klasorune gercek bayt kopyaliyor; manifest SHA256 ile backup ve restore dogrulaniyor; hata durumunda sadece yeni sandbox temizleniyor. Kod 6069217b33301085403f9a3adb175c65e58b9a91, davranissal test 8426b6c30ea3ccd9eeeed3b22c69284bb3e3e353.
+- Uretim dosyalari, korunan listeler ve eski depo degistirilmedi. Bu harici depolama kaniti degildir; K4 production restore accepted degil. 75 canli, 92 parity, 26 runtime security kabulleri halen acik. Yeni Actions sonucu kontrol edilecek.

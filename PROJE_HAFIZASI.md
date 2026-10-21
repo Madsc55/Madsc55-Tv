@@ -1580,3 +1580,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - tests/test_legacy_category_order.py buyuk harf TVG-LOGO senaryosu eklendi. Commit 3feb611f25ca276d422b29451ef78eba2329a49a.
 - [skip ci] kullanilmadi; otomatik push Actions #421 (39622721123) ve #422 (39622739172) queued goruldu. Onceki #416, #417, #418 success; #419/#420 queued. Yeni iki testin sonucu henuz bilinmiyor, basarili sayilmaz.
 - Eski Madsc55/madsc-tv deposu, canli kanallar, kategoriler, sira, logo, favoriler, YENILER, YEDEKLER degismedi. K1-K5 uretim kabul acik.
+
+## 21 Ekim 2026 — K1 Unicode yol koruma guclendirmesi (CI kotasi korunuyor)
+- Yalniz Madsc55/Madsc55-Tv main uzerinde madsc/write_path_audit.py Unicode NFKC/casefold esdeger yol adlarini korunan isim/prefix ve yinelenen yol denetimine bagladi; tam genislikli FAVORILER/EPG gibi gorunus farklariyla korumayi atlama riski daraltildi. Commit f15bb89224f8053c5c1d640a57211e62ec59bb94.
+- tests/test_write_path_audit.py Unicode esdeger korunan yollar ve esdeger rapor adlari icin negatif regresyon eklendi. Commit 57c25afa3a7066e0e9316cecad752fe3c64f7cac.
+- Her iki commit [skip ci] ile yapildi: son kota kurali geregi yeni Actions calistirilmadi. Yerel toplu test bu turda calistirilamadi; bu degisikliklerin test basarisi henuz kanitli degil. K1 26/26 ve K5 92/92 kabul sayaclari degismedi; 22 gorevden 0'i resmi tamamlandi.
+- Korunan playlist/EPG/logo/favoriler/yedek dosyalari ve eski repo degistirilmedi. Sonraki is: kaynaklarin toplu offline regresyonu, butun gercek writer callsite envanteri ve merkezi guard baglantisi; sonra K2-K5 gercek kabul.

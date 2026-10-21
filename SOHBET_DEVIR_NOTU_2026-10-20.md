@@ -223,3 +223,9 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/channel_catalog.py K2 discovery -> kanal sunumu/IBO/logo/ölçüm bağlantısı commit c525bba6a276dba7d553a4fae398a096a3269301; test f6da4ed99f68566234bc195ba217d7cdc4c71e5d.
 - K3 evaluate_probe üzerinden doğrulanmış teknik durum entegrasyonu commit 181e51d5b2b322aacff51d3b9e2bd1b727c74440; test d20cea8b4e54c871b6565594250cbc06c8f0264a. Teknik durum sadece verilen probe kanıtından gelir; kod canlı test YAPMAZ. IBO kullanıcı onayı ayrı ve korunur.
 - Açık işler: gerçek eski kategori isim/sıra kaynaklarıyla tam eşleştirme, gerçek logo arama/kimlik doğrulama, 3 aşamalı zamana yayılmış teknik test, ayrı M3U taslakları, beşli workflow bağları ve tüm main için ücretsiz offline toplu regresyon. Actions çalıştırma, canlı listelere yazma.
+
+
+## 21 Ekim 2026 — K5 M3U taslak entegrasyonu
+- K2/K3 katalogda yabanci kanal fingerprint ile probe kaniti verilmesi engellendi: madsc/channel_catalog.py 7d3baf9af000d41141dda0ad5340ea569938efbb; test fa4986420752135a6e39ec8234f44ce96c595f0f.
+- K5 madsc/playlist_previews.py salt okunur bellek ici 5 ayri taslak olusturur: IBO_ONAYLI_CALISAN, CALISAN_ADAY, CALISMAYAN_ADAY, YABANCI, TEST_BEKLIYOR. Mevcut eski group-title metadata'sini korur, buyuk harf gorunen ad ve dogrulanmis logo alanlarini tasir; kaynak URL fingerprint eslesmesini zorunlu kilar, M3U metadata enjeksiyonunu reddeder. Commitler 69ac99355d596e4dd8ffdfef9f99aebc93d6f7e7, ded0334e464ef80a7af0fa60ba49b17c907d66a0; test 06f3c1293fed36e7666c2305da3a9025855bd07a.
+- Bu BES TASLAK DOSYASI bes AYRI OTOMASYON degildir. K5 yardimci fonksiyonu dosya YAZMAZ, canli listeleri DEGISTIRMEZ, kanal probe/IBO cihaz testi YAPMAZ. Eski kategori ad/sira tam kabul ve canli logo aramasi halen acik. GitHub Actions ve guncel main offline tum regresyon calistirilmadi.

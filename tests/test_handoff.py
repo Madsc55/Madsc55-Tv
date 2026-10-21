@@ -25,6 +25,19 @@ class HandoffTests(unittest.TestCase):
         ])
         self.assertEqual(report["alternatives"], [])
 
+
+    def test_k2_k3_handoff_keeps_alternative_stream_relationship(self):
+        discovery = classify_candidates([
+            {"name": "TRT 1", "url": "https://example.org/a", "tvg_id": "trt1"},
+            {"name": "TRT 1 HD", "url": "https://example.org/b", "tvg_id": "trt1"},
+        ])
+        report = assess_candidates(discovery, {})
+        primary, alternative = report["assessed"]
+        self.assertIsNone(primary["alternative_to_sha256"])
+        self.assertEqual(alternative["alternative_to_sha256"], primary["url_sha256"])
+        self.assertEqual(alternative["technical_status"], "UNTESTED")
+        self.assertFalse(alternative["production_change_allowed"])
+
     def test_unprobed_candidate_is_untested(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         result = assess_candidates(discovery, {})

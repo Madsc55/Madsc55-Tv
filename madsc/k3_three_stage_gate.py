@@ -26,6 +26,8 @@ def assess_three_stage_probes(samples: list[dict]) -> dict:
             raise ValueError("UTC timestamps required")
         if when > now:
             raise ValueError("Future-dated test evidence is invalid")
+        if when.year < 2020:
+            raise ValueError("Implausibly old test evidence is invalid")
         evidence = evaluate_probe(sample.get("probe"))
         records.append((when.astimezone(timezone.utc), evidence))
     records.sort(key=lambda item: item[0])

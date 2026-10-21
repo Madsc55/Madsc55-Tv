@@ -79,7 +79,7 @@ def consolidation_plan(root: Path) -> dict:
                     value = value.split(" #", 1)[0].rstrip()
                     if command in value:
                         return True
-                if stripped in ("run: |", "run: >"):
+                if stripped in ("run: |", "run: >", "- run: |", "- run: >"):
                     run_indent = indent
                 if run_indent is not None and indent > run_indent:
                     if command in stripped and not stripped.startswith("#"):

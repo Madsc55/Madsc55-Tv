@@ -4,6 +4,9 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import ast
+
+from madsc.k1_k5_acceptance_requirements import REQUIREMENTS, assess_task_evidence
 
 MAIN = {
     "K1": "madsc-01-guvenlik.yml",
@@ -37,6 +40,20 @@ def inspect_installation(root: Path) -> dict:
             raise ValueError("Invalid or duplicate task stage/status/id")
         ids.add(identifier)
         counts[stage][status] += 1
+    if ids != set(REQUIREMENTS):
+        raise ValueError("Incomplete or unexpected K1-K5 task ledger")
+    evidence = assess_task_evidence(tasks)
+    writer_calls = []
+    for module in sorted((root / "madsc").glob("*.py")):
+        if module.is_symlink():
+            raise ValueError("Symlinked Python source")
+        tree = ast.parse(module.read_text(encoding="utf-8"), filename=str(module))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                target = node.func
+                name = target.attr if isinstance(target, ast.Attribute) else (target.id if isinstance(target, ast.Name) else "")
+                if name in {"write_text", "write_bytes", "open", "replace", "mkdir", "NamedTemporaryFile", "mkstemp", "unlink", "rename", "copyfile", "copy2"}:
+                    writer_calls.append({"file": module.relative_to(root).as_posix(), "line": node.lineno, "operation": name})
     files = sorted(p.name for p in workflows.iterdir()
                    if p.is_file() and p.suffix in (".yml", ".yaml"))
     missing = [name for name in MAIN.values() if name not in files]
@@ -49,6 +66,11 @@ def inspect_installation(root: Path) -> dict:
         "additional_workflows_requiring_consolidation_review": additional,
         "total_workflow_files": len(files),
         "task_counts": counts,
+        "evidence_requirements_missing_tasks": evidence["requirements_missing_tasks"],
+        "external_evidence_required_tasks": evidence["requires_external_evidence_tasks"],
+        "writer_callsite_candidates": writer_calls,
+        "writer_callsite_candidates_count": len(writer_calls),
+        "all_writer_callsites_manually_verified": False,
         "tasks_total": len(tasks),
         "tasks_completed": sum(x["completed"] for x in counts.values()),
         "tasks_in_progress": sum(x["in_progress"] for x in counts.values()),

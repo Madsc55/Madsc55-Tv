@@ -61,6 +61,32 @@ class MigratedOptInContractTests(unittest.TestCase):
                         step, (filename, command),
                     )
 
+    def test_automatic_batch_has_read_only_permissions_and_no_sensitive_defaults(self):
+        data = (ROOT / "madsc-05-bakim.yml").read_text(encoding="utf-8")
+        header = data.split("\njobs:", 1)[0]
+        self.assertIn("  push:\n    branches: [main]\n", header)
+        self.assertIn("permissions:\n  contents: read\n  actions: read\n", header)
+        self.assertNotIn("contents: write", data)
+        self.assertNotIn("actions: write", data)
+        self.assertNotIn("persist-credentials: true", data)
+        self.assertNotIn("secrets.GITHUB_TOKEN", data)
+        for name in ("allow_legacy_source_audit", "allow_legacy_notes_merge"):
+            self.assertRegex(
+                header,
+                r"(?m)^      " + re.escape(name) +
+                r":\n(?:(?!^      [A-Za-z_][A-Za-z_0-9]*:).+\n)*?"
+                r"        default: false\s*$",
+            )
+        for command in (
+            "python -m madsc.legacy_99_bulk_audit",
+            "python scripts/birlestir_eski_sistem_notlari.py",
+        ):
+            step = next(
+                s for s in re.split(r"(?=^      - name: )", data, flags=re.MULTILINE)
+                if command in s
+            )
+            self.assertIn("if: ${{ inputs.", step)
+
     def test_video_dependency_only_installs_when_approved(self):
         data = (ROOT / "madsc-03-kanal-test.yml").read_text(encoding="utf-8")
         steps = re.split(r"(?=^      - name: )", data, flags=re.MULTILINE)

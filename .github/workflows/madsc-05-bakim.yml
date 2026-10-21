@@ -50,8 +50,10 @@ jobs:
           echo "exit_code=$sonuc" >> "$GITHUB_OUTPUT"
           exit "$sonuc"
       - name: K1-K5 gercek kurulum, eksik kanit ve yazma noktasi envanteri
+        if: ${{ always() && !cancelled() }}
         shell: bash
         run: |
+          mkdir -p reports
           python -m madsc.five_system_installation > reports/k1-k5-installation-audit.json
           python -m json.tool reports/k1-k5-installation-audit.json >/dev/null
       - name: Toplu kurulum envanterini sakla

@@ -25,6 +25,25 @@ class WorkflowConsolidationTests(unittest.TestCase):
 
 
 
+
+    def test_real_k2_k3_failure_uploads_cover_legacy_report_paths(self):
+        root = Path(__file__).resolve().parent.parent / ".github" / "workflows"
+        reports = {
+            "K2": ("reports/k2-legacy-multisource.json",
+                   "reports/k2-live-pilot.json",
+                   "reports/verified-k2-history.json"),
+            "K3": ("reports/k3-real-manifest-pilot.json",
+                   "reports/k3-turkish-tv-video-pilot.json",
+                   "reports/turkish-tv-batch-validation.json"),
+        }
+        for stage, paths in reports.items():
+            with self.subTest(stage=stage):
+                body = (root / MAIN[stage]).read_text(encoding="utf-8")
+                upload = body.split("- name: Upload isolated evidence", 1)[1]
+                self.assertIn("always() && !cancelled()", upload)
+                for report in paths:
+                    self.assertIn(report, upload)
+
     def test_real_isolated_workflows_keep_failure_evidence(self):
         root = Path(__file__).resolve().parent.parent
         for stage in ("K1", "K2", "K3"):

@@ -52,7 +52,7 @@ class WorkflowConsolidationTests(unittest.TestCase):
             folder = self.make_root(Path(d))
             command = AUXILIARY["madsc-k2-live-pilot.yml"][1]
             with (folder / MAIN["K2"]).open("a", encoding="utf-8") as out:
-                out.write("      # " + command + "\\n")
+                out.write("      # " + command + "\n")
             result = consolidation_plan(Path(d))
             self.assertEqual(result["commands_integrated_in_main"], 0)
             self.assertFalse(result["all_ten_commands_integrated_in_main"])

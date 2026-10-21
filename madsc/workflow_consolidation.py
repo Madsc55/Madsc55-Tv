@@ -146,7 +146,8 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
         destinations = [contracts(body) for body in main_sources]
         gaps = []
         if src["timeout_minutes"] and not any(
-                t in dst["timeout_minutes"] for t in src["timeout_minutes"] for dst in destinations):
+                actual >= required for required in src["timeout_minutes"]
+                for dst in destinations for actual in dst["timeout_minutes"]):
             gaps.append("timeout")
         if src["artifact_names"] and not all(
                 any(a in dst["artifact_names"] for dst in destinations)

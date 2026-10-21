@@ -29,6 +29,9 @@ def ledger(inventory, evidence=None):
     evidence = {} if evidence is None else evidence
     if not isinstance(evidence, dict) or set(evidence) - {r["path"] for r in rows}:
         raise ValueError("Unknown workflow evidence")
+    if any(not isinstance(proofs, dict) or set(proofs) - set(REQUIRED)
+           for proofs in evidence.values()):
+        raise ValueError("Invalid proof keys")
     output = []
     for row in rows:
         path = row["path"]

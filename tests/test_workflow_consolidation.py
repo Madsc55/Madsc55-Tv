@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from madsc.workflow_consolidation import AUXILIARY, MAIN, consolidation_plan, auxiliary_behavior_matrix
+from madsc.workflow_consolidation import AUXILIARY, MAIN, consolidation_plan, auxiliary_behavior_matrix, contract_gate
 
 
 class WorkflowConsolidationTests(unittest.TestCase):
@@ -70,6 +70,26 @@ class WorkflowConsolidationTests(unittest.TestCase):
             self.assertIn("timeout", row["static_contract_gaps"])
             self.assertIn("artifact_name", row["static_contract_gaps"])
             self.assertFalse(result["behavioral_parity_verified"])
+
+
+    def test_contract_gate_rejects_missing_commands(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.make_root(Path(d))
+            gate = contract_gate(Path(d))
+            self.assertFalse(gate["pass"])
+            self.assertEqual(len(gate["missing_commands"]), 10)
+            self.assertFalse(gate["behavioral_parity_verified"])
+
+    def test_contract_gate_accepts_all_executable_commands_without_claiming_parity(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            for name, (stages, command, _) in AUXILIARY.items():
+                with (folder / MAIN[stages.split("+")[0]]).open("a", encoding="utf-8") as out:
+                    out.write("      - run: " + command + chr(10))
+            gate = contract_gate(Path(d))
+            self.assertTrue(gate["pass"])
+            self.assertEqual(gate["missing_commands"], [])
+            self.assertFalse(gate["behavioral_parity_verified"])
 
     def test_all_ten_mapped_to_five_without_claiming_parity(self):
         with tempfile.TemporaryDirectory() as d:

@@ -25,6 +25,22 @@ class ChannelCatalogTests(unittest.TestCase):
         self.assertTrue(out["channels"][0]["logo_verified"])
         self.assertFalse(out["production_writes"])
 
+    def test_summary_counts_candidates_duplicates_and_ibo_without_claiming_device_test(self):
+        rows = [
+            {"name": "kanal", "url": "https://example.org/one"},
+            {"name": "tekrar", "url": "https://example.org/one"},
+            {"name": "yabanci", "url": "https://example.org/two", "foreign": True},
+        ]
+        digest = sha256(b"https://example.org/one").hexdigest()
+        out = prepare_channel_catalog(rows, ibo_results={digest: "WORKING"})
+        summary = out["summary"]
+        self.assertEqual(summary["candidate_count"], 2)
+        self.assertEqual(summary["duplicate_count"], 1)
+        self.assertEqual(summary["technical_probe_count"], 0)
+        self.assertEqual(summary["three_stage_evidence_count"], 0)
+        self.assertEqual(summary["buckets"]["IBO_ONAYLI_CALISAN"], 1)
+        self.assertFalse(summary["device_acceptance_proven"])
+
     def test_probe_evidence_drives_working_candidate(self):
         rows = [{"name": "kanal", "url": "https://example.org/ok", "group_title": "Haber"}]
         digest = sha256(b"https://example.org/ok").hexdigest()

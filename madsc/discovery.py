@@ -26,7 +26,8 @@ def normalize_url(value: str) -> str:
 def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) -> dict:
     known = {normalize_url(x) for x in (known_urls or set())}
     seen = set()
-    accepted, duplicates, rejected = [], [], []
+    accepted, duplicates, rejected, alternatives = [], [], [], []
+    identities = {}
     if not isinstance(rows, list):
         raise ValueError("Candidate rows must be a list")
     for index, item in enumerate(rows):
@@ -58,8 +59,13 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
                 duplicates.append(entry)
             else:
                 seen.add(url)
+                identity = ("tvg_id", entry["tvg_id"].casefold()) if entry["tvg_id"] else ("name_group", entry["name"].casefold(), entry["group_title"].casefold())
+                if identity in identities:
+                    alternatives.append({**entry, "alternative_to_sha256": identities[identity]})
+                else:
+                    identities[identity] = key
                 accepted.append(entry)
         except (KeyError, TypeError, ValueError, AttributeError) as exc:
             rejected.append({"source_index": index, "reason": str(exc)})
-    return {"candidates": accepted, "duplicates": duplicates, "rejected": rejected,
+    return {"candidates": accepted, "duplicates": duplicates, "alternatives": alternatives, "rejected": rejected,
             "production_playlist_modified": False, "device_verified": False}

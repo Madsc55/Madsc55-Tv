@@ -283,7 +283,7 @@ def run(category: str, output: Path) -> dict:
         output.parent.mkdir()
     enforce_local_output_path(output)
     with output.open("x", encoding="utf-8") as handle:
-        handle.write(json.dumps(report, ensure_ascii=False, indent=2) + "\\n")
+        handle.write(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     return report
 
 def main() -> None:

@@ -1659,3 +1659,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - K1, K2, K3 bagimsiz workflow'larinda Upload isolated evidence adimlari always() && !cancelled() kosuluna baglandi. Bir onceki adim fail olsa bile olusan raporlar yuklenmeye calisilir; eksik dosya ve uretim kabul otomatik basarili sayilmaz. Commitler 307ef3e, 06da9cb, a811002.
 - tests/test_workflow_consolidation.py gercek K1/K2/K3 YAML'larinda hata sonrasi artifact yukleme regresyonu eklendi, commit 82d5f4b. Otomatik Actions run 39649951753 basladi, sonuc henuz bu not aninda dogrulanmadi.
 - Son kesin yesil run 39648796704: 6/6. 22 kabul gorevi ve 92 legacy parity kanitlari hala tamamlanmadi. Canli liste, EPG, logo, yedek ve favoriler korunuyor.
+
+## 21 Ekim 2026 - Son yesil run ve toplu eksik komut kapisi
+- GitHub Actions #39650954707 completed/success, K1 K2 K3 K4 K5 toplu kanit 6/6 success. Onceki run #39649951753 regresyon testinde yanlis newline literal nedeniyle fail; 69f46d2 ile duzeltildi.
+- madsc/workflow_consolidation.py: 10 yardimci workflow icin komut ana YAML run adiminda bulunmazsa command_missing ve missing_commands listesi uretir (2f5ceb7). Test fixture eksik komutu ve blocker listesini denetler (9e66945). Bu iki commit [skip ci], henuz test edilmedi.
+- 22 kabul gorevi 0 tamam, 5 devam, 17 bekleme; 92 legacy parity 0 dogrulama. Bu sayaclar fixture yesil diye artmaz. Kalan: gercek dis kaynak, 75 aday icin 3 ayri >=6 saat probe, IBO cihaz, backup/restore ve kalan davranis farklari.
+- Canli M3U, XMLTV, logolar, favoriler, yedekler, arsiv, eski repo degismedi. Sonraki toplu paket: on ana besli YAML ile on yardimci workflow farklarini davranissal kanitla kapat, fixture regresyon ve kabul kanitlarini bagla.

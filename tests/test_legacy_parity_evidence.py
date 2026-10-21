@@ -36,5 +36,30 @@ class EvidenceLedgerTest(unittest.TestCase):
         i["workflows"].pop()
         with self.assertRaises(ValueError):
             ledger(i)
+
+    def test_missing_and_invalid_proofs_are_counted_without_acceptance(self):
+        from madsc.legacy_parity_evidence import REQUIRED
+        partial = {
+            "legacy_execution": {"sha256": "a" * 64, "run_id": 12},
+            "new_execution": {"sha256": "bad", "run_id": 14},
+            "reviewer_approval": {"sha256": "b" * 64, "run_id": True},
+        }
+        report = ledger(inventory(), {".github/workflows/w00.yml": partial})
+        first = report["rows"][0]
+        self.assertEqual(first["missing"], [key for key in REQUIRED if key not in partial])
+        self.assertEqual(first["invalid"], ["new_execution", "reviewer_approval"])
+        self.assertEqual(report["invalid_evidence_fields"], 2)
+        self.assertEqual(report["missing_evidence_fields"], 99 * len(REQUIRED) - len(partial))
+        self.assertEqual(report["metadata_complete"], 0)
+        self.assertEqual(report["accepted"], 0)
+
+    def test_complete_metadata_is_counted_but_never_accepted(self):
+        from madsc.legacy_parity_evidence import REQUIRED
+        proofs = {key: {"sha256": "c" * 64, "run_id": 123} for key in REQUIRED}
+        report = ledger(inventory(), {".github/workflows/w00.yml": proofs})
+        self.assertEqual(report["metadata_complete"], 1)
+        self.assertEqual(report["accepted"], 0)
+        self.assertEqual(report["blocked"], 99)
+
 if __name__ == "__main__":
     unittest.main()

@@ -70,14 +70,15 @@ def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
             resolved[0].is_relative_to(resolved[1]) or
             resolved[1].is_relative_to(resolved[0])):
         raise ValueError("Copy audit requires independent nonnested directories")
-    # Separate directories are insufficient if their files share inodes.
-    for name in names:
+    first = snapshot_manifest(source, names)
+    second = snapshot_manifest(destination, names)
+    # Only access inode metadata after source paths passed manifest validation.
+    for entry in first["entries"]:
+        name = entry["path"]
         left = (resolved[0] / name).stat()
         right = (resolved[1] / name).stat()
         if (left.st_dev, left.st_ino) == (right.st_dev, right.st_ino):
             raise ValueError("Copy audit requires physically independent files")
-    first = snapshot_manifest(source, names)
-    second = snapshot_manifest(destination, names)
     return first["entries"] == second["entries"]
 
 
@@ -105,16 +106,16 @@ def verify_independent_restore(source: Path, backup: Path, restored: Path,
         raise ValueError("Source, backup and restored trees must be distinct")
     if any(a.is_relative_to(b) for a in locations for b in locations if a != b):
         raise ValueError("Nested trees are not independent")
-    # Distinct directories may still share inode-backed files via hard links.
-    # A backup must not be able to change when the source is modified.
-    for name in names:
+    # Validate all requested paths before checking inode identity.
+    original = snapshot_manifest(source, names)
+    backed_up = snapshot_manifest(backup, names)
+    recovered = snapshot_manifest(restored, names)
+    for entry in original["entries"]:
+        name = entry["path"]
         stats = [(root / name).stat() for root in locations]
         identities = [(item.st_dev, item.st_ino) for item in stats]
         if len(set(identities)) != 3:
             raise ValueError("Independent restore trees must not share hard-linked files")
-    original = snapshot_manifest(source, names)
-    backed_up = snapshot_manifest(backup, names)
-    recovered = snapshot_manifest(restored, names)
     valid = original["entries"] == backed_up["entries"] == recovered["entries"]
     return {"independent_sandbox_restore_matches": valid,
             "files_checked": len(original["entries"]),

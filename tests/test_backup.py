@@ -290,3 +290,34 @@ class BackupTests(unittest.TestCase):
             empty = snapshot_manifest(root, [])
             self.assertEqual(empty["entries"], [])
             self.assertFalse(verify_manifest(root, empty))
+
+    def test_copy_audit_rejects_same_and_nested_trees(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            source = base / "source"
+            nested = source / "nested"
+            other = base / "other"
+            for tree in (source, nested, other):
+                tree.mkdir(parents=True, exist_ok=True)
+                (tree / "sample.txt").write_text("fixture")
+            for destination in (source, nested):
+                with self.subTest(destination=destination), self.assertRaises(ValueError):
+                    compare_copy(source, destination, ["sample.txt"])
+                with self.subTest(restore=destination), self.assertRaises(ValueError):
+                    verify_sandbox_restore(source, destination, ["sample.txt"])
+            self.assertTrue(compare_copy(source, other, ["sample.txt"]))
+
+    def test_copy_audit_rejects_empty_names_and_symlink_root(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            source, destination = base / "source", base / "destination"
+            source.mkdir()
+            destination.mkdir()
+            (source / "sample.txt").write_text("fixture")
+            (destination / "sample.txt").write_text("fixture")
+            alias = base / "alias"
+            alias.symlink_to(source, target_is_directory=True)
+            with self.assertRaises(ValueError):
+                compare_copy(source, destination, [])
+            with self.assertRaises(ValueError):
+                compare_copy(alias, destination, ["sample.txt"])

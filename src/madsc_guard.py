@@ -6,6 +6,8 @@ from pathlib import Path
 
 PROTECTED = {"calisanlar.m3u", "yeniler", "yedekler", "hepsi", "favoriler", "epg", "logolar", "arsiv", "playlist.m3u8", "xmltv.xml", "yeni̇ler"}
 def safe_relative_path(raw: str) -> bool:
+    if not isinstance(raw, str) or not raw or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw):
+        return False
     p = Path(raw.replace("\\", "/"))
     if p.is_absolute() or not p.parts or ".." in p.parts:
         return False
@@ -18,7 +20,7 @@ def validate_manifest(manifest: dict) -> None:
     paths = manifest.get("output_paths")
     if not isinstance(paths, list) or not paths:
         raise ValueError("explicit nonempty output_paths required")
-    if any(not isinstance(p, str) or not safe_relative_path(p) or not p.replace("\\\\", "/").startswith("artifacts/") for p in paths):
+    if any(not isinstance(p, str) or not safe_relative_path(p) or not p.replace("\\", "/").startswith("artifacts/") for p in paths):
         raise ValueError("outputs must stay under artifacts/ and outside protected paths")
 
 def main() -> None:

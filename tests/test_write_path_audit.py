@@ -46,6 +46,15 @@ class WritePathAuditTests(unittest.TestCase):
         self.assertEqual(result["rejected"], paths)
         self.assertFalse(result["runtime_gate_enforced"])
 
+    def test_unicode_compatibility_aliases_cannot_bypass_protection(self):
+        paths = ["ＦＡＶＯＲＩＬＥＲ/channel.txt", "ＥＰＧ/guide.xml",
+                 "reports/ＣＡＬＩＳＡＮＬＡＲ.m3u",
+                 "reports/ＳＡＦＥ.json", "reports/SAFE.json"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths[:3] + paths[4:])
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["ＦＡＶＯＲＩＬＥＲ/channel.txt"])
+
     def test_mixed_safe_and_unsafe_paths_do_not_clear_block(self):
         result = audit_write_paths(["reports/safe.json", "EPG/guide.xml"])
         self.assertTrue(result["blocked"])

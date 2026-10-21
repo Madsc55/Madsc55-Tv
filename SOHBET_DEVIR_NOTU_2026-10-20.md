@@ -396,3 +396,10 @@ Kullanici 17 pending gorevin topluca en fazla UC calisma turunda bitirilmesini i
 - madsc/offline_gate.py artik on komutun ana workflow'da gercekten bulundugunu da zorunlu kilacak; commit 0c7126f3b033bd027ebbc9c6728e31caaa975236.
 - GitHub tree API ile src/madsc_guard.py ve config/shadow_manifest.json dosyalarinin mevcut oldugu ve 15 YAML workflow'un hala bulundugu dogrulandi.
 - Tum repo offline testleri henuz calistirilmadi; 17 pending gorev ve gercek kabul kaniti durumu degismedi. Actions calistirilmadi, uretim dosyalarina dokunulmadi.
+
+
+## 21 Ekim 2026 14:09 — toplu test fiksturu ve aktarim dogrulamasi
+- tests/test_offline_gate.py'deki unittest summary fiksturlerinde yanlis cift kacisli newline duzeltildi; commit bc80839230b0626da799592686849774192b2068.
+- madsc/workflow_consolidation.py yorum satirini komut olarak saymiyor, cok satirli run shell komutlarini sayiyor; commit 95809843cadc2afea23c5eaa65038cbf47dc332c.
+- GitHub'dan bes ana YAML tekrar okunarak 10 yardimci komutun TAMAMININ yorum olmayan satirlarda bulundugu bagimsiz kaynak taramasi ile teyit edildi (10/10 command presence). Bu offline regression veya behavioral parity degildir.
+- GitHub Actions ve canli probe calistirilmadi, protected uretim dosyalarina dokunulmadi. 17 pending kabul gorevi acik; gercek test ve kanitlar sonraki is.

@@ -1531,3 +1531,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - madsc/legacy_category_order.py audit_historical_metadata() eklendi: tarihsel 1934 metadata kaydinda bos ad ve gomulu M3U attribute metnini raporlar, uretime yazmaz, kendiliginden onarmaz. Commit 73f5528e7bba60b89288b6ef5fa9ee1c3a325a6e.
 - tests/test_legacy_category_order.py salt okunur denetim regresyonu eklendi; commit 95a0851f5716b1a6d6058954d26c9368145eb055. Testler henüz CALISTIRILMADI, Actions tetiklenmedi; [skip ci].
 - Sonraki: tam main offline gate; ardindan K1 runtime koruma, K2 kaynak/aday, K3 IBO/EPG, K4 harici restore, K5 kanitli kabul. Eski 92 workflow gecisi sonraya ertelendi. Korunan YENILER/YEDEKLER/favoriler/logo/sira/playlist/EPG ve eski repo degistirilmedi.
+
+## 21 Ekim 2026 — K2 kaynak manifesti fail-closed denetimi
+- madsc/legacy_category_order.py: snapshot kok tipi dict olmak zorunda; source_files dort beklenen dosyayi tam ve tekil tanimlamali, her count beklenen sayiya ve SHA 40 kucuk harf hex bicimine uymali. Commit 69db62c6d1d002fb6324990b47db68ff8d6cf885.
+- tests/test_legacy_category_order.py: bozuk kok, eksik kaynak manifesti, bozuk SHA senaryolari icin regresyon testleri yazildi. Commit dd2941040635adb4c69b6ef69058ed3ffdf7faa3.
+- Bunlar kaynak SHA'sinin gercek dosya icerigiyle eslesmesini kanitlamaz; testler henüz CALISTIRILMADI. [skip ci], Actions yok, eski depo/canli listeler/EPG/logo/favoriler/YENILER/YEDEKLER degismedi.
+- Siradaki ana hedef: tam main checkout ve tek offline K1-K5 regresyon; 22 gorev, 26 runtime guvenlik ve 92 eski davranis icin gercek kanit gereklilikleri acik.

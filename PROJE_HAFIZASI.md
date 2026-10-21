@@ -1598,3 +1598,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - tests/test_write_path_audit.py normalize Unicode traversal, dosya uzantisi ve ayirici taklitleri icin negatif testler eklendi. Commit 2dc317827516992799ceb56eeba81dfcfdb787f6.
 - [skip ci] kullanildi; Actions baslatilmadi, offline regresyon bu turda calistirilamadi. Kod degisikligi test edilmis/kabul edilmis sayilmiyor. 0/26 runtime ve 0/92 parity ayni. K1-03 acik, tum writer noktalarinin envanteri eksik.
 - Korunan listeler, IBO cihaz favorileri, EPG/logo ve eski repo degistirilmedi.
+
+## 21 Ekim 2026 — K1-K5 tek toplu offline envanter gelistirmesi
+- madsc/five_system_installation.py, 22 gorevin tamamini REQUIREMENTS ile karsilastirip eksik kanit sayisini, dis kanit gerektiren gorev sayisini ve madsc/*.py icindeki AST kaynakli muhtemel writer callsite satirlarini tek salt-okunur raporda listeler. Kod commit 1c7af5166f44ee97b86304188c61b4345b3a0ccb.
+- tests/test_five_system_channel_flow.py toplu kurulum, 22 gorev ve tek writer kaydini kapsayan regresyon senaryosu eklendi. Test commit 5487100ca9c22dc637b1b367ecbb416db6a61c71.
+- Bunlar envanter/kabul hazirlik kodudur; writer noktalarinin tamligi, guvenlik runtime kabulu, gercek kaynak, 75 aday, IBO, harici restore veya 92/92 davranissal esdegerlik kaniti degildir. 0/22 resmi kapanis degismedi.
+- [skip ci] kullanildi; yeni Actions tetiklenmedi. Offline toplu regresyon henuz calistirilamadi. Eski repo ve korunan uretim dosyalari degistirilmedi.

@@ -65,7 +65,7 @@ def atomic_write_pair(destination, pair):
 
 def write_isolated_history_pair(root, relative_path, pair):
     """K2 history artifact through K1 guard; never touches legacy histories."""
-    from madsc.write_path_audit import enforce_write_paths
+    from madsc.write_path_audit import enforce_write_paths, enforce_local_output_path
     if not isinstance(relative_path, str) or not relative_path.startswith("reports/"):
         raise PermissionError("Only isolated history reports are permitted")
     enforce_write_paths([relative_path])
@@ -80,6 +80,7 @@ def write_isolated_history_pair(root, relative_path, pair):
     if not target.parent.resolve().is_relative_to(root.resolve()):
         raise PermissionError("History report escapes root")
     raw = encode_pair(pair)
+    enforce_local_output_path(target, allowed_root=root)
     with target.open("x", encoding="utf-8") as handle:
         handle.write(raw)
     return {"isolated_history_written": True, "production_write_allowed": False}

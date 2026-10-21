@@ -1790,3 +1790,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Actions #39680219595 failure: Guvenlik job test_restore_drill.py eski restore_drill.shutil.copyfile mock'u artik var olmayan attribute'a eristi (AttributeError); diger kategoriler skipped. Bu kod entegrasyonunun eski teste uyumsuzluguydu, uretim backup hatasi kaniti degil.
 - Sonraki ef2906125e4e96511be196b6764a7f6ee38fdb3b test commit'i mock'u backup_to_new_sandbox fonksiyonuna tasidi. #39680249100 Guvenlik, Kesif, Kanal Testleri job'lari success; K4 Arsiv ve Yedek halen in_progress (son kontrol). Tum workflow success henuz iddia edilmiyor.
 - Sonraki adim: #39680249100 tum job'larin final sonucunu denetle; fail varsa logdan duzelt. K4 dis depolama kabul sayisi degismedi.
+
+
+## 21 Ekim 2026 - K4 bozuk butunlukte rollback testleri
+- #39680249100 Guvenlik, Kesif, Kanal Testleri, Arsiv ve Yedek, Genel Bakim job'lari success; Besli toplu kanit final job'u son kontrol in_progress.
+- tests/test_backup.py: backup_to_new_sandbox ve restore_to_new_sandbox SHA256 manifest verify_manifest False verdiginde yeni hedef klasoru temizlerken kaynak/backup baytlarini koruyor mu iki yeni regresyon testi ile denetlendi. Test commit 5f3dd39bf5d86c27a23c789def95e54be4ac5323. Yeni CI sonucu bekleniyor.
+- Dis storage kaniti, 75 canli kanal, 92 eski workflow davranissal parity, 26 runtime security kabulleri halen acik. Korunan listelere ve eski repoya dokunulmadi.

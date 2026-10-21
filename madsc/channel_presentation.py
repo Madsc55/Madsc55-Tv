@@ -28,7 +28,8 @@ def present_channel(row: dict, *, measurement: dict | None = None,
         raise ValueError("Invalid evidence")
     measured = measurement.get("verified") is True
     quality = quality_label(measurement.get("width"), measurement.get("height")) if measured else None
-    name = row["name"].strip().upper()
+    # Turkish dotted/dotless i needs explicit handling independent of host locale.
+    name = row["name"].strip().replace("i", "İ").replace("ı", "I").upper()
     if quality and not name.endswith(" " + quality):
         name += " " + quality
     logo = logo_evidence.get("url") if (

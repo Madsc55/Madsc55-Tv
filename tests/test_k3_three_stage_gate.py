@@ -40,6 +40,13 @@ class K3ThreeStageGateTests(unittest.TestCase):
         self.assertEqual(result["preliminary_passes"], 2)
         self.assertFalse(result["three_stage_preliminary_pass"])
 
+    def test_future_dated_evidence_rejected(self):
+        with self.assertRaises(ValueError):
+            assess_three_stage_probes([
+                sample("2099-01-01T00:00:00Z"),
+                sample("2099-01-01T06:00:00Z"),
+                sample("2099-01-01T12:00:00Z")])
+
     def test_naive_timestamp_rejected(self):
         with self.assertRaises(ValueError):
             assess_three_stage_probes([

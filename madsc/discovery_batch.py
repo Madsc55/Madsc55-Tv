@@ -60,6 +60,8 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
     """Rank independent feed corroboration without treating it as playback proof."""
     if not isinstance(sources, dict) or not sources or len(sources) > 200:
         raise ValueError("Require 1-200 named M3U sources")
+    if known_urls is not None and not isinstance(known_urls, (set, frozenset)):
+        raise ValueError("Known URLs must be a set")
     known = {normalize_url(url) for url in (known_urls or set())}
     grouped = defaultdict(lambda: {"sources": set(), "urls": set(), "names": set()})
     reports = {}

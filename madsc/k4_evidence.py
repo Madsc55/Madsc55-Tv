@@ -29,7 +29,8 @@ def main():
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    if args.report.is_symlink() or not args.report.is_file() or args.report.stat().st_size > 1024 * 1024:
+    if (args.report.is_symlink() or any(parent.is_symlink() for parent in args.report.parents)
+            or not args.report.is_file() or args.report.stat().st_size > 1024 * 1024):
         raise ValueError("Invalid K4 evidence file")
     report = json.loads(args.report.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
     result = verify(report)

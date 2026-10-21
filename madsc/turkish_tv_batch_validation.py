@@ -18,10 +18,13 @@ def run():
     sources_ok = 0
     total = 0
     source_by_digest = {}
+    source_errors = {}
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
         for name, entries, error in pool.map(scan, SOURCES.items()):
             if error is None:
                 sources_ok += 1
+            else:
+                source_errors[name] = "source_scan_failed"
             if not eligible_source(name):
                 continue
             for title, url in entries:
@@ -52,7 +55,9 @@ def run():
               "selection_policy": "sha256_ascending_stable",
               "selected_candidate_sha256": [digest for digest, _ in chosen],
               "source_provenance_declared_only": True, "sources_checked": len(SOURCES),
-              "sources_ok": sources_ok, "entries_in_turkish_feeds": total,
+              "sources_ok": sources_ok, "source_failures": source_errors,
+              "source_failures_count": len(source_errors),
+              "entries_in_turkish_feeds": total,
               "unique_https_nonradio_candidates": len(found), "tested": len(results),
               "video_verified": sum(x["video"] for x in results),
               "video_and_audio_verified": sum(x["video"] and x["audio"] for x in results),

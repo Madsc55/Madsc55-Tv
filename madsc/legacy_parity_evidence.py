@@ -5,11 +5,15 @@ Inventory is not proof. Only independently supplied evidence can advance accepta
 REQUIRED = ("legacy_execution", "new_execution", "input_output_comparison",
             "side_effect_comparison", "failure_timeout_comparison", "reviewer_approval")
 def validate_inventory(inventory):
+    if not isinstance(inventory, dict):
+        raise ValueError("Inventory must be an object")
     rows = inventory.get("workflows")
     if not isinstance(rows, list) or len(rows) != 99:
         raise ValueError("Expected exactly 99 source workflow rows")
+    if any(not isinstance(row, dict) for row in rows):
+        raise ValueError("Workflow rows must be objects")
     paths = [row.get("path") for row in rows]
-    if len(set(paths)) != 99 or not all(isinstance(x, str) and x.startswith(".github/workflows/") for x in paths):
+    if not all(isinstance(x, str) for x in paths) or len(set(paths)) != 99 or not all(x.startswith(".github/workflows/") for x in paths):
         raise ValueError("Invalid or duplicate workflow paths")
     if inventory.get("source_repository") != "Madsc55/madsc-tv":
         raise ValueError("Wrong legacy source repository")

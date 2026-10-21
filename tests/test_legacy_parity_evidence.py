@@ -7,6 +7,19 @@ def inventory():
             "workflows": [{"path": f".github/workflows/w{i:02}.yml", "candidate_k_stages": ["K5"]}
                           for i in range(99)]}
 class EvidenceLedgerTest(unittest.TestCase):
+    def test_malformed_inventory_fails_with_value_error(self):
+        for bad in (None, [], "not an inventory"):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                ledger(bad)
+        bad = inventory()
+        bad["workflows"][0] = None
+        with self.assertRaises(ValueError):
+            ledger(bad)
+        bad = inventory()
+        bad["workflows"][0] = {"path": None}
+        with self.assertRaises(ValueError):
+            ledger(bad)
+
     def test_unproven_inventory_is_blocked(self):
         report = ledger(inventory())
         self.assertEqual((report["total"], report["accepted"], report["blocked"]), (99, 0, 99))

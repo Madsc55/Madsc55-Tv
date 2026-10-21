@@ -49,3 +49,16 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertTrue(result["content"].startswith("#EXTM3U\n"))
         self.assertFalse(result["production_writes"])
         self.assertFalse(result["ibo_device_verified"])
+
+    def test_known_urls_requires_set(self):
+        with self.assertRaises(ValueError):
+            corroborate_sources({"a": "#EXTM3U"}, known_urls=["https://example.org/a"])
+
+    def test_preview_rejects_unsafe_candidate(self):
+        feed = ("#EXTM3U\n#EXTINF:-1,Unsafe\nfile:///tmp/channel\n"
+                "#EXTINF:-1,Safe\nhttps://example.org/live.m3u8\n")
+        result = build_m3u8_preview({"source": feed})
+        self.assertEqual(result["channel_count"], 1)
+        self.assertEqual(result["rejected"], 1)
+        self.assertEqual(result["status"], "SANDBOX_PREVIEW_ONLY")
+        self.assertFalse(result["production_writes"])

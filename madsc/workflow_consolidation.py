@@ -45,7 +45,9 @@ def _command_in_run_step(content: str, command: str) -> bool:
         if stripped in ("run: |", "run: >", "- run: |", "- run: >"):
             run_indent = indent
         if run_indent is not None and indent > run_indent:
-            if command in stripped and not stripped.startswith("#"):
+            # Shell comments inside YAML block scalars are not executed.
+            executable = stripped.split(" #", 1)[0].rstrip()
+            if command in executable and not executable.startswith("#"):
                 return True
     return False
 

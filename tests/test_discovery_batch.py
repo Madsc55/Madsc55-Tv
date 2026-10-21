@@ -104,6 +104,11 @@ class DiscoveryBatchTests(unittest.TestCase):
             with self.subTest(entrypoint=entrypoint.__name__), self.assertRaises(ValueError):
                 entrypoint(feeds)
 
+    def test_preview_rejects_ambiguous_source_names(self):
+        feeds = {"Feed": "#EXTM3U", " feed ": "#EXTM3U"}
+        with self.assertRaises(ValueError):
+            build_m3u8_preview(feeds)
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

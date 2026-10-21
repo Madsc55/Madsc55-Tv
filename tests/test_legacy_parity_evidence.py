@@ -160,3 +160,32 @@ class EvidenceLedgerTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LegacyScopeTests(unittest.TestCase):
+    def test_pinned_source_scope_is_92_plus_seven(self):
+        import json
+        from pathlib import Path
+        from madsc.legacy_parity_evidence import reconcile_legacy_scope
+        inventory = json.loads((Path(__file__).resolve().parents[1] /
+                                "docs/LEGACY_SOURCE_SCOPE.json").read_text())
+        result = reconcile_legacy_scope(inventory)
+        self.assertEqual(len(result["legacy_paths"]), 92)
+        self.assertEqual(len(result["excluded_from_92"]), 7)
+        self.assertEqual(result["behavioral_parity_accepted"], 0)
+        self.assertFalse(result["production_ready"])
+        inventory["workflows"][0]["path"] = ".github/workflows/madsc-01-unreviewed.yml"
+        with self.assertRaises(ValueError):
+            reconcile_legacy_scope(inventory)
+
+    def test_missing_exclusion_does_not_silently_change_92_scope(self):
+        import json
+        from pathlib import Path
+        from madsc.legacy_parity_evidence import reconcile_legacy_scope
+        inventory = json.loads((Path(__file__).resolve().parents[1] /
+                                "docs/LEGACY_SOURCE_SCOPE.json").read_text())
+        for row in inventory["workflows"]:
+            if row["path"].endswith("k1-protected-write-tests.yml"):
+                row["path"] = ".github/workflows/unknown.yml"
+        with self.assertRaises(ValueError):
+            reconcile_legacy_scope(inventory)

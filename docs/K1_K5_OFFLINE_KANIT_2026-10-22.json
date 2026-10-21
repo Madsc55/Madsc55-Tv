@@ -1,0 +1,50 @@
+{
+  "mode": "offline_local",
+  "scope": "unit_regression_and_isolated_five_stage_fixture",
+  "production_acceptance": false,
+  "legacy_92_behavioral_acceptance": 0,
+  "runtime_security_26_acceptance": 0,
+  "test_exit_code": 0,
+  "timed_out": false,
+  "tests_discovered": 552,
+  "tests_passed": true,
+  "five_stage_fixture_gate_passed": true,
+  "all_offline_gates_passed": true,
+  "workflow_and_task_inventory_passed": true,
+  "auxiliary_workflows_mapped": 10,
+  "auxiliary_commands_integrated_in_main": 10,
+  "task_requirements_inventoried": 22,
+  "legacy_scope_source_workflows": 99,
+  "legacy_scope_behavior_workflows": 92,
+  "legacy_scope_excluded": [
+    ".github/workflows/k1-protected-write-tests.yml",
+    ".github/workflows/madsc-01-guvenlik.yml",
+    ".github/workflows/madsc-02-kesif.yml",
+    ".github/workflows/madsc-03-kanal-test.yml",
+    ".github/workflows/madsc-04-arsiv-yedek.yml",
+    ".github/workflows/madsc-05-genel-bakim.yml",
+    ".github/workflows/madsc-hizli-on-kontrol.yml"
+  ],
+  "workflow_inventory_error": null,
+  "task_inventory_error": null,
+  "five_stage_fixture_categories": {
+    "k1": "success",
+    "k2": "success",
+    "k3": "success",
+    "k4": "success",
+    "k5": "success"
+  },
+  "five_stage_fixture_errors": {},
+  "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification.",
+  "tested_base_commit": "223aa5c9c63ac160c98b2e0e9a8aef774a92e400",
+  "tested_files_sha256": {
+    "madsc/legacy_99_bulk_audit.py": "1c6a4bebfdfce0c9b9efb5edda3a7db95446f0fe1551b5498817f2bfc179ce62",
+    "madsc/legacy_parity_cli.py": "8e0a3690c13da8fd936cc97de52d3e902a5eb4e485a6ad74d10fbfe9865bc9f0",
+    "madsc/legacy_parity_evidence.py": "9ed526f12c04c8242b9f4ebc09036c036a476a6e136e92b1dba7db364935114b",
+    "madsc/offline_gate.py": "5778533b76f5b26ff5f561c7b78c860adcc31b9635ec9f85c7ffe4cd651037ae",
+    "tests/test_legacy_99_source_integrity.py": "400639c8ba28baf3ebe760a6cc1d417952fd1739e3c642cd6faebe3f244e9869",
+    "tests/test_legacy_parity_cli.py": "d1a481e2c1ef7816aa05608b773b1b0c4723e09953f9ed7697f4cb4faadbda1c",
+    "tests/test_legacy_parity_evidence.py": "e6d80e8ba8f353944b9c3d76214b2822f4b77de96aabb1fefd2f892aee46fe16",
+    "docs/LEGACY_SOURCE_SCOPE.json": "6b744f198e169bd496cc43b858b204a8b7a57306f7410b2c321ad3e66ee1a3a1"
+  }
+}

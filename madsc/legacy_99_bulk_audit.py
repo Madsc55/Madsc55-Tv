@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import urllib.parse
 import urllib.request
+from madsc.write_path_audit import enforce_local_output_path
 
 REPO = "Madsc55/madsc-tv"
 BRANCH = "madsc/bes-sistem-toplu-birlestirme"
@@ -58,6 +59,8 @@ def github(url, token):
 
 
 def run(output, token):
+    path = Path(output)
+    enforce_local_output_path(path.absolute())
     ref = urllib.parse.quote(BRANCH, safe="")
     tree = github(f"https://api.github.com/repos/{REPO}/git/trees/{ref}?recursive=1", token)
     if tree.get("truncated"):
@@ -111,7 +114,7 @@ def run(output, token):
     path = Path(output)
     if path.exists():
         raise ValueError("Will not overwrite evidence")
-    path.parent.mkdir(parents=True, exist_ok=True)
+    enforce_local_output_path(path.absolute())
     with path.open("x", encoding="utf-8") as stream:
         json.dump(report, stream, ensure_ascii=False, indent=2, sort_keys=True)
     print(json.dumps({"workflow_count": len(rows), "behavioral_parity_verified_count": 0}))

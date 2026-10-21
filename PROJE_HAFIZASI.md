@@ -1835,3 +1835,14 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - K1 manifest nesne tipi, yinelenen cikti yolları, kontrol karakteri ve drive/colon yollarini reddeder.
 - K3 m3u8 sandbox onizlemesi disinda production listesine yazma yok; K4 yedekleme akisi degistirilmedi.
 - Gercek kanal testleri, K1 runtime 26 kural ve K5 eski otomasyon esdegerligi bu commit ile tamamlanmis sayilmaz.
+
+
+## 22 Ekim 2026 — K1/K5 toplu koruma ve 92/99 kapsam mutabakatı
+- Başlangıç main: 223aa5c9c63ac160c98b2e0e9a8aef774a92e400. Yeni depo Madsc55/Madsc55-Tv; eski depo salt okunur.
+- legacy_parity_cli ve legacy_99_bulk_audit rapor yazıları ortak K1 enforce_local_output_path kapısına bağlandı. Korunan hedef, symlink üst dizin ve mevcut dosya reddedilir; audit hedefi ağ erişiminden önce kontrol edilir. Hedef üst klasör önceden mevcut olmalıdır.
+- 92/99 farkı kaynakla çözüldü: eski scripts/five_category_92_workflow_audit.py blob 9a35ecd797e5c1c595d6796cfffba6cd8a289853 beş merkezi YAML + k1-protected-write-tests.yml + madsc-hizli-on-kontrol.yml dosyalarını hariç tutuyor. Pinned tree a88dfa874b6964dcaa4de7a8f9075af2f146acd8 içinde aynı script SHA ve 99 workflow kaydı doğrulandı. docs/LEGACY_SOURCE_SCOPE.json 99 yol/blob SHA içerir. Bu tur tüm 99 YAML baytı yeniden indirilmedi.
+- reconcile_legacy_scope 92+7 kapsamını doğrular; değişen/eksik merkezi kapsamı reddeder; offline_gate aynı kontrolü zorunlu uygular. Bu sayım mutabakatı davranışsal eşdeğerlik değildir.
+- Yerel python -m madsc.offline_gate: 552 test, K1/K2/K3/K4/K5 izole fixture kapıları success, 10 yardımcı komut ve 22 görev envanteri geçti. Başarısız test yok. Kanıt ve değişen kaynak SHA256: docs/K1_K5_OFFLINE_KANIT_2026-10-22.json.
+- Son gözlenen GitHub Actions #39686179902 success, SHA d5d61317806dc7a00b762567695286e3779ceaf1; bu yeni kodun CI kanıtı değildir. Actions tetiklenmedi, commitler [skip ci].
+- 0/92 tam davranışsal kabul, 0/26 runtime kural kabulü, 0/22 tam görev kabulü korunuyor. Eksik: gerçek karşılaştırmalı execution/artifact kökeni, hata/timeout/retry, zamanlı canlı ölçümler, kullanıcı IBO cihaz kabulü, EPG/Pages, bağımsız harici restore.
+- Korunan yayın listeleri, EPG, YEDEKLER/YENİLER/FAVORİLER ve eski depo değişmedi; PR #71 veya başka merge yapılmadı. Sıradaki adım: 92 kaynak yoluna bağlanan gerçek karşılaştırmalı kanıt çiftlerini doğrula; kanıt bulunmadan snapshot eşleşmesini kabul sayma. DEVAM_NOTU.md yeni sohbet giriş noktasıdır.

@@ -140,3 +140,32 @@ def compare_snapshot_batch(inventory, snapshots):
             "snapshot_mismatches": sum(r["status"] == "snapshot_mismatch" for r in results),
             "missing_pairs": sum(r["status"] == "missing_execution_pair" for r in results),
             "behavioral_parity_accepted": 0, "rows": results}
+
+
+# Exact exclusions from pinned legacy five_category_92_workflow_audit.py.
+# Count reconciliation is source evidence, never behavioral acceptance.
+SCOPE_EXCLUSIONS = frozenset({
+    "madsc-01-guvenlik.yml", "madsc-02-kesif.yml", "madsc-03-kanal-test.yml",
+    "madsc-04-arsiv-yedek.yml", "madsc-05-genel-bakim.yml",
+    "k1-protected-write-tests.yml", "madsc-hizli-on-kontrol.yml",
+})
+
+
+def reconcile_legacy_scope(inventory):
+    rows = validate_inventory(inventory)
+    by_name = {row["path"].rsplit("/", 1)[1]: row["path"] for row in rows}
+    if not SCOPE_EXCLUSIONS <= by_name.keys():
+        raise ValueError("Missing legacy scope exclusions")
+    # Reject additional central-prefix files rather than silently expanding
+    # the exclusion rule beyond the seven source-verified files.
+    central = {name for name in by_name if any(
+        name.startswith(f"madsc-0{i}-") for i in range(1, 6))}
+    if central != {name for name in SCOPE_EXCLUSIONS if name.startswith("madsc-0")}:
+        raise ValueError("Legacy central workflow scope drift")
+    excluded = sorted(by_name[name] for name in SCOPE_EXCLUSIONS)
+    legacy = sorted(set(by_name.values()) - set(excluded))
+    if len(legacy) != 92:
+        raise ValueError("Expected 92 legacy behavior workflows")
+    return {"source_workflows": 99, "legacy_behavior_workflows": 92,
+            "excluded_from_92": excluded, "legacy_paths": legacy,
+            "behavioral_parity_accepted": 0, "production_ready": False}

@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 from madsc.legacy_parity_evidence import compare_snapshot_batch
+from madsc.write_path_audit import enforce_local_output_path
 
 
 def load_json(path):
@@ -26,7 +27,7 @@ def run(inventory_path, snapshots_path, output_path):
     destination = Path(output_path)
     if destination.exists() or destination.is_symlink():
         raise ValueError("Refusing to overwrite comparison evidence")
-    destination.parent.mkdir(parents=True, exist_ok=True)
+    enforce_local_output_path(destination.absolute())
     with destination.open("x", encoding="utf-8") as stream:
         json.dump(report, stream, indent=2, ensure_ascii=False, sort_keys=True)
     return report

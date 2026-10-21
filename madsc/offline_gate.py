@@ -55,6 +55,9 @@ def main():
     try:
         from madsc.workflow_consolidation import consolidation_plan
         from madsc.k1_k5_acceptance_requirements import assess_task_evidence
+        from madsc.legacy_parity_evidence import reconcile_legacy_scope
+        legacy_scope = reconcile_legacy_scope(json.loads(
+            (root / "docs" / "LEGACY_SOURCE_SCOPE.json").read_text(encoding="utf-8")))
         workflow_plan = consolidation_plan(root)
         ledger = json.loads((root / "docs" / "K1_K5_KANITLI_GOREV_DEFTERI.json").read_text(encoding="utf-8"))
         acceptance_plan = assess_task_evidence(ledger)
@@ -62,9 +65,12 @@ def main():
                             and len(workflow_plan["main_workflows"]) == 5
                             and workflow_plan["commands_integrated_in_main"] == 10
                             and workflow_plan["all_ten_commands_integrated_in_main"] is True
+                            and legacy_scope["legacy_behavior_workflows"] == 92
+                            and len(legacy_scope["excluded_from_92"]) == 7
                             and acceptance_plan["total"] == 22
                             and acceptance_plan["production_ready"] is False)
     except Exception as exc:
+        legacy_scope = {}
         workflow_plan = {"error": type(exc).__name__}
         acceptance_plan = {"error": type(exc).__name__}
         inventory_passed = False
@@ -86,6 +92,9 @@ def main():
         "auxiliary_workflows_mapped": workflow_plan.get("auxiliary_count"),
         "auxiliary_commands_integrated_in_main": workflow_plan.get("commands_integrated_in_main"),
         "task_requirements_inventoried": acceptance_plan.get("total"),
+        "legacy_scope_source_workflows": legacy_scope.get("source_workflows"),
+        "legacy_scope_behavior_workflows": legacy_scope.get("legacy_behavior_workflows"),
+        "legacy_scope_excluded": legacy_scope.get("excluded_from_92"),
         "workflow_inventory_error": workflow_plan.get("error"),
         "task_inventory_error": acceptance_plan.get("error"),
         "five_stage_fixture_categories": five_stage.get("categories", {}),

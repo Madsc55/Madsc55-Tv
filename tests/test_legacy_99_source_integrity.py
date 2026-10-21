@@ -39,6 +39,20 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
             self.assertTrue(all(len(row["evidence_missing"]) == 6
                                 for row in report["workflows"]))
 
+    def test_unsafe_output_rejected_before_network(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(audit, "github") as network:
+            root = Path(temp)
+            with self.assertRaises(PermissionError):
+                audit.run(root / "xmltv.xml", "")
+            network.assert_not_called()
+            outside = root / "outside"
+            outside.mkdir()
+            (root / "alias").symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(PermissionError):
+                audit.run(root / "alias" / "audit.json", "")
+            network.assert_not_called()
+            self.assertEqual(list(outside.iterdir()), [])
+
     def test_blocker_summary_rejects_forged_acceptance(self):
         missing = ["legacy_execution", "new_execution", "input_output_comparison",
                    "side_effect_comparison", "failure_timeout_comparison",

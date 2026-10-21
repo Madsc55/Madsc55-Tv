@@ -55,6 +55,15 @@ class WritePathAuditTests(unittest.TestCase):
         with self.assertRaises(ProtectedWriteRejected):
             enforce_write_paths(["ＦＡＶＯＲＩＬＥＲ/channel.txt"])
 
+    def test_unicode_normalized_traversal_and_suffix_blocked(self):
+        paths = ["reports/．．/safe.json", "reports/．/safe.json",
+                 "reports/file．m3u8", "reports/file．m3u",
+                 "reports/file．", "reports/dir／../safe.json"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths)
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["reports/．．/safe.json"])
+
     def test_mixed_safe_and_unsafe_paths_do_not_clear_block(self):
         result = audit_write_paths(["reports/safe.json", "EPG/guide.xml"])
         self.assertTrue(result["blocked"])

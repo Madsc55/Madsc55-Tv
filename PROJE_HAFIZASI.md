@@ -1466,3 +1466,9 @@ Kullanici 12 gunde GitHub Actions 2000 dakikalik kotasinin tukendigini ve K1-K5 
 - Eski Madsc55/madsc-tv deposu yalniz referans icindir.
 - BIRLESIK_KALICI_CALISMA_KURALLARI.md dosyasindaki 21. kural aynen gecerlidir. Yanlis ad kullanilmayacak.
 - Son Actions #405 basarili; 92 eski davranis ve 26 runtime kural icin gercek kabul kanitlari henuz tamamlanmadi.
+
+## 21 Ekim 2026 — Kullanici onceligi: once yeni besli sistem
+- Kesin proje adi Madsc55-Tv, depo Madsc55/Madsc55-Tv, dal main.
+- Kullanici emri: once yalniz yeni K1 guvenlik, K2 kesif, K3 kanal/EPG/IBO, K4 yedek ve K5 merkezi bakim sistemini tamamla.
+- Eski sistemin 92 davranissal esdegerligi, eski workflow kaldirma/kapatma ve eski-yeni gecis kabulu yeni sistem bittikten sonraya ertelendi. Eski depoya dokunma.
+- Yeni sistemin kendi test, guvenlik, kanit ve eksik kod gelistirmelerine devam et; gercek kanit olmadan tamamlandi deme. Korunan canli listeler, favoriler, EPG ve yedekler degistirilmez.

@@ -43,6 +43,15 @@ class ChannelTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             summarize_candidate_continuity(["a" * 64], {"b" * 64: []})
 
+
+    def test_batch_continuity_rejects_invalid_fingerprint_types(self):
+        from madsc.channel_test import summarize_candidate_continuity
+        for candidates, measurements in (([[]], {}), (["a" * 64], {1: []}),
+                                         (["a" * 64, "a" * 64], {})):
+            with self.subTest(candidates=candidates, measurements=measurements):
+                with self.assertRaises(ValueError):
+                    summarize_candidate_continuity(candidates, measurements)
+
     def test_success_is_not_device_approval(self):
         result = evaluate_probe({"url_sha256":"a"*64,"http_status":200,"video":True,
                                  "audio":True,"duration_seconds":60})

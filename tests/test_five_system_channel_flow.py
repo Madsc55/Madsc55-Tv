@@ -5,6 +5,35 @@ from madsc.five_system_channel_flow import build_offline_channel_previews
 
 
 class FiveSystemChannelFlowTests(unittest.TestCase):
+    def test_five_stage_installation_audit_reports_all_evidence_gaps_and_writer_calls(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        from madsc.five_system_installation import inspect_installation, MAIN
+        from madsc.k1_k5_acceptance_requirements import REQUIREMENTS
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            workflows = root / ".github" / "workflows"
+            workflows.mkdir(parents=True)
+            for name in MAIN.values():
+                (workflows / name).write_text("name: offline\\n", encoding="utf-8")
+            (root / "docs").mkdir()
+            (root / "madsc").mkdir()
+            (root / "madsc" / "writer.py").write_text(
+                "from pathlib import Path\\nPath('example').write_text('x')\\n",
+                encoding="utf-8")
+            tasks = [{"id": key, "stage": key[:2], "status": "pending"}
+                     for key in REQUIREMENTS]
+            (root / "docs" / "K1_K5_KANITLI_GOREV_DEFTERI.json").write_text(
+                json.dumps(tasks), encoding="utf-8")
+            report = inspect_installation(root)
+            self.assertEqual(report["tasks_total"], 22)
+            self.assertEqual(report["evidence_requirements_missing_tasks"], 22)
+            self.assertEqual(report["writer_callsite_candidates_count"], 1)
+            self.assertEqual(report["writer_callsite_candidates"][0]["operation"], "write_text")
+            self.assertFalse(report["all_writer_callsites_manually_verified"])
+            self.assertFalse(report["production_ready"])
+
     def test_combined_flow_keeps_ibo_and_legacy_category(self):
         rows = [{"name": "izmir tv", "url": "https://example.org/live",
                  "tvg_id": "izmir.tv", "group_title": "Haber"}]

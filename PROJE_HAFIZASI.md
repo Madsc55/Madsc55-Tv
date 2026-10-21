@@ -1693,3 +1693,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - 049c1e4: auxiliary_behavior_matrix kaynak artifact adi farkli olsa da reports/ altindaki yuklenen dosya yollarini ana workflow ile karsilastirir; missing_artifact_paths ve artifact_path gap uretir. Bu statik karsilastirmadir, gercek artifact esdegerligi degildir.
 - 64b531d: fixture ile eksik rapor yolu testi eklendi, yeni CI #39659140742 basladi, sonuc bekleniyor.
 - Korunan dosyalar degismedi. 22 gorev 0 kabul, 92 legacy parity 0.
+
+## 21 Ekim 2026 - Statik artifact beyanini gercek kanittan ayirma
+- #39659140742 completed success 6/6.
+- 2276c76: workflow matrix her yardimci satirinda artifact_paths_declared_only=true, artifact_files_produced_verified=false; contract_gate de false raporlar. YAML path listesi hicbir zaman dosyanin uretildigi ya da dogru oldugu kaniti degildir.
+- 8ddc50c: fixture regresyonu bu ayrimi zorunlu tutar; yeni CI #39659707243 basladi, sonucu bekleniyor.
+- Sonraki gercek is: opt-in real run artifact'lerini indirip dogrulama, kaynak bazli davranis kabul kriterleri. Canli korunan yollar degismedi; 0/22 kabul, 0/92 parity.

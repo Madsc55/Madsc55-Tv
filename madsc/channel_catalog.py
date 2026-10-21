@@ -44,6 +44,12 @@ def prepare_channel_catalog(rows: list[dict], measurements: dict | None = None,
             staged_result = assess_three_stage_probes(staged)
             if staged_result["url_sha256"] != digest:
                 raise ValueError("Three-stage fingerprint mismatch")
+        if staged_result is not None and staged_result["three_stage_preliminary_pass"]:
+            if status != "PRELIMINARY_PASS":
+                raise ValueError("Three-stage pass conflicts with current technical probe")
+        if staged_result is not None and probe is None:
+            # Historical stage evidence does not substitute for a current probe.
+            status = "UNTESTED"
         supplied_measurement = measurements.get(digest, {})
         if not isinstance(supplied_measurement, dict):
             raise ValueError("Invalid measurement")

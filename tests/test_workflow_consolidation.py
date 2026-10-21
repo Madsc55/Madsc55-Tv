@@ -23,6 +23,20 @@ class WorkflowConsolidationTests(unittest.TestCase):
         return folder
 
 
+
+    def test_longer_destination_timeout_is_not_a_gap(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            source = folder / "madsc-k2-live-pilot.yml"
+            source.write_text(source.read_text(encoding="utf-8") +
+                              "    timeout-minutes: 5\\n", encoding="utf-8")
+            target = folder / MAIN["K2"]
+            target.write_text(target.read_text(encoding="utf-8") +
+                              "    timeout-minutes: 10\\n", encoding="utf-8")
+            result = auxiliary_behavior_matrix(Path(d))
+            row = next(x for x in result["rows"] if x["source"] == source.name)
+            self.assertNotIn("timeout", row["static_contract_gaps"])
+
     def test_bulk_contract_matrix_flags_missing_timeout_and_artifact(self):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))

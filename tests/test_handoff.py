@@ -4,6 +4,27 @@ from madsc.discovery import classify_candidates
 from madsc.handoff import assess_candidates
 
 class HandoffTests(unittest.TestCase):
+
+    def test_k2_alternative_stream_not_duplicate_url(self):
+        report = classify_candidates([
+            {"name": "TRT 1", "url": "https://example.org/a.m3u8", "tvg_id": "trt1"},
+            {"name": "TRT 1 HD", "url": "https://example.org/b.m3u8", "tvg_id": "trt1"},
+            {"name": "TRT 1", "url": "https://example.org/a.m3u8", "tvg_id": "trt1"},
+        ])
+        self.assertEqual(len(report["candidates"]), 2)
+        self.assertEqual(len(report["duplicates"]), 1)
+        self.assertEqual(len(report["alternatives"]), 1)
+        self.assertEqual(report["alternatives"][0]["alternative_to_sha256"],
+                         report["candidates"][0]["url_sha256"])
+        self.assertFalse(report["production_playlist_modified"])
+
+    def test_k2_distinct_channel_identities_are_not_alternatives(self):
+        report = classify_candidates([
+            {"name": "A", "url": "https://example.org/a", "tvg_id": "a"},
+            {"name": "B", "url": "https://example.org/b", "tvg_id": "b"},
+        ])
+        self.assertEqual(report["alternatives"], [])
+
     def test_unprobed_candidate_is_untested(self):
         discovery = classify_candidates([{"name": "Sample", "url": "https://example.org/live.m3u8"}])
         result = assess_candidates(discovery, {})

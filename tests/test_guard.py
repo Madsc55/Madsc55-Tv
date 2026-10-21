@@ -19,9 +19,6 @@ class GuardTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     validate_manifest({"production_write": False, "output_paths": paths})
 
-if __name__ == "__main__":
-    unittest.main()
-
     def test_manifest_input_and_path_hardening(self):
         for manifest in (None, [], {"production_write": False, "output_paths": ["artifacts/a", "artifacts/a"]}):
             with self.subTest(manifest=manifest):
@@ -30,3 +27,6 @@ if __name__ == "__main__":
         for path in ("artifacts/a\\nb", "artifacts/C:/escape", "artifacts\\\\..\\\\escape"):
             with self.subTest(path=path):
                 self.assertFalse(safe_relative_path(path))
+
+if __name__ == "__main__":
+    unittest.main()

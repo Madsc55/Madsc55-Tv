@@ -64,7 +64,11 @@ def consolidation_plan(root: Path) -> dict:
             raise ValueError("Automatic trigger found: " + name)
         targets = [MAIN[key] for key in stage.split("+")]
         main_contents = [ (folder / target).read_text(encoding="utf-8") for target in targets ]
-        migrated = any(command in content for content in main_contents)
+        migrated = any(
+            any(line.lstrip().startswith(("run: ", "- run: ")) and command in line
+                for line in content.splitlines())
+            for content in main_contents
+        )
         entries.append({
             "command_present_in_main": migrated,
             "workflow": name,

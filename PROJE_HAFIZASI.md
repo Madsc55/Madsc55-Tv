@@ -1510,3 +1510,11 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Tarihsel metadata snapshot 1934 kayit; stream URL'leri public repoya tasinmadi. Kategori/sira koruma kodu ve testleri var. Son ad duzeltme commitleri 06b3783 ve 25b4f6d.
 - Bu devir kaydi yazilmadan onceki Actions: #413: queued/pending; #412: queued/pending; #411: completed/success; #410: completed/success. Yeni sohbette yeniden sorgula; sonucunu varsayma.
 - Kalan: K1 26 kural runtime kaniti, K2 gercek kesif/aday, K3 uc asama/IBO cihaz, EPG/logo/Pages, K4 gercek harici restore, K5 butunlesik kabul. Offline test = gercek cihaz/uretim kabulu degildir. Kullanici yeni sohbetten bu isleri surdurmek istiyor.
+
+## 21 Ekim 2026 — #412/#413 kesin kontrol ve kategori izolasyonu
+- Yeni depo Madsc55/Madsc55-Tv main kontrol edildi; eski depo ve korunan uretim dosyalari degistirilmedi.
+- Actions #412 run 39616429446, commit 06b3783859859293e6f2089c65cf4eda3b586880: completed/failure. K1 447 testte 1 failure: test_new_candidates_are_isolated_and_ordered; K2-K5 skipped, toplu kabul failure.
+- Actions #413 run 39616450580, commit 25b4f6d4e55af52e6a91bc68c550405e8358fb07: completed/success, K1-K5 ve toplu kabul 6/6 success.
+- GitHub main kaynak dogrulamasi: madsc/legacy_category_order.py ve tests/test_legacy_category_order.py ayni IZOLE_ADAY_TEST_KUYRUGU hedefini kullaniyor. route_discovered_candidates production_writes=false, existing_order_modified=false donduruyor; YENILER/YEDEKLER otomatik degismiyor.
+- Bu turda yeni kod degisikligi veya yeni Actions tetiklemesi yapilmadi. #413 offline/CI fixture kaniti olup gercek yayin, 26 runtime guvenlik kurali, IBO cihaz, harici restore veya 92 parity kabul kaniti degildir.
+- Kullanici onceligi: yeni K1-K5 tamamlansin, eski 92 davranis aktarimi daha sonra. Kalan: K1 runtime kapilari; K2 kaynak mutabakati ve izole aday; K3 uc asama/6 saat/IBO/EPG-logo; K4 harici restore; K5 merkezi kabul. Kota tuketen Actions icin ayrica acik izin gerekir; sonraki is toplu offline kaynak ve entegrasyon testleri.

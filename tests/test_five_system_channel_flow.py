@@ -35,6 +35,32 @@ class FiveSystemChannelFlowTests(unittest.TestCase):
         self.assertFalse(result["network_probed"])
         self.assertFalse(result["production_ready"])
 
+    def test_three_stage_evidence_is_attached_but_not_production_approval(self):
+        rows = [{"name": "kanal", "url": "https://example.org/stream"}]
+        digest = sha256(b"https://example.org/stream").hexdigest()
+        sample = {"url_sha256": digest, "http_status": 200,
+                  "video": True, "audio": True, "duration_seconds": 31}
+        staged = [{"captured_at": stamp, "probe": dict(sample)} for stamp in (
+            "2026-10-20T00:00:00Z", "2026-10-20T06:00:00Z",
+            "2026-10-20T12:00:00Z")]
+        out = build_offline_channel_previews(rows, three_stage={digest: staged})
+        channel = out["catalog"]["channels"][0]
+        self.assertTrue(channel["three_stage_preliminary_pass"])
+        self.assertEqual(channel["bucket"], "TEST_BEKLIYOR")
+        self.assertFalse(out["production_ready"])
+        self.assertFalse(out["network_probed"])
+
+    def test_mismatched_three_stage_channel_is_rejected(self):
+        rows = [{"name": "kanal", "url": "https://example.org/stream"}]
+        digest = sha256(b"https://example.org/stream").hexdigest()
+        sample = {"url_sha256": "a" * 64, "http_status": 200,
+                  "video": True, "audio": True, "duration_seconds": 31}
+        staged = [{"captured_at": stamp, "probe": dict(sample)} for stamp in (
+            "2026-10-20T00:00:00Z", "2026-10-20T06:00:00Z",
+            "2026-10-20T12:00:00Z")]
+        with self.assertRaises(ValueError):
+            build_offline_channel_previews(rows, three_stage={digest: staged})
+
     def test_bad_probe_rejected_before_any_preview(self):
         rows = [{"name": "kanal", "url": "https://example.org/stream"}]
         with self.assertRaises(ValueError):

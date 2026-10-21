@@ -16,6 +16,10 @@ def load_historical_categories(path: str | Path = SNAPSHOT) -> dict:
     entries = data.get("entries")
     if not isinstance(entries, list):
         raise ValueError("Historical entries must be a list")
+    if any(not isinstance(row, dict) for row in entries):
+        raise ValueError("Historical entries must contain objects")
+    if any(row.get("file") not in EXPECTED for row in entries):
+        raise ValueError("Unknown historical source file")
     for filename, count in EXPECTED.items():
         selected = [row for row in entries if row.get("file") == filename]
         if len(selected) != count or [row.get("order") for row in selected] != list(range(count)):
@@ -31,7 +35,8 @@ def route_discovered_candidates(candidates: list[dict]) -> dict:
         raise ValueError("Candidates must be a list")
     queued = []
     for index, candidate in enumerate(candidates):
-        if not isinstance(candidate, dict) or not isinstance(candidate.get("name"), str):
+        if (not isinstance(candidate, dict) or not isinstance(candidate.get("name"), str)
+                or not candidate["name"].strip()):
             raise ValueError("Invalid discovery candidate")
         queued.append({"discovery_order": index, "name": candidate["name"],
                        "destination": "IZOLE_ADAY_TEST_KUYRUGU",

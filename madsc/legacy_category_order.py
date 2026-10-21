@@ -26,7 +26,7 @@ def load_historical_categories(path: str | Path = SNAPSHOT) -> dict:
 
 
 def route_discovered_candidates(candidates: list[dict]) -> dict:
-    """New channels remain isolated test candidates, never production entries."""
+    """New channels stay in an isolated queue, not in protected YENILER or YEDEKLER lists."""
     if not isinstance(candidates, list):
         raise ValueError("Candidates must be a list")
     queued = []
@@ -34,7 +34,7 @@ def route_discovered_candidates(candidates: list[dict]) -> dict:
         if not isinstance(candidate, dict) or not isinstance(candidate.get("name"), str):
             raise ValueError("Invalid discovery candidate")
         queued.append({"discovery_order": index, "name": candidate["name"],
-                       "destination": "YENILER_TEST_BEKLIYOR",
+                       "destination": "IZOLE_ADAY_TEST_KUYRUGU",
                        "requires_k3_probe": True, "requires_user_ibo_decision": True,
                        "production_change_allowed": False})
     return {"queued": queued, "production_writes": False, "existing_order_modified": False}

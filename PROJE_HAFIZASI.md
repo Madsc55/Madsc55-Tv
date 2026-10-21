@@ -1604,3 +1604,8 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - tests/test_five_system_channel_flow.py toplu kurulum, 22 gorev ve tek writer kaydini kapsayan regresyon senaryosu eklendi. Test commit 5487100ca9c22dc637b1b367ecbb416db6a61c71.
 - Bunlar envanter/kabul hazirlik kodudur; writer noktalarinin tamligi, guvenlik runtime kabulu, gercek kaynak, 75 aday, IBO, harici restore veya 92/92 davranissal esdegerlik kaniti degildir. 0/22 resmi kapanis degismedi.
 - [skip ci] kullanildi; yeni Actions tetiklenmedi. Offline toplu regresyon henuz calistirilamadi. Eski repo ve korunan uretim dosyalari degistirilmedi.
+
+## 21 Ekim 2026 — Toplu K1-K5 writer callsite siniflandirma
+- madsc/five_system_installation.py AST envanteri yalnizca okuma yapan open() cagrisini yazma adayi saymiyor; write/append/create/update kiplerini yazma, dinamik kipleri inceleme gerektiren olarak sinifliyor. Commit 7cdc4845e28c28c3d3e625d613a10b88249735f5.
+- tests/test_five_system_channel_flow.py tek senaryoda salt okuma, yazma ve dinamik open kiplerini dogrulayan regresyon eklendi. Commit d6efdccb0e2c18b03457f3a95247342e8a688104.
+- [skip ci] kullanildi, Actions calistirilmadi. Testler bu turda gercekten kosulmadi; kod/testler kabul edilmis sayilmiyor. Toplu K1-K5 gercek islevsel kapanis, 26 runtime kural ve 92 parity hala acik. Korunan dosyalar degismedi.

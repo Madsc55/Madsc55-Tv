@@ -50,7 +50,7 @@ class WorkflowConsolidationTests(unittest.TestCase):
             result = auxiliary_behavior_matrix(Path(d))
             row = next(x for x in result["rows"] if x["source"] == source.name)
             self.assertEqual(result["auxiliary_count"], 10)
-            self.assertTrue(row["command_present"])
+            self.assertFalse(row["command_present"])
             self.assertIn("timeout", row["static_contract_gaps"])
             self.assertIn("artifact_name", row["static_contract_gaps"])
             self.assertFalse(result["behavioral_parity_verified"])

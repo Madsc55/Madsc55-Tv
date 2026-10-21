@@ -24,6 +24,8 @@ def normalize_url(value: str) -> str:
     return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path or "/", parts.query, ""))
 
 def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) -> dict:
+    if known_urls is not None and not isinstance(known_urls, (set, frozenset)):
+        raise ValueError("Known URLs must be a set")
     known = {normalize_url(x) for x in (known_urls or set())}
     seen = set()
     accepted, duplicates, rejected, alternatives = [], [], [], []
@@ -56,7 +58,7 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
                      "group_title": group.strip(), "url_sha256": key,
                      "source_index": index, "status": "candidate_only"}
             if url in seen or url in known:
-                duplicates.append(entry)
+                duplicates.append({**entry, "duplicate_reason": "already_known" if url in known else "same_batch"})
             else:
                 seen.add(url)
                 identity = ("tvg_id", entry["tvg_id"].casefold()) if entry["tvg_id"] else ("name_group", entry["name"].casefold(), entry["group_title"].casefold())

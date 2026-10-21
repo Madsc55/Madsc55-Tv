@@ -19,6 +19,8 @@ jobs:
           python-version: '3.12'
       - name: Unit tests
         run: python -m unittest discover -s tests -v
+      - name: K1 legacy shadow security guard (read-only)
+        run: python -m src.madsc_guard config/shadow_manifest.json
       - name: Isolated report
         run: python -m madsc.core --category k1 --output reports/k1.json
       - name: Upload isolated evidence

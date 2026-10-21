@@ -39,6 +39,16 @@ def consolidation_plan(root: Path) -> dict:
     expected = set(AUXILIARY) | set(MAIN.values())
     if files != expected:
         raise ValueError("Workflow inventory drift: " + repr(sorted(files ^ expected)))
+    for stage, name in MAIN.items():
+        path = folder / name
+        if path.is_symlink():
+            raise ValueError("Symlink main workflow forbidden: " + name)
+        body = path.read_text(encoding="utf-8")
+        if "workflow_dispatch:" not in body or "permissions:" not in body:
+            raise ValueError("Missing manual trigger or permissions in main: " + name)
+        if any(line.lstrip().startswith(("push:", "pull_request:", "schedule:", "workflow_call:"))
+               for line in body.splitlines()):
+            raise ValueError("Automatic trigger in main: " + name)
     entries = []
     for name, (stage, command, external) in AUXILIARY.items():
         path = folder / name
@@ -47,6 +57,8 @@ def consolidation_plan(root: Path) -> dict:
         data = path.read_text(encoding="utf-8")
         if "workflow_dispatch:" not in data or "permissions:" not in data:
             raise ValueError("Missing manual trigger or permissions: " + name)
+        if command not in data:
+            raise ValueError("Mapped behavior command absent from source: " + name)
         if any(line.lstrip().startswith(("push:", "pull_request:", "schedule:", "workflow_call:"))
                for line in data.splitlines()):
             raise ValueError("Automatic trigger found: " + name)

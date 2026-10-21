@@ -248,3 +248,9 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/backup.py, control karakterli ve supheli kaynak dosya yollarini reddeder; verify_manifest ayni path'in tekrarini kabul etmez. Commit d170404c44a8a4d64cf2f4825e733003999bdfca.
 - tests/test_backup_manifest_hardening.py: kontrol karakteri, tekrar eden manifest girdisi, normal manifest kabul testi. Commit 36be2ea87c0778141eabe6ea14b588c3d40958cc.
 - Bunlar gercek main commitleridir. GitHub Actions calistirilmadi, guncel main toplu offline test sonucu henuz yok. Eski repo ve uretim listeleri degistirilmedi. K4 gercek harici restore ve 92/92 esdegerlik hala tamamlanmadi.
+
+
+## 21 Ekim 2026 — K4 rapor yazicilarina K1 guvenlik baglantisi
+- Repo tree incelemesinde madsc/restore_drill.py ve madsc/k4_evidence.py rapor cikisinda mkdir ve write_text kullaniyordu. K1 enforce_local_output_path + open('x') on kontrol/ozel yeni dosya olusturma eklendi. Commitler e9dc9103805a81908a872d10e0de5b29a85ae521, 5ff86c1f2861778c1310126908237d42c46b43be.
+- tests/test_k4_report_output_safety.py: mevcut restore raporunu ezmeme ve CALISANLAR.m3u korumali hedefini reddetme senaryolari. Commit cfee0332b3e3bd43c5bf15b6ca89cff4e5d7b460.
+- On kontroller TOCTOU/tum bagimsiz yazicilar icin tam guvence degildir; global 26 runtime kabul ve 92 davranissal esdegerlik tamamlanmadi. Testler commit edildi, fakat guncel main toplu offline regresyonu calistirilmis degildir. Actions tetiklenmedi; uretim listelerine dokunulmadi.

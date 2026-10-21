@@ -299,3 +299,10 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - python -m unittest discover -s tests -v: Ran 4 tests, OK. Testler kontrol karakteri, yinelenen manifest girdisi, cok bloklu hash/tahrifat ve normal manifest senaryolaridir. Yalniz bu iki main dosyasi icin dogrulanmis lokal K4 alt-kume testidir.
 - Ayrica onceki /mnt/data/madsc_current_k3 lokal 5 test tekrar calistirildi: Ran 5 tests, OK. Ancak tam main repo test paketi indirilemedi/kurulamadi; tam K1-K5 offline gate calistirilmadi. 92/92 davranissal ve 26/26 runtime kabul 0.
 - GitHub Actions tetiklenmedi; uretim listeleri, eski repo ve canli URL'ler degistirilmedi.
+
+
+## 21 Ekim 2026 — toplu test odagi ve gercek 9 offline test
+- Yerel /mnt/data/madsc_batch_verified icinde K3+K4 icin python -m unittest discover -s tests -v calistirildi: 9 tests, OK (K4:4; K3:5). GitHub Actions, network probe ve production yazmasi yok.
+- K4 madsc/backup.py SHA 6f4bacbc759fb3da24ca143d69eb7d3656b1a50b ve tests/test_backup_manifest_hardening.py SHA e73a7c724532b4c1e2760b9f3aed6effee35b0fe main ile AYNI. K4 dort testin guncel kaynak eslesmesi kanitli.
+- K3 madsc/k3_three_stage_gate.py SHA fe33fbc5f43d1b4eec5900767ac5edd5f5591b3c ve tests/test_k3_three_stage_gate.py SHA 622873e54243558f5ea6961c5f2cea6dc4c3c059 main ile AYNI; ancak bagimli madsc/channel_test.py yerel SHA 6ad313c7c9f80625c2896aef648c16e5d3bdb2f1, main SHA fa2abdb2fe8b23805359b3312a65d30f468c4514; bu nedenle 5 K3 testi main tum bagimliliklariyla dogrulanmis sayilmaz.
+- Tam main 81 test dosyasini ve tum bagimliliklari iceren eksiksiz offline gate henuz CALISTIRILMADI. 92/92 davranissal ve 26/26 runtime guvenlik kabul hala 0. Bundan sonra parcali yeni ozellikler yerine main'in SHA-dogrulanmis eksiksiz kopyasini ve tek toplu offline regresyonu ONCELIKLENDIR. Eski repo/canli listeler korunur, Actions calistirilmaz.

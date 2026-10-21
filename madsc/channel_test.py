@@ -143,6 +143,8 @@ def summarize_candidate_continuity(candidate_fingerprints: list[str],
     """Batch-evaluate real-shaped evidence without inventing missing measurements."""
     if not isinstance(candidate_fingerprints, list) or not isinstance(measurements, dict):
         raise ValueError("Invalid continuity batch")
+    if any(not isinstance(key, str) for key in candidate_fingerprints):
+        raise ValueError("Invalid candidate fingerprint")
     if len(set(candidate_fingerprints)) != len(candidate_fingerprints):
         raise ValueError("Duplicate candidate fingerprint")
     if any(not isinstance(key, str) or len(key) != 64

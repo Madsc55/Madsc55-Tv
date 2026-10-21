@@ -52,8 +52,27 @@ def inspect_installation(root: Path) -> dict:
             if isinstance(node, ast.Call):
                 target = node.func
                 name = target.attr if isinstance(target, ast.Attribute) else (target.id if isinstance(target, ast.Name) else "")
-                if name in {"write_text", "write_bytes", "open", "replace", "mkdir", "NamedTemporaryFile", "mkstemp", "unlink", "rename", "copyfile", "copy2"}:
-                    writer_calls.append({"file": module.relative_to(root).as_posix(), "line": node.lineno, "operation": name})
+                operations = {"write_text", "write_bytes", "replace", "mkdir",
+                              "NamedTemporaryFile", "mkstemp", "unlink", "rename", "copyfile", "copy2"}
+                if name == "open":
+                    mode_node = next((kw.value for kw in node.keywords if kw.arg == "mode"), None)
+                    if mode_node is None and len(node.args) >= (2 if isinstance(target, ast.Name) else 1):
+                        mode_node = node.args[1] if isinstance(target, ast.Name) else node.args[0]
+                    if mode_node is None:
+                        continue  # Default open() is read-only.
+                    if not isinstance(mode_node, ast.Constant) or not isinstance(mode_node.value, str):
+                        classification = "dynamic_mode_review"
+                    elif any(flag in mode_node.value for flag in "wax+"):
+                        classification = "write"
+                    else:
+                        continue
+                elif name in operations:
+                    classification = "write"
+                else:
+                    continue
+                writer_calls.append({"file": module.relative_to(root).as_posix(),
+                                     "line": node.lineno, "operation": name,
+                                     "classification": classification})
     files = sorted(p.name for p in workflows.iterdir()
                    if p.is_file() and p.suffix in (".yml", ".yaml"))
     missing = [name for name in MAIN.values() if name not in files]

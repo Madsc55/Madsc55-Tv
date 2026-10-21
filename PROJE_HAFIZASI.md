@@ -1549,3 +1549,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - madsc/legacy_category_order.py kaynak repository/ref alanlari onayli sabit degerlerle eslesmezse fail-closed reddeder. Commit 72a62b615abcf0777e977e23b3ea60245d18cc5e.
 - tests/test_legacy_category_order.py: yanlis repo ve yanlis ref icin regresyon eklendi. Commit 339f8503031f63d5bee6c92c0cd93ec76fa01f23.
 - Bu yalniz metadata provenance kontroludur; eski depo SHA bloblari canli olarak yeniden hash dogrulanmadi. Testler calistirilmadi, Actions tetiklenmedi [skip ci]. Eski repo, canli kanal listeleri, EPG, logolar, favoriler, YENILER ve YEDEKLER degismedi.
+
+## 21 Ekim 2026 — K2 gercek Git blob SHA kaynak mutabakati
+- Salt okunur GitHub API GET /repos/Madsc55/madsc-tv/git/trees/main?recursive=1 ile eski deponun main agaci okundu; truncated=false.
+- Yeni config/legacy_category_order_snapshot.json source_files blob SHA'lari eski main dosyalariyla birebir eslesti (4/4): CALISANLAR.m3u b40aaf6615b120eac7bd936ccf022dc4a14025ae; YABANCI_KANALLAR.m3u 3980338955c65a7f238c7d8a377011a8dd78491f; YENILER.m3u 2a2c4141b14607f2f87d2405a7885e9e0fdda073; CALISMAYANLAR.txt 881cb039e3e248ad2c38d380720d0994a9bfafd6.
+- Bu bagimsiz Git blob kimligi karsilastirmasidir; yerel dosya iceriklerini yeniden hash etme, canli stream, 26 runtime guvenlik, IBO/EPG, harici restore, 92 davranis kabul veya toplu offline regresyon DEGiLDiR.
+- Korunan kaynaklara yazma yok; Actions tetiklenmedi. Siradaki ana oncelik tam offline gate ve kalan K1-K5 gercek kanit zinciri.

@@ -14,7 +14,8 @@ def task_summary(tasks):
     if not isinstance(tasks, list) or not tasks:
         raise ValueError("Nonempty task ledger required")
     ids = set()
-    stages = {name: {"completed": 0, "total": 0} for name in STAGES}
+    stages = {name: {"completed": 0, "in_progress": 0, "pending": 0, "total": 0} for name in STAGES}
+    in_progress = 0
     completed = 0
     for task in tasks:
         if not isinstance(task, dict) or not isinstance(task.get("id"), str) or not task["id"] or task["id"] in ids:
@@ -32,8 +33,15 @@ def task_summary(tasks):
         if status == "completed":
             completed += 1
             stages[stage]["completed"] += 1
+        elif status == "in_progress":
+            in_progress += 1
+            stages[stage]["in_progress"] += 1
+        else:
+            stages[stage]["pending"] += 1
     total = len(tasks)
-    return {"completed": completed, "remaining": total - completed, "total": total,
+    return {"completed": completed, "in_progress": in_progress,
+            "pending": total - completed - in_progress,
+            "remaining": total - completed, "total": total,
             "completed_percent": round(100 * completed / total, 2),
             "remaining_percent": round(100 * (total - completed) / total, 2),
             "by_stage": stages, "scope": "Only explicitly enumerated, evidence-linked tasks"}

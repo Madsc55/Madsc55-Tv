@@ -14,6 +14,33 @@ class IsolationTests(unittest.TestCase):
                 self.assertFalse(result["legacy_workflows_executed"])
                 self.assertFalse(result["checks"]["runtime_rule_evidence"])
                 self.assertFalse(result["checks"]["legacy_behavioral_equivalence"])
+    def test_category_report_cannot_overwrite_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "k1.json"
+            run("k1", output)
+            first = output.read_bytes()
+            with self.assertRaises(PermissionError):
+                run("k1", output)
+            self.assertEqual(output.read_bytes(), first)
+
+    def test_category_report_rejects_protected_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "playlist.m3u8"
+            with self.assertRaises(PermissionError):
+                run("k1", output)
+            self.assertFalse(output.exists())
+
+    def test_category_report_rejects_symlink(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "target.json"
+            target.write_text("original", encoding="utf-8")
+            link = root / "k1.json"
+            link.symlink_to(target)
+            with self.assertRaises(PermissionError):
+                run("k1", link)
+            self.assertEqual(target.read_text(encoding="utf-8"), "original")
+
     def test_k1_fixture_report_write_guard_in_batch(self):
         evidence = execute("k1")
         self.assertTrue(evidence["fixture_report_write_guard"])

@@ -137,11 +137,11 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
         targets = [MAIN[stage] for stage in stages.split("+")]
         main_sources = [(folder / target).read_text(encoding="utf-8") for target in targets]
         def contracts(body):
-            timeout = [int(n) for n in re.findall(r"^\\s*timeout-minutes:\\s*(\\d+)\\s*$", body, re.M)]
-            artifacts = re.findall(r"^\\s*name:\\s*(madsc-[a-z0-9-]+|turkish-tv-batch-validation)\\s*$", body, re.M)
+            timeout = [int(n) for n in re.findall(r"^\s*timeout-minutes:\s*(\d+)\s*$", body, re.M)]
+            artifacts = re.findall(r"^\s*name:\s*(madsc-[a-z0-9-]+|turkish-tv-batch-validation)\s*$", body, re.M)
             return {"timeout_minutes": timeout, "artifact_names": artifacts,
-                    "actions_read": bool(re.search(r"^\\s*actions:\\s*read\\s*$", body, re.M)),
-                    "always_upload": bool(re.search(r"^\\s*if:\\s*(?:\\$\\{\\{\\s*)?always\\(\\)", body, re.M))}
+                    "actions_read": bool(re.search(r"^\s*actions:\s*read\s*$", body, re.M)),
+                    "always_upload": bool(re.search(r"^\s*if:\s*(?:\$\{\{\s*)?always\(\)", body, re.M))}
         src = contracts(source)
         destinations = [contracts(body) for body in main_sources]
         gaps = []

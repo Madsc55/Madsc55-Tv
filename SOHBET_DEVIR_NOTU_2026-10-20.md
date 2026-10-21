@@ -292,3 +292,10 @@ SIRADAKI: (1) kaynaklari ve kurallari dogrula, (2) guncel main'i izole ortamda u
 - madsc/backup.py snapshot_manifest: read_bytes ile tum dosyayi RAM'e alma kaldirildi; 1 MiB bloklar ile streaming SHA256 ve byte sayimi yapiliyor. Commit 830e7aa3fb470314873aa77bb6a66df07f54c3df.
 - tests/test_backup_manifest_hardening.py: 1 MiB'den buyuk dosyada hash/byte eslesmesi ve sonradan degisen baytin tespiti. Commit 4c658fc2e7c105418361edc520e8a7f173ba154e.
 - Testler GitHub main'e yazildi fakat guncel main K4 testleri veya toplu offline regresyon henuz CALISTIRILMADI. Eski 92 davranis kabul 0/92, 26 guvenlik runtime kabul 0/26. GitHub Actions yok, eski repo ve canli playlist degisikligi yok.
+
+
+## 21 Ekim 2026 — K4 manifest testleri gercekten calistirildi
+- GitHub main madsc/backup.py blob SHA 6f4bacbc759fb3da24ca143d69eb7d3656b1a50b ve tests/test_backup_manifest_hardening.py blob SHA e73a7c724532b4c1e2760b9f3aed6effee35b0fe. /mnt/data/madsc_k4_offline/ altinda birebir kopyalarin git hash-object ciktilari ayni.
+- python -m unittest discover -s tests -v: Ran 4 tests, OK. Testler kontrol karakteri, yinelenen manifest girdisi, cok bloklu hash/tahrifat ve normal manifest senaryolaridir. Yalniz bu iki main dosyasi icin dogrulanmis lokal K4 alt-kume testidir.
+- Ayrica onceki /mnt/data/madsc_current_k3 lokal 5 test tekrar calistirildi: Ran 5 tests, OK. Ancak tam main repo test paketi indirilemedi/kurulamadi; tam K1-K5 offline gate calistirilmadi. 92/92 davranissal ve 26/26 runtime kabul 0.
+- GitHub Actions tetiklenmedi; uretim listeleri, eski repo ve canli URL'ler degistirilmedi.

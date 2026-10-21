@@ -65,9 +65,9 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
     known = {normalize_url(url) for url in (known_urls or set())}
     grouped = defaultdict(lambda: {"sources": set(), "urls": set(), "names": set()})
     reports = {}
+    if any(not isinstance(source, str) or not source.strip() for source in sources):
+        raise ValueError("Invalid source name")
     for source, text in sorted(sources.items()):
-        if not isinstance(source, str) or not source.strip():
-            raise ValueError("Invalid source name")
         report = parse_m3u(text, source)
         reports[source] = {"entries": report["entries"], "rejected": len(report["rejected"]),
                            "parse_errors": len(report["parse_errors"])}
@@ -101,6 +101,8 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
         raise ValueError("Require 1-200 named M3U sources")
     rows = []
     rejected_count = 0
+    if any(not isinstance(source, str) or not source.strip() for source in sources):
+        raise ValueError("Invalid source name")
     for source, body in sorted(sources.items()):
         parsed = parse_m3u(body, source)
         rows.extend(parsed["candidate_rows"])

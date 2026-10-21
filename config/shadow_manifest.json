@@ -1,6 +1,0 @@
-{
-  "production_write": false,
-  "output_paths": [
-    "artifacts/k1-report.json"
-  ]
-}

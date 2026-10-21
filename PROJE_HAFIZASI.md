@@ -1810,3 +1810,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - K5 madsc/legacy_parity_evidence.py 99 kaynak workflow icin eksik/bozuk kanit alanlarini ayri raporluyor, metadata_complete ve alan toplamlarini veriyor; bagimsiz dogrulama olmadigindan kabul halen 0. Kod 80cd133c68f4879c6146a0c4b0377e9ae07564fb.
 - tests/test_legacy_parity_evidence.py eksik SHA, boolean run_id, tam gorunen sahte metadata ve 99 satir toplamlari icin testler eklendi: e7c9d8c46ab903c3200fd6b4f0b5f505a159114a. Son Actions sonucunu kontrol et.
 - 92 eski workflow davranissal parity gercek kabul 0/92; 99 kaynak envanter ayri kavramdir. Production korunan listeler degismedi.
+
+
+## 21 Ekim 2026 - Toplu CI tetikleme duzeltmesi
+- Kullanici istegiyle K5 madsc-05-bakim.yml otomatik push tetiklemesi kaldirildi; workflow_dispatch korundu. K1-K5 tek manuel batch calismasi olarak baslatilabilir; her kod/test push'u artik bu workflow'u otomatik kuyruga koymaz.
+- workflow_consolidation.py guvenlik kontrati K5 dahil tum ana workflow'larda push tetikleyicisini reddeder; test fixture ve gercek YAML testi uyumlu guncellendi.
+- Degisiklikler tek git commit'inde toplandi. K1-K5 otomatik kabul edilmedi; 92 legacy parity ve 26 runtime security kabulleri degismedi. Kullanici onayi olmadan production veya live probe yok.

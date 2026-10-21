@@ -11,10 +11,7 @@ class WorkflowConsolidationTests(unittest.TestCase):
         folder.mkdir(parents=True)
         for name in list(AUXILIARY) + list(MAIN.values()):
             command = AUXILIARY[name][1] if name in AUXILIARY else "echo fixture"
-            trigger = ("  push:\n    branches: [main]\n    paths:\n"
-                       "      - 'madsc/**'\n      - 'tests/**'\n"
-                       "      - '.github/workflows/madsc-05-bakim.yml'\n"
-                       if name == MAIN["K5"] else "")
+            trigger = ""
             (folder / name).write_text(
                 "name: fixture\non:\n" + trigger +
                 "  workflow_dispatch:\npermissions:\n  contents: read\njobs:\n  isolated:\n    steps:\n      - run: " + command + "\n",
@@ -26,6 +23,13 @@ class WorkflowConsolidationTests(unittest.TestCase):
 
 
 
+
+    def test_main_k5_is_manual_only(self):
+        root = Path(__file__).resolve().parent.parent
+        body = (root / ".github" / "workflows" / MAIN["K5"]).read_text(encoding="utf-8")
+        self.assertIn("  workflow_dispatch:", body)
+        self.assertNotIn("  push:", body)
+        self.assertNotIn("  schedule:", body)
 
     def test_network_probe_steps_require_success_and_opt_in(self):
         root = Path(__file__).resolve().parent.parent / ".github" / "workflows"

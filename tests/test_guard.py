@@ -12,6 +12,13 @@ class GuardTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 validate_manifest(manifest)
 
+    def test_duplicate_paths_after_normalization(self):
+        for paths in (["artifacts/report.json", "artifacts/REPORT.JSON"],
+                      ["artifacts/a/b.json", "artifacts/a\\\\b.json"]):
+            with self.subTest(paths=paths):
+                with self.assertRaises(ValueError):
+                    validate_manifest({"production_write": False, "output_paths": paths})
+
 if __name__ == "__main__":
     unittest.main()
 

@@ -1671,3 +1671,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Fixture tabanli iki regresyon eklendi: eksik 10 komut reddi, 10 komut varliginda parity iddiasi olmadan gecis (eb57f2e).
 - K5 ana toplu YAML artik reports/workflow-contract-gate.json olusturur ve artifact icinde saklar; eksik komut olursa K5 fail (9349421). GitHub Actions #39652296086 basladi, sonuc henuz bu not aninda bilinmiyor.
 - Son kesin yesil #39650954707 6/6. 22 kabul gorevi 0 tamam; 92 eski workflow davranissal esdegerlik 0. Canli veri ve korunan yollar degismedi.
+
+## 21 Ekim 2026 - Toplu artefact yolu ve failure upload regresyonu
+- GitHub Actions #39652296086 completed success: K1 K2 K3 K4 K5 ve toplu kabul 6/6; on-yardimci executable contract gate gecti. Bu yalniz offline/fixture kanitidir.
+- c3f6985: statik sozlesme matrisi artifact_renamed_in_consolidation ve timeout_insufficient alanlari ile farklari siniflandirir, parity onayi vermez.
+- 4d6738a: gercek K2 ve K3 ana workflow'larinin eski yardimci rapor dosyalarini upload-artifact adiminda kapsadigini ve always kosulunu regresyonla kontrol eder. Yeni Actions run #39653476180 baslatildi; sonuc not aninda bekleniyor.
+- Canli listeler, EPG, favoriler, logo, yedek ve eski depo degismedi. Kabul 0/22, legacy davranis parity 0/92.

@@ -1746,3 +1746,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - #39677049091 ve #39677061945 GitHub Actions completed/success; bos manifest reddi CI'da gecti.
 - compare_copy artik ayni, ic ice veya sembolik bagli kok dizinleri bagimsiz kopya gibi kabul etmez; bos dosya kapsaminda denetim basarili sayilmaz. Kod 8eeb8b3df8f0a12e51633455dbf15299aa375cd8, davranissal test 3644a54630af189e5bf5ea91154ab6baa42f0d69. Yeni CI sonucu bekleniyor.
 - K4 gercek dis depolama/restore kabul edilmedi; 75 canli kanal, 92 parity, 26 runtime security kabul sayilari degismedi. Korunan yollar ve eski repo degistirilmedi.
+
+
+## 21 Ekim 2026 - K4 hardlink bagimsizlik kontrolu
+- Actions #39677814549 in_progress, #39677831373 pending (son gorulen); bunlara basari atfedilmedi.
+- K4 uc bagimsiz agac restore audit: kaynak, yedek veya geri yuklenen dosyalardan ikisi ayni inode/dev (hard link) paylasiyorsa reddediyor. Kod 6b3ac112cdaf0010115cdebdbe6694ab9aec5dce, regresyon testi 22b8f8cb9e7d95875d43d780894d5873fd4edcb4. Yeni CI bekleniyor.
+- Harici depolama ve production restore kaniti yok. 75 canli yayin, 92 parity, 26 runtime kural kabulleri degismedi. Eski repo ve korunan listeler degistirilmedi.

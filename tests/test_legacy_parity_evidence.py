@@ -20,6 +20,14 @@ class EvidenceLedgerTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             ledger(bad)
 
+    def test_inventory_rejects_path_traversal_and_non_workflow_files(self):
+        for path in (".github/workflows/../evil.yml", ".github/workflows/nested/a.yml",
+                     ".github/workflows/README.md", ".github/workflows/a\\\\b.yml"):
+            bad = inventory()
+            bad["workflows"][0]["path"] = path
+            with self.subTest(path=path), self.assertRaises(ValueError):
+                ledger(bad)
+
     def test_unproven_inventory_is_blocked(self):
         report = ledger(inventory())
         self.assertEqual((report["total"], report["accepted"], report["blocked"]), (99, 0, 99))

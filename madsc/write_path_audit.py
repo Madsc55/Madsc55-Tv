@@ -27,10 +27,13 @@ def audit_write_paths(paths: list[str]) -> dict:
         duplicate = normalized in seen
         seen.add(normalized)
         parts = name.split("/")
-        folded = unicodedata.normalize("NFKC", name).casefold()
+        folded = normalized
         normalized_parts = folded.split("/")
         if (duplicate or chr(92) in raw or not name or name.startswith("/")
             or any(part in ("", ".", "..") for part in parts)
+            or any(part in ("", ".", "..") for part in normalized_parts)
+            or folded.startswith("/") or folded.startswith("~")
+            or any(part.endswith((" ", ".")) for part in normalized_parts)
             or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw)
             or any(part.endswith((" ", ".")) for part in parts)
             or ":" in name
@@ -40,7 +43,7 @@ def audit_write_paths(paths: list[str]) -> dict:
             or any(part in {item.casefold() for item in PROTECTED_EXACT}
                    for part in normalized_parts)
             or any(folded.startswith(prefix.casefold()) for prefix in PROTECTED_PREFIXES)
-            or PurePosixPath(name).suffix.casefold() in (".m3u", ".m3u8")
+            or PurePosixPath(folded).suffix in (".m3u", ".m3u8")
             or any(part in ("favoriler", "hepsi", "yedekler",
                                       "epg", "logolar", "logos", "arsiv") for part in normalized_parts)):
             rejected.append(raw)

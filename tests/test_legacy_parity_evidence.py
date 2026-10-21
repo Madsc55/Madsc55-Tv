@@ -34,6 +34,12 @@ class EvidenceLedgerTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             ledger(inventory(), {".github/workflows/w98.yml": None})
 
+    def test_inventory_rejects_backslash_path(self):
+        bad = inventory()
+        bad["workflows"][0]["path"] = ".github/workflows/a\\\\b.yml"
+        with self.assertRaises(ValueError):
+            ledger(bad)
+
     def test_unproven_inventory_is_blocked(self):
         report = ledger(inventory())
         self.assertEqual((report["total"], report["accepted"], report["blocked"]), (99, 0, 99))

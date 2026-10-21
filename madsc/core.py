@@ -18,7 +18,7 @@ from madsc.epg_inventory import inspect_xmltv
 from madsc.legacy_epg_logo import join_pilot
 from madsc.legacy_retest_390 import evaluate_entries, parse_entries
 from madsc.candidate_coordination import coordinate
-from madsc.write_path_audit import audit_write_paths
+from madsc.write_path_audit import audit_write_paths, enforce_local_output_path
 from madsc.fixture_report_writer import write_fixture_report, write_stage_report
 from madsc.history_pair_bridge import bridge_legacy_pair, merge_into_envelope
 from madsc.history_pair_store import decode_pair
@@ -275,8 +275,15 @@ def run(category: str, output: Path) -> dict:
         "checks": {"isolation": True, "runtime_rule_evidence": False,
                    "legacy_behavioral_equivalence": False},
     }
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # Fail closed: never overwrite evidence or follow a symlinked output path.
+    output = Path(output).absolute()
+    if output.parent.name == "reports" and not output.parent.exists():
+        if output.parent.parent.is_symlink() or not output.parent.parent.is_dir():
+            raise PermissionError("Unsafe reports root")
+        output.parent.mkdir()
+    enforce_local_output_path(output)
+    with output.open("x", encoding="utf-8") as handle:
+        handle.write(json.dumps(report, ensure_ascii=False, indent=2) + "\\n")
     return report
 
 def main() -> None:

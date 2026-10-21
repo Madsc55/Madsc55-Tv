@@ -7,6 +7,8 @@ def normalize_url(value: str) -> str:
     if not isinstance(value, str):
         raise ValueError("Candidate URL must be text")
     value = value.strip()
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
+        raise ValueError("Control characters are forbidden in candidate URLs")
     parts = urlsplit(value)
     if parts.scheme.lower() not in ("http", "https") or not parts.netloc or parts.username or parts.password:
         raise ValueError("Candidate must use HTTP(S) without embedded credentials")

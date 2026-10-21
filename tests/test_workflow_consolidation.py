@@ -105,6 +105,15 @@ class WorkflowConsolidationTests(unittest.TestCase):
 
 
 
+
+    def test_declared_paths_never_count_as_produced_artifacts(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.make_root(Path(d))
+            matrix = auxiliary_behavior_matrix(Path(d))
+            self.assertTrue(all(row["artifact_paths_declared_only"] for row in matrix["rows"]))
+            self.assertTrue(all(not row["artifact_files_produced_verified"] for row in matrix["rows"]))
+            self.assertFalse(contract_gate(Path(d))["artifact_files_produced_verified"])
+
     def test_artifact_report_path_gap_detected_even_when_name_differs(self):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))

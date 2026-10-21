@@ -54,6 +54,7 @@ jobs:
           test -f verified-history-source/manifest.json
           python -m madsc.history_verified_workflow --manifest verified-history-source/manifest.json --output reports/verified-k2-history.json
       - name: Upload isolated evidence
+        if: ${{ always() && !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: madsc-k2-isolated-evidence

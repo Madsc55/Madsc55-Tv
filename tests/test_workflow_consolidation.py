@@ -47,6 +47,16 @@ class WorkflowConsolidationTests(unittest.TestCase):
             self.assertEqual(result["commands_integrated_in_main"], 0)
             self.assertFalse(result["all_ten_commands_integrated_in_main"])
 
+    def test_commented_main_command_is_not_counted_as_migrated(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            command = AUXILIARY["madsc-k2-live-pilot.yml"][1]
+            with (folder / MAIN["K2"]).open("a", encoding="utf-8") as out:
+                out.write("      # " + command + "\\n")
+            result = consolidation_plan(Path(d))
+            self.assertEqual(result["commands_integrated_in_main"], 0)
+            self.assertFalse(result["all_ten_commands_integrated_in_main"])
+
     def test_automatic_trigger_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))

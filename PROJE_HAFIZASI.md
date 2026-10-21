@@ -1784,3 +1784,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - madsc/restore_drill.py artik elle shutil.copyfile kullanmak yerine backup_to_new_sandbox -> restore_to_new_sandbox -> verify_independent_restore zincirini calistiriyor; CI'daki K4 drill ayni fonksiyonu kullaniyor. Kod 07db91624781c42060edba5e14ce588f139a1b41.
 - tests/test_restore_drill.py mevcut corruption injection testini yeni API'ye uyarladi; gercek iki sonuc alanini denetliyor: ef2906125e4e96511be196b6764a7f6ee38fdb3b. Yeni CI sonucunu kontrol et.
 - Gercek dis depolama veya production restore kabul edilmedi; 75 canli, 92 parity ve 26 runtime security kabul sayilari degismedi. Korunan yollar ve eski repo degistirilmedi.
+
+
+## 21 Ekim 2026 - K4 CI regresyon hata analizi
+- Actions #39680219595 failure: Guvenlik job test_restore_drill.py eski restore_drill.shutil.copyfile mock'u artik var olmayan attribute'a eristi (AttributeError); diger kategoriler skipped. Bu kod entegrasyonunun eski teste uyumsuzluguydu, uretim backup hatasi kaniti degil.
+- Sonraki ef2906125e4e96511be196b6764a7f6ee38fdb3b test commit'i mock'u backup_to_new_sandbox fonksiyonuna tasidi. #39680249100 Guvenlik, Kesif, Kanal Testleri job'lari success; K4 Arsiv ve Yedek halen in_progress (son kontrol). Tum workflow success henuz iddia edilmiyor.
+- Sonraki adim: #39680249100 tum job'larin final sonucunu denetle; fail varsa logdan duzelt. K4 dis depolama kabul sayisi degismedi.

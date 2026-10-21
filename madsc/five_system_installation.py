@@ -5,6 +5,7 @@ import argparse
 import json
 from pathlib import Path
 import ast
+import hashlib
 
 from madsc.k1_k5_acceptance_requirements import REQUIREMENTS, assess_task_evidence
 
@@ -44,10 +45,13 @@ def inspect_installation(root: Path) -> dict:
         raise ValueError("Incomplete or unexpected K1-K5 task ledger")
     evidence = assess_task_evidence(tasks)
     writer_calls = []
+    source_fingerprints = {}
     for module in sorted((root / "madsc").glob("*.py")):
         if module.is_symlink():
             raise ValueError("Symlinked Python source")
-        tree = ast.parse(module.read_text(encoding="utf-8"), filename=str(module))
+        source_bytes = module.read_bytes()
+        source_fingerprints[module.relative_to(root).as_posix()] = hashlib.sha256(source_bytes).hexdigest()
+        tree = ast.parse(source_bytes, filename=str(module))
         for node in ast.walk(tree):
             if isinstance(node, ast.Call):
                 target = node.func
@@ -93,10 +97,15 @@ def inspect_installation(root: Path) -> dict:
         "evidence_requirements_missing_tasks": evidence["requirements_missing_tasks"],
         "external_evidence_required_tasks": evidence["requires_external_evidence_tasks"],
         "writer_callsite_candidates": writer_calls,
+        "writer_source_sha256": source_fingerprints,
         "writer_callsite_candidates_count": len(writer_calls),
         "writer_callsite_modules": writer_by_module,
         "writer_dynamic_mode_review_count": sum(row["classification"] == "dynamic_mode_review" for row in writer_calls),
         "all_writer_callsites_manually_verified": False,
+        "writer_inventory_limitations": [
+            "Static AST only; aliases, wrappers, subprocesses and dynamic calls require runtime review",
+            "Source hashes bind the report to inspected Python bytes, not production behavior",
+        ],
         "tasks_total": len(tasks),
         "tasks_completed": sum(x["completed"] for x in counts.values()),
         "tasks_in_progress": sum(x["in_progress"] for x in counts.values()),

@@ -76,7 +76,7 @@ class VerifiedHistoryPipelineTests(unittest.TestCase):
                 destination.mkdir()
                 for name, value in FILES.items():
                     (destination / name).write_bytes(value)
-            with self.assertRaises(ValueError):
+            with self.assertRaises(PermissionError):
                 produce_verified_history(
                     manifest, output, current_sha=B, run_id="789",
                     token="test-token", verify_origin=verify, download=download)

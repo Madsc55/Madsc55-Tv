@@ -70,6 +70,12 @@ def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
             resolved[0].is_relative_to(resolved[1]) or
             resolved[1].is_relative_to(resolved[0])):
         raise ValueError("Copy audit requires independent nonnested directories")
+    # Separate directories are insufficient if their files share inodes.
+    for name in names:
+        left = (resolved[0] / name).stat()
+        right = (resolved[1] / name).stat()
+        if (left.st_dev, left.st_ino) == (right.st_dev, right.st_ino):
+            raise ValueError("Copy audit requires physically independent files")
     first = snapshot_manifest(source, names)
     second = snapshot_manifest(destination, names)
     return first["entries"] == second["entries"]

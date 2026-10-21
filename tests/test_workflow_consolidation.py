@@ -10,8 +10,9 @@ class WorkflowConsolidationTests(unittest.TestCase):
         folder = root / ".github" / "workflows"
         folder.mkdir(parents=True)
         for name in list(AUXILIARY) + list(MAIN.values()):
+            command = AUXILIARY[name][1] if name in AUXILIARY else "echo fixture"
             (folder / name).write_text(
-                "name: fixture\non:\n  workflow_dispatch:\npermissions:\n  contents: read\n",
+                "name: fixture\non:\n  workflow_dispatch:\npermissions:\n  contents: read\n" + command + "\n",
                 encoding="utf-8",
             )
         return folder
@@ -31,6 +32,26 @@ class WorkflowConsolidationTests(unittest.TestCase):
             folder = self.make_root(Path(d))
             (folder / "01-guvenlik.yml").write_text(
                 "on:\n  workflow_dispatch:\n  push:\npermissions:\n  contents: read\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                consolidation_plan(Path(d))
+
+    def test_missing_mapped_command_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            (folder / "madsc-k2-live-pilot.yml").write_text(
+                "on:\\n  workflow_dispatch:\\npermissions:\\n  contents: read\\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                consolidation_plan(Path(d))
+
+    def test_main_automatic_trigger_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            (folder / MAIN["K1"]).write_text(
+                "on:\\n  workflow_dispatch:\\n  schedule:\\npermissions:\\n  contents: read\\n",
                 encoding="utf-8",
             )
             with self.assertRaises(ValueError):

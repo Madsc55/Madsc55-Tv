@@ -1,8 +1,20 @@
 name: Madsc55-Tv - Besli Toplu Guvenlik ve Kabul
 on:
   workflow_dispatch:
+    inputs:
+      allow_legacy_source_audit:
+        description: 'Opt-in read-only 99-workflow GitHub source audit'
+        type: boolean
+        required: true
+        default: false
+      allow_legacy_notes_merge:
+        description: 'Opt-in archived notes merge in temporary checkout'
+        type: boolean
+        required: true
+        default: false
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: madsc-five-system-batch
   cancel-in-progress: false
@@ -329,6 +341,30 @@ jobs:
           name: madsc-k5-guarded-evidence
           path: reports/reports/k5-isolated-evidence.json
           retention-days: 14
+      - name: K5 99 eski workflow kaynak bütünlüğü (explicit opt-in)
+        if: ${{ inputs.allow_legacy_source_audit == true }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p reports
+          python -m unittest discover -s tests -p test_legacy_99_source_integrity.py -v
+          python -m madsc.legacy_99_bulk_audit --output reports/legacy-99-source-audit.json
+      - name: K5 eski notları birleştir ve SHA256 doğrula (explicit opt-in)
+        if: ${{ inputs.allow_legacy_notes_merge == true }}
+        run: |
+          python scripts/birlestir_eski_sistem_notlari.py --include-structured
+          python -m madsc.legacy_notes_integrity --merged ESKI_SISTEM_NOTLARI.md --archive docs/eski_depo_not_arsivi --report reports/eski-notlar-dogrulama.json
+      - name: K5 opt-in eski kaynak raporlarını sakla
+        if: ${{ inputs.allow_legacy_source_audit == true || inputs.allow_legacy_notes_merge == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k5-legacy-source-evidence
+          path: |
+            reports/legacy-99-source-audit.json
+            reports/eski-notlar-dogrulama.json
+            ESKI_SISTEM_NOTLARI.md
+          if-no-files-found: error
+          retention-days: 30
       - name: K5 on yardimci workflow ve 22 gorev kaynak envanteri
         run: |
           mkdir -p reports

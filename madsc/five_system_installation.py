@@ -73,6 +73,11 @@ def inspect_installation(root: Path) -> dict:
                 writer_calls.append({"file": module.relative_to(root).as_posix(),
                                      "line": node.lineno, "operation": name,
                                      "classification": classification})
+    writer_calls.sort(key=lambda row: (row["file"], row["line"], row["operation"]))
+    writer_by_module = {}
+    for row in writer_calls:
+        writer_by_module.setdefault(row["file"], {"write": 0, "dynamic_mode_review": 0})
+        writer_by_module[row["file"]][row["classification"]] += 1
     files = sorted(p.name for p in workflows.iterdir()
                    if p.is_file() and p.suffix in (".yml", ".yaml"))
     missing = [name for name in MAIN.values() if name not in files]
@@ -89,6 +94,8 @@ def inspect_installation(root: Path) -> dict:
         "external_evidence_required_tasks": evidence["requires_external_evidence_tasks"],
         "writer_callsite_candidates": writer_calls,
         "writer_callsite_candidates_count": len(writer_calls),
+        "writer_callsite_modules": writer_by_module,
+        "writer_dynamic_mode_review_count": sum(row["classification"] == "dynamic_mode_review" for row in writer_calls),
         "all_writer_callsites_manually_verified": False,
         "tasks_total": len(tasks),
         "tasks_completed": sum(x["completed"] for x in counts.values()),

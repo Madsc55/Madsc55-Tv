@@ -1518,3 +1518,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - GitHub main kaynak dogrulamasi: madsc/legacy_category_order.py ve tests/test_legacy_category_order.py ayni IZOLE_ADAY_TEST_KUYRUGU hedefini kullaniyor. route_discovered_candidates production_writes=false, existing_order_modified=false donduruyor; YENILER/YEDEKLER otomatik degismiyor.
 - Bu turda yeni kod degisikligi veya yeni Actions tetiklemesi yapilmadi. #413 offline/CI fixture kaniti olup gercek yayin, 26 runtime guvenlik kurali, IBO cihaz, harici restore veya 92 parity kabul kaniti degildir.
 - Kullanici onceligi: yeni K1-K5 tamamlansin, eski 92 davranis aktarimi daha sonra. Kalan: K1 runtime kapilari; K2 kaynak mutabakati ve izole aday; K3 uc asama/6 saat/IBO/EPG-logo; K4 harici restore; K5 merkezi kabul. Kota tuketen Actions icin ayrica acik izin gerekir; sonraki is toplu offline kaynak ve entegrasyon testleri.
+
+## 21 Ekim 2026 — K2 kategori girdisi fail-closed sertlestirme
+- Yeni repo main madsc/legacy_category_order.py: bozuk/non-dict tarihsel satirlar ve bilinmeyen kaynak dosyalari ValueError ile reddedilir; kesif adaylarinda bos veya yalniz bosluk isimleri reddedilir. Kod commit d8bb351c83fd58d6360ccad591337dfdfff7882d.
+- tests/test_legacy_category_order.py: bozuk snapshot satiri, bilinmeyen dosya ve bos aday regresyonlari eklendi; commit 8e451779ce0ca1e0da0225bae18782eb90906a42.
+- Iki commit [skip ci] ile yapildi. GitHub Actions veya tam offline regresyon CALISTIRILMADI; testlerin gectigi iddia edilmiyor. Korunan canli kategori/sira/logo/favoriler/YENILER/YEDEKLER ve eski depo degistirilmedi.
+- Siradaki: tam main kaynak checkout ve tek toplu offline K1-K5 test, sonucuna gore baglantili duzeltmeler. Canli ag, IBO cihaz ve harici restore kaniti hala eksik; eski 92 davranis aktarimi sonraya ertelendi.

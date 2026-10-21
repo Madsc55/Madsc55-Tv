@@ -134,6 +134,16 @@ class WorkflowConsolidationTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 consolidation_plan(Path(d))
 
+    def test_k5_unrestricted_push_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            path = folder / MAIN["K5"]
+            content = path.read_text(encoding="utf-8")
+            content = content.replace("    branches: [main]", "    branches: ['**']")
+            path.write_text(content, encoding="utf-8")
+            with self.assertRaises(ValueError):
+                consolidation_plan(Path(d))
+
     def test_main_automatic_trigger_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))

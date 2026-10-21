@@ -21,7 +21,7 @@ def prepare_channel_catalog(rows: list[dict], measurements: dict | None = None,
         raise ValueError("Evidence maps must be dictionaries")
     discovery = classify_candidates(rows)
     digests = {c["url_sha256"] for c in discovery["candidates"]}
-    for evidence in (measurements, logos, ibo_results):
+    for evidence in (measurements, logos, ibo_results, probes):
         if set(evidence) - digests:
             raise ValueError("Evidence for unknown channel fingerprint")
     entries = []

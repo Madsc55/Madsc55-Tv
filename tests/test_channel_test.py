@@ -18,6 +18,15 @@ class ChannelTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     evaluate_probe(probe)
 
+    def test_invalid_probe_types_fail_closed(self):
+        valid = {"url_sha256": "a" * 64, "http_status": 200,
+                 "video": True, "audio": True, "duration_seconds": 40}
+        for invalid in (None, [], "invalid", {**valid, "video": "yes"},
+                        {**valid, "audio": 1}, {**valid, "duration_seconds": True}):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ValueError):
+                    evaluate_probe(invalid)
+
     def test_missing_evidence_fails_closed(self):
         with self.assertRaises(ValueError):
             evaluate_probe({"http_status":200})

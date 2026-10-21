@@ -159,11 +159,34 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
             gaps.append("always_upload")
         if not any(_command_in_run_step(body, command) for body in main_sources):
             gaps.append("command_missing")
+        # Preserve a path-level check separately from artifact naming:
+        # renamed consolidated bundles are valid only when they contain the
+        # same report paths. This is static evidence, not runtime parity.
+        def uploaded_paths(body):
+            found = set()
+            in_upload = False
+            for line in body.splitlines():
+                stripped = line.strip()
+                if stripped.startswith("- ") and ("uses:" in stripped or "name:" in stripped):
+                    in_upload = False
+                if "uses: actions/upload-artifact@" in stripped:
+                    in_upload = True
+                if in_upload and stripped.startswith("reports/"):
+                    found.add(stripped)
+                if in_upload and stripped.startswith("path: reports/"):
+                    found.add(stripped.split("path:", 1)[1].strip())
+            return found
+        source_paths = uploaded_paths(source)
+        target_paths = set().union(*(uploaded_paths(body) for body in main_sources))
+        missing_paths = sorted(source_paths - target_paths)
+        if missing_paths:
+            gaps.append("artifact_path")
         # A consolidated artifact may intentionally have a different name; report
         # that difference without treating it as proven behavioral failure.
         rows.append({"source": name, "stages": stages, "command_present": any(
             _command_in_run_step(body, command) for body in main_sources),
             "source_contract": src, "main_contracts": destinations,
+            "missing_artifact_paths": missing_paths,
             "static_contract_gaps": gaps,
             "requires_manual_behavior_review": bool(gaps) or external,
             "artifact_renamed_in_consolidation": "artifact_name" in gaps,

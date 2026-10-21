@@ -56,9 +56,11 @@ class MigratedOptInContractTests(unittest.TestCase):
                     ]
                     self.assertEqual(len(containing_steps), 1, (filename, command))
                     step = containing_steps[0]
-                    self.assertIn(
-                        "if: ${{ inputs." + input_name + " == true }}",
-                        step, (filename, command),
+                    self.assertRegex(
+                        step,
+                        r"if: \\$\\{\\{ (?:success\\(\\) && )?inputs\\." +
+                        re.escape(input_name) + r" == true \\}\\}",
+                        (filename, command),
                     )
 
     def test_automatic_batch_has_read_only_permissions_and_no_sensitive_defaults(self):

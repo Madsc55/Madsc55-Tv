@@ -24,6 +24,20 @@ class WorkflowConsolidationTests(unittest.TestCase):
 
 
 
+
+    def test_real_isolated_workflows_keep_failure_evidence(self):
+        root = Path(__file__).resolve().parent.parent
+        for stage in ("K1", "K2", "K3"):
+            with self.subTest(stage=stage):
+                body = (root / ".github" / "workflows" / MAIN[stage]).read_text(
+                    encoding="utf-8")
+                self.assertIn(
+                    "      - name: Upload isolated evidence\\n"
+                    "        if: ${{ always() && !cancelled() }}\\n"
+                    "        uses: actions/upload-artifact@v4", body)
+                self.assertIn("workflow_dispatch:", body)
+                self.assertNotIn("  schedule:", body)
+
     def test_longer_destination_timeout_is_not_a_gap(self):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))

@@ -39,7 +39,7 @@ jobs:
         if: ${{ inputs.allow_live_probes == true }}
         run: python -m madsc.k3_live_manifest_pilot
       - name: Bounded Turkish TV video probe (explicit opt-in only)
-        if: ${{ inputs.allow_live_probes == true }}
+        if: ${{ success() && inputs.allow_live_probes == true }}
         run: |
           ffprobe -version | head -n 1
           python -m madsc.k3_turkish_tv_video_pilot

@@ -1687,3 +1687,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - GitHub Actions #39657348060 fail: tests/test_migrated_opt_in_contract.py eski tam if stringini bekliyordu; K2 success() && inputs.allow_network_discovery == true kosulunu yanlis reddetti. K2/K3 workflow islevsel fail kaniti yok, statik test uyumsuzlugu.
 - ac1430f ara denemesi ardindan be4e208 commit ile test yalniz iki acik fail-closed formu kabul edecek sekilde duzeltildi: inputs.FLAG == true veya success() && inputs.FLAG == true. En guncel run #39658173167 kuyrukta; sonucu dogrulanmadan basarili denmez. Aradaki #39658143312 sonucu esas alinmaz.
 - Korunan dosyalar degismedi; kabul 0/22 ve legacy parity 0/92.
+
+## 21 Ekim 2026 - Artifact path bazli kaynak karsilastirmasi
+- #39658173167 6/6 success. K2/K3 opt-in regresyonu hatasi kapandi.
+- 049c1e4: auxiliary_behavior_matrix kaynak artifact adi farkli olsa da reports/ altindaki yuklenen dosya yollarini ana workflow ile karsilastirir; missing_artifact_paths ve artifact_path gap uretir. Bu statik karsilastirmadir, gercek artifact esdegerligi degildir.
+- 64b531d: fixture ile eksik rapor yolu testi eklendi, yeni CI #39659140742 basladi, sonuc bekleniyor.
+- Korunan dosyalar degismedi. 22 gorev 0 kabul, 92 legacy parity 0.

@@ -143,6 +143,15 @@ class EvidenceLedgerTest(unittest.TestCase):
                           report["missing_pairs"], report["behavioral_parity_accepted"]),
                          (99, 2, 1, 1, 97, 0))
 
+    def test_batch_validates_late_malformed_snapshot(self):
+        from madsc.legacy_parity_evidence import compare_snapshot_batch
+        good = {"exit_code": 0, "timed_out": False, "outputs": {}, "side_effects": {}}
+        with self.assertRaises(ValueError):
+            compare_snapshot_batch(inventory(), {
+                ".github/workflows/w00.yml": {"legacy": good, "replacement": good},
+                ".github/workflows/w98.yml": {"legacy": good, "replacement": {"exit_code": True}},
+            })
+
     def test_batch_rejects_unknown_or_incomplete_pairs(self):
         from madsc.legacy_parity_evidence import compare_snapshot_batch
         for payload in ({"unknown": {}}, {".github/workflows/w00.yml": {"legacy": {}}}):

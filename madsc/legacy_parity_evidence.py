@@ -117,6 +117,12 @@ def compare_snapshot_batch(inventory, snapshots):
     paths = {row["path"] for row in rows}
     if not isinstance(snapshots, dict) or set(snapshots) - paths:
         raise ValueError("Unknown snapshot workflow")
+    # Validate every supplied pair before generating any report rows.
+    comparisons = {}
+    for path, pair in snapshots.items():
+        if not isinstance(pair, dict) or set(pair) != {"legacy", "replacement"}:
+            raise ValueError("Incomplete execution pair")
+        comparisons[path] = compare_execution_snapshots(pair["legacy"], pair["replacement"])
     results = []
     for row in rows:
         path = row["path"]
@@ -124,10 +130,7 @@ def compare_snapshot_batch(inventory, snapshots):
             results.append({"path": path, "status": "missing_execution_pair",
                             "behavioral_parity_accepted": False})
             continue
-        pair = snapshots[path]
-        if not isinstance(pair, dict) or set(pair) != {"legacy", "replacement"}:
-            raise ValueError("Incomplete execution pair")
-        comparison = compare_execution_snapshots(pair["legacy"], pair["replacement"])
+        comparison = comparisons[path]
         results.append({"path": path,
                         "status": ("snapshot_match_unverified" if comparison["snapshot_fields_match"]
                                    else "snapshot_mismatch"),

@@ -24,6 +24,12 @@ class LegacyNotesIntegrityTests(unittest.TestCase):
             result = legacy_notes_integrity.verify(merged, archive, report)
             self.assertTrue(result["verified"])
             self.assertEqual(result["sources"], 3)
+            before = merged.read_bytes()
+            with self.assertRaises(PermissionError):
+                legacy_notes_integrity.verify(merged, archive, root / "xmltv.xml")
+            self.assertFalse((root / "xmltv.xml").exists())
+            self.assertEqual(merged.read_bytes(), before)
+
             self.assertTrue((archive / "AGENTS.md").exists())
             self.assertTrue((archive / "decision.json").exists())
             merged.write_text(merged.read_text().replace("Historical decisions", "TAMPERED"), encoding="utf-8")

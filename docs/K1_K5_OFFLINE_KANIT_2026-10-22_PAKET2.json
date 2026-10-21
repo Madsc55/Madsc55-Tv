@@ -1,0 +1,48 @@
+{
+  "mode": "offline_local",
+  "scope": "unit_regression_and_isolated_five_stage_fixture",
+  "production_acceptance": false,
+  "legacy_92_behavioral_acceptance": 0,
+  "runtime_security_26_acceptance": 0,
+  "test_exit_code": 0,
+  "timed_out": false,
+  "tests_discovered": 554,
+  "tests_passed": true,
+  "five_stage_fixture_gate_passed": true,
+  "all_offline_gates_passed": true,
+  "workflow_and_task_inventory_passed": true,
+  "auxiliary_workflows_mapped": 10,
+  "auxiliary_commands_integrated_in_main": 10,
+  "task_requirements_inventoried": 22,
+  "legacy_scope_source_workflows": 99,
+  "legacy_scope_behavior_workflows": 92,
+  "legacy_scope_excluded": [
+    ".github/workflows/k1-protected-write-tests.yml",
+    ".github/workflows/madsc-01-guvenlik.yml",
+    ".github/workflows/madsc-02-kesif.yml",
+    ".github/workflows/madsc-03-kanal-test.yml",
+    ".github/workflows/madsc-04-arsiv-yedek.yml",
+    ".github/workflows/madsc-05-genel-bakim.yml",
+    ".github/workflows/madsc-hizli-on-kontrol.yml"
+  ],
+  "workflow_inventory_error": null,
+  "task_inventory_error": null,
+  "five_stage_fixture_categories": {
+    "k1": "success",
+    "k2": "success",
+    "k3": "success",
+    "k4": "success",
+    "k5": "success"
+  },
+  "five_stage_fixture_errors": {},
+  "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification.",
+  "tested_base_commit": "6c5ccba95211e67d9b24e3b8ef81a4ce0ac273d0",
+  "tested_files_sha256": {
+    "madsc/history_origin_cli.py": "497247f65cfc406779fc09c7b62c688655f3186e16003ea874e9394b32ecf5a3",
+    "madsc/batch_acceptance.py": "3df5dfcfc9c0f66fcdaef64ac99449e8249d22916e1fc2f0a61102577f68206d",
+    "madsc/handoff_acceptance.py": "45e7bffdbe1ecbe1a1d85717fcdcf7843846b39d9ea6c716779213aca7968572",
+    "madsc/legacy_notes_integrity.py": "2f0069c50931b3f43468c91f240bf17ff69a3612fefa3f5d199052511b0c586e",
+    "tests/test_acceptance_output_guards.py": "edda185c441da3f2431e808240f5e2d2d7b9676f9259b970786cd13f002074a9",
+    "tests/test_legacy_notes_integrity.py": "cb21368bedb79bcad3517789642de1726112a9b3bc430ab746e256426c1aea3b"
+  }
+}

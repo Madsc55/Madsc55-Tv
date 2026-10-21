@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+from madsc.write_path_audit import enforce_local_output_path
 from madsc.artifact_handoff import unpack
 from madsc.batch_acceptance import _unique_json_pairs
 
@@ -31,11 +32,13 @@ def main():
     p.add_argument("--run-id", required=True)
     p.add_argument("--commit-sha", required=True)
     a = p.parse_args()
+    enforce_local_output_path(a.output.absolute())
     result = verify(load(a.k2), load(a.k3), load(a.k5), a.run_id, a.commit_sha)
     if a.output.is_symlink():
         raise ValueError("Invalid acceptance output path")
-    a.output.parent.mkdir(parents=True, exist_ok=True)
-    a.output.write_text(json.dumps(result, sort_keys=True) + "\n", encoding="utf-8")
+    enforce_local_output_path(a.output.absolute())
+    with a.output.open("x", encoding="utf-8") as stream:
+        stream.write(json.dumps(result, sort_keys=True) + "\n")
     print(json.dumps(result))
 if __name__ == "__main__":
     main()

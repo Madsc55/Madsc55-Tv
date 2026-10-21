@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+from madsc.write_path_audit import enforce_local_output_path
 
 from madsc.github_history_client import verify_live_github_origin
 from madsc.history_source_gate import load_verified_source
@@ -19,6 +20,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--workflow", default=".github/workflows/madsc-05-bakim.yml")
     args = parser.parse_args()
+    enforce_local_output_path(args.output.absolute())
     if args.output.is_symlink():
         raise ValueError("Symlinked report output")
     if args.manifest.is_symlink() or not args.manifest.is_file():
@@ -37,8 +39,9 @@ def main():
     # Only a successful independent check produces an isolated report.
     result = {"schema": "madsc-verified-history-origin-v1",
               **verified, "read_only": True, "production_ready": False}
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, sort_keys=True) + "\n", encoding="utf-8")
+    enforce_local_output_path(args.output.absolute())
+    with args.output.open("x", encoding="utf-8") as stream:
+        stream.write(json.dumps(result, sort_keys=True) + "\n")
     print(json.dumps(result))
 
 

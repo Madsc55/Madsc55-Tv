@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from madsc.write_path_audit import enforce_local_output_path
 
 SUFFIXES = {".md", ".txt", ".rst", ".json", ".csv"}
 EXCLUDE = {"ARSIV_REHBERI.md"}
@@ -55,7 +56,7 @@ def verify(merged, archive, report):
         raise ValueError("Unexpected text outside verified legacy source sections")
     if report.exists() or report.is_symlink():
         raise ValueError("Refusing to overwrite verification report")
-    report.parent.mkdir(parents=True, exist_ok=True)
+    enforce_local_output_path(report.absolute())
     result = {"verified": True, "sources": len(results), "merged_sha256": hashlib.sha256(raw).hexdigest(),
               "merged_bytes": len(raw), "entries": results, "production_writes": False}
     with report.open("x", encoding="utf-8") as out:

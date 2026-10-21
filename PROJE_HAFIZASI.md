@@ -1846,3 +1846,12 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Son gözlenen GitHub Actions #39686179902 success, SHA d5d61317806dc7a00b762567695286e3779ceaf1; bu yeni kodun CI kanıtı değildir. Actions tetiklenmedi, commitler [skip ci].
 - 0/92 tam davranışsal kabul, 0/26 runtime kural kabulü, 0/22 tam görev kabulü korunuyor. Eksik: gerçek karşılaştırmalı execution/artifact kökeni, hata/timeout/retry, zamanlı canlı ölçümler, kullanıcı IBO cihaz kabulü, EPG/Pages, bağımsız harici restore.
 - Korunan yayın listeleri, EPG, YEDEKLER/YENİLER/FAVORİLER ve eski depo değişmedi; PR #71 veya başka merge yapılmadı. Sıradaki adım: 92 kaynak yoluna bağlanan gerçek karşılaştırmalı kanıt çiftlerini doğrula; kanıt bulunmadan snapshot eşleşmesini kabul sayma. DEVAM_NOTU.md yeni sohbet giriş noktasıdır.
+
+
+## 22 Ekim 2026 — K2/K5 kabul yazıcıları aynı K1 kapısına bağlandı
+- Önceki kod SHA 53ca22f2781d106139d52a20493e223b391418fd, devir SHA 6c5ccba95211e67d9b24e3b8ef81a4ce0ac273d0 GitHub main üzerinden tekrar okundu. Compare: 11 dosya değişti; korunan dosyalarda fark yok, merge yok.
+- history_origin_cli, batch_acceptance, handoff_acceptance ve legacy_notes_integrity: enforce_local_output_path + exclusive create. İlk üç CLI çıktı hedefini kanıt işleme/ağ doğrulamasından önce reddeder. Üst klasör önceden mevcut olmalı; rapor kanıtı üzerine yazılmaz.
+- Yeni gerçek CLI sınır testleri korunan xmltv/playlist, symlink üst dizin, mevcut raporu reddederken işleyici/GitHub doğrulama çağrılmadığını ve dosya baytlarının korunduğunu denetler. Arşiv doğrulayıcısının korunan hedefi reddi de sınandı.
+- Son yerel toplu regresyon: 554 test, beş K1–K5 izole kapısı, 92+7 kapsam kapısı, 10 yardımcı komut ve 22 görev envanteri başarılı. Başarısız test yok; git diff --check temiz. Kanıt: docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET2.json.
+- Son eski CI run #39686179902 artifact metadata listesi salt okunur incelendi; fixture/handoff/restore raporları mevcut. İçerikler bu adımda indirilmedi; bunlara 92 tam parity kanıtı atfedilmedi. Yeni Actions çalıştırılmadı.
+- 0/92, 0/26, 0/22 tam kabuller korunuyor. Bu altı yazıcıdaki düzeltme tüm bağımsız yazma noktalarının kapandığı anlamına gelmez; ci_diagnostics summary append, canlı pilot yazıcıları ve diğer dolaylı çağrılar için tam çağrı noktası denetimi açık. Sıradaki bağımsız yerel iş budur; gerçek cihaz/ağ/harici yedek kabulü ayrıca açık. DEVAM_NOTU.md güncellenecek.

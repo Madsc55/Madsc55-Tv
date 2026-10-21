@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json
 from pathlib import Path
+from madsc.write_path_audit import enforce_local_output_path
 from madsc.maintenance import verify_fixture_evidence
 
 CATEGORIES = ("k1", "k2", "k3", "k4", "k5")
@@ -86,9 +87,11 @@ def main() -> None:
     p.add_argument("--reports", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     a = p.parse_args()
+    enforce_local_output_path(a.output.absolute())
     result = collect(a.reports)
-    a.output.parent.mkdir(parents=True, exist_ok=True)
-    a.output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    enforce_local_output_path(a.output.absolute())
+    with a.output.open("x", encoding="utf-8") as stream:
+        stream.write(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(result, ensure_ascii=False))
 
 if __name__ == "__main__":

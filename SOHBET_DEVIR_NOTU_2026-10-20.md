@@ -409,3 +409,12 @@ Kullanici 17 pending gorevin topluca en fazla UC calisma turunda bitirilmesini i
 - tests/test_migrated_opt_in_contract.py eklendi: K2/K3/K5'teki sekiz tasinmis riskli komutun dogru boolean input ile if: inputs.X == true korumasinda oldugunu ve input default false oldugunu; bes ana YAML'in manual-only kaldigini denetleyen statik unittest. Commit e25a42f05d859b5354e3f1bf51e5eb07c808de58.
 - Bu test henüz tam depoda CALISTIRILMADI. Yerel container'dan github.com/raw.githubusercontent.com DNS erisimi basarisiz, dolayisiyla tam checkout halen elde degil. GitHub Actions kota tuketilmedi.
 - 17 pending gorev kapanmadi; 92 davranissal parity ve 26 guvenlik kuralinin runtime kabul kaniti hala eksik.
+
+## 21 Ekim 2026 — GitHub Actions #400–#403 ve otomatik toplu regresyon
+- #400 workflow_dispatch: 439 unittest, 6 failure + 1 error; discovery escape validation ve existing evidence exception testleri duzeltildi.
+- #401 workflow_dispatch: GitHub conclusion success.
+- #402 otomatik push: 439 testten 3 failure; K5 push tetikleyicisi ile eski manual-only kabul testleri catisti.
+- #403 otomatik push (commit 877f9e7): GitHub conclusion success; K1 logunda 440 unittest OK, offline_gate 440 tests_passed=true. K1, K2, K3, K5 ve toplu kabul adimlari basarili; GitHub run genel sonucu success.
+- K5 .github/workflows/madsc-05-bakim.yml artik main uzerinde sadece madsc/**, tests/** ve kendi YAML degisiklikleri icin push ile otomatik basliyor; workflow_dispatch da mevcut. K1–K4 manual-only; hassas opt-in islemler default false. GitHub Actions otomatik test, otomatik kod duzeltme degildir.
+- Bu testler izolasyon/regresyon kanitidir; 92 eski workflow davranissal kabul 0/92, 26 runtime guvenlik kabul 0/26, 22 gorevden tamamlanan 0. Korunan uretim listeleri/EPG/favoriler/yedekler degistirilmedi. IBO Player Pro gercek cihaz kabulunu kullanici yapacak.
+- Sonraki is: 22 kanit gorevinin kaynak/bagimliliklarini tek tek tamamlamak; 10 yardimci workflow icin gercek davranis, artifact, timeout/retry, izin, trigger parity; kanitsiz kapatma yok.

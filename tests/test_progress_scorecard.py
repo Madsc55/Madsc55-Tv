@@ -1,5 +1,5 @@
 import unittest
-from madsc.progress_scorecard import scorecard
+from madsc.progress_scorecard import scorecard, task_summary
 
 
 class ProgressScorecardTests(unittest.TestCase):
@@ -19,7 +19,27 @@ class ProgressScorecardTests(unittest.TestCase):
         self.assertEqual(progress["combined_acceptance_percent"], 50.0)
         self.assertEqual(progress["combined_acceptance_denominator"], 118)
         self.assertIsNone(result["calculated_overall_percent"])
+
+    def test_task_ledger_calculates_real_scoped_progress(self):
+        tasks = [
+            {"id": "k1-1", "stage": "K1", "status": "completed", "evidence": ["commit:d095b9f"]},
+            {"id": "k2-1", "stage": "K2", "status": "in_progress", "evidence": []},
+            {"id": "k3-1", "stage": "K3", "status": "pending", "evidence": []},
+        ]
+        result = scorecard(tasks=tasks)
+        self.assertEqual(result["calculated_overall_percent"], 33.33)
+        self.assertEqual(result["task_progress"]["remaining"], 2)
+        self.assertEqual(result["task_progress"]["by_stage"]["K1"]["completed"], 1)
         self.assertFalse(result["production_ready"])
+
+    def test_fake_completion_and_duplicate_ids_rejected(self):
+        with self.assertRaises(ValueError):
+            task_summary([{"id": "x", "stage": "K1", "status": "completed", "evidence": []}])
+        with self.assertRaises(ValueError):
+            task_summary([{"id": "x", "stage": "K1", "status": "pending"},
+                          {"id": "x", "stage": "K2", "status": "pending"}])
+        with self.assertRaises(ValueError):
+            task_summary([])
 
     def test_invalid_counts_rejected(self):
         for value in (-1, 93, True, 1.2):

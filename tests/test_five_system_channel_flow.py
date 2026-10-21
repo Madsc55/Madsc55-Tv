@@ -61,6 +61,11 @@ class FiveSystemChannelFlowTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_offline_channel_previews(rows, three_stage={digest: staged})
 
+    def test_orphan_three_stage_evidence_is_rejected(self):
+        rows = [{"name": "kanal", "url": "https://example.org/stream"}]
+        with self.assertRaises(ValueError):
+            build_offline_channel_previews(rows, three_stage={"0" * 64: []})
+
     def test_bad_probe_rejected_before_any_preview(self):
         rows = [{"name": "kanal", "url": "https://example.org/stream"}]
         with self.assertRaises(ValueError):

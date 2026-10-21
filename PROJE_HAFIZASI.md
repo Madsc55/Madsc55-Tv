@@ -1586,3 +1586,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - tests/test_write_path_audit.py Unicode esdeger korunan yollar ve esdeger rapor adlari icin negatif regresyon eklendi. Commit 57c25afa3a7066e0e9316cecad752fe3c64f7cac.
 - Her iki commit [skip ci] ile yapildi: son kota kurali geregi yeni Actions calistirilmadi. Yerel toplu test bu turda calistirilamadi; bu degisikliklerin test basarisi henuz kanitli degil. K1 26/26 ve K5 92/92 kabul sayaclari degismedi; 22 gorevden 0'i resmi tamamlandi.
 - Korunan playlist/EPG/logo/favoriler/yedek dosyalari ve eski repo degistirilmedi. Sonraki is: kaynaklarin toplu offline regresyonu, butun gercek writer callsite envanteri ve merkezi guard baglantisi; sonra K2-K5 gercek kabul.
+
+## 21 Ekim 2026 — K1 merkezi kapinin K2 atomic history yazicisina baglanmasi
+- madsc/history_pair_store.py atomic_write_pair artik hedef dosya adini K1 enforce_write_paths ile denetliyor, symlink olan ust dizinleri reddediyor. Kod commit b3b42b475d2433e242f9238b0de58f403b1ca299.
+- tests/test_history_pair_hls.py korunan dosya adlari, Unicode esdeger yol ve symlink ust klasor reddi icin negatif testler eklendi. Test commit 6f55c7f9bcaf964751eb29841b5fcbd6f480dba1.
+- Her iki commit [skip ci] ile kaydedildi; yeni Actions baslatilmadi. Bu turda offline toplu test calistirilmadi. K1-03 in_progress, 26 runtime ve 92 eski otomasyon kabul sayaclari degismedi. Diger gercek yazma noktalarinin tam envanteri ve runtime entegrasyonu bekliyor.
+- Etki: K1 guvenlik, K2 history, K4 butunluk, K5 kabul. Eski repo ve korunan canli dosyalar degismedi.

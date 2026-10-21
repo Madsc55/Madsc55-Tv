@@ -1726,3 +1726,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Acik gercek isler: 75 yayin adayinin en az 3 ayri gercek olcumle 6+ saat sureklilik testi; ffprobe/ffmpeg ve kanit provenance; IBO Player Pro cihaz testini kullanici yapacak; EPG/Pages canli kabul; K4 dis yedek/restore; 26 runtime guvenlik kurali; 92 eski workflow davranissal esdegerlik. docs/K1_K5_KANITLI_GOREV_DEFTERI.json son bilinen 0/22 tam kabul, 7 in_progress, 15 pending; 0/92 legacy parity, 0/26 runtime security accepted. Bunlari yeni kanit olmadan artirma.
 - Korunan yollar: CALISANLAR.m3u, YENILER.m3u, playlist.m3u8, xmltv.xml, EPG/, logos/, logolar/, YEDEKLER, FAVORILER, cihaz favorileri, arsivler. Bunlara yazma yok.
 - Yeni sohbette ilk is: Actions son sonucunu ve PROJE_HAFIZASI.md bu notu oku. K3 kaynak raporlarina daha fazla kozmetik alan eklemek yerine bir eksik kabul isini uctan uca tamamla: gercek opt-in artifact uretim ve dogrulama akisini veya K1/K4 davranissal kontratlari testlerle gelistir. Statik kaynak-string testleri yerine davranissal fixture testlerini tercih et. Kod, test, CI sonucunu dogrula; notu guncelle.
+
+
+## 21 Ekim 2026 gece - K4 kanonik manifest sirasi
+- Gercek Actions API kontrolu: son gorunen #39675900584 completed/success, SHA 56faa93; bu yalniz onceki fixture koduna ait.
+- K4 `verify_manifest` sirasi degistirilmis manifesti reddeder: b639c94126eed3ce1bc0fa8fc079b906ba0169dd. Davranissal regresyon testi: a7943b03430e085560b56d3883830036480d37ff.
+- Yeni commitlerin Actions sonucu henuz dogrulanmadi. K4 harici yedek/restore, 75 canli kanal, 92 parity ve 26 runtime guvenlik kabulu halen acik; kabul sayilari artirilmadi.
+- Eski repo, PR #71, korunan yayin listeleri ve favoriler degistirilmedi. Uretim yazma yetkisi acilmadi.

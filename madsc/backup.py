@@ -52,6 +52,8 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     # A manifest is a canonical snapshot, not an arbitrary subset or reordered list.
     if paths != sorted(paths):
         return False
+    if not paths:
+        return False
     current = snapshot_manifest(root, paths)
     return current["entries"] == manifest["entries"]
 

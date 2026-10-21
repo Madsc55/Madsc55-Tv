@@ -25,6 +25,30 @@ class ChannelCatalogTests(unittest.TestCase):
         self.assertTrue(out["channels"][0]["logo_verified"])
         self.assertFalse(out["production_writes"])
 
+    def test_probe_evidence_drives_working_candidate(self):
+        rows = [{"name": "kanal", "url": "https://example.org/ok", "group_title": "Haber"}]
+        digest = sha256(b"https://example.org/ok").hexdigest()
+        probe = {"url_sha256": digest, "http_status": 200, "video": True,
+                 "audio": True, "duration_seconds": 31}
+        out = prepare_channel_catalog(rows, probes={digest: probe})
+        self.assertEqual(out["channels"][0]["technical_status"], "PRELIMINARY_PASS")
+        self.assertEqual(out["channels"][0]["bucket"], "CALISAN_ADAY")
+        self.assertFalse(out["network_probed"])
+
+    def test_claimed_status_without_probe_is_not_accepted(self):
+        rows = [{"name": "kanal", "url": "https://example.org/ok"}]
+        digest = sha256(b"https://example.org/ok").hexdigest()
+        out = prepare_channel_catalog(rows, measurements={
+            digest: {"technical_status": "PRELIMINARY_PASS", "verified": False}})
+        self.assertEqual(out["channels"][0]["technical_status"], "UNTESTED")
+        self.assertEqual(out["channels"][0]["bucket"], "TEST_BEKLIYOR")
+
+    def test_probe_fingerprint_mismatch_is_rejected(self):
+        rows = [{"name": "kanal", "url": "https://example.org/ok"}]
+        digest = sha256(b"https://example.org/ok").hexdigest()
+        with self.assertRaises(ValueError):
+            prepare_channel_catalog(rows, probes={digest: {"url_sha256": "0" * 64}})
+
     def test_unknown_fingerprint_rejected(self):
         rows = [{"name": "A", "url": "https://example.org/a"}]
         with self.assertRaises(ValueError):

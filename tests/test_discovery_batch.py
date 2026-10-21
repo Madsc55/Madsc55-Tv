@@ -94,6 +94,10 @@ class DiscoveryBatchTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             corroborate_sources({"a": "#EXTM3U"}, known_urls={None})
 
+    def test_leading_blank_line_is_not_a_valid_m3u_header(self):
+        with self.assertRaises(ValueError):
+            parse_m3u("\n#EXTM3U\n#EXTINF:-1,Channel\nhttps://example.org/live", "fixture")
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

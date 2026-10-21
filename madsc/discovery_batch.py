@@ -18,7 +18,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         raise ValueError("Source and M3U text are required")
     if type(max_entries) is not int or not 1 <= max_entries <= 20000:
         raise ValueError("Invalid candidate limit")
-    lines = text.lstrip("\ufeff").splitlines()
+    lines = text.removeprefix("\ufeff").splitlines()
     if not lines or lines[0].strip() != "#EXTM3U":
         raise ValueError("Missing M3U header")
     candidates, errors = [], []

@@ -1642,3 +1642,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - tests/test_workflow_consolidation.py: eksik timeout ve artifact farklarini tespit eden regresyon eklendi; commit bf0b213. Bu iki yeni commit icin [skip ci] kullanildi, test henuz calistirilmadi.
 - Resmi durum: 0/22 kabul, 5 devam eden, 17 bekleyen; 0/26 runtime, 0/92 legacy parity. Sonraki adim: matrisi tum workflow'larda calistirip farklari topluca gider; gercek davranis/harici kanit ayri kabul edilir.
 - Korunan canli dosyalar ve eski repo degismedi.
+
+## 21 Ekim 2026 - 10 yardimci workflow toplu fark analizi
+- 15 workflow GitHub main kaynagindan okundu; 10 yardimci kaynak ile bes ana YAML operasyon sozlesmesi karsilastirildi. Ilk statik taramada 9/10 yardimcida en az bir fark var: artifact isimleri, timeout ve if always yukleme. Bunlar otomatik davranissal parity hatasi/kabul kaniti degildir.
+- madsc/workflow_consolidation.py --behavior-matrix CLI eklendi, commit d4b86dc. Timeout kontrolu kaynak limitini karsilayan daha uzun hedef limitini uygun sayacak sekilde duzeltildi, commit 289dfc9. Test regresyonu 3bdc210.
+- Onceki toplu GitHub Actions run 39645023901: 6/6 success. Yeni commitler [skip ci]; yeni kod test edilmedi. 0/22 kabul, 0/26 runtime, 0/92 davranis parity ayni.
+- Sonraki toplu is: artifact adi/if always farklarini kaynak-hedef bazinda gerekcelendir; mevcut is akisi davranisini bozmadan gerekli eksikleri entegre et, tek toplu regresyon yap. Canli playlist, EPG, favoriler, logo, arsiv, eski repo degismedi.

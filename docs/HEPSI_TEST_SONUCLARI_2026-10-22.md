@@ -24,3 +24,10 @@
 2. GitHub main'in ZIP'ten farklı dosyalarını blob SHA ile eşleştir; tam main snapshot ile tekrar koş.
 3. 99 workflow kaynak envanterini 92 davranış sözleşmesiyle birebir karşılaştır; sadece komut varlığı değil, girdiler/çıktılar, artifact, izin, timeout, hata davranışı ve yan etkileri doğrula.
 4. K1 26 kuralı ve 22 görev için bağımsız kanıt eklemeden sayaçları artırma.
+
+## Ek regresyon taraması — devam eden tur
+- Tüm 150 `test_*.py` dosyası 10 modüllük gruplarla taranmaya başlandı; tüm paket henüz yeşil değil.
+- Bulunan ve GitHub'da düzeltilen test syntax hatası: `tests/test_k3_live_manifest_source_snapshot.py`; commit `8f138e30d536e686ceac7cb15af6928dceeadfae`. ZIP çalışma kopyasında aynı düzeltme uygulandı ve hedefli test `6/6` geçti.
+- Geniş taramada kalan başarısızlıklar: batch 1'de 2 failure/9 error (aday görüntü metaverisi ve fingerprint test beklentileri), batch 4'te 1 failure (üç aşamalı süreklilik alanı bekleneni karşılamıyor), batch 6'da 6 error (güvensiz aday metaverisi), batch 9'da 1 legacy retest çıktı farkı, batch 11'de 1 legacy replay zamanlama farkı. Bu gruplar henüz kök nedenlerine göre giderilmedi.
+- Batch 7'nin tek SyntaxError'ı giderildi. Batch 2,3,5,10,12'nin çalıştırılabilen grupları exit 0 verdi. Tüm 150 modül için tek bir kesin toplam test sayısı çıkarılamadı; bir sonraki tarama komutunun toplam süresi aşıldı.
+- Bunlar yerel ZIP ve hedefli senkronizasyonla elde edilen sonuçlardır; güncel main'in eksiksiz checkout testi değildir. Kabul sayaçları değişmez: 0/92, 0/26, 0/22.

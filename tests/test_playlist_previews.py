@@ -39,6 +39,23 @@ class PlaylistPreviewTests(unittest.TestCase):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 render_playlist_previews(catalog, rows)
 
+    def test_duplicate_catalog_channels_cannot_enter_multiple_playlists(self):
+        rows = [{"name": "A", "url": "https://example.org/a"}]
+        catalog = prepare_channel_catalog(rows)
+        catalog["channels"].append(dict(catalog["channels"][0], bucket="YABANCI"))
+        with self.assertRaises(ValueError):
+            render_playlist_previews(catalog, rows)
+
+    def test_distinct_channels_render_into_separate_buckets(self):
+        rows = [{"name": "A", "url": "https://example.org/a"},
+                {"name": "B", "url": "https://example.org/b", "foreign": True}]
+        catalog = prepare_channel_catalog(rows)
+        result = render_playlist_previews(catalog, rows)
+        self.assertEqual(result["counts"]["TEST_BEKLIYOR"], 1)
+        self.assertEqual(result["counts"]["YABANCI"], 1)
+        self.assertEqual(sum(result["counts"].values()), 2)
+        self.assertFalse(result["production_writes"])
+
     def test_unverified_logo_rejected(self):
         rows = [{"name": "A", "url": "https://example.org/a"}]
         catalog = prepare_channel_catalog(rows)

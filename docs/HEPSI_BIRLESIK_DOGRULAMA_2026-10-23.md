@@ -42,3 +42,15 @@
 - Aynı log açıkça production_acceptance=false, legacy_92_behavioral_acceptance=0, runtime_security_26_acceptance=0 raporluyor. Bu CI başarısı yalnızca offline regresyon ve izole kabul kapsamındadır; 92 workflow, 26 runtime kuralı veya üretim kabulü için kanıt sayılmaz.
 - K1 noncanonical Unicode path testi Non-canonical Unicode output path hatasını açıkça bekleyecek şekilde güncellendi; bu değişiklik aynı başarılı run'ın kapsamındadır.
 - Kaynak kodu/test kapısı için yeni hata görülmedi; kalan işler gerçek veri ve runtime kabul kanıtlarıdır. Üretim listeleri, EPG, cihaz verileri, yedekler ve eski depo değiştirilmedi.
+
+## 23 Ekim 2026 — Güncel kod için CI başarı kanıtı doğrulandı
+- Main HEAD bu not yazılırken `f7308de59eb3facc67095e769f8a57b9f1c43927`.
+- GitHub Actions run `39862185213` başarılı ve test edilen SHA `fb4a738e1be8860acc9fcd508ec580511cfeb951`. Log çıktısı `tests_passed=true`, `five_stage_fixture_gate_passed=true`, `all_offline_gates_passed=true`, `five_stage_installation_inventory_passed=true`, `five_report_roundtrip_passed=true`; job conclusion success.
+- Main ile bu başarılı SHA karşılaştırması: main 2 commit ileride, değişen dosyalar yalnızca `PROJE_HAFIZASI.md` ve `docs/HEPSI_BIRLESIK_DOGRULAMA_2026-10-23.md`; çalışma kodu/test dosyası değişmemiş. Bu nedenle mevcut main'in kod/test ağacı başarılı CI ile aynıdır, yalnızca notlar sonradan güncellenmiştir.
+- CI raporu açıkça `runtime_rules_verified=false`, `legacy_92_behavioral_equivalence_verified=false`, `ibo_device_verified=false`, `external_restore_verified=false`, `production_ready=false`, `independent_execution_evidence=false` olarak kalıyor. Dolayısıyla bu başarılı koşu offline suite ve izole fixture kapılarını doğrular; üretim sertifikası veya eski 92 workflow eşdeğerliği değildir.
+- Canlı üretim sistemine müdahale yapılmadı; Actions yeniden tetiklenmedi; PR #71 birleştirilmedi.
+- Kabul sayaçları değişmez: 92 eski workflow 0/92, 26 güvenlik kuralı 0/26 bağımsız kabul, 22 ana görev 0/22 bağımsız kabul.
+
+## Kalan somut öncelik
+- 99 workflow'un salt kaynak envanteri mevcut `madsc/legacy_99_bulk_audit.py` tarafından kaynak SHA/bytes/komut/trigger/permissions/artifact satırlarıyla çıkarılıyor; ancak her workflow için eksik kanıt seti aynı: legacy execution, new execution, input/output comparison, side-effect comparison, failure/timeout comparison, reviewer approval. Bu yüzden 0/92 sayacı dürüstçe korunuyor.
+- Sıradaki anlamlı iş, her workflow için ayrı bir behavior contract ve izole fixture kurmak; önce yan etkisiz/deterministik workflow'lardan başlayıp eski ve yeni çıktı/exit code/artifact/izin/timeout davranışını kıyaslamak. Canlı IPTV, EPG, cihaz ve yedek operasyonları için üretim izni/kanıtı olmadan çalıştırma yapılmamalı.

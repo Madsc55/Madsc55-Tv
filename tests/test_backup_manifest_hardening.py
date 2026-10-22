@@ -241,6 +241,20 @@ class BackupManifestHardeningTests(unittest.TestCase):
                     snapshot_manifest(root, ["x" * 4097])
             self.assertEqual(len(snapshot_manifest(root, ["good.txt"])["entries"]), 1)
 
+    def test_manifest_rejects_forged_external_modes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_bytes(b"fixture")
+            original = snapshot_manifest(root, ["good.txt"])
+            self.assertTrue(verify_manifest(root, original))
+            for mode in ("external", "verified_restore", True, None, 1):
+                with self.subTest(mode=mode):
+                    forged = dict(original)
+                    forged["mode"] = mode
+                    with self.assertRaisesRegex(ValueError, "Unsupported backup manifest mode"):
+                        verify_manifest(root, forged)
+            self.assertTrue(verify_manifest(root, original))
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

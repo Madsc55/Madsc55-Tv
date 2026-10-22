@@ -1,0 +1,63 @@
+name: MADSC55 — Online K2 K3 Pilot Gates
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: madsc55-online-pilot-gates
+  cancel-in-progress: false
+jobs:
+  offline-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate K1-K5 offline regression gate first
+        run: python -m madsc.offline_gate
+  online-k2:
+    needs: offline-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bounded read-only online discovery
+        run: python -m madsc.live_discovery_pilot
+      - name: Preserve K2 redacted report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc55-online-k2-report
+          path: reports/k2-live-pilot.json
+          if-no-files-found: warn
+          retention-days: 14
+  online-k3:
+    needs: offline-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bounded read-only HTTPS manifest checks
+        run: python -m madsc.k3_live_manifest_pilot
+      - name: Preserve K3 redacted report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc55-online-k3-report
+          path: reports/k3-real-manifest-pilot.json
+          if-no-files-found: warn
+          retention-days: 14

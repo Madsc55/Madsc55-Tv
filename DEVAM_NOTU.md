@@ -755,3 +755,10 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
   3. `publish-iptv-png-logos.yml` (`7b8fa62...`): `logos/` altına PNG üretip yayınlamaya çalışıyor; fakat `tools/protected_write_gate.py` (`11b257e...`) tüm `logos/` yollarını engelliyor. Değişen PNG varsa publisher/gate kapsamı statik olarak çelişiyor.
 - K5-19 defterinde statik inceleme 30/92, kalan 62 olarak güncellendi; gerçek davranışsal kabul hâlâ 0/92, K1 runtime güvenlik kabulü 0/26 ve 22 ana görev 0/22. Kaynak incelemesi kabul sayacını artırmaz.
 - Korunan IPTV/EPG/favoriler/cihaz/backup/VOD verileri değiştirilmedi; legacy workflow dispatch veya canlı probe yapılmadı. Son test sonuçları, paralel K1-K5 commitleri nedeniyle iptal/yeniden kuyruğa alınabildiğinden, sadece son HEAD üzerindeki tamamlanmış Actions çalıştırması kanıt sayılmalı.
+
+
+## 23 Ekim 2026 — K2 semantik feed fingerprint'i
+- `corroborate_sources` artık ham metin biçimi yerine parse edilmiş kanal envanterinin sıralı imzasını (normalize URL SHA-256, kanal adı, tvg-id, logo ve grup) hash'liyor. Satır sırası, yorum satırları, BOM ve CRLF/LF farkları tek başına bağımsız kaynak oyu üretemez.
+- Kod commit: `28a8d963798a85db7639890cb04bec544a3314b5`; test commit: `5c6e087387b731948d98ad699bca33d8521e3cdd`. Yeni test iki kanallı, yorum/sıra/BOM/CRLF farkı olan eşdeğer feed'lerin her aday için tek kaynak sayıldığını kontrol eder.
+- Doğrulama sınırı: commit `e8eb0b34e60b612dc0d09b096dafa1e0123eaead` için offline Actions başarılı oldu. Daha yeni çalıştırmalar K5'te `test_manifest_serialization_failure_cleans_partial_bundle_and_preserves_source` hatasıyla başarısız oldu (`Invalid playlist header`) ve eşzamanlı push'lar bazı test çalıştırmalarını iptal etti. En son K2 test commit'i için başarılı CI sonucu henüz yok; testler yerelde çalıştırılmış sayılmaz.
+- Bu semantik fingerprint yine de kısmi kopyaları, yeniden yazılmış metadata'yı veya aynı kaynağın farklı alt kümelerini kesin olarak tanımaz. Gerçek kaynak URL/köken/lisans, günlük keşif parity ve bağımsız artifact SHA kanıtı açık. K2 kabul sayaçları değişmedi; üretim playlist/EPG/favoriler/yedekler ve eski depo değişmedi.

@@ -93,7 +93,7 @@ class GuardTests(unittest.TestCase):
                      "artifacts/ｘｍｌｔｖ.xml",
                      "ａｒｔｉｆａｃｔｓ/report.json"):
             with self.subTest(path=path):
-                with self.assertRaises(ValueError):
+                with self.assertRaisesRegex(ValueError, "Non-canonical Unicode output path"):
                     validate_manifest({"production_write": False, "output_paths": [path]})
 
     def test_manifest_input_and_path_hardening(self):

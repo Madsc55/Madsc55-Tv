@@ -150,6 +150,30 @@ class DiagnosticApiFailClosedTests(unittest.TestCase):
             self.assertEqual(calls, [])
 
 
+    def test_duplicate_or_invalid_artifact_ids_are_rejected(self):
+        for mismatch in ("same_id_different_name", "boolean_id", "missing_id"):
+            origin, artifact, archive = evidence()
+            original_fetch, _ = fetcher(origin, artifact)
+
+            def fetch(url, token=None):
+                data = original_fetch(url, token=token)
+                if "/artifacts?" in url:
+                    if mismatch == "same_id_different_name":
+                        duplicate = dict(data["artifacts"][0])
+                        duplicate["name"] = "unrelated-artifact"
+                        data["artifacts"].append(duplicate)
+                        data["total_count"] = 2
+                    elif mismatch == "boolean_id":
+                        data["artifacts"][0]["id"] = True
+                    elif mismatch == "missing_id":
+                        del data["artifacts"][0]["id"]
+                return data
+
+            with self.subTest(mismatch=mismatch), self.assertRaises(ValueError):
+                verify_failure_diagnostic_evidence(
+                    origin, artifact, archive, fetch=fetch)
+
+
 
 if __name__ == "__main__":
     unittest.main()

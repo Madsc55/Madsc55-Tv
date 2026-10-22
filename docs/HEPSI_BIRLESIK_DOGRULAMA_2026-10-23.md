@@ -163,3 +163,12 @@
 - Kod commit `b1fb904f8e1219adc505bb03d04ad3d590d481af`; test commit `87debd64e6b46ff8abb116830d95e2cf836af5c9`. Actions runs `39863903611` ve `39863903615` queued; `39863891832` ve `39863892845` in progress (son kontrol). Bu değişiklikler için başarı sonucu henüz doğrulanmadı.
 - Kabul sayaçları değişmez: 92 workflow 0/92, runtime security 0/26, independent main tasks 0/22; production acceptance false.
 - Scheduler timezone fix doğrulandı: Dokuzuncu Geliştirme Testi run `39863903611`, SHA `87debd64e6b46ff8abb116830d95e2cf836af5c9`, job `test` başarılı. Önceki kod commit'i `b1fb904f` için aynı test run `39863891832` da başarılı. Beş aşamalı toplu denetim run `39863903615` son kontrolde hâlâ in_progress; bağımsız geniş denetim sonucu bekleniyor.
+
+
+## K1-03 — Python dosya yazma noktalarının statik envanteri
+- Eklendi `madsc/write_callsite_audit.py`: Python AST üzerinden yazma/değiştirme API adaylarını salt-okunur tarar; dosya yolu, satır, fonksiyon, API ve aynı kapsamda yazmadan önce tanınan K1 guard çağrısı bulunup bulunmadığını raporlar.
+- Eklendi `tests/test_write_callsite_audit.py`: güvenli/korumasız write callsite'ları, iç fonksiyondan dış fonksiyona guard sızmaması, read-only open, pathlib.open yazma modu ve bozuk Python sözdiziminin fail-closed davranışı test edilir.
+- `madsc/offline_gate.py` içine statik envanter kapısı eklendi; test koşusunda tarama hatası offline gate'i başarısız yapar. Rapor `write_callsite_inventory` alanında dosya ve callsite listesini, kapsam sınırlamalarını açıklar. Bu analiz statik kanıttır; runtime enforcement veya tüm çağıran zincirlerinin güvenli olduğunun kanıtı değildir.
+- İlk envanter raporu 97 Python dosyası tarandığını ve 58 dosya sistemi mutasyon adayı bulduğunu gösterdi. O koşu bir regresyon testi beklentisi (pathlib.open positional mode) nedeniyle başarısızdı; scanner gate'in kendisi geçiyordu. `bcd8245` bu mode parsing hatasını düzeltti ve yeni Actions run `39864090233` başlatıldı; sonuç henüz alınmadı.
+- Dosya: `madsc/write_callsite_audit.py`; test: `tests/test_write_callsite_audit.py`; gate: `madsc/offline_gate.py`. Davranış sözleşmesi/CI sonucuna göre yeni devir notu eklenecek.
+- Kabul sayaçları değişmez: runtime K1 0/26; legacy 92 workflow 0/92; 22 görev 0/22. Canlı IPTV/EPG/favori/cihaz/yedek/arşiv verilerine müdahale edilmedi; PR #71 birleştirilmedi.

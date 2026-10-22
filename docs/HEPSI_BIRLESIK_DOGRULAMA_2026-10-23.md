@@ -223,3 +223,11 @@
 - Run `39863892845` için GitHub API 404; sonucu doğrulanamıyor. Bu yüzden son erişilebilir sonuçlar kullanıldı.
 - K3 gerçek HLS/ffprobe workflow'ları `workflow_dispatch` gerektirir; bu GitHub bağlantısında workflow dispatch aracı bulunmadığı için canlı pilot bu oturumda başlatılmadı. IBO Player Pro cihaz kabulü yok. K4 harici storage ve bağımsız dış restore kanıtı da yok.
 - Üretim kabulü false; 92 workflow 0/92, 26 runtime güvenlik kuralı 0/26, 22 ana görev 0/22. Üretim playlist/EPG/favori/yedekler değişmedi; eski depo ve PR #71'e dokunulmadı.
+
+
+## 23 Ekim 2026 — K5 legacy workflow batch 07 (salt-okunur kaynak incelemesi)
+- Yeni kaynak inceleme belgesi: `docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_07_2026-10-23.md`; commit `bf2db8d7e19898a91f1d3ac70baa3cc765c6e4d9`.
+- Frozen `Madsc55/madsc-tv@ca374df3b9585c0d76a078db9536150ebbc260f7` üzerinde üç yeni workflow incelendi: `automatic-png-logos.yml`, `birlesik-durum-raporu.yml`, `genis-kanal-tarama.yml`. Workflow SHA'ları kaynak envanteriyle eşleşti; eski depoya yazılmadı.
+- K1/K5 için kritik bulgu: `scripts/automatic_png_logos.py` korunan `CALISANLAR.m3u` dosyasını doğrudan `playlist.write_text(updated,...)` ile yazıyor. Workflow sonrasında diff görürse `git restore -- CALISANLAR.m3u` çalıştırıyor; write-then-restore, protected path'e hiç yazmama garantisi değildir. Replacement parity, izole fixture kopyası ve sıfır protected-path write ile kanıtlanmalı. Bu eski workflow çalıştırılmadı; playlist değişmedi.
+- Birleşik durum workflow'u snapshot JSON'ları üretir ve sadece generated health report yazar; tarihsel snapshot'ı canlı durum gibi sunmamalı. Geniş kanal taraması 9 public M3U kaynağı ve ffprobe kullandığı için gerçek ağ/probe işidir; fixture/parity amaçlı tetiklenmedi.
+- Statik inceleme toplamı 21/92; statik inceleme bekleyen 71. Bu kabul değildir: davranışsal parity 0/92, runtime güvenlik 0/26, ana görev kabulü 0/22, production_ready=false.

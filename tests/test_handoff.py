@@ -270,3 +270,15 @@ class HandoffTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Conflicting alternative channel identity"):
                     assess_candidates(tampered, {})
 
+
+    def test_unsafe_tvg_ids_rejected_at_handoff(self):
+        discovery = classify_candidates([
+            {"name": "News", "url": "https://example.org/a", "tvg_id": "news"}
+        ])
+        for unsafe in ("news\\\\bad", "news\\nmore", "news\\x7f"):
+            with self.subTest(unsafe=repr(unsafe)):
+                altered = dict(discovery)
+                altered["candidates"] = [dict(discovery["candidates"][0], tvg_id=unsafe)]
+                with self.assertRaisesRegex(ValueError, "Unsafe candidate tvg-id"):
+                    assess_candidates(altered, {})
+

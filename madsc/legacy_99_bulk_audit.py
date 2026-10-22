@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import re
 import urllib.parse
-import urllib.request
+from madsc.github_history_client import github_json
 from madsc.write_path_audit import enforce_local_output_path
 from madsc.legacy_workflow_safety import assess_workflow_source
 
@@ -52,11 +52,7 @@ def summarize_blockers(rows):
 
 
 def github(url, token):
-    headers = {"Accept": "application/vnd.github+json", "User-Agent": "madsc-source-audit"}
-    if token:
-        headers["Authorization"] = "Bearer " + token
-    with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as response:
-        return json.load(response)
+    return github_json(url, token=token)
 
 
 def run(output, token):

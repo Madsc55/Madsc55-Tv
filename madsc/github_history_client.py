@@ -6,12 +6,13 @@ Requires explicit repository, current SHA, and approved workflow.
 import json
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote
-from urllib.request import Request, urlopen
+from urllib.request import Request
+from madsc.github_transport import github_opener
 
 from madsc.github_history_origin import verify_github_origin
 
 
-def github_json(path, *, token, opener=urlopen):
+def github_json(path, *, token, opener=None):
     if not path.startswith("https://api.github.com/"):
         raise ValueError("Unexpected GitHub API URL")
     headers = {"Accept": "application/vnd.github+json",
@@ -20,6 +21,7 @@ def github_json(path, *, token, opener=urlopen):
     if token:
         headers["Authorization"] = "Bearer " + token
     request = Request(path, headers=headers, method="GET")
+    opener = github_opener().open if opener is None else opener
     try:
         with opener(request, timeout=15) as response:
             raw = response.read(2 * 1024 * 1024 + 1)

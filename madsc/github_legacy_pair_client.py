@@ -6,7 +6,7 @@ the recorded head SHA. Optional bounded ZIP downloads bind API origins to bytes.
 It never dispatches Actions or writes production data.
 """
 from urllib.parse import quote
-from urllib.request import HTTPRedirectHandler
+from madsc.github_transport import GitHubRedirectHandler, github_opener
 import re
 
 from madsc.github_history_client import github_json
@@ -180,20 +180,12 @@ def verify_provenance_pair_api(legacy_path, legacy_blob_sha, pair, *, token=None
 # Artifacts are downloaded only after both independent API origins pass.
 # Redirects to signed storage URLs must not receive the GitHub bearer token.
 def _artifact_opener():
-    from urllib.request import build_opener
-    return build_opener(_ArtifactRedirectHandler())
+    return github_opener(allow_storage=True)
 
 
-class _ArtifactRedirectHandler(HTTPRedirectHandler):
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        from urllib.parse import urlsplit
-        parsed = urlsplit(newurl)
-        if parsed.scheme != "https" or parsed.username or parsed.password:
-            raise ValueError("Unsafe artifact redirect")
-        redirected = super().redirect_request(req, fp, code, msg, headers, newurl)
-        if redirected is not None and parsed.netloc != "api.github.com":
-            redirected.remove_header("Authorization")
-        return redirected
+class _ArtifactRedirectHandler(GitHubRedirectHandler):
+    def __init__(self):
+        super().__init__(allow_storage=True)
 
 
 def download_execution_artifact(origin, *, token, opener=None):

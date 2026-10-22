@@ -1,0 +1,196 @@
+{
+  "schema": "madsc-github-transport-offline-evidence-v1",
+  "base_commit": "21a9146cd09feccb19084f78965652142ea82f31",
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "date": "2026-10-22",
+  "source_sha256": {
+    "madsc/github_transport.py": "5afa5dd0811e9330ef2ed7ae2288d1dca93f920d43279b3c6fe5929e9f477854",
+    "madsc/github_history_client.py": "03ed80fd495597e7244743efbbca4f5a38b72d844d18017226e2694d6cb4c8d6",
+    "madsc/github_legacy_pair_client.py": "004e4946b64052e09d96c2ba0b024412aba7e662518c404ee2c5618266af3c45",
+    "madsc/history_artifact_download.py": "9ebe305236637f7b6387154cc16500344ee5834a588a8d01c5240195cdd31cdd",
+    "madsc/legacy_99_bulk_audit.py": "64a47c797203d74e2dd31881e1cfb359327ae3b19e243298c5ae48493bebda1b",
+    "tests/test_github_transport.py": "47578c78c251282034cf4e1516c0224ced90ccd260c93423ef15120523f46edb"
+  },
+  "focused_tests": 19,
+  "offline_gate": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 783,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "five_stage_installation_inventory_passed": true,
+    "five_stage_installation_inventory_error": null,
+    "five_report_roundtrip_passed": true,
+    "five_report_roundtrip": {
+      "passed": true,
+      "reports_written": 5,
+      "reports_sha256": {
+        "madsc-batch-k1/k1.json": "61af2b9fa0904884868df287ad7c9a75fab5fc2022efbc6a5ae67fa4972783da",
+        "madsc-batch-k2/k2.json": "9e782ea047045f77e080c340ac6d88b8598c43c10185486388af667c04ab6a16",
+        "madsc-batch-k3/k3.json": "c9ee1e2307e79ac6e80de73836c1fa4029d4de4393317d44b801f271843a8b3b",
+        "madsc-batch-k4/k4.json": "8c17b28fbb84a44ea8f9a0f7a67ff7d059b482f64c2700e43aed0d3d0032a267",
+        "madsc-batch-k5/k5.json": "0093c5292645efec11236d2dd6789c4677f0d2bf65dab761dc050f74fe1c55d5"
+      },
+      "consumer_preserved_report_bytes": true,
+      "acceptance": {
+        "category_order": [
+          "k1",
+          "k2",
+          "k3",
+          "k4",
+          "k5"
+        ],
+        "categories": {
+          "k1": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "security",
+            "fixture_checks": 7,
+            "fixture_check_names": [
+              "audit_does_not_claim_runtime_gate",
+              "favorite_metadata_and_nested_logo_write_denied",
+              "fixture_report_write_guard",
+              "integrity_comparison",
+              "no_playlist_mutation",
+              "protected_write_paths_identified",
+              "valid_playlist"
+            ]
+          },
+          "k2": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "discovery",
+            "fixture_checks": 8,
+            "fixture_check_names": [
+              "both_m3u_and_m3u8",
+              "duplicates_separated",
+              "invalid_rejected",
+              "legacy_history_bridge_isolated",
+              "no_production_mutation",
+              "source_inventory_reconciled",
+              "sources_unchanged",
+              "unique_candidates"
+            ]
+          },
+          "k3": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "channel_testing",
+            "fixture_checks": 14,
+            "fixture_check_names": [
+              "ffprobe_json_fixture_not_live",
+              "handoff_read_only",
+              "ibo_fixture_not_live_device_evidence",
+              "ibo_report_not_device_verified",
+              "ibo_working_survives_technical_failure",
+              "k2_to_k3_handoff",
+              "legacy_390_offline_decode_contract",
+              "legacy_epg_logo_pilot_join",
+              "no_device_approval",
+              "no_production_approval",
+              "preliminary_classification",
+              "preliminary_not_approved",
+              "repeated_measurements_fixture_only",
+              "xmltv_id_matching"
+            ]
+          },
+          "k4": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "backup",
+            "fixture_checks": 7,
+            "fixture_check_names": [
+              "external_backup_not_claimed",
+              "independent_restore_reports_no_production_proof",
+              "manifest_integrity",
+              "restore_not_claimed",
+              "sandbox_copy_integrity",
+              "sandbox_restore_audit",
+              "three_tree_restore_fixture"
+            ]
+          },
+          "k5": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "maintenance",
+            "fixture_checks": 20,
+            "fixture_check_names": [
+              "all_92_pair_requirements_bound_without_acceptance",
+              "batch_failure_summary",
+              "candidate_k2_k3_k5_consistent",
+              "candidate_k2_k3_k5_join",
+              "candidate_metadata_counts",
+              "candidate_report_read_only",
+              "cross_category_handoff",
+              "failure_limit",
+              "five_categories",
+              "five_fixture_reports_successful",
+              "k1_guards_k5_report_write",
+              "k2_k3_k4_k5_candidate_restore_review",
+              "k4_corruption_blocks_k5_review",
+              "no_legacy_shutdown",
+              "no_schedule_activation",
+              "paginated_failure_history_blocks_retry",
+              "production_not_approved",
+              "read_only",
+              "separate_job_gate_not_false_writer_clearance",
+              "single_batch_no_extra_triggers"
+            ]
+          }
+        },
+        "k5_fixture_evidence_verified": true,
+        "five_isolated_reports_valid": true,
+        "runtime_rules_verified": false,
+        "legacy_92_behavioral_equivalence_verified": false,
+        "ibo_device_verified": false,
+        "external_restore_verified": false,
+        "production_ready": false,
+        "automatic_schedule_enabled": false
+      },
+      "independent_execution_evidence": false,
+      "production_ready": false
+    },
+    "workflow_and_task_inventory_passed": true,
+    "operational_contract_gate": {
+      "schema": "madsc-contract-gate-v1",
+      "checked": 10,
+      "missing_commands": [],
+      "pass": true,
+      "blocking_contract_gaps": [],
+      "static_gaps_total": 0,
+      "artifact_files_produced_verified": false,
+      "behavioral_parity_verified": false,
+      "production_writes": false
+    },
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "network_requests_performed": false,
+  "production_ready": false,
+  "remaining": "Real independent same-input execution pairs, runtime26 and end-to-end22 remain unaccepted."
+}

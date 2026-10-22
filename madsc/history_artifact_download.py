@@ -5,7 +5,8 @@ import json
 import zipfile
 from pathlib import Path
 from madsc.write_path_audit import enforce_local_output_path
-from urllib.request import Request, urlopen
+from urllib.request import Request
+from madsc.github_transport import github_opener
 
 from madsc.history_pair_store import KEYS
 from madsc.history_pair_bridge import import_legacy_pair
@@ -46,10 +47,10 @@ def extract_verified_history(archive, expected_hashes, destination):
 
 
 def download_verified_history_artifact(*, repository, artifact_id, token, expected_hashes,
-                                       destination, opener=urlopen):
+                                       destination, opener=None):
     if repository != "Madsc55/Madsc55-Tv" or type(artifact_id) is not int or artifact_id <= 0:
         raise ValueError("Unexpected repository or artifact")
-    if not token:
+    if not isinstance(token, str) or not token:
         raise ValueError("GitHub token required for artifact download")
     enforce_local_output_path(Path(destination).absolute())
     url = f"https://api.github.com/repos/{repository}/actions/artifacts/{artifact_id}/zip"
@@ -57,6 +58,7 @@ def download_verified_history_artifact(*, repository, artifact_id, token, expect
         "Accept": "application/vnd.github+json",
         "Authorization": "Bearer " + token,
         "User-Agent": "madsc55-history-source"}, method="GET")
+    opener = github_opener(allow_storage=True).open if opener is None else opener
     with opener(request, timeout=30) as response:
         archive = response.read(16 * 1024 * 1024 + 1)
     return extract_verified_history(archive, expected_hashes, destination)

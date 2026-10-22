@@ -20,7 +20,13 @@ def pack(discovery, run_id, commit_sha):
         raise ValueError("Too many alternatives in discovery")
     assess_candidates(discovery, {})
     body = {"schema": 1, "run_id": run_id, "commit_sha": commit_sha, "discovery": discovery}
-    digest = hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    try:
+        serialized = json.dumps(body, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    except (TypeError, ValueError, OverflowError, RecursionError) as exc:
+        raise ValueError("Invalid JSON discovery evidence") from exc
+    if len(serialized.encode("utf-8")) > 16 * 1024 * 1024:
+        raise ValueError("Oversized discovery evidence")
+    digest = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
     return {**body, "digest": digest}
 
 def unpack(envelope, run_id, commit_sha):

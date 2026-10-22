@@ -389,3 +389,11 @@ class HandoffTests(unittest.TestCase):
                 self.assertEqual(len(report["rejected"]), 1)
                 self.assertEqual(len(report["candidates"]), 1)
                 self.assertEqual(report["candidates"][0]["name"], "News")
+
+    def test_discovery_bounds_raw_rows_and_known_urls(self):
+        row = {"name": "News", "url": "https://example.org/news"}
+        with self.assertRaisesRegex(ValueError, "Too many candidate rows"):
+            classify_candidates([row] * 20001)
+        known = {"https://example.org/stream/" + str(i) for i in range(20001)}
+        with self.assertRaisesRegex(ValueError, "Too many known URLs"):
+            classify_candidates([], known_urls=known)

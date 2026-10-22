@@ -35,19 +35,19 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
         flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
         if hasattr(os, "O_NOFOLLOW"):
             flags |= os.O_NOFOLLOW
+        # Serialize once: json.dump and json.dumps may differ for values
+        # containing non-ASCII data, so verify exactly what we intended to write.
+        payload = (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8")
         fd = os.open(target, flags, 0o600)
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            json.dump(manifest, handle, ensure_ascii=False, sort_keys=True, indent=2)
-            handle.write("\n")
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
         # Verify the persisted bytes before claiming a successful export.
         saved = target.read_bytes()
         if json.loads(saved) != manifest:
             raise OSError("Archive manifest readback mismatch")
-        if hashlib.sha256(saved).digest() != hashlib.sha256(
-            (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8")
-        ).digest():
+        if hashlib.sha256(saved).digest() != hashlib.sha256(payload).digest():
             raise OSError("Archive manifest byte integrity mismatch")
         return manifest
     except BaseException:

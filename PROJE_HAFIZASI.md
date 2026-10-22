@@ -2455,3 +2455,11 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - AST envanterinden somut bir sıra hatası bulundu: `madsc/core.py::run`, `reports/playlist.m3u8` gibi korunan hedeflerde `reports/` klasörünü K1 kontrolünden önce yaratabiliyordu. `enforce_write_paths` artık mkdir öncesi tam hedefte çağrılır ve üst dizin symlink'leri kontrol edilir. Commit `808f388`; test `fe82f2f` korunan hedefin hiçbir klasör yaratmadığını doğrular.
 - Güncel run `39864306236` bu fix/test için queued; sonucu beklemeden başarılı sayma.
 - Kabul sayaçları: K1 0/26, legacy 0/92, görev 0/22. Üretim verileri korunur; PR #71 merge edilmez.
+
+
+## 23 Ekim 2026 — K1 guard-before-mkdir uygulaması
+- Run `39864306236` SHA `fe82f2f` başarılı: 980 test, K1-K5 offline fixture gate başarılı, AST envanteri 97 dosya/78 mutasyon adayı.
+- `madsc/core.py::run` için korunan hedefi `reports/` oluşturmadan önce reddetme düzeltmesi CI'dan geçti.
+- Aynı kural `madsc/isolated_playlist_bundle.py::export_isolated_previews` üzerine uygulandı: destination path K1 guard'dan geçmeden output directory yaratılmıyor. Test `FAVORILER` hedefinin yaratılmadığını doğrular. Kod `1d48c0f`, test `90ba1b9`.
+- CI run `39864450322` bu son değişikliği test ediyor; sonuç bekleniyor.
+- Kabul sayaçları K1 0/26, eski workflow 0/92, ana görevler 0/22. Üretim verileri korunur; PR #71 merge edilmez.

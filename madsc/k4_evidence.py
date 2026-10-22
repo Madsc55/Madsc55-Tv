@@ -1,6 +1,8 @@
 """Fail-closed K4 isolated restore evidence verification for K5 acceptance."""
 import argparse
 import json
+import os
+import stat
 from pathlib import Path
 from madsc.batch_acceptance import _unique_json_pairs
 from madsc.write_path_audit import enforce_local_output_path
@@ -29,13 +31,28 @@ def main():
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    if (args.report.is_symlink() or any(parent.is_symlink() for parent in args.report.parents)
-            or not args.report.is_file() or args.report.stat().st_size > 1024 * 1024):
-        raise ValueError("Invalid K4 evidence file")
-    report = json.loads(args.report.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
-    result = verify(report)
     destination = args.output if args.output.is_absolute() else Path.cwd() / args.output
     enforce_local_output_path(destination)
+    if args.report.is_symlink() or any(parent.is_symlink() for parent in args.report.parents):
+        raise ValueError("Invalid K4 evidence file")
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    try:
+        fd = os.open(args.report, flags)
+    except OSError as exc:
+        raise ValueError("Invalid K4 evidence file") from exc
+    try:
+        metadata = os.fstat(fd)
+        if (not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1
+                or metadata.st_size > 1024 * 1024):
+            raise ValueError("Invalid K4 evidence file")
+        with os.fdopen(fd, "rb", closefd=False) as handle:
+            raw = handle.read(1024 * 1024 + 1)
+        if len(raw) > 1024 * 1024:
+            raise ValueError("K4 evidence file too large")
+    finally:
+        os.close(fd)
+    report = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_json_pairs)
+    result = verify(report)
     with destination.open("x", encoding="utf-8") as handle:
         handle.write(json.dumps(result, sort_keys=True) + "\n")
     print(json.dumps(result, sort_keys=True))

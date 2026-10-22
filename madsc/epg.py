@@ -4,7 +4,7 @@ import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-TVG_ID = re.compile(r'\btvg-id="([^"]*)"')
+TVG_ID = re.compile(r'(?:^|\s)tvg-id="([^"]*)"')
 
 
 def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:

@@ -96,3 +96,12 @@
 - Düzeltme kaynak depoya kaydedildi: `Madsc55/madsc-tv` commit `ad57ba6eca0f06cef3f31dddf1563f367d197c04`. `Stability evidence` adımından sonra `actions/cache/save@v4` eklendi; `KARARLILIK_GECMISI.json`, `kanal-kararlilik-${{ github.run_id }}` anahtarıyla kaydediliyor. Böylece sonraki çalıştırmanın `kanal-kararlilik-` restore prefix'iyle bu geçmişi bulabilmesi amaçlanıyor.
 - Kaynak commit `ad57ba6eca0f` için Birlesik Aday Onay Raporu run `39863242921` tetiklendi ve son kontrolde queued durumundaydı; cache'in iki ardışık çalıştırmada gerçekten geri yüklenmesi henüz doğrulanmadı.
 - Bu değişiklik donmuş karşılaştırma tabanı `ca374df3b9585c0d76a078db9536150ebbc260f7` üzerinde bir sonraki kaynak revizyonudur; baseline içeriği geriye dönük değiştirilmedi. Davranışsal parity kabulü bu nedenle hâlâ 0/92.
+
+
+## 23 Ekim 2026 — K1 trust-boundary genişletmesi
+- İnceleme, önceki symlink kontrolünün `.github/workflows` dizinine ve tek tek girdilere baktığını; ancak depo kökü veya `.github` bileşeni symlink ise dizin dışına yönlendirme ihtimalini ayrıca kapatmadığını gösterdi.
+- `madsc/workflow_consolidation.py` artık kök yolun symlink olmamasını, `.github` dizininin symlink olmamasını ve `.github/workflows` dizininin gerçek dizin olmasını da doğruluyor. Kod commit: `b1cf07e9bd000ebb638e191fc3bb2ae13893442c`.
+- `tests/test_workflow_consolidation.py::test_symlinked_github_directory_rejected` eklendi; `.github` bileşeninin dış dizine yönlendirildiği geçici fixture'da fail-closed davranışı sınar. Test commit: `9a9c94f13ac7ac2552e33a3f5f367366f1d88c7f`.
+- Test henüz çalıştırılmadı; bu değişiklikler için başarılı CI kanıtı yok. GitHub Actions dispatch yapılmadı.
+- Son bilinen başarılı Actions run `39862697684` SHA `483bce535b585e5c750b7cfa54b87fb9f578d72c` üzerinde; yeni K1 trust-boundary değişikliği bu run'da yer almıyor.
+- Kabul sayaçları değişmedi: 92 eski workflow 0/92, 26 güvenlik kuralı 0/26, 22 ana görev 0/22. Üretim verilerine müdahale edilmedi; PR #71 birleştirilmedi.

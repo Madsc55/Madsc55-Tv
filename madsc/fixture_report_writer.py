@@ -49,8 +49,11 @@ def _exclusive_bytes(destination: Path, payload: bytes) -> None:
                 pass
             else:
                 if (created_identity is not None and
-                        (current.st_dev, current.st_ino) ==
-                        (created_identity.st_dev, created_identity.st_ino)):
+                        (current.st_dev, current.st_ino, current.st_size,
+                         current.st_mtime_ns, current.st_ctime_ns) ==
+                        (created_identity.st_dev, created_identity.st_ino,
+                         created_identity.st_size, created_identity.st_mtime_ns,
+                         created_identity.st_ctime_ns)):
                     destination.unlink(missing_ok=True)
 
 
@@ -96,7 +99,7 @@ def write_turkish_tv_test_bundle(root: Path, playlist: bytes, report: str) -> di
                 current = path.lstat()
             except FileNotFoundError:
                 continue
-            if (current.st_dev, current.st_ino) == (identity.st_dev, identity.st_ino):
+            if (current.st_dev, current.st_ino, current.st_size,\n                    current.st_mtime_ns, current.st_ctime_ns) == (\n                    identity.st_dev, identity.st_ino, identity.st_size,\n                    identity.st_mtime_ns, identity.st_ctime_ns):
                 path.unlink(missing_ok=True)
         raise
     return {

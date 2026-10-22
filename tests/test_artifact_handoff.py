@@ -64,3 +64,18 @@ class ArtifactHandoffTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Invalid alternative evidence"):
                     pack(discovery, "123", "a" * 40)
 
+
+    def test_non_json_discovery_metadata_rejected(self):
+        for value in (float("nan"), float("inf"), {1, 2}):
+            with self.subTest(value=repr(value)):
+                discovery = dict(self.discovery)
+                discovery["unexpected_metadata"] = value
+                with self.assertRaisesRegex(ValueError, "Invalid JSON discovery evidence"):
+                    pack(discovery, "123", "a" * 40)
+
+    def test_oversized_serialized_discovery_rejected(self):
+        discovery = dict(self.discovery)
+        discovery["unexpected_metadata"] = "x" * (16 * 1024 * 1024)
+        with self.assertRaisesRegex(ValueError, "Oversized discovery evidence"):
+            pack(discovery, "123", "a" * 40)
+

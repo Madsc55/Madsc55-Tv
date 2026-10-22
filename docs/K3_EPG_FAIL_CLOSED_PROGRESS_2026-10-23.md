@@ -1,3 +1,11 @@
+## Üçüncü K3 turu — test fixture düzeltmesi (2026-10-23)
+- `tests/test_epg.py` ilk üç testindeki M3U metinlerinin satır sonları çift kaçışlanmıştı (`\\n` metin olarak yazılıyordu). Gerçek satır sonu kaçışlarına çevrildi; testler artık `#EXTINF` satırlarını gerçekten içerecek.
+- Test düzeltme commit'i: `ef728129a4bdebf8b1a84c14bb6cae806d2cf267`.
+- Ayrı yerel davranış harness'inde güncel validator mantığı ve dokuz senaryo çalıştırıldı: 9/9 geçti. Bu, repodaki `tests/test_epg.py` dosyasının kendisini çalıştırmak veya tam depo test paketini çalıştırmak değildir; bu ikisi ve GitHub Actions hâlâ bekliyor.
+- Üretim verilerine dokunulmadı; `[skip ci]` kullanıldı.
+
+---
+
 ## İkinci K3 sertleştirme turu — M3U tvg-id (2026-10-23)
 - `madsc/epg.py`, aynı `#EXTINF` satırında birden fazla `tvg-id` niteliği bulunduğunda artık `ValueError("Duplicate M3U tvg-id attribute")` ile fail-closed davranır. Böylece regex'in ilk değeri alıp çakışan metadata'yı sessizce yok sayması önlenir.
 - Tek `tvg-id` değerinin çevresindeki boşluklar normalize edilerek eşleme yapılır.

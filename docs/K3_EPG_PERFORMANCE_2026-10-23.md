@@ -1,3 +1,13 @@
+## Yeni K3 kontrolü — 2026-10-23
+- Kullanıcı IBO Player Pro cihaz testini en sona bıraktı; cihaz kabulünü yalnız kullanıcı deneyecek ve sonucunu bildirecek.
+- `39870641608` GitHub Actions run'u **success**; tested commit `36155ba9f7b9e2684d86f79a666cdeeb82d87fee`, `tests_discovered=1049`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`. Bu commit 17 EPG testini ve lineer duplicate-ID kontrolünü içeriyor.
+- Yeni kod commit'i `7a87a130b818f364df1d11364e4ea9f3a821a134`: bozuk M3U girdisindeki NUL baytları `ValueError` ile reddedilir.
+- Yeni test commit'i `291f6c3e7594f2e2d015db9f74cab2e2a3306432`: NUL bayt regresyonu; EPG test fonksiyonu sayısı 18.
+- **18. test için başarılı CI kanıtı henüz yok**; 1049-testlik başarılı koşu bu son iki commit'ten öncedir. CI tamamlanana kadar sonucu geçti diye kaydetme.
+- K3 canlı HLS video/ses, süreklilik, Pages/XMLTV zinciri, logo kimliği ve en son kullanıcı cihaz kabulü açık. Üretim verilerine dokunulmadı.
+
+---
+
 # K3 EPG performance and duplicate-ID regression — 2026-10-23
 
 ## Scope

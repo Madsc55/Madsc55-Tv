@@ -161,5 +161,34 @@ class CandidateProbeLinkTests(unittest.TestCase):
                     pack({"candidates": candidates}, run, sha)
 
 
+    def test_evidence_loader_accepts_regular_json_and_rejects_duplicates(self):
+        import tempfile
+        from pathlib import Path
+        from madsc.candidate_probe_link import load_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "evidence.json"
+            path.write_text('{"ok": true}', encoding="utf-8")
+            self.assertEqual(load_evidence(path), {"ok": True})
+            path.write_text('{"ok": true, "ok": false}', encoding="utf-8")
+            with self.assertRaises(ValueError):
+                load_evidence(path)
+
+    def test_evidence_loader_rejects_symlink_and_oversize(self):
+        import tempfile
+        from pathlib import Path
+        from madsc.candidate_probe_link import load_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "evidence.json"
+            target.write_text("{}", encoding="utf-8")
+            alias = root / "alias.json"
+            alias.symlink_to(target)
+            with self.assertRaises(ValueError):
+                load_evidence(alias)
+            target.write_bytes(b"x" * (16 * 1024 * 1024 + 1))
+            with self.assertRaises(ValueError):
+                load_evidence(target)
+
+
 if __name__ == "__main__":
     unittest.main()

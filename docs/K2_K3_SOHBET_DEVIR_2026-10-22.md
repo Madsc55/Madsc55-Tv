@@ -19,3 +19,24 @@
 - K2 gerçek kaynak/geçmiş kanıtının aynı snapshot'a bağlanması, K3'te 3 bağımsız örnek, ardışık >=6 saat, gerçek ffprobe/ffmpeg kanıtı ve IBO Player Pro cihaz denemesi uçtan uca doğrulanmalı. Offline sahte/fixture kanıt üretim kabulü değildir.
 - Önceki proje devirlerine göre 92 eski workflow için bağımsız gerçek davranışsal kabul, 26 K1 kuralı için runtime denetim ve 22 görev için tam kabul hâlâ açık; bunları bitmiş ilan etme. Güncel durum için ana devir notları ve en yeni commitleri tekrar oku.
 - Sonraki güvenli iş: güncel main'de K2/K3 testlerini topluca çalıştır; hataları kaynağında düzelt; önceki sohbetlerin aynı dosyalardaki güncellemelerini koru. Üretim kaynaklarını değiştirme.
+
+## Ek devir — 22 Ekim, sonraki K2/K3 çalışmaları
+
+### Bu sohbetin ek commitleri
+- ea0cefc0593e4bf657341d090ec8d84435ec8f0b: aday/probe bağlantısında aday yapısı ve SHA kontrolü.
+- aad6c4462a94e316ab946da90de6316b269880d9: bozuk aday regresyonu; başka sohbet daha sonra testi paket sınırında reddi doğrulayacak biçimde uyarladı.
+- 3b875f7a162c53b61bbae6d908bd6520f267fb11 ve a2312a541e36ddd4246b8adfaf655c0f660f8574: aday ve alternatif listeleri için 20.000 üst sınırı ve testler.
+- 07dc7b82c4710b21eb700d0411fc5ad8fd4c877c ve 0fe73d3d0f20fe7c141c1e0c73a0fb0d89925715: alternatif listesinin veri tipi kontrolü ve testler.
+- fe9ee61499528a1221def7c5faf11dfa146799d8, 96abf90335716cfd6c3c7db385dc188a1009cc28, a733d2cc0996881ca47d8bc37d5d7cd25151f723: K3 süreklilik kanıtında gelecekteki/eski tarih reddi ve saat dilimi regresyonları.
+- 089110df2818a163ac975b786f424986a8440a5a, c58f9f93e48cec122ae1594244cabd5dacb773a9: JSON'a çevrilemeyen veya 16 MiB üstü K2/K3 keşif kanıtı reddi ve testleri.
+- ae3b70751a56e3c8621a6d66890c5b05fd2a31e4, 84c958add37b86f97c07706fedcd38d2700c4a6d: canonical küçük harf SHA-256 digest ve hmac.compare_digest ile doğrulama, bozuk digest regresyonları.
+- be7b53571f20c81431582cf277ed5fd1e50ade32, 012bf2dfea267273b5d17d2a7800de34a0de9636: K2/K3 run_id en fazla 20 ASCII rakam ve sınır testleri.
+
+### Paralel sohbet koordinasyonu
+- Başka sohbetler K1, K5 ve K3 testlerini aynı main dalına kaydediyor; son görülen HEAD d686a73e8e (K3 probe-cap testi). Bu sohbetin 012bf2d commit'i öncesinde K1'in 876868 commit'i yüzünden GitHub 409 oluştu; dosya tekrar okunarak değişiklik güvenle yeniden yazıldı. Doğrudan sohbetler arası mesajlaşma yok; ortak commit geçmişi üzerinden koordinasyon var.
+- Diğer K3 sohbetinin URL deduplikasyonu, unseekable stream ve kimlik normalizasyonu düzeltmelerini tekrarlama. Aynı dosyada eşzamanlı çalışma riskini gözet.
+
+### Dürüst doğrulama durumu ve sıradaki işler
+- Bu ek commitler GitHub'a kaydedildi; bu sohbet henüz Python testlerini çalıştırmadı. Önce yeni testlerin mevcut fixture yapısına uygunluğunu ve toplu unittest/pytest çalışmasını doğrula. K2/K3 gerçek üretim kanıtı ve cihaz kabulü açık.
+- Özellikle tests/test_artifact_handoff.py içindeki yeni testlerin self.discovery ve self.envelope fixture'larının mevcut olup olmadığını kontrol et; yanlış fixture varsa düzelt. K3'te 3 ayrı >=6 saat ölçüm ve gerçek kaynak/ffprobe kanıtı olmadan üretim onayı verme.
+- Korunan dosyalara dokunma; canlı yayın veya GitHub Actions tetikleme için ayrıca izin gerekir.

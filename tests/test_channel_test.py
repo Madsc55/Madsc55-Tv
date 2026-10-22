@@ -104,6 +104,29 @@ class ChannelTests(unittest.TestCase):
         self.assertTrue(result["three_stage_six_hour_preliminary"])
         self.assertEqual(result["elapsed_hours"], 12)
 
+    def test_continuity_rejects_same_instant_with_different_offsets(self):
+        from madsc.channel_test import evaluate_three_stage_continuity
+        base = {"url_sha256": "a" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": stamp} for stamp in (
+            "2026-10-21T10:00:00Z",
+            "2026-10-21T12:00:00+02:00",
+            "2026-10-21T22:00:00Z")]
+        with self.assertRaisesRegex(ValueError, "strictly chronological"):
+            evaluate_three_stage_continuity(samples)
+
+    def test_continuity_rejects_mixed_channel_samples(self):
+        from madsc.channel_test import evaluate_three_stage_continuity
+        base = {"url_sha256": "a" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": stamp} for stamp in (
+            "2026-10-21T10:00:00Z",
+            "2026-10-21T16:00:00Z",
+            "2026-10-21T22:00:00Z")]
+        samples[1]["url_sha256"] = "b" * 64
+        with self.assertRaisesRegex(ValueError, "Mixed channel fingerprints"):
+            evaluate_three_stage_continuity(samples)
+
     def test_continuity_middle_stage_failure_requires_review(self):
         from madsc.channel_test import evaluate_three_stage_continuity
         base = {"url_sha256": "a" * 64, "http_status": 200,

@@ -55,8 +55,14 @@ def _command_in_run_step(content: str, command: str) -> bool:
 def consolidation_plan(root: Path) -> dict:
     """Validate exact inventory and map every auxiliary behavior to main stages."""
     root = Path(root)
-    folder = root / ".github" / "workflows"
-    if not folder.is_dir() or folder.is_symlink():
+    github_dir = root / ".github"
+    folder = github_dir / "workflows"
+    # Reject symlinks at every trust-boundary component, not only the final
+    # workflows directory. Otherwise .github itself could redirect inventory
+    # reads outside the checked-out repository.
+    if (root.is_symlink() or not root.is_dir()
+            or github_dir.is_symlink() or not github_dir.is_dir()
+            or folder.is_symlink() or not folder.is_dir()):
         raise ValueError("Workflow directory missing or unsafe")
     workflow_entries = list(folder.iterdir())
     # A symlink can make an external file appear to be a trusted workflow.

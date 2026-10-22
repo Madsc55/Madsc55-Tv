@@ -108,6 +108,7 @@ def run():
     verified = []
     tv_tested = 0
     source_rows = 0
+    seen_tv_urls = set()
     for name, url in candidates():
         source_rows += 1
         if source_rows > MAX_SOURCE_ROWS:
@@ -119,6 +120,11 @@ def run():
         if not cat:
             results.append({"sha256": digest, "status": "radio_excluded"})
             continue
+        digest = hashlib.sha256(url.encode()).hexdigest()
+        if digest in seen_tv_urls:
+            results.append({"sha256": digest, "status": "duplicate_excluded"})
+            continue
+        seen_tv_urls.add(digest)
         tv_tested += 1
         try:
             ok, reason = verify_video(url)

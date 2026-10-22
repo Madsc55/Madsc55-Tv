@@ -58,8 +58,29 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
         raw = run.get("created_at")
         if not isinstance(raw, str):
             raise ValueError("Missing failure history timestamp")
-        if ("T" not in raw or raw.count("T") != 1 or
-                not (raw.endswith("Z") or "+" in raw[10:] or "-" in raw[10:])):
+        # Validate the literal RFC3339 shape before fromisoformat's more
+        # permissive ISO parser (which accepts compact dates and separators).
+        date_time = raw[:19]
+        fraction_and_zone = raw[19:]
+        base_shape = (len(date_time) == 19 and
+                      all(date_time[i] == ch for i, ch in
+                          ((4, "-"), (7, "-"), (10, "T"), (13, ":"), (16, ":"))) and
+                      all(date_time[i].isascii() and date_time[i].isdigit()
+                          for i in (0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 14, 15, 17, 18)))
+        if fraction_and_zone.startswith("."):
+            fraction = fraction_and_zone[1:]
+            digits = 0
+            while digits < len(fraction) and "0" <= fraction[digits] <= "9":
+                digits += 1
+            fraction_and_zone = fraction[digits:]
+            base_shape = base_shape and 1 <= digits <= 6
+        zone_shape = (fraction_and_zone == "Z" or
+                      (len(fraction_and_zone) == 6 and
+                       fraction_and_zone[0] in "+-" and
+                       fraction_and_zone[3] == ":" and
+                       all("0" <= fraction_and_zone[i] <= "9"
+                           for i in (1, 2, 4, 5))))
+        if not base_shape or not zone_shape:
             raise ValueError("Invalid failure history timestamp")
         try:
             value = datetime.fromisoformat(raw.replace("Z", "+00:00"))

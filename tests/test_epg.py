@@ -174,3 +174,12 @@ class EpgTests(unittest.TestCase):
             self.assertEqual(result["duplicate_playlist_ids"], ["a.tr", "z.tr"])
             self.assertEqual(result["missing_tvg_id"], 2)
             self.assertFalse(result["matching_verified"])
+
+    def test_nul_byte_in_playlist_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_bytes(b'#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\x00\nhttps://example.org/a.m3u8\n')
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "NUL byte"):
+                check_epg_mapping(p, e)

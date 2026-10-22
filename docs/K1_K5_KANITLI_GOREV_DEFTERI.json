@@ -107,9 +107,10 @@
       "62211f4: XMLTV programme channel references now fail closed when missing/blank; unmatched programme IDs block mapping_verified",
       "4a3eee5: regression tests cover missing, blank, and unmatched programme channel IDs; [skip ci], not yet run in CI",
       "6dcaaac: duplicate M3U tvg-id attributes now rejected fail-closed",
-      "73fdc79: regression tests for duplicate tvg-id and whitespace normalization; focused local behavioral checks passed for 5 cases; GitHub Actions not run"
+      "73fdc79: regression tests for duplicate tvg-id and whitespace normalization; focused local behavioral checks passed for 5 cases; GitHub Actions not run",
+      "ef72812: fixed first three test fixtures to use actual newline escapes; 9/9 scenarios passed in isolated local harness; repository test file/full suite/Actions not executed"
     ],
-    "note": "Local XMLTV/tvg-id structural validation hardened, including duplicate M3U tvg-id rejection. Focused local behavior checks passed; full repository suite/CI not run. IBO/Pages live-chain acceptance and device confirmation remain open."
+    "note": "EPG validator fails closed on malformed XMLTV programme channel refs and duplicate M3U tvg-id attributes. Test fixtures corrected; isolated nine-case behavior harness passed 9/9. Actual repository tests/full CI not run; IBO/Pages live-chain acceptance and device confirmation remain open."
   },
   {
     "id": "K3-14",

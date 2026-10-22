@@ -14,7 +14,7 @@ class InstallationGateIntegrationTests(unittest.TestCase):
     def test_missing_installation_contract_blocks_green_unit_tests(self, run, installation):
         run.return_value.returncode = 0
         run.return_value.stdout = ""
-        run.return_value.stderr = "Ran 759 tests in 0.100s\\n\\nOK"
+        run.return_value.stderr = "Ran 759 tests in 0.100s\n\nOK"
         installation.side_effect = ValueError("K1-K5 inventory drift")
         output = io.StringIO()
         with redirect_stdout(output):

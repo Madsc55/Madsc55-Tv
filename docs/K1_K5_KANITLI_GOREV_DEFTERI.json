@@ -109,9 +109,10 @@
       "6dcaaac: duplicate M3U tvg-id attributes now rejected fail-closed",
       "73fdc79: regression tests for duplicate tvg-id and whitespace normalization; focused local behavioral checks passed for 5 cases; GitHub Actions not run",
       "ef72812: fixed the first three test fixtures to use actual newline escapes; initial isolated harness 9/9; repository-wide CI was subsequently run successfully as run #89 on commit 474dc539.",
-      "GitHub Actions run #89 / 39867960099 on 474dc539: offline-tests succeeded; tests_passed=true, all_offline_gates_passed=true, K1-K5 isolated fixture categories all success; not production certification"
+      "GitHub Actions run #89 / 39867960099 on 474dc539: offline-tests succeeded; tests_passed=true, all_offline_gates_passed=true, K1-K5 isolated fixture categories all success; not production certification",
+      "Offline suite run #99 / 39868459061 on main commit a0469c34: 1016 tests discovered, test_exit_code=0, tests_passed=true, all_offline_gates_passed=true; EPG test file has 14 cases including malformed header and fake tvg-id regressions"
     ],
-    "note": "EPG validator hardened; newline fixtures fixed; test suite expanded to 12 cases. GitHub Actions offline gate run #89 passed on commit 474dc539 (tests_passed=true, all_offline_gates_passed=true). K3-13 remains in_progress pending live Pages/XMLTV chain and IBO device acceptance."
+    "note": "EPG parser hardened and 14 EPG tests included in successful 1016-test offline suite (run #99, commit a0469c34). K3-13 remains in_progress pending live Pages/XMLTV chain and IBO device acceptance; offline CI is not production certification."
   },
   {
     "id": "K3-14",

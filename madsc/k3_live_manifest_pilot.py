@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 from madsc.probe_target_gate import validate_probe_target, validate_resolved_addresses
+from madsc.discovery import normalize_url
 
 SOURCE = "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/tr.m3u"
 LIMIT = 12
@@ -62,15 +63,19 @@ def run():
     for name, url in candidates(source_evidence):
         if len(results) >= LIMIT:
             continue
-        digest = hashlib.sha256(url.encode()).hexdigest()
+        try:
+            normalized_url = normalize_url(url)
+        except ValueError:
+            continue
+        digest = hashlib.sha256(normalized_url.encode()).hexdigest()
         if digest in seen_hashes:
             continue
         seen_hashes.add(digest)
         try:
-            result = probe(url)
+            result = probe(normalized_url)
             result["status"] = "manifest_only" if result["hls_manifest_seen"] else "unverified"
         except (ValueError, PermissionError, OSError, subprocess.TimeoutExpired) as exc:
-            result = {"url_sha256": hashlib.sha256(url.encode()).hexdigest(),
+            result = {"url_sha256": digest,
                       "status": "blocked_or_unreachable", "error_type": type(exc).__name__,
                       "audio_video_verified": False}
         results.append(result)

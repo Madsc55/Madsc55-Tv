@@ -1,5 +1,6 @@
 import unittest
 import json
+import os
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
@@ -48,6 +49,20 @@ class K4EvidenceTests(unittest.TestCase):
             with patch("sys.argv", args), self.assertRaises(ProtectedWriteRejected):
                 main()
             self.assertEqual(output.read_text(), "unchanged")
+
+    def test_cli_rejects_hardlinked_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original = root / "original.json"
+            original.write_text(json.dumps(GOOD))
+            hardlink = root / "hardlink.json"
+            os.link(original, hardlink)
+            output = root / "result.json"
+            args = ["k4_evidence", "--report", str(hardlink), "--output", str(output)]
+            with patch("sys.argv", args), self.assertRaises(ValueError):
+                main()
+            self.assertFalse(output.exists())
+            self.assertEqual(json.loads(original.read_text()), GOOD)
 
     def test_cli_rejects_duplicate_json_keys_and_symlinked_parent(self):
         with tempfile.TemporaryDirectory() as tmp:

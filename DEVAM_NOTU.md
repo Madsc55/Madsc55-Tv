@@ -796,3 +796,10 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Kümülatif statik inceleme: 36/92, 56 kaldı. Davranışsal parity 0/92; runtime güvenlik 0/26; ana görevler 0/22. K5-19 görev defteri güncellendi; batch 12 kaynak incelemesi kabul sayacı artırmaz.
 - K5 izole playlist export/manifest regression için Actions run `39868459061`, test edilen HEAD `a0469c34ec9a8642acffdddfbda55dadf9d39aba`, sonuç `success`. Bu yalnız offline regresyon kapısının yeşil olduğudur; gerçek kaynak, IBO cihazı, harici yedek veya 92 workflow davranışsal eşdeğerliği değildir.
 - Korunan üretim listeleri/EPG/favoriler/logolar/yedekler ve gerçek cihaz değiştirilmedi; eski depo salt okunur kaldı; PR #71 merge edilmedi. Devir notu güncel; Actions sonuçları yalnız tam SHA eşleşmesiyle kabul edilmeli.
+
+
+## 23 Ekim 2026 — K2 kaynak bağımsızlığı açıkça doğrulanmamış olarak işaretlendi
+- `corroborate_sources` çıktısına `source_independence_verified: false` ve `source_count_semantics: distinct_semantic_feed_inventories_not_verified_origins` eklendi. Farklı semantik envanter sayıları, gerçek ayrı işletmeci/kaynak kökeni kanıtı olarak yorumlanamaz.
+- Kod commit `e8e686bfa0f2bf31376bcf58230bc8b5aa212a6d`; regresyon testi commit `9c1c8a594849d730f75d9c050265df74b382b8ec`. K2-08 görev defterine CI ve sınırlar işlendi (`42841d5e`).
+- Son bilinen tam offline CI başarısı `39868459061` (commit `a0469c34`); 1016 testlik paket sonraki K3 devir notunda raporlandı. Yeni açık `source_independence_verified` regresyonu için workflow `39868653542` çalışıyor; bu SHA için sonuç henüz doğrulanmadı.
+- K2-05 gerçek kaynak URL/işletmeci/lisans mutabakatı, K2-06 günlük keşif/tetik eşdeğerliği ve K2-07 bağımsız gerçek artifact SHA kanıtı açık. Gerçek kaynak verisi olmadan kabul kapatılmadı; üretim verisi değiştirilmedi.

@@ -57,5 +57,21 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
         self.assertEqual(report["reason_counts"]["duplicate_excluded"], 2)
         self.assertFalse(report["playlist_modified"])
 
+
+    def test_source_generator_is_not_consumed_beyond_limit(self):
+        consumed = []
+        def rows():
+            for i in range(pilot.MAX_SOURCE_ROWS + 5):
+                consumed.append(i)
+                yield ("Radyo FM", f"https://example.org/r{i}.m3u8")
+        with tempfile.TemporaryDirectory() as d:
+            with patch.object(pilot, "candidates", side_effect=rows), \
+                 patch.object(pilot, "verify_video") as verify, \
+                 patch.object(pilot, "write_fixture_report"), \
+                 patch.object(pilot.Path, "cwd", return_value=Path(d)):
+                pilot.run()
+        verify.assert_not_called()
+        self.assertEqual(len(consumed), pilot.MAX_SOURCE_ROWS)
+
 if __name__ == "__main__":
     unittest.main()

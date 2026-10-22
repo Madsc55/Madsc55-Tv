@@ -169,6 +169,9 @@ def review_candidate_batch(coordination: dict, backup_evidence: dict) -> dict:
     candidates = coordination.get("candidates")
     if not isinstance(candidates, list):
         raise ValueError("Missing K2/K3 candidates")
+    # Bound unauthenticated evidence before iterating and building a review.
+    if len(candidates) > 10000:
+        raise ValueError("Candidate evidence exceeds safe review limit")
     seen = set()
     for item in candidates:
         if not isinstance(item, dict):

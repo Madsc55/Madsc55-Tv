@@ -1,3 +1,13 @@
+# EN YENİ K3 GÜNCELLEMESİ — EPG sertleştirmesi tam offline suite'te geçti (2026-10-23)
+- M3U header token doğrulaması sıkılaştırıldı; `#EXTM3U-invalid` reddediliyor. `tvg-id` yalnız gerçek whitespace-delimited nitelik olarak algılanıyor; `not-tvg-id` eşleşmesi reddediliyor.
+- `tests/test_epg.py`: 14 EPG testi. Bu testler main commit `a0469c34ec9a8642acffdddfbda55dadf9d39aba` içinde mevcut.
+- GitHub Actions Offline Unit Tests run #99 / ID `39868459061`: success; 1016 test keşfedildi, `tests_passed=true`, `all_offline_gates_passed=true`, K3 izole fixture success. Kanıt raporu: `docs/K3_HARDENING_2026-10-23.md`.
+- Bu, offline doğrulamadır; gerçek HLS video/ses, 6+ saat süreklilik, Pages/XMLTV canlı zinciri, IBO Player Pro cihaz EPG'si ve logo doğrulaması hâlâ açık. K3-13 tamamlandı olarak işaretlenmesin.
+- Üretim playlist/EPG/cihaz verileri değiştirilmedi; PR #71 merge edilmedi; genel sayaçlar 0/92, 0/26, 0/22.
+- Sonraki adım: yetkili canlı manifest/video pilotunu kontrollü olarak çalıştırıp raporu gözden geçir; CI başarısını canlı kabul yerine kullanma.
+
+---
+
 # EN YENİ K3 GÜNCELLEMESİ — EPG regresyon CI başarılı (2026-10-23)
 - EPG test fixture'larının ilk üçündeki çift kaçışlı satır sonları düzeltildi; test sayısı 9'dan 12'ye çıkarıldı. Eklenenler: geçersiz M3U başlığı, yanlış XMLTV kökü ve bozuk XML.
 - GitHub Actions Offline Unit Tests run #89, ID `39867960099`, tested commit `474dc5392538fa1bca9d920d9285aa4dc9af1696`: **completed / success**. Log açıkça `tests_passed=true`, `all_offline_gates_passed=true`, K1-K5 isolated fixture kategorilerinin tamamı success gösteriyor. Bu production certification değildir.

@@ -16,6 +16,10 @@ ATTR = re.compile(r'([\w-]+)="([^"]*)"')
 def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     if not isinstance(text, str) or not isinstance(source, str) or not source.strip() or len(text) > 8_000_000:
         raise ValueError("Source and M3U text are required")
+    # Source names are provenance labels, not arbitrary control sequences.
+    # Reject embedded controls before they can contaminate audit reports.
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in source):
+        raise ValueError("Source name contains control characters")
     # Surrogate code points cannot be represented in UTF-8 output and must
     # fail at ingestion rather than during downstream hashing or rendering.
     try:

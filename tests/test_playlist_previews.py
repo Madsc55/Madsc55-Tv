@@ -31,6 +31,14 @@ class PlaylistPreviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             render_playlist_previews(catalog, rows)
 
+    def test_playlist_preview_rejects_invalid_channel_name_delimiters(self):
+        rows = [{"name": "A", "url": "https://example.org/a"}]
+        for name in ("", "A,B", None, 42, "A\\nB"):
+            catalog = prepare_channel_catalog(rows)
+            catalog["channels"][0]["display_name"] = name
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                render_playlist_previews(catalog, rows)
+
     def test_unverified_logo_rejected(self):
         rows = [{"name": "A", "url": "https://example.org/a"}]
         catalog = prepare_channel_catalog(rows)

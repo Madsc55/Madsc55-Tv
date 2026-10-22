@@ -2544,3 +2544,7 @@ K2 kabul sayaçları ve görev durumları değişmedi. Gerçek kaynak/lisans, g�
 `madsc/fixture_report_writer.py::_exclusive_bytes` artık tüm mutlak üst dizin bileşenlerini `O_DIRECTORY|O_NOFOLLOW` + descriptor-relative `openat` biçiminde açar; hedefi `O_EXCL|O_NOFOLLOW` ile açık parent fd üzerinden oluşturur. Bu, kontrol ile dosya açma arasındaki symlink-parent yarış penceresini daraltır/kapatır. Başarısız yazımda cleanup yalnız aynı açık parent fd içindeki aynı inode/metadata eşleşmesini kaldırır.
 Kod commit: `967977def72e1f184c7e2920d323401f4afb035b`. Regresyon commitleri: `6d9624592a93a885fddd5aaccab2cfcc5f8f1d95`, `32fd75b48d334068efe5687b085daeb86603a0b4`.
 CI sonucu henüz doğrulanmadı; eski 990-test run bu değişiklikleri kapsamaz. K1 26 kural kabulü 0/26; tüm yazma noktalarının merkezi enforcement'a bağlı olduğu kanıtlanmış değil.
+
+
+## 23 Ekim 2026 — K2 birebir aynı feed içeriklerinde oy şişirmeyi engelleme
+`corroborate_sources` artık kaynak gövdesinin SHA-256 fingerprint'ini kullanıyor: birebir aynı M3U metni farklı kullanıcı etiketiyle verilirse kaynak listesi raporlanır ama `source_count` yalnız bir artar. Kod `3ea2415ba29b08994c892dca2cdcfd23b42bd9e5`; test `70433a0079dff063187ce5c094cd5c70d4f828be`. Bu, yalnız birebir aynı gövdeyi yakalar; farklı biçimlenmiş kopyaların bağımsızlığını veya kaynak lisansını kanıtlamaz. CI yeni SHA için doğrulanmadı; `workflow_dispatch` bu oturumda başlatılmadı. K2 kabul durumu değiştirilmedi. Sonraki: gerçek kaynak kökeni/URL kanıtı, günlük keşif parity ve artifact SHA doğrulaması.

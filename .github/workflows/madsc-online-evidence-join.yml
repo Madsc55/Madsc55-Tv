@@ -1,0 +1,39 @@
+name: MADSC55 — K2 K3 Joined Evidence
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: madsc55-online-evidence-join
+  cancel-in-progress: false
+jobs:
+  joined-online-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: K1-K5 offline regression prerequisite
+        run: python -m madsc.offline_gate
+      - name: K2 real source read-only discovery
+        run: python -m madsc.live_discovery_pilot
+      - name: K3 bounded HTTPS manifest probes
+        run: python -m madsc.k3_live_manifest_pilot
+      - name: Correlate K2 and K3 channel hashes
+        run: |
+          python -m madsc.online_evidence_reconcile reports/k2-live-pilot.json reports/k3-real-manifest-pilot.json > reports/k2-k3-joined-evidence.json
+      - name: Upload joined evidence and input reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc55-k2-k3-joined-evidence
+          path: |
+            reports/k2-live-pilot.json
+            reports/k3-real-manifest-pilot.json
+            reports/k2-k3-joined-evidence.json
+          if-no-files-found: warn
+          retention-days: 14

@@ -2385,3 +2385,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Bu kod/test commitleri henüz CI'da çalıştırılmadı. Önceki doğrulanmış offline gate `39862185213` 958 testte başarılıydı ama yeni commitleri kapsamaz. Actions bu turda tetiklenmedi. Kabul: runtime K1 0/26, legacy 0/92, görev 0/22.
 
 - Doğrulama talebi: Bu commit, yukarıdaki K1 writer/root hardening değişikliklerinden sonra standart push tabanlı offline CI'nın güncel main üzerinde çalışmasını istemek için oluşturuldu. Sonuç ancak Actions run tamamlandığında kabul edilecek; bu not testin çalıştığı veya geçtiği anlamına gelmez.
+
+
+## 23 Ekim 2026 — K1 bundle rollback yarış güvenliği
+- `madsc/fixture_report_writer.py::write_turkish_tv_test_bundle` hata anında önceden oluşturduğu playlist yolunu koşulsuz unlink ediyordu. Bir başka işlem bu yolun dosyasını arada değiştirmişse rollback o yeni dosyayı silebilirdi. Artık oluşturulan dosyanın `st_dev/st_ino` kimliği kaydediliyor ve yalnızca aynı inode hâlâ hedefteyse temizleniyor: `2c01a1b95614654e448c2aa3927736e59a191b14`.
+- İkinci yazım hata verirken playlist yolunun başka içerikle değiştirilmesini simüle eden test eklendi; rollback'in bu içeriği koruması beklenir: `3e58e5875b08ba19aac661ced8ea28ba698f8258`.
+- Önceki K1 root symlink/NOFOLLOW sertleştirmeleri ve bunların testleri korunuyor. Bu yeni kod/test henüz çalıştırılmadı. Sonraki push ile offline CI sonucu izlenecek; başarı olmadan kabul sayacı artırılmayacak. Runtime K1 0/26, legacy 0/92, görev 0/22.

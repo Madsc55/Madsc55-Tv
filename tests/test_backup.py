@@ -663,3 +663,31 @@ class BackupTests(unittest.TestCase):
                     restore_to_new_sandbox(backup, destination, ["file.txt"])
             self.assertEqual((destination / "keep.txt").read_text(encoding="utf-8"), "concurrent")
             self.assertEqual((backup / "file.txt").read_text(encoding="utf-8"), "original")
+
+    def test_manifest_openat_rejects_symlinked_final_component(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            real = root / "real.txt"
+            real.write_text("safe", encoding="utf-8")
+            (root / "alias.txt").symlink_to(real)
+            with self.assertRaises(ValueError):
+                snapshot_manifest(root, ["alias.txt"])
+
+    def test_manifest_openat_rejects_symlinked_intermediate_component(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            real_dir = root / "real"
+            real_dir.mkdir()
+            (real_dir / "file.txt").write_text("safe", encoding="utf-8")
+            (root / "alias").symlink_to(real_dir, target_is_directory=True)
+            with self.assertRaises(ValueError):
+                snapshot_manifest(root, ["alias/file.txt"])
+
+    def test_manifest_keeps_requested_relative_path_for_nested_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            nested = root / "nested"
+            nested.mkdir()
+            (nested / "file.txt").write_text("safe", encoding="utf-8")
+            manifest = snapshot_manifest(root, ["nested/file.txt"])
+            self.assertEqual(manifest["entries"][0]["path"], "nested/file.txt")

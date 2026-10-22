@@ -1,4 +1,5 @@
 """Bounded real HTTPS HLS reachability pilot; no playlist mutation or redirects."""
+import argparse
 import hashlib
 import ipaddress
 import json
@@ -17,9 +18,16 @@ LIMIT = 12
 SOURCE_MAX_BYTES = 2_000_000  # Same cap as K2 discovery
 
 
-def candidates(source_evidence=None):
-    with urlopen(Request(SOURCE, headers={"User-Agent": "Madsc55-Tv-K3-pilot"}), timeout=15) as r:
-        raw = r.read(SOURCE_MAX_BYTES + 1)
+def candidates(source_evidence=None, source_file=None):
+    if source_file is None:
+        with urlopen(Request(SOURCE, headers={"User-Agent": "Madsc55-Tv-K3-pilot"}), timeout=15) as r:
+            raw = r.read(SOURCE_MAX_BYTES + 1)
+    else:
+        source_path = Path(source_file)
+        if source_path.is_symlink() or not source_path.is_file():
+            raise ValueError("Invalid source snapshot")
+        with source_path.open("rb") as source:
+            raw = source.read(SOURCE_MAX_BYTES + 1)
     if len(raw) > SOURCE_MAX_BYTES or not raw.startswith(b"#EXTM3U"):
         raise ValueError("Unexpected source size or format")
     if source_evidence is not None:
@@ -54,13 +62,13 @@ def probe(url):
             "response_bytes": len(body), "curl_exit_code": result.returncode}
 
 
-def run():
+def run(source_file=None):
     results = []
     seen_hashes = set()
     source_evidence = {}
     # Keep the first LIMIT candidates while still exhausting the generator:
     # the source SHA-256 must describe the complete downloaded snapshot.
-    for name, url in candidates(source_evidence):
+    for name, url in candidates(source_evidence, source_file):
         if len(results) >= LIMIT:
             continue
         try:
@@ -93,4 +101,6 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    parser = argparse.ArgumentParser(description="Bounded K3 HTTPS manifest pilot")
+    parser.add_argument("--source-file", type=Path)
+    run(parser.parse_args().source_file)

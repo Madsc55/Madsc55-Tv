@@ -27,6 +27,8 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         source.encode("utf-8", errors="strict")
     except UnicodeEncodeError as exc:
         raise ValueError("M3U source and text must be valid UTF-8") from exc
+    if len(source) > 256:
+        raise ValueError("Source name exceeds bounded length")
     if type(max_entries) is not int or not 1 <= max_entries <= 20000:
         raise ValueError("Invalid candidate limit")
     lines = text.removeprefix("\ufeff").splitlines()
@@ -126,6 +128,8 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Invalid source name")
     if len({name.strip().casefold() for name in sources}) != len(sources):
         raise ValueError("Ambiguous duplicate source names")
+    if any(len(name) > 256 for name in sources):
+        raise ValueError("Source name exceeds bounded length")
     if known_urls is not None and not isinstance(known_urls, (set, frozenset)):
         raise ValueError("Known URLs must be a set")
     if known_urls is not None and len(known_urls) > 20000:
@@ -202,6 +206,8 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
         raise ValueError("Require 1-200 named M3U sources")
     if len({name.strip().casefold() for name in sources if isinstance(name, str)}) != len(sources):
         raise ValueError("Ambiguous duplicate source names")
+    if any(isinstance(name, str) and len(name) > 256 for name in sources):
+        raise ValueError("Source name exceeds bounded length")
     rows = []
     rejected_count = 0
     # Downstream classification is bounded to 20,000 rows in total.

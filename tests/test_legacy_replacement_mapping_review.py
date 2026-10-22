@@ -85,6 +85,26 @@ class MappingReviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.review([self.row])
 
+    def test_malformed_replacement_blob_rejected(self):
+        self.readiness["rows"][0]["workflow_blob_sha"] = "not-a-git-sha"
+        with self.assertRaises(ValueError):
+            self.review([self.row])
+
+    def test_missing_replacement_contract_field_rejected(self):
+        del self.readiness["rows"][0]["input_digest_binding_complete"]
+        with self.assertRaises(ValueError):
+            self.review([self.row])
+
+    def test_nonboolean_replacement_contract_flag_rejected(self):
+        self.readiness["rows"][0]["marker_contract_complete"] = "true"
+        with self.assertRaises(ValueError):
+            self.review([self.row])
+
+    def test_nonstring_replacement_path_rejected(self):
+        self.readiness["rows"][0]["workflow_path"] = ["invalid"]
+        with self.assertRaises(ValueError):
+            self.review([self.row])
+
     def test_missing_rationale_rejected(self):
         with self.assertRaises(ValueError):
             self.review([{**self.row, "review_rationale": ""}])

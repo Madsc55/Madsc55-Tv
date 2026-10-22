@@ -824,3 +824,10 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 ## K2 CI sonuç güncellemesi — 23 Ekim 2026
 - Güncelleme: `source_independence_verified` korumasını içeren kod/test commit'i `9c1c8a594849d730f75d9c050265df74b382b8ec` için GitHub Actions run `39868653542` başarıyla tamamlandı: https://github.com/Madsc55/Madsc55-Tv/actions/runs/39868653542
 - Böylece bu regresyon için önceki “CI bekleniyor” notu geçersizdir. Görev defterine başarılı koşum kanıtı eklendi. Bu başarı gerçek kaynak/lisans kanıtı veya günlük tetik eşdeğerliği anlamına gelmez; K2-05/06/07 ve gerçek kaynak davranış kabulü açık kalır.
+
+
+## 23 Ekim 2026 — K1 lambda guard kapsamı: iç içe ziyaretçi hatası düzeltildi
+- Ek incelemede bulundu: `_Scanner.visit_Lambda` lambda gövdesini ayrı kapsamda işlese de `_ScopeCalls` üst fonksiyonun guard envanterini toplarken varsayılan NodeVisitor davranışı lambda gövdesine giriyordu. Böylece ertelenmiş lambda içindeki guard, dış fonksiyonun yazma çağrısına yanlışlıkla iliştirilebiliyordu; yeni regresyon testi bu vakayı yakalamak üzere eklenmişti.
+- Düzeltme: `_ScopeCalls.visit_Lambda` artık lambda gövdesini dış kapsam için ziyaret etmiyor. Yinelenen visitor tanımı da kaldırıldı.
+- Kod commitleri: `9bf7f9926ddab13c3bebc4ca108e8d2908ef8a6b`, temizlik `bbb975e650456ae29d89d5c66dbc4ce51e7c2f6a`. İlgili test `3c3610e35eef121b6e876eccd62c50754fd7ee6e`.
+- Dosyalar GitHub'da tekrar okundu; bu son düzeltme için Actions/check sonucu doğrulanmadı ve test çalıştırılmış sayılmıyor. K1 kabulü 0/26, üretim hazır değil. Üretim dosyaları değişmedi.

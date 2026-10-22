@@ -68,3 +68,10 @@ K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen
 - `tests/test_backup_manifest_hardening.py` commit `aae9e86fc2cd40fe6d08e6fcc9ab71efb0623044`: iki yeni hata enjeksiyonu testi kaynak tanıtıcısının kapandığını ve yarım hedefin temizlendiğini doğrulamak için eklendi.
 - Actions `39869948785` **failure**: K4 testinde hatalı çok satırlı `with` sözdizimi (`SyntaxError`) ve ayrı K2 `test_empty_name_and_orphan_url_are_reported` beklenti uyuşmazlığı. Paralel `fix(ci): correct malformed multiline mock context managers` commitinin Actions `39870164408` çalıştırmasında artık K4 SyntaxError görülmüyor; **yalnız K2 testi başarısız**, toplam 1035 test. Bu nedenle henüz tam yeşil CI kabulü yok. K2 dosyası paralel sohbet tarafından düzeltiliyor, çakışma yaratmamak için burada tekrar değiştirilmedi.
 - Gerçek harici yedek makbuzu, bağımsız dış restore, korunan VOD/arşiv eşdeğerliği ve ayın 1/15 zamanlayıcı kanıtı hâlâ yok. Üretim dosyaları değiştirilmedi.
+
+
+## 23 Ekim 2026 — Sahte harici yedek kabul beyanlarını reddetme
+- `madsc/backup.py` commit `7815f0c6e6d0a9e12783306f4a57e4c62c6adc06`: `verify_manifest`, yerel checksum manifestine eklenen `external_backup_verified`, `restore_verified` veya `production_writes` alanlarının `False` dışındaki değerlerini artık `ValueError` ile reddediyor. Özellikle Python'da `True == 1` olmasına rağmen `1` de kabul edilmiyor.
+- `tests/test_backup_manifest_hardening.py` commit `1bb7aead06b252544bb3e2d41e89bd89840e4c5a`: her alan için `True`, `1`, `"true"` ve `None` sahte beyanlarını sınayan regresyon eklendi. Orijinal yerel manifestin geçerli kalması da doğrulanıyor.
+- Bu değişiklik yerel checksum kanıtının gerçek harici yedek veya üretim restore kanıtıymış gibi sunulmasını engeller; gerçek dış servis makbuzu veya restore üretmez. Son gözlemde Actions `39870589190` paralel commit yüzünden `cancelled`; yeni regresyonun güncel tam CI başarısı ayrıca doğrulanmalı.
+- IBO Player Pro cihaz kabulü kullanıcı talimatıyla en sona bırakıldı; gerçek cihaz testini kullanıcı yapıp bildirecek.

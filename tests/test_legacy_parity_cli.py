@@ -1,4 +1,5 @@
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -75,6 +76,23 @@ class LegacyParityCliTests(unittest.TestCase):
                 run(source, snapshots, output)
             self.assertEqual(calls[0], 2)
             self.assertEqual(protected.read_text(), "original")
+
+    def test_parity_input_rejects_symlink_hardlink_and_oversize(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            real = root / "real.json"
+            real.write_text("{}")
+            symlink = root / "alias.json"
+            symlink.symlink_to(real)
+            hardlink = root / "hardlink.json"
+            os.link(real, hardlink)
+            huge = root / "huge.json"
+            with huge.open("wb") as stream:
+                stream.truncate(16 * 1024 * 1024 + 1)
+            for path in (symlink, hardlink, huge):
+                with self.subTest(path=path), self.assertRaises(ValueError):
+                    load_json(path)
+            self.assertEqual(load_json(real), {})
 
     def test_duplicate_json_keys_are_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:

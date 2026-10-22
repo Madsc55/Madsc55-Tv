@@ -31,6 +31,8 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
         total = count
         if not batch and received < total:
             raise ValueError("Truncated failure history")
+        if received + len(batch) > 1000:
+            raise ValueError("Failure history exceeds bounded review capacity")
         for run in batch:
             if (not isinstance(run, dict) or type(run.get("id")) is not int
                     or run["id"] <= 0 or run["id"] in runs

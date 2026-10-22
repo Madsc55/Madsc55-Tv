@@ -680,3 +680,10 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Birleşik doğrulama raporu güncellendi: `5fab36193e467b302c5bfe6d90b5558fe42b2547`. Merkezi proje hafızası güncellendi: `89d5a1d03aee84207fecfcc7bd2ed4c684d6bdec`.
 - CI durumu doğrulanmadı; workflow `workflow_dispatch` gerektiriyor ve manuel dispatch yapılmadı. 990 testlik eski baseline yeni kodu kapsamıyor. Testleri başarılı olarak raporlama.
 - Sonraki: güncel HEAD'i tekrar oku; erişilebilir CI sonucu elde edildiğinde regresyonları doğrula. K2-05/06/07/08 durumlarını kanıtsız kapatma. Gerçek kaynak/lisans, günlük eşdeğerlik ve bağımsız artifact SHA kanıtı açık. Üretim listeleri ve eski depo değişmedi.
+
+
+## 23 Ekim 2026 — K4 workflow kaynak bulgusu
+K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834a9fe4d2708db99a949` incelendi. Yalnız `workflow_dispatch` var; schedule/cron yok. `contents: read`, 10 dakikalık timeout ve 14 günlük Actions artifact'ları mevcut. Akış gerçek harici hedefe yedek yazmıyor; yalnız yerel `reports/k4-source/nested/sample.txt` fixture'ı ile sandbox restore drill yapıyor. Bu nedenle K4-18 için tetikleme eksikliği kaynak seviyesinde doğrulandı; bu workflow'a körlemesine cron eklenmedi çünkü bu gerçek yedekleme sağlamaz ve yanıltıcı kabul yaratır.
+- Bulgu `docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md` içine eklendi; görev defterinde K4-18 not/evidence güncellendi. Commitler: `7713d91e4a35a86973d8120701c2a6d112a7ae56`, `bfed9d956a8ce4c2cf4f437b5d5eafaf6f5ddabe`.
+- Bu iki değişiklik dokümantasyon/kayıt niteliğinde; test başarısı iddia edilmiyor. Önceki genel CI run `39867650745` (SHA `a83211a36e9ad1dd1c6047b74888970ddc33b381`) bu sırada kontrol edildi ve o an `in_progress` idi; nihai sonucu doğrulanmadan başarılı sayılmamalı. Güncel main HEAD'i her devam adımında yeniden oku; paralel K1/K2/K3/K5 çalışmaları nedeniyle aynı dosyaları eski SHA ile güncelleme.
+- K4-15/16/17/18 kabulü hâlâ tamamlanmadı. Harici sağlayıcı makbuzu/gerçek restore kanıtı yok; üretim dosyaları ve cihazlar değişmedi, Actions dispatch/rerun yapılmadı.

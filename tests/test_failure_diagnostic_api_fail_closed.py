@@ -27,6 +27,31 @@ class DiagnosticApiFailClosedTests(unittest.TestCase):
                 verify_failure_diagnostic_evidence(
                     origin, artifact, archive, fetch=fetch)
 
+    def test_missing_ambiguous_or_expired_diagnostic_artifact_rejected(self):
+        for mismatch in ("missing", "duplicate", "expired", "workflow_blob"):
+            origin, artifact, archive = evidence()
+            original_fetch, _ = fetcher(origin, artifact)
+
+            def fetch(url, token=None):
+                data = original_fetch(url, token=token)
+                if "/artifacts?" in url:
+                    if mismatch == "missing":
+                        data["artifacts"] = []
+                        data["total_count"] = 0
+                    elif mismatch == "duplicate":
+                        data["artifacts"].append(dict(data["artifacts"][0]))
+                        data["total_count"] = 2
+                    elif mismatch == "expired":
+                        data["artifacts"][0]["expired"] = True
+                elif mismatch == "workflow_blob" and "/contents/" in url:
+                    data["sha"] = "f" * 40
+                return data
+
+            with self.subTest(mismatch=mismatch), self.assertRaises(ValueError):
+                verify_failure_diagnostic_evidence(
+                    origin, artifact, archive, fetch=fetch)
+
+
 
 if __name__ == "__main__":
     unittest.main()

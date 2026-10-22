@@ -20,13 +20,15 @@ class MappingReviewTests(unittest.TestCase):
             "marker_contract_complete": True,
             "static_file_binding_complete": True,
             "input_digest_binding_complete": True,
+            "controlled_process_contract_complete": True,
         }]}
         self.readiness["rows"].extend(
             {"workflow_path": path, "workflow_blob_sha": "c" * 40,
              "declared_file_binding": None,
              "marker_contract_complete": False,
              "static_file_binding_complete": False,
-             "input_digest_binding_complete": False}
+             "input_digest_binding_complete": False,
+             "controlled_process_contract_complete": False}
             for path in sorted(CENTRAL_REPLACEMENT_WORKFLOWS - {REPLACEMENT}))
         self.row = {
             "legacy_path": LEGACY, "legacy_blob_sha": "a" * 40,
@@ -112,6 +114,17 @@ class MappingReviewTests(unittest.TestCase):
 
     def test_empty_binding_path_rejected(self):
         self.readiness["rows"][0]["declared_file_binding"]["input_path"] = ""
+        with self.assertRaises(ValueError):
+            self.review([self.row])
+
+    def test_uncontrolled_consumer_blocks_static_candidate(self):
+        self.readiness["rows"][0]["controlled_process_contract_complete"] = False
+        result = self.review([self.row])
+        self.assertEqual(result["static_contract_candidates"], 0)
+        self.assertEqual(result["rows"][0]["status"], "mapping_contract_blocked")
+
+    def test_missing_controlled_process_contract_rejected(self):
+        del self.readiness["rows"][0]["controlled_process_contract_complete"]
         with self.assertRaises(ValueError):
             self.review([self.row])
 

@@ -2593,3 +2593,7 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 ## K2 CI sonuç güncellemesi — 23 Ekim 2026
 - Güncelleme: `source_independence_verified` korumasını içeren kod/test commit'i `9c1c8a594849d730f75d9c050265df74b382b8ec` için GitHub Actions run `39868653542` başarıyla tamamlandı: https://github.com/Madsc55/Madsc55-Tv/actions/runs/39868653542
 - Böylece bu regresyon için önceki “CI bekleniyor” notu geçersizdir. Görev defterine başarılı koşum kanıtı eklendi. Bu başarı gerçek kaynak/lisans kanıtı veya günlük tetik eşdeğerliği anlamına gelmez; K2-05/06/07 ve gerçek kaynak davranış kabulü açık kalır.
+
+
+## 23 Ekim 2026 — K1 lambda guard scope düzeltmesi
+`_ScopeCalls` iç içe lambda gövdelerini taramadığı halde önceden varsayılan ziyaretçi lambda içine giriyor, ertelenmiş guard çağrısını dış fonksiyonun guard listesine katabiliyordu. `visit_Lambda` dış kapsamda artık erken dönüyor; çift tanımlı visitor temizlendi. Kod: `9bf7f9926ddab13c3bebc4ca108e8d2908ef8a6b`, `bbb975e650456ae29d89d5c66dbc4ce51e7c2f6a`; test: `3c3610e35eef121b6e876eccd62c50754fd7ee6e`. Son CI sonucu henüz doğrulanmadı. K1 0/26; üretim verisine dokunulmadı.

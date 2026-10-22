@@ -70,6 +70,27 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
     return False, ""
 
 
+
+
+class _ScopeCalls(ast.NodeVisitor):
+    """Collect calls in one scope without accidentally inheriting nested guards."""
+    def __init__(self):
+        self.calls = []
+
+    def visit_Call(self, node):
+        self.calls.append(node)
+        self.generic_visit(node)
+
+    def visit_FunctionDef(self, node):
+        return
+
+    def visit_AsyncFunctionDef(self, node):
+        return
+
+    def visit_ClassDef(self, node):
+        return
+
+
 class _Scanner(ast.NodeVisitor):
     def __init__(self, path: str):
         self.path = path
@@ -77,8 +98,11 @@ class _Scanner(ast.NodeVisitor):
         self.rows: list[dict] = []
 
     def _visit_scope(self, node, name: str):
-        calls = [n for n in ast.walk(node) if isinstance(n, ast.Call)]
-        guards = sorted(n.lineno for n in calls if _call_name(n).rsplit(".", 1)[-1] in _GUARDS)
+        collector = _ScopeCalls()
+        for child in node.body:
+            collector.visit(child)
+        guards = sorted(n.lineno for n in collector.calls
+                        if _call_name(n).rsplit(".", 1)[-1] in _GUARDS)
         self.scope.append((name, guards))
         for child in node.body:
             self.visit(child)

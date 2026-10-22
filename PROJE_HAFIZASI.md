@@ -2094,3 +2094,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - `0b53efc06fb8eb82d09717627acfbd367a758b16`: `madsc/github_legacy_pair_client.py` artifact workflow_run içinde bu ek alanlar varsa run repository nesneleri ve declared branch ile çapraz doğrular. Alanlar eksikse önceki uyumluluk korunur; mevcut ve uyuşmaz alan reddedilir.
 - `7eaa4346a54c62a15c80ccdf81a17e66a342924a`: üç negatif repo/branch uyuşmazlık alt senaryosu ve bir pozitif metadata eşleşme testi eklendi. Bu testler henüz tam checkout ortamında çalıştırılmadı; CI izinsiz başlatılmadı.
 - Eski/yeni gerçek artifact ZIP baytları ve aynı-input snapshot çiftleri henüz doğrulanmadı. Kabul **0/92, 0/26, 0/22**. Korunan IPTV verilerine ve eski depoya yazılmadı.
+
+
+## 22 Ekim 2026 — Eski başarılı run'ın iş ve atlanan adım denetimi
+- `39686179902` (commit `d5d61317806dc7a00b762567695286e3779ceaf1`, `workflow_dispatch`, `run_attempt=1`) için gerçek GitHub Actions jobs API okundu. 6/6 iş `completed/success`: Güvenlik `119520692796`, Keşif `119520769452`, Kanal Testleri `119520852012`, Arşiv ve Yedek `119520973912`, Genel Bakım `119521065413`, Beşli toplu kanıt doğrulama `119521173766`.
+- 6 işin step summary API'si de ayrı ayrı kontrol edildi. Genel Bakım işinde **üç explicit opt-in adımı SKIPPED**: `K5 99 eski workflow kaynak bütünlüğü (explicit opt-in)`, `K5 eski notları birleştir ve SHA256 doğrula (explicit opt-in)`, `K5 opt-in eski kaynak raporlarını sakla`. Diğer işlerde başarısız/atlanan step görülmedi. Bu yüzden 6/6 job yeşil sonucu, eski 99 workflow derin doğrulamasının yürütüldüğü anlamına gelmez.
+- Bu, mevcut API metadata/step sonuçlarına dayalı incelemedir; log/ZIP byte doğrulaması yapılmadı. Sonraki commitlerde test koşulmadı. 0/92 davranış, 0/26 güvenlik, 0/22 görev kabulü korunuyor. Salt okunur inceleme; Actions dispatch/rerun veya IPTV değişikliği yok.

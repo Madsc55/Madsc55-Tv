@@ -41,5 +41,21 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
         self.assertEqual(report["radio_excluded"], pilot.MAX_SOURCE_ROWS)
         self.assertEqual(len(report["results"]), pilot.MAX_SOURCE_ROWS)
 
+
+    def test_duplicate_tv_urls_do_not_consume_probe_quota(self):
+        rows = [("TV duplicate", "https://example.org/first.m3u8")] * 3
+        rows += [(f"TV {i}", f"https://example.org/tv{i}.m3u8") for i in range(pilot.LIMIT + 2)]
+        with tempfile.TemporaryDirectory() as d:
+            with patch.object(pilot, "candidates", return_value=iter(rows)), \
+                 patch.object(pilot, "verify_video", return_value=(False, "no_manifest")) as verify, \
+                 patch.object(pilot, "write_fixture_report") as write, \
+                 patch.object(pilot.Path, "cwd", return_value=Path(d)):
+                pilot.run()
+        self.assertEqual(verify.call_count, pilot.LIMIT)
+        report = json.loads(write.call_args.args[2])
+        self.assertEqual(report["tested"], pilot.LIMIT)
+        self.assertEqual(report["reason_counts"]["duplicate_excluded"], 2)
+        self.assertFalse(report["playlist_modified"])
+
 if __name__ == "__main__":
     unittest.main()

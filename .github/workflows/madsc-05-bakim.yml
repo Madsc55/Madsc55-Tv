@@ -127,7 +127,16 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then sha256sum reports/k2-input.m3u > reports/parity-input-before.sha256; fi
+          set +e
           python -m madsc.artifact_transport produce --path reports/k2-candidates.json --source reports/k2-input.m3u --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+          consumer_status=$?
+          set -e
+          if [[ "$consumer_status" -ne 0 ]]; then
+            if [[ "${{ inputs.allow_parity_evidence }}" == "true" && -f reports/k2-candidates.json ]]; then
+              python -m madsc.parity_snapshot_cli --exit-code "$consumer_status" --output candidates=reports/k2-candidates.json --output-root .
+            fi
+            exit "$consumer_status"
+          fi
       - name: K2 fixture history input
         run: |
           mkdir -p reports/history-input

@@ -623,3 +623,43 @@ class BackupTests(unittest.TestCase):
             alias.symlink_to(real, target_is_directory=True)
             with self.assertRaisesRegex(ValueError, "ancestors"):
                 snapshot_manifest(alias / "backup", ["file.txt"])
+
+    def test_backup_rollback_preserves_replaced_destination_directory(self):
+        from unittest.mock import patch
+        from madsc.backup import backup_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source, destination = root / "source", root / "backup"
+            source.mkdir()
+            (source / "file.txt").write_text("original", encoding="utf-8")
+            def replace_destination(*_args):
+                moved = root / "original-created-backup"
+                destination.rename(moved)
+                destination.mkdir()
+                (destination / "keep.txt").write_text("concurrent", encoding="utf-8")
+                return False
+            with patch("madsc.backup.verify_manifest", side_effect=replace_destination):
+                with self.assertRaises(ValueError):
+                    backup_to_new_sandbox(source, destination, ["file.txt"])
+            self.assertEqual((destination / "keep.txt").read_text(encoding="utf-8"), "concurrent")
+            self.assertEqual((source / "file.txt").read_text(encoding="utf-8"), "original")
+
+    def test_restore_rollback_preserves_replaced_destination_directory(self):
+        from unittest.mock import patch
+        from madsc.backup import restore_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            backup, destination = root / "backup", root / "restored"
+            backup.mkdir()
+            (backup / "file.txt").write_text("original", encoding="utf-8")
+            def replace_destination(*_args):
+                moved = root / "original-created-restore"
+                destination.rename(moved)
+                destination.mkdir()
+                (destination / "keep.txt").write_text("concurrent", encoding="utf-8")
+                return False
+            with patch("madsc.backup.verify_manifest", side_effect=replace_destination):
+                with self.assertRaises(ValueError):
+                    restore_to_new_sandbox(backup, destination, ["file.txt"])
+            self.assertEqual((destination / "keep.txt").read_text(encoding="utf-8"), "concurrent")
+            self.assertEqual((backup / "file.txt").read_text(encoding="utf-8"), "original")

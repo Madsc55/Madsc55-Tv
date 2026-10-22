@@ -11,12 +11,18 @@ def norm(value):
 
 def xmltv_channels(xml_data):
     root = ET.fromstring(xml_data)
+    if root.tag != "tv":
+        raise ValueError("XMLTV root element must be <tv>")
     result = {}
     for channel in root.findall("channel"):
-        key = channel.get("id", "")
+        key = channel.get("id", "").strip()
+        if not key:
+            raise ValueError("XMLTV channel is missing a nonempty id")
+        if key in result:
+            # Duplicate IDs make tvg-id validation non-deterministic. Fail closed.
+            raise ValueError("Duplicate XMLTV channel id")
         names = [n.text or "" for n in channel.findall("display-name")]
-        if key:
-            result[key] = names
+        result[key] = names
     return result
 
 def playlist_entries(playlist):

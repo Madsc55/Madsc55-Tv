@@ -2616,3 +2616,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `parse_m3u` kimlik alanları (`tvg-id`, `tvg-logo`, `group-title`) yanlış veya tırnaksız yazıldığında sessizce metadata düşürmez: `invalid_metadata_attribute` üretir ve ilişkili URL'yi aday kataloğuna almaz. Kod `a5d0d3b4`, kaçış düzeltmesi `f82e0cb9`.
 - İki regresyon testi `38d8209adce32f8d2afa964a6a32ed77c35959b8` commit'inde. Bu commitin doğrudan Actions koşusu iptal edildi; ancak onun iki commit ilerideki soyundan gelen `205ad1bf6f094a36600a0ad5872f228fc74fe850` commit'i için Actions `39869009399` başarıyla tamamlandı. GitHub compare sonucu `ahead`, ahead_by=2, behind_by=0 olarak doğrulandı.
 - K2-08 görev defteri yeni kanıtla güncellendi; tamamlandı statüsüne geçirilmedi. K2-05 gerçek kaynak/lisans, K2-06 günlük tetik davranışsal eşdeğerlik, K2-07 bağımsız gerçek artifact köken/SHA kanıtı hâlâ açık. Korunan üretim dosyalarına, eski depoya ve IBO cihazına dokunulmadı.
+
+
+## 23 Ekim 2026 — K2 hatalı EXTINF satırı sonrası toparlanma
+- `madsc/discovery_batch.py` içindeki `parse_m3u`, kanal adı bulunmayan, boş başlıklı veya metadata tırnakları dengesiz olan EXTINF satırından sonra ilişkili URL'yi tüketerek gereksiz `orphan_url` tanısını önlüyor; sonraki geçerli kanal korunuyor. Kod `aa6cba2913d5a1c5ad368a4a7c6c76d10197149a`.
+- Regresyon testi `1d222cde478962ccef73ec361834660dfc1af87f`. Tam bu commit'in Actions çalıştırması `39869955026` eşzamanlı push nedeniyle `cancelled`; başarılı test sonucu olarak sayma. Daha yeni soy commitlerin CI sonucu ayrıca kontrol edilmeli.
+- K2-08 görev defterinde `in_progress` kaldı. Gerçek kaynak/lisans, günlük keşif eşdeğerliği ve bağımsız artifact SHA kabulü açık; üretim playlist/EPG/favoriler/yedekler ve eski depo değiştirilmedi.

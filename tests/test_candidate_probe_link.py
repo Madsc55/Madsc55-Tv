@@ -222,6 +222,14 @@ class CandidateProbeLinkTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Secure evidence opening is unavailable"):
                     load_evidence(path)
 
+    def test_evidence_loader_rejects_directory_as_evidence(self):
+        import tempfile
+        from pathlib import Path
+        from madsc.candidate_probe_link import load_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises((OSError, ValueError)):
+                load_evidence(Path(directory))
+
     def test_evidence_loader_rejects_fifo_without_waiting_for_writer(self):
         import os
         import tempfile

@@ -206,7 +206,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
         from madsc.candidate_probe_link import load_evidence
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "invalid.json"
-            for payload in (b'{"broken":', b'\\xff'):
+            for payload in (b'{"broken":', bytes([255])):
                 with self.subTest(payload=payload):
                     path.write_bytes(payload)
                     with self.assertRaises((ValueError, UnicodeError)):

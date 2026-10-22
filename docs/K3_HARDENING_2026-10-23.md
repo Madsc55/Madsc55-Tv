@@ -1,3 +1,13 @@
+## Düzeltme: 15 EPG testi içeren daha yeni başarılı offline koşu
+- Önceki bölümlerde 15. EPG testi için CI kanıtı beklediği yazıyordu; bu ifade artık güncel değildir.
+- Run `39868761301`, tested commit `bbb975e650456ae29d89d5c66dbc4ce51e7c2f6a`: **completed / success**.
+- Bu commit'teki `madsc/epg.py` blob'u `03755ace638bf3f788b8d3cfdf95d7d77ef077ed` ve `tests/test_epg.py` blob'u `aea48db70cee57802dda5e993d365c1e53ab6480`; dosya 15 EPG test fonksiyonu içeriyor ve ayrıştırıcı yalnız virgülden önceki metadata bölümünü tarıyor.
+- CI logu: `tests_discovered=1020`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`; K3 izole fixture kategorisi success.
+- Bu başarılı offline koşu K3'nin yapısal doğrulamasını güçlendirir; canlı HLS video/ses, 6+ saat süreklilik, Pages/XMLTV ve IBO cihaz kabulü yine doğrulanmış değildir.
+- Not: en güncel `main` HEAD, `bbb975e` sonrasındaki commit'leri de içeriyor; bu koşu ile sonraki HEAD arasında K3 EPG dosyaları blob düzeyinde aynı. Tam güncel HEAD için tekrar koşu tercih edilir.
+
+---
+
 ## En güncel doğrulama — 15 EPG testi ve 1017 toplam test başarılı
 - Ortak offline suite run `39868610849`, commit `8e78f26d855f8c4bb89b22f1b8f026d4a6234902`: completed/success.
 - Log kanıtı: `tests_discovered=1017`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`, K3 fixture category success.

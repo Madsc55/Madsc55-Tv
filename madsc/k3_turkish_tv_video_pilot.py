@@ -71,6 +71,8 @@ def verify_av(url):
         manifest = safe_curl(url, 65536)
         if not manifest:
             return False, False, "variant_unreachable"
+        if not manifest.lstrip().startswith(b"#EXTM3U"):
+            return False, False, "invalid_variant_manifest"
         text = manifest.decode("utf-8-sig", errors="replace")
     segments = [line.strip() for line in text.splitlines()
                 if line.strip() and not line.startswith("#")]
@@ -89,8 +91,13 @@ def verify_av(url):
             result = subprocess.run(
                 ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
                  "-of", "json", str(segment)], capture_output=True, timeout=8)
-            streams = json.loads(result.stdout or b"{}").get("streams", [])
-        except (subprocess.TimeoutExpired, ValueError):
+            decoded = json.loads(result.stdout or b"{}")
+            if not isinstance(decoded, dict) or not isinstance(decoded.get("streams", []), list):
+                return False, False, "probe_error"
+            streams = decoded.get("streams", [])
+            if any(not isinstance(stream, dict) for stream in streams):
+                return False, False, "probe_error"
+        except (subprocess.TimeoutExpired, ValueError, OSError):
             return False, False, "probe_error"
     video = any(stream.get("codec_type") == "video" for stream in streams)
     audio = any(stream.get("codec_type") == "audio" for stream in streams)

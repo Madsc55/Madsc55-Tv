@@ -58,6 +58,19 @@ class FixtureReportWriterTests(unittest.TestCase):
                     _exclusive_bytes(destination, b'{"ok": true}')
             self.assertFalse(destination.exists())
 
+    def test_fixture_writer_rejects_symlinked_root_ancestor(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            real = base / "real"
+            fixture = real / "fixture"
+            fixture.mkdir(parents=True)
+            alias = base / "alias"
+            alias.symlink_to(real, target_is_directory=True)
+            root_through_alias = alias / "fixture"
+            with self.assertRaisesRegex(PermissionError, "ancestors"):
+                write_fixture_report(root_through_alias, "reports/result.json", "{}")
+            self.assertFalse((fixture / "reports").exists())
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

@@ -2321,3 +2321,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - `src/madsc_guard.py` artık UTF-8/JSON ayrıştırma hatalarını ve manifest sözleşmesi ValueError durumlarını argparse hata çıkışına dönüştürüyor; kontrolsüz traceback yerine kapalı hata sonucu: `46a6e8fd802a7dd7eaa53be3fe5a0043edb13d1d`.
 - Bozuk JSON girdisinin exit code 2 ile reddedilmesini kapsayan test: `1b8e023d42b1ba0958e774f198e77fe92f809cc9`.
 - Testler çalıştırılmadı; Actions dispatch yok. Sonraki adım erişilebilir checkout'ta K1/K2 odaklı testler ve tam offline_gate. Kabul sayaçları değişmedi (0/26, 0/92, 0/22).
+
+
+## 22 Ekim 2026 — K1 invalid UTF-8 negatif testi
+- `tests/test_guard.py` içine geçersiz UTF-8 manifestinin CLI exit code 2 ile reddedildiğini doğrulayan test eklendi: `1c328a953449ae287460dcf86f0f62b63b53a2bf`.
+- Başlangıç HEAD `6b5eb355bda7dedcf9b549c9fccd565ac3fbcfd3` olarak okundu. Test değişikliği yazımdan önce dosya SHA'sı yeniden alınarak yalnız test dosyasına uygulandı.
+- Bu test çalıştırılmadı; yeni SHA üzerinde test sonucu iddia edilmiyor. Actions dispatch ve üretim yazımı yok. Kabul sayaçları 0/26, 0/92, 0/22 olarak kaldı.

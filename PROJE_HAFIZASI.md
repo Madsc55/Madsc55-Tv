@@ -2081,3 +2081,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - `8a66833beb4d047441e95498d3db16eeec352158`: API run `id`, `run_attempt`, artifact `workflow_run.id` ve beyan edilen artifact `id` için `type(...) is int` kontrolü eklendi. Python `True == 1` eşitliğinin köken kimliğini geçerli göstermesi engellendi.
 - `e5009e34d2907c340e4deaae59a6f3a1105de885`: dört bool kimlik negatif testi eklendi. Testlerin çalıştırılması hâlâ bekliyor.
 - Container kontrolü: `/mnt/data` içinde checkout yok; `git ls-remote` GitHub DNS çözümlemesinde başarısız. GitHub connector yalnız dosya okuma/yazma için erişilebilir. Actions izinsiz tetiklenmedi. Kabul sayıları 0/92, 0/26, 0/22. Sonraki öncelik, checkout/test ortamı ve bağımsız gerçek eski/yeni yürütme kanıtlarıdır. Korunan IPTV içerikleri ve eski repo değiştirilmedi.
+
+
+## 22 Ekim 2026 — Gerçek Actions artifact listesi (salt okunur)
+- `GET /repos/Madsc55/Madsc55-Tv/actions/runs/39686179902/artifacts?per_page=100` API yanıtı incelendi: `total_count=26`, yanıt içinde 26 artifact; tamamının `expired=false`, `digest=sha256:<64 hex>`, `workflow_run.id=39686179902` ve `workflow_run.head_sha=d5d61317806dc7a00b762567695286e3779ceaf1` alanları mevcut. K1–K5 batch, `madsc-offline-five-stage-gate`, `madsc-five-system-acceptance`, `madsc-regression-diagnostics` gibi artifact adları görülüyor.
+- Bu, yalnız **GitHub API metadata envanteridir**; artifact ZIP baytları indirilmedi ve SHA256 içerik doğrulaması yapılmadı. `d5d6131` önceki kod sürümüdür, yeni commitlerin test kanıtı değildir. Tek başına eski/yeni gerçek davranış eşdeğerliği veya production kabulü vermez. 0/92, 0/26, 0/22 değişmedi.
+- İleri adım: 26 artifact metadata kaydını güvenilir arşiv baytları ve workflow blob SHA ile bağla; eski ve yeni depoda bağımsız aynı-girdi execution çiftlerini karşılaştır. Mevcut izinlerle Actions dispatch/rerun yapılmadı.

@@ -257,6 +257,25 @@ class LegacyScopeTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             reconcile_legacy_scope(inventory)
 
+    def test_scope_rejects_unpinned_source_and_invalid_blob_identity(self):
+        import json
+        from pathlib import Path
+        from madsc.legacy_parity_evidence import reconcile_legacy_scope
+        path = Path(__file__).resolve().parents[1] / "docs/LEGACY_SOURCE_SCOPE.json"
+        original = json.loads(path.read_text())
+        for field, bad in (("source_commit", "f" * 40),
+                           ("source_commit", None)):
+            changed = json.loads(json.dumps(original))
+            changed[field] = bad
+            with self.subTest(field=field, bad=bad), self.assertRaises(ValueError):
+                reconcile_legacy_scope(changed)
+        for field, bad in (("git_blob_sha", "not-a-sha"), ("git_blob_sha", None),
+                           ("bytes", True), ("bytes", -1), ("bytes", "123")):
+            changed = json.loads(json.dumps(original))
+            changed["workflows"][-1][field] = bad
+            with self.subTest(field=field, bad=bad), self.assertRaises(ValueError):
+                reconcile_legacy_scope(changed)
+
     def test_missing_exclusion_does_not_silently_change_92_scope(self):
         import json
         from pathlib import Path

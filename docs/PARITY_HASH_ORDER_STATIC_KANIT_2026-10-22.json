@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-22",
+  "scope": "K1 K4 K5 workflow static hash ordering only",
+  "source_head": "ddebbac51b15a16e6d86e67633a504f9c6ca8a0c",
+  "checks": [
+    {
+      "workflow": "madsc-01-guvenlik.yml",
+      "static_order_pass": true
+    },
+    {
+      "workflow": "madsc-04-yedek.yml",
+      "static_order_pass": true
+    },
+    {
+      "workflow": "madsc-05-bakim.yml",
+      "static_order_pass": true
+    }
+  ],
+  "method": "Read three main-branch YAML files through connected GitHub and check exact ordered substrings: input sha256sum capture < consumer < sha256sum --check < parity_manifest_cli < second sha256sum --check < artifact upload; exactly two checks.",
+  "python_unittest_executed": false,
+  "yaml_parser_executed": false,
+  "github_actions_executed": false,
+  "reason": "Local git clone fails DNS; Actions dispatch not authorized.",
+  "behavioral_parity_accepted": "0/92",
+  "runtime_safety_accepted": "0/26",
+  "tasks_accepted": "0/22"
+}

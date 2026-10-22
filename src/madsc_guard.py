@@ -2,6 +2,8 @@
 from __future__ import annotations
 import argparse
 import json
+import os
+import stat
 import unicodedata
 from pathlib import Path
 from madsc.write_path_audit import audit_write_paths
@@ -42,11 +44,20 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("manifest", type=Path)
     args = parser.parse_args()
-    if args.manifest.is_symlink() or not args.manifest.is_file():
-        parser.error("Manifest must be an existing regular file, not a symlink")
-    if args.manifest.stat().st_size > 1024 * 1024:
-        parser.error("Manifest exceeds 1 MiB limit")
-    validate_manifest(json.loads(args.manifest.read_text(encoding="utf-8")))
+    # Open once without following a final-component symlink. Inspect and read
+    # the same descriptor to avoid a path-swap between validation and reading.
+    try:
+        fd = os.open(args.manifest, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0))
+        with os.fdopen(fd, "rb") as stream:
+            metadata = os.fstat(stream.fileno())
+            if not stat.S_ISREG(metadata.st_mode) or metadata.st_size > 1024 * 1024:
+                parser.error("Manifest must be a regular file no larger than 1 MiB")
+            payload = stream.read(1024 * 1024 + 1)
+            if len(payload) > 1024 * 1024:
+                parser.error("Manifest exceeds 1 MiB limit")
+    except OSError as exc:
+        parser.error(f"Cannot safely open manifest: {exc.strerror}")
+    validate_manifest(json.loads(payload.decode("utf-8")))
     print("K1 read-only output gate: PASS")
 
 if __name__ == "__main__":

@@ -2573,3 +2573,11 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Kod commit: `28a8d963798a85db7639890cb04bec544a3314b5`; test commit: `5c6e087387b731948d98ad699bca33d8521e3cdd`. Yeni test iki kanallı, yorum/sıra/BOM/CRLF farkı olan eşdeğer feed'lerin her aday için tek kaynak sayıldığını kontrol eder.
 - Doğrulama sınırı: commit `e8eb0b34e60b612dc0d09b096dafa1e0123eaead` için offline Actions başarılı oldu. Daha yeni çalıştırmalar K5'te `test_manifest_serialization_failure_cleans_partial_bundle_and_preserves_source` hatasıyla başarısız oldu (`Invalid playlist header`) ve eşzamanlı push'lar bazı test çalıştırmalarını iptal etti. En son K2 test commit'i için başarılı CI sonucu henüz yok; testler yerelde çalıştırılmış sayılmaz.
 - Bu semantik fingerprint yine de kısmi kopyaları, yeniden yazılmış metadata'yı veya aynı kaynağın farklı alt kümelerini kesin olarak tanımaz. Gerçek kaynak URL/köken/lisans, günlük keşif parity ve bağımsız artifact SHA kanıtı açık. K2 kabul sayaçları değişmedi; üretim playlist/EPG/favoriler/yedekler ve eski depo değişmedi.
+
+
+## 2026-10-23 K5 — Batch 12 devam kaydı
+- Kaynak inceleme: `docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_12_2026-10-23.md`; eski `Madsc55/madsc-tv` deposunda arşiv/yedek, merkezi K1-K5 kanıt toplayıcı ve ana liste sağlık workflow'ları salt okunur incelendi.
+- Yeni bulgu: `test_ana_liste_saglik.py::test_parallel_probe_results_keep_playlist_order` çok satırlı M3U fixture'ında çift kaçışlı newline kullanıyor; yeni depoda gerçek newline ve 12 satır parse edildiği assertion'ı ile düzelt. Eski depoya yazma.
+- K5 izole export/manifest regresyonu Actions run `39868459061`, SHA `a0469c34ec9a8642acffdddfbda55dadf9d39aba`, `success`. Bu offline test kapısıdır; üretim/cihaz veya eski workflow parity kabulü değildir.
+- Kümülatif statik kaynak incelemesi 36/92; 56 kaldı. Davranışsal parity 0/92, runtime güvenlik 0/26, ana görevler 0/22. K5-19 defteri ve `DEVAM_NOTU.md` güncellendi.
+- Korunan playlist, EPG, favoriler, logolar, yedekler ve cihaz değişmedi; eski depo salt okunur kaldı; PR #71 merge edilmedi.

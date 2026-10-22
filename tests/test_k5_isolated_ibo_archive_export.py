@@ -1,5 +1,6 @@
 """K5 offline tests for create-only isolated IBO archive evidence."""
 import json
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -22,6 +23,23 @@ class K5IboArchiveExportTests(unittest.TestCase):
             self.assertFalse(result["production_writes"])
             with self.assertRaises(FileExistsError):
                 export_6115_archive_manifest(self.urls, destination)
+
+    def test_directory_sync_failure_rolls_back(self):
+        if not hasattr(os, "O_DIRECTORY"):
+            self.skipTest("Directory fsync unsupported")
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            original = os.fsync
+            calls = []
+            def fail_directory_sync(fd):
+                calls.append(fd)
+                if len(calls) == 2:
+                    raise OSError("fixture directory sync failure")
+                return original(fd)
+            with patch("madsc.isolated_ibo_archive_export.os.fsync", side_effect=fail_directory_sync):
+                with self.assertRaisesRegex(OSError, "directory sync failure"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(destination.exists())
 
     def test_export_bytes_end_with_one_real_newline(self):
         with TemporaryDirectory() as tmp:

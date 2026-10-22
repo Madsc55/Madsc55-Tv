@@ -57,7 +57,7 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
                             or not {"input_path", "output_label", "output_path"}
                             <= row["declared_file_binding"].keys()
                             or any(not isinstance(row["declared_file_binding"][field], str)
-                                   or not row["declared_file_binding"][field]
+                                   or not row["declared_file_binding"][field].strip()
                                    for field in ("input_path", "output_label", "output_path"))))
                    for row in workflow_rows)):
         raise ValueError("Malformed replacement workflow catalog")

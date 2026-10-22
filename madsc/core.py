@@ -192,7 +192,7 @@ def execute(category: str) -> dict:
                                     "docs/LEGACY_SOURCE_SCOPE.json").read_text(encoding="utf-8"))
         pair_preparation = compare_provenance_bound_batch(source_catalog, {},
             replacement_workflow_root=Path(__file__).resolve().parents[1])
-        history_rows = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
+        history_rows = [{"id": i, "head_branch": "fixture", "created_at": f"2026-10-22T{(i - 4) // 60:02d}:{(i - 4) % 60:02d}:00Z",
                          "status": "in_progress" if i == 104 else "completed",
                          "conclusion": None if i == 104 else "failure"} for i in range(104, 4, -1)]
         old_failures = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",

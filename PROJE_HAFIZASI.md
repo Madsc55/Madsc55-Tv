@@ -2477,3 +2477,11 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Run `39864659684` bu test için queued; CI sonucu gelmeden kabul etme.
 - Daha önce başarılı run `39864450322`: 981 test, 97 Python dosyası/78 mutasyon adayı; runtime/production kabulü değil.
 - K5 kaynak sözleşmesi `docs/legacy-workflow-contracts/madsc-documentation-check.json`; eşdeğerlik hâlâ doğrulanmadı.
+
+
+## 23 Ekim 2026 — K1/K5 güncel doğrulama notu
+- Run `39864659684` SHA `6e1916a` başarıyla tamamlandı: 982 test, beşli fixture gate ve tüm offline gate'ler başarılı. Güncel main'de sonraki değişiklikler yalnızca doküman; kod/test ağacı aynı.
+- K1-03 statik tarama: 97 Python dosyası, 78 mutation adayı. Her aday review_required; lexical guard varlığı global enforcement kanıtı değildir.
+- Üç guard-before-mkdir sınırı CI ile doğrulandı: `madsc/core.py::run`, `madsc/isolated_playlist_bundle.py::export_isolated_previews`, `madsc/fixture_report_writer.py::_prepare_fixture_root`.
+- K5: `docs/legacy-workflow-contracts/madsc-documentation-check.json` kaynak workflow'un tetikleyici/izin/komutlarını belgeliyor; yeni replacement ve karşılaştırmalı execution kanıtı yok.
+- Açık sayaçlar: K1 0/26, eski workflow eşdeğerliği 0/92, ana görevler 0/22. CI üretim onayı değildir; canlı veriler korunuyor ve PR #71 birleştirilmedi.

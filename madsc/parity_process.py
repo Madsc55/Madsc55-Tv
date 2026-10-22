@@ -51,12 +51,18 @@ def observe_process(argv, *, cwd, timeout_seconds):
                         timed_out = True
                         kill_group()
                         process.wait()
-                        # Drain bytes already in the pipes after killing all writers.
-                        for key in list(selector.get_map().values()):
-                            while True:
+                        # Signal delivery to descendants is asynchronous. Drain
+                        # with readiness notifications until EOF, never block on
+                        # an escaped process retaining a pipe indefinitely.
+                        cleanup_deadline = time.monotonic() + 1
+                        while selector.get_map():
+                            if time.monotonic() >= cleanup_deadline:
+                                raise RuntimeError('Process pipes did not close after timeout')
+                            for key, _ in selector.select(0.05):
                                 chunk = os.read(key.fd, 65536)
                                 if not chunk:
-                                    break
+                                    selector.unregister(key.fileobj)
+                                    continue
                                 buffers[key.data].extend(chunk)
                                 if len(buffers[key.data]) > MAX_CAPTURE_BYTES:
                                     raise ValueError('Parity process output exceeds capture limit')

@@ -124,25 +124,29 @@ jobs:
         env:
           RUN_ID: ${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
+        id: parity_consumer
         shell: bash
         run: |
           if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then sha256sum reports/k2-input.m3u > reports/parity-input-before.sha256; fi
+          if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then
+            python -m madsc.parity_consumer_cli --consumer k5 --timeout-seconds 120
+          else
           set +e
           python -m madsc.artifact_transport produce --path reports/k2-candidates.json --source reports/k2-input.m3u --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
           consumer_status=$?
           set -e
-          if [[ "$consumer_status" -ne 0 ]]; then
-            if [[ "${{ inputs.allow_parity_evidence }}" == "true" && -f reports/k2-candidates.json ]]; then
-              python -m madsc.parity_snapshot_cli --exit-code "$consumer_status" --output candidates=reports/k2-candidates.json --output-root . || echo "WARNING: failure snapshot unavailable; preserving original consumer exit status" >&2
-            fi
-            exit "$consumer_status"
+          exit "$consumer_status"
           fi
-      - name: Upload failed consumer snapshot (explicit opt-in only)
-        if: ${{ failure() && !cancelled() && inputs.allow_parity_evidence == true }}
+      - name: Başarısız tüketicinin ölçülen tanı dosyalarını sakla (açık opt-in)
+        if: ${{ always() && !cancelled() && inputs.allow_parity_evidence == true && steps.parity_consumer.outcome == 'failure' }}
         uses: actions/upload-artifact@v4
         with:
           name: madsc-k2-failed-consumer-snapshot
-          path: reports/madsc-parity-snapshot.json
+          path: |
+            reports/parity-process-stdout.log
+            reports/parity-process-stderr.log
+            reports/parity-process-outcome.json
+            reports/madsc-parity-snapshot.json
           if-no-files-found: ignore
           retention-days: 14
       - name: K2 fixture history input
@@ -173,18 +177,21 @@ jobs:
         if: ${{ inputs.allow_parity_evidence == true }}
         run: python -m madsc.parity_snapshot_cli --exit-code 0 --output candidates=reports/k2-candidates.json --output-root .
       - name: Manifest öncesi girdi değişmezliğini doğrula (açık opt-in)
-        if: ${{ inputs.allow_parity_evidence == true }}
+        id: parity_input_before
+        if: ${{ always() && !cancelled() && inputs.allow_parity_evidence == true && (steps.parity_consumer.outcome == 'success' || steps.parity_consumer.outcome == 'failure') }}
         shell: bash
         run: sha256sum --check --status reports/parity-input-before.sha256
       - name: K2 aktarım girdisi ve çıktı kanıtını bağla (açık opt-in)
-        if: ${{ inputs.allow_parity_evidence == true }}
+        id: parity_manifest
+        if: ${{ always() && !cancelled() && inputs.allow_parity_evidence == true && steps.parity_input_before.outcome == 'success' }}
         run: python -m madsc.parity_manifest_cli --input reports/k2-input.m3u --snapshot reports/madsc-parity-snapshot.json --input-digest-receipt reports/parity-input-before.sha256 --workflow-path .github/workflows/madsc-05-bakim.yml --output-root .
       - name: Manifest sonrası girdi değişmezliğini doğrula (açık opt-in)
-        if: ${{ inputs.allow_parity_evidence == true }}
+        id: parity_input_after
+        if: ${{ always() && !cancelled() && inputs.allow_parity_evidence == true && steps.parity_manifest.outcome == 'success' }}
         shell: bash
         run: sha256sum --check --status reports/parity-input-before.sha256
       - name: Upload K2 handoff parity manifest (explicit opt-in only)
-        if: ${{ inputs.allow_parity_evidence == true }}
+        if: ${{ always() && !cancelled() && inputs.allow_parity_evidence == true && steps.parity_input_after.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: madsc-k2-handoff-parity-evidence

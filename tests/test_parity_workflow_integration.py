@@ -84,26 +84,30 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
                                 data.index("path: reports/madsc-parity-evidence.json"))
                 self.assertIn('inputs.allow_parity_evidence', data)
 
-    def test_failed_consumers_keep_nonzero_exit_and_optional_snapshot(self):
-        cases = {
-            "madsc-01-guvenlik.yml": "guard=reports/k1-guard.txt",
-            "madsc-04-yedek.yml": "restore=reports/k4-restore-drill.json",
-            "madsc-05-bakim.yml": "candidates=reports/k2-candidates.json",
-        }
-        for filename, observation in cases.items():
-            data = (WORKFLOWS / filename).read_text(encoding="utf-8")
+    def test_measured_consumers_fail_without_continue_on_error(self):
+        for filename, key in (("madsc-01-guvenlik.yml", "k1"),
+                              ("madsc-04-yedek.yml", "k4"),
+                              ("madsc-05-bakim.yml", "k5")):
+            data = (WORKFLOWS / filename).read_text()
+            steps = re.split(r"(?=^      - name: )", data, flags=re.MULTILINE)
+            consumer = next(step for step in steps if "id: parity_consumer" in step)
             with self.subTest(workflow=filename):
-                self.assertIn("consumer_status=", data)
-                self.assertIn('if [[ "$consumer_status" -ne 0 ]]; then', data)
-                self.assertIn('exit "$consumer_status"', data)
-                self.assertIn("preserving original consumer exit status", data)
-                self.assertIn("|| echo", data)
-                self.assertIn('--exit-code "$consumer_status"', data)
-                self.assertIn("--output " + observation, data)
-                self.assertLess(data.index('--exit-code "$consumer_status"'),
-                                data.index('exit "$consumer_status"'))
-                self.assertLess(data.index('exit "$consumer_status"'),
-                                data.index('python -m madsc.parity_snapshot_cli --exit-code 0'))
+                self.assertIn(f"python -m madsc.parity_consumer_cli --consumer {key} --timeout-seconds 120", consumer)
+                self.assertNotIn("continue-on-error", consumer)
+                self.assertIn('if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then', consumer)
+                self.assertIn("else", consumer)
+                for identity, prerequisite in (("parity_manifest", "parity_input_before"),
+                                               ("parity_input_after", "parity_manifest")):
+                    step = next(step for step in steps if f"id: {identity}" in step)
+                    self.assertIn("always() && !cancelled()", step)
+                    self.assertIn(f"steps.{prerequisite}.outcome == 'success'", step)
+                artifact = next(step for step in steps if "path: reports/madsc-parity-evidence.json" in step)
+                self.assertIn("steps.parity_input_after.outcome == 'success'", artifact)
+                diagnostics = next(step for step in steps if "-failed-consumer-snapshot" in step)
+                self.assertIn("steps.parity_consumer.outcome == 'failure'", diagnostics)
+                self.assertIn("always() && !cancelled()", diagnostics)
+                for path in ('stdout.log', 'stderr.log', 'outcome.json'):
+                    self.assertIn('reports/parity-process-' + path, diagnostics)
 
     def test_failure_snapshot_shell_fallback_preserves_original_status(self):
         import subprocess
@@ -160,10 +164,10 @@ fi
                 self.assertEqual(len(matches), 1)
                 step = matches[0]
                 self.assertIn(
-                    "if: ${{ failure() && !cancelled() && inputs.allow_parity_evidence == true }}",
+                    "if: ${{ always() && !cancelled() && inputs.allow_parity_evidence == true && steps.parity_consumer.outcome == 'failure' }}",
                     step)
                 self.assertIn("uses: actions/upload-artifact@v4", step)
-                self.assertIn("path: reports/madsc-parity-snapshot.json", step)
+                self.assertIn("reports/madsc-parity-snapshot.json", step)
                 self.assertIn("if-no-files-found: ignore", step)
                 self.assertLess(data.index('exit "$consumer_status"'),
                                 data.index("name: " + artifact_name))
@@ -178,16 +182,17 @@ fi
                 r"(?:(?!^      [A-Za-z_][A-Za-z_0-9]*:).+\n)*?"
                 r"        default: false\s*$",
             )
-            parity_steps = [
-                step for step in re.split(r"(?=^      - name: )", data, flags=re.MULTILINE)
-                if (("madsc.parity_" in step
-                     or "path: reports/madsc-parity-evidence.json" in step)
-                    and "if: ${{ inputs.allow_parity_evidence == true }}" in step)
-            ]
-            self.assertEqual(len(parity_steps), 3, filename)
-            self.assertTrue(all(
-                "if: ${{ inputs.allow_parity_evidence == true }}" in step
-                for step in parity_steps), filename)
+            steps = re.split(r"(?=^      - name: )", data, flags=re.MULTILINE)
+            parity_steps = [step for step in steps
+                            if "madsc.parity_" in step or "-failed-consumer-snapshot" in step
+                            or "path: reports/madsc-parity-evidence.json" in step]
+            self.assertEqual(len(parity_steps), 5, filename)
+            for step in parity_steps:
+                if "id: parity_consumer" in step:
+                    self.assertIn('if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then', step)
+                else:
+                    self.assertIn("inputs.allow_parity_evidence == true", step)
+
 
 
 if __name__ == "__main__":

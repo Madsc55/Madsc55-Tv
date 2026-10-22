@@ -114,12 +114,28 @@ def audit_parity_workflow_readiness(root):
             binding = {"consumer_command": contract["consumer"],
                        "input_path": contract["manifest_input"].removeprefix("--input "),
                        "output_label": label, "output_path": output_path}
+        measured_contract_complete = False
+        if contract:
+            key = {".github/workflows/madsc-01-guvenlik.yml": "k1",
+                   ".github/workflows/madsc-04-yedek.yml": "k4",
+                   ".github/workflows/madsc-05-bakim.yml": "k5"}[relative_path]
+            measured_contract_complete = all(token in active for token in (
+                f"python -m madsc.parity_consumer_cli --consumer {key} --timeout-seconds 120",
+                "id: parity_consumer", "id: parity_input_before", "id: parity_manifest",
+                "id: parity_input_after", "always() && !cancelled()",
+                "steps.parity_input_before.outcome == 'success'",
+                "steps.parity_manifest.outcome == 'success'",
+                "steps.parity_input_after.outcome == 'success'",
+                "steps.parity_consumer.outcome == 'failure'",
+                "reports/parity-process-stdout.log", "reports/parity-process-stderr.log",
+                "reports/parity-process-outcome.json"))
         rows.append({
             "workflow_path": relative_path,
             "workflow_sha256": hashlib.sha256(raw).hexdigest(),
             "workflow_blob_sha": hashlib.sha1(
                 b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest(),
             "declared_file_binding": binding,
+            "controlled_process_contract_complete": measured_contract_complete,
             "input_digest_binding_complete": digest_binding_complete,
             "markers": markers,
             "marker_contract_complete": not missing,
@@ -191,7 +207,13 @@ def preflight_replacement_execution(root, origin):
     snapshot = origin.get("snapshot")
     compare_execution_snapshots(snapshot, snapshot)
     binding = row["declared_file_binding"]
-    if binding["output_label"] not in snapshot["outputs"]:
+    failed = snapshot["exit_code"] != 0 or snapshot["timed_out"]
+    diagnostic_labels = {"process_stdout", "process_stderr", "process_outcome"}
+    if failed:
+        if (row["controlled_process_contract_complete"] is not True
+                or set(snapshot["outputs"]) != diagnostic_labels):
+            raise ValueError("Failure snapshot is missing the contracted diagnostic outputs")
+    elif binding["output_label"] not in snapshot["outputs"]:
         raise ValueError("Snapshot is missing the contracted output label")
     digest = origin.get("input_sha256")
     if (not isinstance(digest, str) or len(digest) != 64
@@ -203,7 +225,9 @@ def preflight_replacement_execution(root, origin):
             "workflow_sha256": row["workflow_sha256"],
             "file_binding": dict(binding),
             "input_sha256": digest,
-            "contracted_output_sha256": snapshot["outputs"][binding["output_label"]],
+            "contracted_output_sha256": snapshot["outputs"].get(binding["output_label"]),
+            "snapshot_observation_mode": "failure_diagnostics" if failed else "consumer_output",
+            "diagnostic_output_sha256": dict(snapshot["outputs"]) if failed else {},
             "static_workflow_contract_checked": True,
             "input_digest_receipt_required_by_source": True,
             "input_bytes_independently_verified": False,

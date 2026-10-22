@@ -1,0 +1,87 @@
+{
+  "schema": "madsc-local-controlled-timeout-evidence-v1",
+  "base_commit": "c1fe77e309eaa6332c54add4d858058c7ee993de",
+  "command": "python -m madsc.offline_gate",
+  "result": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 632,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "yaml_validation": {
+    "parsed": 3,
+    "unique_step_ids_within_jobs": true,
+    "actionlint_run": false
+  },
+  "source_sha256": {
+    "madsc/parity_consumer_cli.py": "c2a16b9f88a1b22f04b6e26b4cff5e9d2e01d0c86870fc96850fe9471decee3a",
+    "madsc/parity_process.py": "9295d744b3468af93963352d27ca398ceea72aa8abcac051861612b5d5929eb1",
+    "madsc/parity_workflow_readiness.py": "09f28afcf7e544d7f08b030b74c972f573fd952a56987b7cec6910bb7cf5ab52",
+    "tests/test_parity_consumer_cli.py": "fd7e35fe4f9b3d39ae63bbd9d565c8e6e4d2788bb5cebcca598753baaad23a87",
+    "tests/test_parity_workflow_integration.py": "2c254f85c916a5f0af00c4310f375e7b21176eaa6abfa8d05334b7c2d5b1784e",
+    ".github/workflows/madsc-01-guvenlik.yml": "5e120db8d1d52136c74b69bc584bac8d2207efeed13810733b8dd7a370cd8e4e",
+    ".github/workflows/madsc-04-yedek.yml": "9edaa0633eed9353eaa5589dd995748cb0fb54cdf58adce7ca437fe379e17a25",
+    ".github/workflows/madsc-05-bakim.yml": "e4cc294bd82a355c7077f09bd52a492af91bf16d55de31a76eb433fbe3082373"
+  },
+  "scenarios": [
+    "three real workflow consumer bodies with forced observed timeout: exit124 timed_out true; manifest and diagnostic static preflight succeed",
+    "controlled local K1 subprocess writes stderr then sleeps: bytes preserved at timeout",
+    "normal child exit124: timed_out false",
+    "K1/K5 invalid UTF8 real consumer errors: stderr and failure snapshot preserved; K5 has no normal report",
+    "input changes before or after failure manifest: publication check fails",
+    "existing evidence: consumer not started",
+    "evidence writer failure: measured consumer nonzero preserved",
+    "missing diagnostic roles rejected by static preflight",
+    "default-off success and input mutation scenarios remain covered"
+  ],
+  "failed_tests": [],
+  "actions_dispatched": false,
+  "live_probing": false,
+  "legacy_runtime_pairs_verified": 0,
+  "acceptance": {
+    "legacy": 0,
+    "runtime_security": 0,
+    "tasks": 0
+  },
+  "limitations": [
+    "GitHub Actions conditions reviewed in source and YAML parsed, not executed on GitHub",
+    "hard job timeout, cancellation or runner loss can prevent upload",
+    "output overflow/spawn/preflight/writer failure is not a complete measured snapshot",
+    "diagnostic artifact payload bytes still need independent GitHub origin/download/hash verification",
+    "source/input endpoint hashes are not atomic input freezing"
+  ],
+  "protected_data_changed": false
+}

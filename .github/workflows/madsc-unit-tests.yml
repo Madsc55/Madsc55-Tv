@@ -21,4 +21,16 @@ jobs:
         with:
           python-version: '3.12'
       - name: Offline Python regression suite
-        run: python -m madsc.offline_gate
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p reports
+          python -m madsc.offline_gate 2>&1 | tee reports/offline-gate.log
+      - name: Preserve offline test diagnostics
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc55-offline-test-log
+          path: reports/offline-gate.log
+          if-no-files-found: warn
+          retention-days: 14

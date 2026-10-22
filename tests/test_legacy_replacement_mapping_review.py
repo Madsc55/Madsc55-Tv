@@ -14,6 +14,7 @@ class MappingReviewTests(unittest.TestCase):
         self.inventory = {"workflows": [{"path": LEGACY, "git_blob_sha": "a" * 40}]}
         self.readiness = {"rows": [{
             "workflow_path": REPLACEMENT, "workflow_blob_sha": "b" * 40,
+            "input_classification": "isolated_file_bound",
             "declared_file_binding": {
                 "input_path": "input.txt", "output_label": "guard",
                 "output_path": "guard.txt"},
@@ -24,6 +25,10 @@ class MappingReviewTests(unittest.TestCase):
         }]}
         self.readiness["rows"].extend(
             {"workflow_path": path, "workflow_blob_sha": "c" * 40,
+             "input_classification": "external_or_live_input_blocked"
+             if path in (".github/workflows/madsc-02-kesif.yml",
+                         ".github/workflows/madsc-03-kanal-test.yml")
+             else "isolated_file_bound",
              "declared_file_binding": None,
              "marker_contract_complete": False,
              "static_file_binding_complete": False,
@@ -149,6 +154,17 @@ class MappingReviewTests(unittest.TestCase):
                 result = self.review([candidate])
                 self.assertEqual(result["static_contract_candidates"], 0)
                 self.assertEqual(result["rows"][0]["status"], "mapping_contract_blocked")
+
+    def test_invalid_input_classification_rejected(self):
+        self.readiness["rows"][0]["input_classification"] = "unknown"
+        with self.assertRaises(ValueError):
+            self.review([self.row])
+
+    def test_incomplete_file_classification_blocks_candidate(self):
+        self.readiness["rows"][0]["input_classification"] = (
+            "isolated_file_contract_incomplete")
+        result = self.review([self.row])
+        self.assertEqual(result["static_contract_candidates"], 0)
 
     def test_missing_rationale_rejected(self):
         with self.assertRaises(ValueError):

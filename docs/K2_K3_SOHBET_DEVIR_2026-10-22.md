@@ -53,3 +53,25 @@
 - 6477dc3: alternatifin ana kaynak diye kullanılmasını engelleyen ek koruma; henüz test çalıştırılmadı.
 - Diğer sohbetler aynı anda ortak kaynak snapshot, K3 evidence loader ve K1/K5 düzeltmelerini yaptı. Son görülen HEAD 65027d921d; her işlemden önce güncel HEAD ve blob SHA kontrol edilmeli.
 - Testler bu sohbet tarafından çalıştırılıp doğrulanmadı. Devir notunu gerçek yeşil test raporu yerine kullanma; yeni testler ve tüm K2/K3 paketi toplu doğrulanmalı. Üretim playlist/EPG/logo/favori/arşiv/yedek korunur; canlı probelar/Actions izinsiz başlatılmaz.
+
+## Sohbet birleştirme için son devir — 22 Ekim 2026
+
+**Bu sohbetin sahipliği:** K2 keşif / K2→K3 salt-okunur kanıt aktarımı ve bu sınırdaki regresyon testleri. Diğer sohbetler K1/K5, K2/K4, K3 ve ortak snapshot/entegrasyon işlerini paralel yaptı. Tek sohbette birleşirken yeni görev sahipliği dağıt; aynı düzeltmeleri yeniden yapma. Her düzenlemeden önce güncel main commit'i ve hedef dosyanın SHA'sını yeniden oku, eşzamanlı commit varsa yeniden dene, zorla üzerine yazma.
+
+**Bu sohbetin son kod/test commit'leri:**
+- 17a4fa7, d69ab20: keşif ham aday satırı ve bilinen URL sayısı 20.000 sınırı, regresyon.
+- 5f453f6, ba8f87e: sınır kontrollerini pahalı URL normalleştirmesinin önüne taşıma.
+- a178a3c, f568780: K2 keşifte geçersiz Unicode'u reddetme ve bozuk satırdan sonra sağlam satırı işleme testi.
+- 102269e, f629bde: normalize URL'nin UTF-8'e kodlanabilirliğini kontrol ve regresyon.
+- abc239c, 73b61d9: URL sunucu adı yazdırılamayan karakter doğrulaması ve test.
+- b97b8bc, a5bd63c: K2→K3 aktarılan metadata'nın canonical kırpılmış biçimi ve test.
+- 9d54308, 475733b: aktarım metadata'sında Unicode surrogate reddi ve test.
+- 6477dc3: alternatifin kendisi alternatifse ana kaynak olarak kullanmayı reddetme.
+- 7b1bac6, 888137f: alternatif ilişki SHA-256 kimliklerinin canonical biçimi ve test.
+- 5b7f7e1, c63cb1b: probe/süreklilik/IBO kanıt anahtarlarının canonical SHA-256 biçimi ve test.
+- 21bf6d1, 17e6299: probe/süreklilik/IBO kanıt haritalarında 20.000 sınırı ve test.
+- 8c60ccc, 494b47a: doğrudan aktarımda aday/alternatif sayısı 20.000 sınırı ve test.
+
+**Son görülen kendi test commit'i:** 73b61d90304b21c500f4fa8c1104a8d4ab2b8113. Paralel sohbetler main'e daha yeni commit'ler göndermiş olabilir; bunu HEAD sanma.
+
+**Gerçek durum / eksikler:** Kod ve test dosyaları GitHub'a kaydedildi, ancak son commit'ler için başarılı test koşusu doğrulanmadı. 22 Ekim GitHub Actions geçmişinde eski commit'lere ait başarılı offline unit test koşuları var; bunlar güncel main'in yeşil olduğu anlamına gelmez. Birleştirme sonrası ilk iş: tüm yeni testleri gerçekten çalıştır, hataları düzelt, K1–K5 entegrasyon kapılarını ve K2–K3 gerçek uçtan uca kabulünü doğrula. 92 eski workflow davranışsal eşdeğerliğinin ve 99 workflow envanterinin tamamlandığını varsayma; bağımsız kanıt gerekir. Üretim playlist/EPG/XMLTV/logolar/favoriler/arşiv/yedekler korunacak; canlı stream probe ve workflow tetiklemesi açık onay olmadan yapılmayacak. [skip ci] ile işlenen commit'ler CI kanıtı sayılmaz.

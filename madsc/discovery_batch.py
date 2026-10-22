@@ -51,15 +51,18 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
             if separator < 0 or quoted:
                 pending = None
                 errors.append({"line": number, "reason": "missing_channel_name"})
+                discard_url_for_rejected_entry = True
                 continue
             meta, title = line[:separator], line[separator + 1:]
             if not title.strip():
                 pending = None
                 errors.append({"line": number, "reason": "empty_channel_name"})
+                discard_url_for_rejected_entry = True
                 continue
             if meta.count('"') % 2:
                 pending = None
                 errors.append({"line": number, "reason": "unbalanced_metadata_quotes"})
+                discard_url_for_rejected_entry = True
                 continue
             attr_pairs = ATTR.findall(meta)
             # Do not silently discard malformed identity-related attributes.

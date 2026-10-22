@@ -18,6 +18,8 @@ def _sha256_regular_file(path):
     if path.is_symlink():
         raise PermissionError("Symlink parity observation is forbidden")
     flags = os.O_RDONLY
+    if hasattr(os, "O_NONBLOCK"):
+        flags |= os.O_NONBLOCK
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
     descriptor = os.open(path, flags)
@@ -36,6 +38,19 @@ def _sha256_regular_file(path):
             if total > MAX_OBSERVED_FILE_BYTES:
                 raise PermissionError("Oversized parity observation")
             digest.update(chunk)
+        # A digest of changing bytes must not become execution evidence.
+        # Check both the open descriptor and the pathname: replacement/unlink
+        # can leave an unchanged descriptor referring to an obsolete inode.
+        after = os.fstat(descriptor)
+        try:
+            current = path.lstat()
+        except OSError as exc:
+            raise ValueError("Parity file disappeared during read") from exc
+        def version(info):
+            return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns,
+                    info.st_ctime_ns, info.st_nlink)
+        if version(metadata) != version(after) or version(after) != version(current):
+            raise ValueError("Parity file changed during read")
         return digest.hexdigest()
     finally:
         os.close(descriptor)

@@ -1,0 +1,59 @@
+{
+  "mode": "offline_local",
+  "scope": "unit_regression_and_isolated_five_stage_fixture",
+  "production_acceptance": false,
+  "legacy_92_behavioral_acceptance": 0,
+  "runtime_security_26_acceptance": 0,
+  "test_exit_code": 0,
+  "timed_out": false,
+  "tests_discovered": 598,
+  "tests_passed": true,
+  "five_stage_fixture_gate_passed": true,
+  "all_offline_gates_passed": true,
+  "workflow_and_task_inventory_passed": true,
+  "auxiliary_workflows_mapped": 10,
+  "auxiliary_commands_integrated_in_main": 10,
+  "task_requirements_inventoried": 22,
+  "legacy_scope_source_workflows": 99,
+  "legacy_scope_behavior_workflows": 92,
+  "legacy_scope_excluded": [
+    ".github/workflows/k1-protected-write-tests.yml",
+    ".github/workflows/madsc-01-guvenlik.yml",
+    ".github/workflows/madsc-02-kesif.yml",
+    ".github/workflows/madsc-03-kanal-test.yml",
+    ".github/workflows/madsc-04-arsiv-yedek.yml",
+    ".github/workflows/madsc-05-genel-bakim.yml",
+    ".github/workflows/madsc-hizli-on-kontrol.yml"
+  ],
+  "workflow_inventory_error": null,
+  "task_inventory_error": null,
+  "five_stage_fixture_categories": {
+    "k1": "success",
+    "k2": "success",
+    "k3": "success",
+    "k4": "success",
+    "k5": "success"
+  },
+  "five_stage_fixture_errors": {},
+  "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification.",
+  "tested_base_commit": "53ca334a0eb7b209251f41b06909e5ebb0cfdf85",
+  "tested_files_sha256": {
+    "madsc/parity_manifest_cli.py": "647e14447b92b8df73a3d9ed208da3615b83b1c3c7d2ce76566de4138194d746",
+    "madsc/parity_snapshot_writer.py": "9ef04c3d806d88a6848eb0eb447d68783b765fb9b08a38047c488066b684bc49",
+    "tests/test_parity_file_boundaries.py": "802d9348ec4a3958723fa6b26b08d00e428115842dbd691ef7f07d0c5faf505a"
+  },
+  "resolved_failures": [
+    {
+      "case": "FIFO manifest/snapshot",
+      "before": "both timed out after 2s",
+      "after": "PermissionError before any reports output"
+    },
+    {
+      "case": "input/output mutation",
+      "before": "two expected ValueErrors not raised",
+      "after": "modified/replaced input refused without evidence output"
+    }
+  ],
+  "network_probes_performed": false,
+  "github_actions_started": false
+}

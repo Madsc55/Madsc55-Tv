@@ -30,6 +30,7 @@ jobs:
         run: |
           mkdir -p reports/k4-source/nested
           printf 'k4 fixture backup and restore\\n' > reports/k4-source/nested/sample.txt
+          if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then sha256sum reports/k4-source/nested/sample.txt > reports/parity-input-before.sha256; fi
           python -m madsc.restore_drill --source reports/k4-source --file nested/sample.txt --output reports/k4-restore-drill.json
       - name: Upload K4 restore drill evidence
         uses: actions/upload-artifact@v4
@@ -41,9 +42,17 @@ jobs:
       - name: Snapshot K4 restore drill output (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         run: python -m madsc.parity_snapshot_cli --exit-code 0 --output restore=reports/k4-restore-drill.json --output-root .
+      - name: Verify unchanged parity input before manifest (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        shell: bash
+        run: sha256sum --check --status reports/parity-input-before.sha256
       - name: Bind K4 parity input and snapshot (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         run: python -m madsc.parity_manifest_cli --input reports/k4-source/nested/sample.txt --snapshot reports/madsc-parity-snapshot.json --workflow-path .github/workflows/madsc-04-yedek.yml --output-root .
+      - name: Verify unchanged parity input after manifest (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        shell: bash
+        run: sha256sum --check --status reports/parity-input-before.sha256
       - name: Upload K4 parity manifest (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         uses: actions/upload-artifact@v4

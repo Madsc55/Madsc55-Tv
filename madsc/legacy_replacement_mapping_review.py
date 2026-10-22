@@ -42,6 +42,7 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
                    or not required_contract <= row.keys()
                    or not isinstance(row["workflow_path"], str)
                    or row["workflow_path"] not in CENTRAL_REPLACEMENT_WORKFLOWS
+                   or not isinstance(row["declared_file_binding"], (dict, type(None)))
                    or row["input_classification"] not in (
                        "isolated_file_bound", "isolated_file_contract_incomplete",
                        "external_or_live_input_blocked")

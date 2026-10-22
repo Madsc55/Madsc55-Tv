@@ -172,6 +172,19 @@ class BackupManifestHardeningTests(unittest.TestCase):
             with self.assertRaises(OSError):
                 os.fstat(opened[-1])
 
+    def test_secure_source_open_rejects_traversal_components(self):
+        from madsc import backup as module
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "safe.txt").write_bytes(b"safe")
+            for parts in (("..", "outside.txt"), (".", "safe.txt"),
+                          ("", "safe.txt"), ("nested/sibling",),
+                          ("nested\\\\sibling",), ("safe.txt", "..")):
+                with self.subTest(parts=parts):
+                    with self.assertRaisesRegex(ValueError, "Unsafe backup source path"):
+                        module._open_relative_file_nofollow(root, parts)
+            self.assertEqual((root / "safe.txt").read_bytes(), b"safe")
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

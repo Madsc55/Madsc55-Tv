@@ -1,5 +1,6 @@
 """Offline regression for the same bounded K2/K3 source snapshot."""
 import hashlib
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -23,12 +24,41 @@ class SharedSnapshotTests(unittest.TestCase):
                  patch.object(k2, "write_fixture_report") as k2_write:
                 k2.run(snapshot)
                 self.assertEqual(k2_write.call_count, 1)
-                k2_report = __import__("json").loads(k2_write.call_args.args[2])
+                k2_report = json.loads(k2_write.call_args.args[2])
                 rows = list(k3.candidates(k3_evidence, snapshot))
             self.assertEqual(len(rows), 2)
             self.assertEqual(k2_report["source_sha256"], hashlib.sha256(raw).hexdigest())
             self.assertEqual(k2_report["source_sha256"], k3_evidence["source_sha256"])
             self.assertEqual(k2_report["source_bytes"], k3_evidence["source_bytes"])
+
+    def test_reconciliation_accepts_same_snapshot_without_playback_claim(self):
+        from madsc.online_evidence_reconcile import reconcile
+        from madsc.discovery import normalize_url
+        raw = (b"#EXTM3U\n"
+               b"#EXTINF:-1,One\nhttps://example.org/one\n"
+               b"#EXTINF:-1,Two\nhttps://example.org/two\n")
+        with TemporaryDirectory() as d:
+            snapshot = Path(d) / "snapshot.m3u"
+            snapshot.write_bytes(raw)
+            with patch.object(k2, "write_fixture_report") as write_report:
+                k2.run(snapshot)
+            k2_report = json.loads(write_report.call_args.args[2])
+            k3_evidence = {}
+            rows = list(k3.candidates(k3_evidence, snapshot))
+            results = [
+                {"url_sha256": hashlib.sha256(normalize_url(url).encode()).hexdigest(),
+                 "hls_manifest_seen": True}
+                for _, url in rows
+            ]
+            k3_report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
+                         "source": k3.SOURCE, **k3_evidence,
+                         "production_playlist_modified": False, "results": results}
+            joined = reconcile(k2_report, k3_report)
+            self.assertEqual(joined["matched_by_digest"], 2)
+            self.assertEqual(joined["matched_manifest_seen"], 2)
+            self.assertFalse(joined["production_ready"])
+            self.assertFalse(joined["audio_video_verified"])
+            self.assertFalse(joined["device_verified"])
 
     def test_rejects_oversize_shared_snapshot(self):
         with TemporaryDirectory() as d:

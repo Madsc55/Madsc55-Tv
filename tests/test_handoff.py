@@ -306,3 +306,16 @@ class HandoffTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Too many alternatives"):
             assess_candidates({"candidates": [], "alternatives": [{}] * 20001}, {})
 
+
+    def test_direct_handoff_rejects_oversized_evidence_maps(self):
+        discovery = {"candidates": []}
+        huge = {str(i): {} for i in range(20001)}
+        for kind in ("probe", "continuity", "ibo"):
+            with self.subTest(kind=kind), self.assertRaisesRegex(ValueError, "Too many"):
+                if kind == "probe":
+                    assess_candidates(discovery, huge)
+                elif kind == "continuity":
+                    assess_candidates(discovery, {}, continuity_samples=huge)
+                else:
+                    assess_candidates(discovery, {}, ibo_results=huge)
+

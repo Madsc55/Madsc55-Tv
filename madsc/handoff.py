@@ -60,7 +60,7 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         tvg_id = candidate.get("tvg_id", "")
         if not isinstance(tvg_id, str):
             raise ValueError("Invalid candidate tvg-id")
-        if tvg_id != tvg_id.strip() or any(ord(ch) < 32 or ord(ch) == 127 or ch == "\\" for ch in tvg_id):
+        if tvg_id != tvg_id.strip() or any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF or ch == "\\" for ch in tvg_id):
             raise ValueError("Unsafe candidate tvg-id")
         name = candidate.get("name", "")
         logo = candidate.get("tvg_logo", "")
@@ -68,7 +68,7 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         if any(not isinstance(value, str) for value in (name, logo, group)):
             raise ValueError("Invalid candidate display metadata")
         if (not name.strip() or any(value != value.strip() for value in (name, logo, group))
-                or any(ord(ch) < 32 or ord(ch) == 127 or ch == "\\" for value in (name, logo, group) for ch in value)):
+                or any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF or ch == "\\" for value in (name, logo, group) for ch in value)):
             raise ValueError("Unsafe candidate display metadata")
         probe = probes.get(digest)
         if probe is None:

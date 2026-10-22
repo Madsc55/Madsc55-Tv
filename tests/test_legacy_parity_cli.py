@@ -2,6 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 from madsc.legacy_parity_cli import run, load_json
 
 
@@ -47,6 +48,33 @@ class LegacyParityCliTests(unittest.TestCase):
                 run(source, snapshots, root / "alias" / "report.json")
             self.assertEqual(list(outside.iterdir()), [])
             self.assertEqual(before, (source.read_bytes(), snapshots.read_bytes()))
+
+    def test_output_symlink_swap_after_preflight_never_overwrites_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            inventory = {"source_repository": "Madsc55/madsc-tv",
+                         "source_branch": "madsc/bes-sistem-toplu-birlestirme",
+                         "workflows": [{"path": f".github/workflows/w{i:02}.yml"}
+                                       for i in range(99)]}
+            source = root / "inventory.json"
+            snapshots = root / "snapshots.json"
+            output = root / "result.json"
+            protected = root / "do-not-change.txt"
+            source.write_text(json.dumps(inventory))
+            snapshots.write_text("{}")
+            protected.write_text("original")
+            from madsc.legacy_parity_cli import enforce_local_output_path
+            calls = [0]
+            def swap_after_validation(path):
+                enforce_local_output_path(path)
+                calls[0] += 1
+                if calls[0] == 2:
+                    output.symlink_to(protected)
+            with patch("madsc.legacy_parity_cli.enforce_local_output_path",
+                       side_effect=swap_after_validation), self.assertRaises(OSError):
+                run(source, snapshots, output)
+            self.assertEqual(calls[0], 2)
+            self.assertEqual(protected.read_text(), "original")
 
     def test_duplicate_json_keys_are_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:

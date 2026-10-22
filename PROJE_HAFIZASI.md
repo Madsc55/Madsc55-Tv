@@ -1898,3 +1898,11 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - ZIP boyutu 2 MiB, manifest 1 MiB ile sınırlı; extra entry, symlink, compression bomb oranı, bozuk ZIP/UTF-8/JSON ve duplicate key reddedilir. İki artifact aynı input hash taşımadan pair doğrulanmaz.
 - Nihai yerel sonuç 576 test + K1–K5 fixture gates success; docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET7.json. Fixture yine acceptance değildir: 0/92, 0/26, 0/22.
 - Geçmiş artifactler bu v1 manifestini taşımadığı için geriye dönük kabul yok. Sıradaki güvenli kod işi: yeni beşli opt-in parity artifact üretimini bu şemaya bağlamak; gerçek Actions yalnız ayrı izinle.
+
+
+## 22 Ekim 2026 — K5 replacement parity manifest üretimi
+- Kod c5a7060684e57f1e35d2b367e1757d5901dfcafb: parity_manifest_writer gerçek, bounded input baytlarını SHA256 ile bağlar; execution snapshotını mevcut sıkı şemayla doğrular ve deterministik madsc-parity-artifact-v1 JSON üretir.
+- Çıktı sabit reports/madsc-parity-evidence.json yolunda ortak K1 write_fixture_report kapısından geçer. Mevcut hedef, symlink reports dizini, yanlış repo/dal/workflow, boş/büyük input ve bozuk snapshot yazı başlamadan reddedilir. Sonuç açıkça behavioral_parity_accepted=false ve production_ready=false taşır.
+- Replacement workflow allowlist'i depodaki gerçek kurulumla eşitlendi: madsc-01-guvenlik.yml, madsc-02-kesif.yml, madsc-03-kanal-test.yml, madsc-04-yedek.yml, madsc-05-bakim.yml. Önceki yanlış K4/K5 replacement adları kaldırıldı; legacy scope exclusion isimleri değiştirilmedi.
+- Offline sonuç: 580 test ve K1–K5 fixture gates success; 92+7 kapsam ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET8.json. Actions/live probe/production write yok; 0/92, 0/26, 0/22 değişmedi.
+- Açık: üretici henüz gerçek job davranış girdisi/snapshot çağrılarına bağlanmış bir CLI değil. Eski read-only workflow artifactlerinde v1 manifest yok. Sonraki güvenli iş input dosyasını yerinde hashleyen opt-in CLI ve yalnız gerçek job verisi mevcutken workflow bağlantısı; deklaratif hash tek başına kabul edilmeyecek.

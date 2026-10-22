@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: b1be6c247b769bc911773ed35d30b5991875b913
+Son geliştirme commit SHA: c5a7060684e57f1e35d2b367e1757d5901dfcafb
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -100,3 +100,12 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Bu, gelecek artifactlerin üretim kontratıdır; geçmiş run artifactleri bu manifest şemasıyla üretilmediği için geriye dönük 92 kabulü yaratmaz. behavioral_parity_accepted=false ve production_ready=false.
 - Sıradaki somut iş: beşli workflow'ların opt-in parity artifact üretim yolunu bu manifest şemasına bağla; eski taraf için salt-okunur gerçek 92 run artifacti yoksa açık blocker olarak bırak. Actions izni olmadan çalıştırma.
 - Kabul 0/92, 0/26, 0/22; korunan dosyalar/eski depo/PR #71 değişmedi.
+
+## Sekizinci önemli geliştirme — K1 korumalı replacement manifest üreticisi
+- Son kod commit SHA: c5a7060684e57f1e35d2b367e1757d5901dfcafb; taban f4198b56cd9e3e40c45797cb9ae74b934a1fa043.
+- parity_manifest_writer gerçek input baytlarının SHA256'sından deterministik madsc-parity-artifact-v1 JSON üretir; snapshot şekli/digestleri mevcut fail-closed karşılaştırıcıyla doğrulanır. Çıktı yalnız reports/madsc-parity-evidence.json ve ortak K1 izole yazıcısı üzerinden exclusive-create/symlink/ancestor/root kontrolleriyle yazılır.
+- Üretici yalnız Madsc55/Madsc55-Tv, main ve depoda gerçekten kurulu beş workflow yolunu kabul eder. Önceki replacement kontratındaki var olmayan K4/K5 adları madsc-04-arsiv-yedek.yml ve madsc-05-genel-bakim.yml düzeltilerek madsc-04-yedek.yml ve madsc-05-bakim.yml oldu. Eski adlar pinned legacy 92+7 kapsam dışlamasında aynen ve doğru biçimde kalır.
+- Yerel python -m madsc.offline_gate: 580 test, beş izole K kapısı, 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri başarılı. Başarısız test yok; path-scoped git diff --check temiz. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET8.json.
+- Actions, canlı probe, cihaz veya üretim yazması yapılmadı. Manifest üretimi artifact upload/origin doğrulaması veya parity kabulü değildir; sayaçlar 0/92, 0/26, 0/22.
+- Açık engel: eski salt-okunur 92 workflow artifactlerinde v1 manifest üretimi yok. Gerçek aynı-girdi çifti için iki tarafta gerçek davranış girdisi ve snapshot üretimi gerekir; eski tarafa yazmadan bu tur tamamlanamaz.
+- Sıradaki güvenli adım: replacement üreticisini gerçek davranış girdisi ve snapshotı olan açık opt-in job çağrılarına bağlayacak CLI/iş akışı kontratını ekle. Yalnız beyan edilen hash kabul etme; input baytını yerinde hashle. Actions izni olmadan çalıştırma ve legacy kabulü verme.

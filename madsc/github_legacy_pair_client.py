@@ -2,9 +2,11 @@
 
 The caller supplies bounded snapshots and declared identities.  This module
 independently reads each run, its artifact listing, and the workflow blob at
-the recorded head SHA.  It never dispatches Actions or downloads artifacts.
+the recorded head SHA. Optional bounded ZIP downloads bind API origins to bytes.
+It never dispatches Actions or writes production data.
 """
 from urllib.parse import quote
+from urllib.request import HTTPRedirectHandler
 import re
 
 from madsc.github_history_client import github_json
@@ -173,3 +175,76 @@ def verify_provenance_pair_api(legacy_path, legacy_blob_sha, pair, *, token=None
         "behavioral_parity_accepted": False,
         "production_ready": False,
     }
+
+
+# Artifacts are downloaded only after both independent API origins pass.
+# Redirects to signed storage URLs must not receive the GitHub bearer token.
+def _artifact_opener():
+    from urllib.request import build_opener
+    return build_opener(_ArtifactRedirectHandler())
+
+
+class _ArtifactRedirectHandler(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        from urllib.parse import urlsplit
+        parsed = urlsplit(newurl)
+        if parsed.scheme != "https" or parsed.username or parsed.password:
+            raise ValueError("Unsafe artifact redirect")
+        redirected = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if redirected is not None and parsed.netloc != "api.github.com":
+            redirected.remove_header("Authorization")
+        return redirected
+
+
+def download_execution_artifact(origin, *, token, opener=None):
+    """Read a bounded ZIP from its fixed GitHub artifact endpoint; never extract."""
+    from urllib.request import Request
+    from urllib.error import HTTPError, URLError
+    from madsc.legacy_pair_artifact import MAX_ARCHIVE_BYTES
+    repository = origin.get("repository") if isinstance(origin, dict) else None
+    artifact = origin.get("artifact") if isinstance(origin, dict) else None
+    if (repository not in {"Madsc55/madsc-tv", "Madsc55/Madsc55-Tv"}
+            or not isinstance(artifact, dict)
+            or type(artifact.get("id")) is not int or artifact["id"] <= 0
+            or not isinstance(token, str) or not token):
+        raise ValueError("Invalid artifact download identity or missing token")
+    request = Request(
+        f"https://api.github.com/repos/{repository}/actions/artifacts/{artifact['id']}/zip",
+        headers={"Authorization": "Bearer " + token,
+                 "Accept": "application/vnd.github+json",
+                 "User-Agent": "madsc55-parity-evidence"}, method="GET")
+    opener = _artifact_opener().open if opener is None else opener
+    try:
+        with opener(request, timeout=30) as response:
+            archive = response.read(MAX_ARCHIVE_BYTES + 1)
+    except (HTTPError, URLError, TimeoutError) as exc:
+        raise ValueError("GitHub parity artifact download failed") from exc
+    if not isinstance(archive, bytes) or not archive or len(archive) > MAX_ARCHIVE_BYTES:
+        raise ValueError("Invalid parity artifact download size")
+    return archive
+
+
+def verify_provenance_pair_evidence(legacy_path, legacy_blob_sha, pair, *,
+                                    token=None, fetch=github_json,
+                                    download=download_execution_artifact,
+                                    replacement_workflow_root=None):
+    """Bind API-verified independent executions to both actual ZIP manifests.
+
+    Snapshot agreement still requires semantic/side-effect review. No production
+    or behavioral acceptance is granted by this transport/evidence verification.
+    """
+    from madsc.legacy_pair_artifact import verify_provenance_pair_artifacts
+    if not isinstance(token, str) or not token:
+        raise ValueError("GitHub artifact token required")
+    api = verify_provenance_pair_api(
+        legacy_path, legacy_blob_sha, pair, token=token, fetch=fetch,
+        replacement_workflow_root=replacement_workflow_root)
+    archives = [download(pair[role], token=token) for role in ("legacy", "replacement")]
+    byte_proof = verify_provenance_pair_artifacts(
+        legacy_path, legacy_blob_sha, pair, *archives,
+        replacement_workflow_root=replacement_workflow_root)
+    return {**api, **byte_proof,
+            "independent_origin_api_verified": True,
+            "api_bound_artifact_bytes_verified": True,
+            "artifacts_downloaded": 2,
+            "behavioral_parity_accepted": False, "production_ready": False}

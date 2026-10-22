@@ -1,0 +1,974 @@
+{
+  "schema": "madsc-pair-api-byte-chain-v1",
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "base_commit": "cffae104160b69866b2da69d8b9130d99dd5649f",
+  "date": "2026-10-22",
+  "offline_report": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 776,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "five_stage_installation_inventory_passed": true,
+    "five_stage_installation_inventory_error": null,
+    "five_report_roundtrip_passed": true,
+    "five_report_roundtrip": {
+      "passed": true,
+      "reports_written": 5,
+      "reports_sha256": {
+        "madsc-batch-k1/k1.json": "3ca63bdd444762cc422ad3851a141ef3cb35b760ee6e81ea4e38657b2b92c39f",
+        "madsc-batch-k2/k2.json": "7325a2bdf46a3d91569660af02abd6ee3a1fc82e24a68ad44ff3889afa5ac62d",
+        "madsc-batch-k3/k3.json": "62d650a28fca89d14d48902d18831c90a9c168283bf86efa7950d42fffa790d1",
+        "madsc-batch-k4/k4.json": "185accc74ded1e3d3ee5e9db7192a8b81df58ab211349f34238f5006fd290398",
+        "madsc-batch-k5/k5.json": "eadfc5a45759be0f2d41202af2fece63b47d920d2cdc0700a245bc633de8ca1c"
+      },
+      "consumer_preserved_report_bytes": true,
+      "acceptance": {
+        "category_order": [
+          "k1",
+          "k2",
+          "k3",
+          "k4",
+          "k5"
+        ],
+        "categories": {
+          "k1": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "security",
+            "fixture_checks": 7,
+            "fixture_check_names": [
+              "audit_does_not_claim_runtime_gate",
+              "favorite_metadata_and_nested_logo_write_denied",
+              "fixture_report_write_guard",
+              "integrity_comparison",
+              "no_playlist_mutation",
+              "protected_write_paths_identified",
+              "valid_playlist"
+            ]
+          },
+          "k2": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "discovery",
+            "fixture_checks": 8,
+            "fixture_check_names": [
+              "both_m3u_and_m3u8",
+              "duplicates_separated",
+              "invalid_rejected",
+              "legacy_history_bridge_isolated",
+              "no_production_mutation",
+              "source_inventory_reconciled",
+              "sources_unchanged",
+              "unique_candidates"
+            ]
+          },
+          "k3": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "channel_testing",
+            "fixture_checks": 14,
+            "fixture_check_names": [
+              "ffprobe_json_fixture_not_live",
+              "handoff_read_only",
+              "ibo_fixture_not_live_device_evidence",
+              "ibo_report_not_device_verified",
+              "ibo_working_survives_technical_failure",
+              "k2_to_k3_handoff",
+              "legacy_390_offline_decode_contract",
+              "legacy_epg_logo_pilot_join",
+              "no_device_approval",
+              "no_production_approval",
+              "preliminary_classification",
+              "preliminary_not_approved",
+              "repeated_measurements_fixture_only",
+              "xmltv_id_matching"
+            ]
+          },
+          "k4": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "backup",
+            "fixture_checks": 7,
+            "fixture_check_names": [
+              "external_backup_not_claimed",
+              "independent_restore_reports_no_production_proof",
+              "manifest_integrity",
+              "restore_not_claimed",
+              "sandbox_copy_integrity",
+              "sandbox_restore_audit",
+              "three_tree_restore_fixture"
+            ]
+          },
+          "k5": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "maintenance",
+            "fixture_checks": 20,
+            "fixture_check_names": [
+              "all_92_pair_requirements_bound_without_acceptance",
+              "batch_failure_summary",
+              "candidate_k2_k3_k5_consistent",
+              "candidate_k2_k3_k5_join",
+              "candidate_metadata_counts",
+              "candidate_report_read_only",
+              "cross_category_handoff",
+              "failure_limit",
+              "five_categories",
+              "five_fixture_reports_successful",
+              "k1_guards_k5_report_write",
+              "k2_k3_k4_k5_candidate_restore_review",
+              "k4_corruption_blocks_k5_review",
+              "no_legacy_shutdown",
+              "no_schedule_activation",
+              "paginated_failure_history_blocks_retry",
+              "production_not_approved",
+              "read_only",
+              "separate_job_gate_not_false_writer_clearance",
+              "single_batch_no_extra_triggers"
+            ]
+          }
+        },
+        "k5_fixture_evidence_verified": true,
+        "five_isolated_reports_valid": true,
+        "runtime_rules_verified": false,
+        "legacy_92_behavioral_equivalence_verified": false,
+        "ibo_device_verified": false,
+        "external_restore_verified": false,
+        "production_ready": false,
+        "automatic_schedule_enabled": false
+      },
+      "independent_execution_evidence": false,
+      "production_ready": false
+    },
+    "workflow_and_task_inventory_passed": true,
+    "operational_contract_gate": {
+      "schema": "madsc-contract-gate-v1",
+      "checked": 10,
+      "missing_commands": [],
+      "pass": true,
+      "blocking_contract_gaps": [],
+      "static_gaps_total": 0,
+      "artifact_files_produced_verified": false,
+      "behavioral_parity_verified": false,
+      "production_writes": false
+    },
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "focused_tests": 16,
+  "source_sha256": {
+    ".github/workflows/01-guvenlik.yml": "5814d9360c8c5dc8a22d991030f30ba0b4d01d7adf442a8cd7f98d317725c1a3",
+    ".github/workflows/madsc-01-guvenlik.yml": "5e120db8d1d52136c74b69bc584bac8d2207efeed13810733b8dd7a370cd8e4e",
+    ".github/workflows/madsc-02-kesif.yml": "f0cc62f4c03fbe23936d9e1be483dabc7e6bf131f2e4bcbdd7640618e0db4c72",
+    ".github/workflows/madsc-03-kanal-test.yml": "e5bd44adfafde4ed85cec719f47bc60888eb4e5ab3aa03b67baf559f61239668",
+    ".github/workflows/madsc-04-yedek.yml": "9edaa0633eed9353eaa5589dd995748cb0fb54cdf58adce7ca437fe379e17a25",
+    ".github/workflows/madsc-05-bakim.yml": "159b58063ae023e2d0f722b46caa12c1ff643cfdc8edbf6499b39b766cdd93ee",
+    ".github/workflows/madsc-k2-legacy-multisource.yml": "a43442bf11b6bf07cea728ce5d0c42119cb3299d1c03a354168cb1b5c171110c",
+    ".github/workflows/madsc-k2-live-pilot.yml": "2bfda0639e33b9d763526ad7b301e0a3d07f10d93269cb57f99a36a0ea070754",
+    ".github/workflows/madsc-k2-real-history-source.yml": "42715441a31f45f435c56249ad6f9b565d3e821c354d4e6b5fcb2682c9e383f4",
+    ".github/workflows/madsc-k2-verified-history.yml": "96768018668923eb44ba93ba35fac91eb9b5674af41b6ff3b57a3cabf8917d6f",
+    ".github/workflows/madsc-k3-live-manifest-pilot.yml": "f769bf12c3d4e9b80602ae6c1d0b9d03ec637eb3f9e866fe4950d4495de784fc",
+    ".github/workflows/madsc-k3-turkish-tv-video.yml": "8655631893101de4b17352d8798773e711a84636269010d692ac44c36ed1971c",
+    ".github/workflows/madsc-legacy-99-bulk-audit.yml": "b4ff3c5add92e0d827f0548de5d6d0a62c180c9edcfeed4378da1a7dc62aef55",
+    ".github/workflows/madsc-legacy-notes-bulk-merge.yml": "42321b7240a8423d739dcaf0bb4357e83deef07d8d2823dd69b0a11dd2090f5c",
+    ".github/workflows/madsc-turkish-tv-batch.yml": "b97c939499f30da73c103ff943db09bd3ed37a5809224573974f282be570fe0a",
+    ".github/workflows/madsc-unit-tests.yml": "46de38ea11a02c818bd19a6811901e56ff425c07fae0a4bb5af3ecbb4950df18",
+    "madsc/LEGACY_WORKFLOW_ON_ENVANTER.md": "fe85bdeff9648c66511263848e83c6a80242f7ba17839b762cbeece74b357ead",
+    "madsc/__init__.py": "cdd3fec2ae853e3fa6d75cb4c7e3cb2693770c51fd727129f16837be57f1f807",
+    "madsc/artifact_handoff.py": "5dea57549aa2363ea047289ee53a532a093d676d75090480790045a3a45158b3",
+    "madsc/artifact_transport.py": "65af34e6722b6f7ec4470e75b1107a88646a639ca6651c22431d7a4b63b949ac",
+    "madsc/backup.py": "956246d55ff26a5ea49f92729215ee6769efdb4d42d23ba5bac0dabbd2bf4418",
+    "madsc/batch_acceptance.py": "3df5dfcfc9c0f66fcdaef64ac99449e8249d22916e1fc2f0a61102577f68206d",
+    "madsc/candidate_coordination.py": "a61033681c1fae7e87f6f84c6cc0589b24a82a8f6c3ec2ed1fd9bb7cd0235c3f",
+    "madsc/candidate_probe_link.py": "5b1f4937cb322384c336eab3d3992d286c4438570592469d6e860f4a6e2c0227",
+    "madsc/channel_catalog.py": "02e6f36b84e226e2b003f8a36548fb9f81202a3349ea49851bbc53c490728758",
+    "madsc/channel_presentation.py": "d05eaf42efd3d2b1db4865e9dd5bcc0fae5283de6e89f2454511a1a8e8b93419",
+    "madsc/channel_test.py": "4e251239b38878263b4a5328101d7b486d2a42dd82beddf5b2c61266c33e634d",
+    "madsc/ci_diagnostics.py": "d1425eb7a9bcd780adede2aab7f6a6e4fa69638aee4f714a47c86802c33bf099",
+    "madsc/core.py": "f19d96871ad8c544bf5e8e31137cf3ccf442dabfc7161a1ddb2ed52f77adfb90",
+    "madsc/dependencies.py": "8130dbeadb58e43179426b21cd515a378f3995c65db110ac6f7e506148031734",
+    "madsc/discovery.py": "a70fd9b67cfeacce747a9099cd51e6634f5798eb18b9c47572b6fd7cd849a7be",
+    "madsc/discovery_batch.py": "7a9fb4b9eb29cb18534693fe820150448d533678e3c1bdc2af95f8d74364c98e",
+    "madsc/epg.py": "5d979f9808062979c633d022b9f38ef32ad2b45b403b18980a981caa8801db71",
+    "madsc/epg_inventory.py": "22e42190cf52bfba34bfcea798feeb8f7177f25b932ed737a802d9bc25bcb47a",
+    "madsc/five_stage_installation.py": "465a87617a0212728f8e42302d7727a06d2092d31c88aad85462ddc4cda3be33",
+    "madsc/five_system_channel_flow.py": "aa4e99af0281d2f2c15e053f43964a957d9eebbcf41a717ec9d6829568ca685d",
+    "madsc/five_system_installation.py": "401bcd0a6cec3427ccb04c1c30161a65d4602083f83f84821e513737ea3cee78",
+    "madsc/fixture_report_writer.py": "0f088ebe4045dd11d25d0e5cc25566290e7a7b376d71c66ce0d5234596d0ed41",
+    "madsc/github_history_client.py": "0af3d5d1067f62faca5c6262b2ecbf7841cbce748288e925f2613bed01d2e4d4",
+    "madsc/github_history_origin.py": "6ebc9c50da25c916df0270c7587874c75ff0bb0a2f0522303a0ba9975a9a854d",
+    "madsc/github_legacy_pair_client.py": "3b1df4eab5603dcb6809f7c884cfba430fbc9527993052df6a75662f7f7df4cc",
+    "madsc/handoff.py": "14d5ffb31b88ac3272bfb163e7ee6779f290c956ff9a061e9b685d57779a58f5",
+    "madsc/handoff_acceptance.py": "45e7bffdbe1ecbe1a1d85717fcdcf7843846b39d9ea6c716779213aca7968572",
+    "madsc/history_artifact_download.py": "1e755e98ab0d6ac5db1d60a83d61aecc0c2a24a257cad70d00ecbdb2a5154399",
+    "madsc/history_handoff.py": "88d406bb4bd192990dd47b49b262da5ff556ee9d966db07c1ccb7cb5b3f38eb7",
+    "madsc/history_origin_cli.py": "497247f65cfc406779fc09c7b62c688655f3186e16003ea874e9394b32ecf5a3",
+    "madsc/history_pair_bridge.py": "27bdcd049a813e8b4ceda88638ad0c5a6e93c9512bd1e543eed8d057244b26f2",
+    "madsc/history_pair_store.py": "a7dca36ddd65f16439f0d9a6dc5518b5e27b9ce277160d145ed87b9a62f88409",
+    "madsc/history_real_source_publish.py": "1e1240bde414f51630e5d7195016139073b7d67815194b93d38e8acffdded71b",
+    "madsc/history_source_gate.py": "93f59f03f209dba19b1b00440a220d55303d0da5b7d1d88a297e8c220ed60039",
+    "madsc/history_transport.py": "add4ea61a5926540da3d079840e7d692188820829410a01955092b04928abb89",
+    "madsc/history_verified_pipeline.py": "f252c01ba4db983bb82c83a93219526f4f357b2aa0bd12f77e402f76d963fff7",
+    "madsc/history_verified_workflow.py": "6a389d645fdc960b8065437dc28eb628a447aa56ef62feb1c55294929207ee1d",
+    "madsc/hls_segment_window.py": "999900eb334e3e33b30475b81710c138281eb6ea7576288c3ec536d57f61a187",
+    "madsc/https_head_probe.py": "9b21bc12da39d6f503c2d41c0c0c88ff7302bc8a844d0d0646f65d827a99740c",
+    "madsc/ibo_policy.py": "e69f5b5666c0c233674cea9c87b13c4d9c00d8ef941e07931496f68b184d86f5",
+    "madsc/k1_k5_acceptance_requirements.py": "6974acdfcc09820ff115610efdf038b998ccfe0223cd21f95eea5815fb4fd189",
+    "madsc/k3_live_manifest_pilot.py": "d31213c48742b9cca9d22936e01c79844edaaae950b26393b7b9a96686853791",
+    "madsc/k3_three_stage_gate.py": "9a8907d7f80d18c57a29ae71c17022a13a19c26feb85b84ccc1f5e321e79f7ef",
+    "madsc/k3_turkish_tv_video_pilot.py": "c78eda7dc898db792a389f0fc94925a5c400eec335014cf3d8fff5d90a3f514e",
+    "madsc/k4_evidence.py": "f0534f8b87ca4a2f120d14dc6911b01c0413599e94419588cd13b1192cd82397",
+    "madsc/k4_restore_gate.py": "38cf690215aa59379adf1b2d8d5ccc3573d58974ad8764e10d0fe6720bb1f5b7",
+    "madsc/k5_channel_gate.py": "3ad9de773eb849b5ac2c4be7fde8cf7b192aa0e5dd777859fe7ed99254c8f863",
+    "madsc/legacy_99_bulk_audit.py": "3b807791ea11f1a52151d3d3fc110b0d527fd8dabb7cda63750fbc325a908dae",
+    "madsc/legacy_candidate_merge.py": "8cec3074970458ac9234a469676b4101d8e1f3cf3b84dece7b0e496c5d849477",
+    "madsc/legacy_category_order.py": "1a2f665fb1d1cfc57b6b5a96808054d70f9fb6e2b69de25f53ea1c91b4e82a9b",
+    "madsc/legacy_epg_logo.py": "a83122263f5d2f2b35c28e4445e596a4afa786854f8a63d436e5e40d47320f6b",
+    "madsc/legacy_history_merge.py": "3b8fc9e227f6caae7ee274c51a000483fa3362c83f1d2b2ac41d9a56304a2304",
+    "madsc/legacy_history_provenance.py": "face5c06138d32affaebe57d8234c3e4f719cb509bcfce898a75251f3736bea5",
+    "madsc/legacy_multisource_discovery.py": "7955ac136df9738ccedd84ab58e400bf1f8c08ba57b19aaa9634d5e9bc38b283",
+    "madsc/legacy_notes_integrity.py": "2f0069c50931b3f43468c91f240bf17ff69a3612fefa3f5d199052511b0c586e",
+    "madsc/legacy_pair_artifact.py": "1080bf941186f94014b7018cca4dfc7f83d0b0e8a9e945fdeacc2c3d347e7746",
+    "madsc/legacy_parity_cli.py": "b4e4bf08d29e9cfb10d195b74d50c390cda5324e8010f50f6458f67c455d028e",
+    "madsc/legacy_parity_evidence.py": "dd41981a3f76a2b1faf274f227f2c177c9b9f19e30c1cdd2b55c238f513f238b",
+    "madsc/legacy_priority_retest.py": "e2fca7d807474346e53e37c48223abc59b8586d848c2d583e615301106178f29",
+    "madsc/legacy_replacement_mapping_review.py": "06d8194bc891a9d4fcfa774e9a057e1ec26eb1984be72254c7a85533ae20f178",
+    "madsc/legacy_report_export.py": "7cc7a4c82ae1d45da7ce801ec664b68e716bcbaedbe392d71010e9e0211c4277",
+    "madsc/legacy_retest_390.py": "b158e0b0c0a26e5f9963c9e49a583fa8e376186db931b6bf2bdac13f8414717f",
+    "madsc/legacy_scoring.py": "ae40d6c5a97fef4db79a32244c7305fc9c1f7e869ca579997d559672b0f96ab4",
+    "madsc/legacy_stability.py": "34c1aaa9b3e32f0357cd76bc386288631e41199b6ddc3b5e8804d0d07590daa3",
+    "madsc/legacy_unified_report.py": "611da173d05d3ff6462dbcc18663cc3981dd29ee8b2f5e10b2475470d9e48494",
+    "madsc/legacy_workflow_safety.py": "f2618766824cbe87ade0fd3c5e2d84650af7fefc25d8dc4db75ff5ffd9aaee86",
+    "madsc/live_discovery_pilot.py": "f21d20bebaaa937eb988b64fd05d1e1e5906d232662a1eb575c4ad865ac448d7",
+    "madsc/maintenance.py": "0f13532929714c186fde4ad5d171864844806ed091a500ef1b578626d013be9a",
+    "madsc/offline_five_gate.py": "396872c8893db8d1b9c1cdb15e70871e1f07a95ea0003614ddcb0bce1fbaa703",
+    "madsc/offline_gate.py": "e59d270f52611d4132e93162dcc39e411fa4657a876cdb3e54a10a255d2f2afc",
+    "madsc/parity_consumer_cli.py": "c2a16b9f88a1b22f04b6e26b4cff5e9d2e01d0c86870fc96850fe9471decee3a",
+    "madsc/parity_manifest_cli.py": "0e07dc786db9dbecb81b1d57c335a378de46dcfb681350306f71bb21921e90b3",
+    "madsc/parity_manifest_writer.py": "7fc79fa0ed7f4030437efcb4332bf4a8ad94c201a69214798950df51bad4a94d",
+    "madsc/parity_process.py": "9295d744b3468af93963352d27ca398ceea72aa8abcac051861612b5d5929eb1",
+    "madsc/parity_snapshot_cli.py": "903366795c00d26e00625101fee8cce55217a5cddfeb476cd01acc916c789329",
+    "madsc/parity_snapshot_writer.py": "9ef04c3d806d88a6848eb0eb447d68783b765fb9b08a38047c488066b684bc49",
+    "madsc/parity_workflow_readiness.py": "09f28afcf7e544d7f08b030b74c972f573fd952a56987b7cec6910bb7cf5ab52",
+    "madsc/playlist.py": "fd6809941b5627c61546ff3ee1d163d0ddf972bac84a9eb3e514ae9875700d5d",
+    "madsc/playlist_previews.py": "0b0c99a1472adfc044b73e9338b6c56cd339c13df76c36ca71794f275f569804",
+    "madsc/preflight.py": "64eab61c5ebb5e17adc409c1fb185d288549a51eae341f861dc2707a11194308",
+    "madsc/probe_target_gate.py": "89678127cea5190eadbe6b7019499cd8e58ff09391d222c9e890302e6be14afd",
+    "madsc/progress_scorecard.py": "40fe0c963e2a4f2185eb53ad083ed90873bb89f73ff9db4b6b86ce351a9419f4",
+    "madsc/restore_drill.py": "3000ffcc470de964ab3d6e5f2065e852262d5c087aab690238c6165c451d44d6",
+    "madsc/source_import.py": "79195bd0550fdecf86222ffc061e606a4acd3385cda689de1d4141d887aaef87",
+    "madsc/stage_report_cli.py": "8398fedf5cf17b08a99ce16cf80f399a775fcfe6965e4d4e34f86d348702ceba",
+    "madsc/trial_epg_matching.py": "10ab4f4acc845c94ec726378e1eeed0692eacfb8e3ac3a40547418006471cbd4",
+    "madsc/turkish_tv_batch_validation.py": "cc7183e6a10d72a29cdbdd3cb3685672d84dad05232abd055436c294e8519899",
+    "madsc/workflow_consolidation.py": "fd6f9a1abf7ce83a965f5dc3d4231e70dc1a8e61c23db14de7d6aebfd3f59ece",
+    "madsc/write_path_audit.py": "4fad0beb9dab108fec23c27ef6d9d62f78db12fbe9888c0b54b29d1c42fe35cb",
+    "src/madsc_guard.py": "cd2e93344da3bb66306712f0331adf57b5721e129a80e672fc50e18095805ca3",
+    "tests/fixtures/legacy_aday_oncelik_raporu.py": "0cd5edd00efa105aa7bd02d49147615a5a941ea8d83a77421d82e017c2804928",
+    "tests/fixtures/legacy_akilli_aday_puanla.py": "15eabd9dd150744b52ecfa883ff65671b48a0739089369d19a2803cc3b844eec",
+    "tests/fixtures/legacy_akilli_tekrar_test_takvimi.py": "b3fb4d0f4bfc9aa82f8779b57c99a5c4a2fa54ab4ff512fc9de6882a444b22a5",
+    "tests/fixtures/legacy_candidate_epg_logo_join.py": "f98b038fee8e424835bc1d9e73658a06e297f957b4b7d0167f94888d1f56ad79",
+    "tests/fixtures/legacy_discovery_history_restore.py": "2507d30af806cd5f0e628fbe3a73fb641ce1034220f2078f8ecce9984f8a550e",
+    "tests/fixtures/legacy_tekrar_test_390.py": "b185f9170411d8cd4f9d78ec48a93543453a59ea73c4f95af481668687875502",
+    "tests/test_acceptance_output_guards.py": "edda185c441da3f2431e808240f5e2d2d7b9676f9259b970786cd13f002074a9",
+    "tests/test_artifact_handoff.py": "948fa4ad0c3376c921ea3b596c7e7e2cc5ca3d26ad5e48f0fb9d35d078b16627",
+    "tests/test_artifact_source_pipeline.py": "05b554cf09d1d3891457448d08f668597215cc4371eb60994007f59b46088543",
+    "tests/test_backup.py": "9768c9446f875f86cd950d55ff4c46a90837124e60901cca4571519a388b4fd0",
+    "tests/test_backup_manifest_hardening.py": "3eb2867e6c7985f49c681b8354d1bca3b755e7ea8d442e924ffbb98bb6c0e715",
+    "tests/test_batch_acceptance.py": "b2569aa1cc05da6ea2e91f84e691d7b13e45ee9fbfdd31007632c2da0d5aec3e",
+    "tests/test_behavior_mapping_binding.py": "8a078c824d899f5583978c385859da7421b42939b1b598320ec4ef54a5b729b1",
+    "tests/test_candidate_coordination.py": "6e7d4c6ada03e60078e2c6f5e036bc534ea36cfc556d6204248958aa3d26c573",
+    "tests/test_candidate_differential.py": "bda6b717432c6193b48939ee0c18f0c483059ca5de91d36ec86741f0b4f70833",
+    "tests/test_candidate_probe_link.py": "1d3dc69b4dbd3b22d9e29769a7c5acb54bfacdf37beb551f36e05fa46533f1f2",
+    "tests/test_channel_catalog.py": "3d97c0921be982abd7022bbdac553c3908f86d10ab99e6e8d7ef24d292136dba",
+    "tests/test_channel_presentation.py": "23408b2b9dd1e1b31e7bac4d319564f1e3c5e39b6b668633ebe7a477c583217e",
+    "tests/test_channel_test.py": "b5d9f642ad54afffbfebc6e609ea08fdd40581a754c20ad56b375ada14fc8c69",
+    "tests/test_ci_diagnostics.py": "155b80230adb9753bedc292e3c05f63abb587ffe3d8f251af8e059ba46187e37",
+    "tests/test_core.py": "86a091d4a02204f7ebbf7dc45d0c689686a84b76e122aa3bbe68b2dd4889b170",
+    "tests/test_dependencies.py": "e0a9f155075eba3330757e3210dc234bdafcacaf475d9584575dfabe2d6592c5",
+    "tests/test_diagnostic_outcome_strictness.py": "bd8998559b9e4540a4652bcd511d6f434dbc1e083b293ff847710abf9a03f093",
+    "tests/test_diagnostic_outcome_type_confusion.py": "e8f62b331c7af97b1496b8d7aff919c6e62c35e87d30f887b84da5d0606a313e",
+    "tests/test_discovery.py": "5209dd931f780bb1b47484724c3846f95f95ba232f35fa21b502b9ce9ba36f50",
+    "tests/test_discovery_batch.py": "da3256e32659f247b750655043ee6ce202b325998305c53ee5347e04200ab629",
+    "tests/test_epg.py": "14472442bfbb94d0d36c6148c9daa3bf718df6ac8df09c0be5e7c183f9e4d982",
+    "tests/test_epg_inventory.py": "fa70b2d791457417f77a8bc043ad5a1251591b5e3a20a80928e9e2ffcdc7c871",
+    "tests/test_failure_diagnostic_api_fail_closed.py": "5958a52ab942961e9d0bf5da5be9b6c8eff5fe730d2edc45c62c3bede6ddb744",
+    "tests/test_failure_diagnostic_artifact.py": "d136590a70a39c929a284cdae34dd06152ba0c10d3932288988a82154dc93049",
+    "tests/test_failure_diagnostic_artifact_regression.py": "b11c194dca5c2f7fc7fcb703ad203aca71271a2eb00f134e0b63319e202e1b0b",
+    "tests/test_failure_history_order.py": "ef6349d474bff5925eb32eeb83da722cdca696eb25d3617f3ca47ed29148b4ab",
+    "tests/test_five_report_roundtrip.py": "c366629417e53e2b28351c196a04804e353e13599dbe2cb34a60e1005e67413f",
+    "tests/test_five_stage_installation.py": "76475529e0c11642f83fa61d6d88559303a680dbee2581184c46e9a98e625184",
+    "tests/test_five_stage_offline_gate_integration.py": "b1652218168125823b8fabd6913b7e6c1493a9d20d265971ec72014bf3d40489",
+    "tests/test_five_system_channel_flow.py": "6ce2fabba7662c92259efe6eddd1f5a6b5b6856e61787c7354e37f80afeba47b",
+    "tests/test_fixture_report_writer.py": "4ed3b539a8bde082b375ac9ebf134f1bb6e52cd136715a17ecd95459e69a10b4",
+    "tests/test_github_history_client.py": "71a1b2ca56814b0f46df50eb696cd2bd48a09e9df914ba4b61d35adddcbb0c43",
+    "tests/test_github_history_origin.py": "a208465955185b591d24dd8362e362b92cb013d8db6f85c6313a780b789522a9",
+    "tests/test_github_legacy_pair_client.py": "1e02dda545c13184c6c6bcd3fe652ca819be797f918c6f3e7f6ae74d0394e568",
+    "tests/test_guard.py": "595679ee8af45a89536e88c80041850b45e86bbf3165f70e3a6eb2108305d090",
+    "tests/test_handoff.py": "11d8feb095d0959ff5285d45b886ac03cd58f74caad72c5c2b4c028286dbb55e",
+    "tests/test_handoff_acceptance.py": "de6669a180367e0160ade5f120cef71f810fd4683888e7178a399c2ac8175478",
+    "tests/test_history_artifact_download.py": "d48c576d3df8bc714df8fb097063cf508265553c4d3848a2f7efba4d482a9a11",
+    "tests/test_history_handoff.py": "93ff3e7944348562665b7138f7f642cbf2a5b74aae17ed332bacb5b3134feae5",
+    "tests/test_history_merge_differential.py": "ef53f8fe2c5e4a834d298d1d4c18662507b2208104d010359b86e637216f8b21",
+    "tests/test_history_origin_cli.py": "478281f6ce521d87391d1801217778787750bdcb70be9c0c475aa9e784e65566",
+    "tests/test_history_pair_bridge.py": "78a6512371e733d70bff477a24b6b2020fd8df83e4030292d85e5a9f81fd8a9b",
+    "tests/test_history_pair_hls.py": "668497d61c0a2e3486252ea834378e2f358a2bd95886935f5a069ac6853b52fe",
+    "tests/test_history_provenance.py": "e410e6fd50938c44db34542e668098daa10f2fde0a1a997b19e233b2fdaeda7d",
+    "tests/test_history_real_source_publish.py": "62bdcf124049b99c26cfea072eebf0f20a04e8d9641b5f0ddc4218527880aac0",
+    "tests/test_history_source_gate.py": "0d1598f1a9b66c7c5cb0d507d42c65b62858d5ee1a5bf1b56440be36e16bb143",
+    "tests/test_history_verified_pipeline.py": "7fa2a75033fd74729763551d56d168ed93e4326be97e2a01f98fc67d262bf643",
+    "tests/test_https_head_probe.py": "d27bcecb5496b356c2696b5b88a951a58dd4761467cdd55a796bdd2f314f5cae",
+    "tests/test_ibo_policy.py": "da87633e526d22161e230e276149d0b0518ceb0361064bcb59bd005f73169406",
+    "tests/test_integration.py": "6f23edf1c5fc5d331c5936fb4533ada70e899c0ceb0793a3e4b96fd7f261dc4b",
+    "tests/test_k1_k5_acceptance_requirements.py": "e81761e9dfc1634a65fbe37429761ae16af337da86e6c13fc83c9da95fa855c2",
+    "tests/test_k3_three_stage_gate.py": "3c531742e30ea570aa54ec6588083d60d94cde831afea5d8f7bdcb341a11b899",
+    "tests/test_k4_evidence.py": "a8af464223902d64da8a5e26cc4126643be8cd8e103c652e6868ad2301ca593f",
+    "tests/test_k4_report_output_safety.py": "e87f7437004fdf36bc0265b5a5a501d4728db7781f0e2aedc267aa1eb9c2552e",
+    "tests/test_k4_restore_gate.py": "28559e208557377b25509bbab19c7f456f73115f76e69246237a4fe4ac6ff1eb",
+    "tests/test_k5_channel_gate.py": "659bfcca1bb82a4e0db27abd48c6e1c9fc2b7663305fa9c08fd407109624d261",
+    "tests/test_k5_head_observation.py": "a9678aef2d9e99762624ac378ae6a700f88978bf743f884891cb28372c9caee0",
+    "tests/test_legacy_390_differential.py": "8bff0234b89d26d7fd5476d4051f2d38a2282fdba098d804ed4a06a4d8a48055",
+    "tests/test_legacy_99_source_integrity.py": "c1126a80b36cd3d66ecdb4b2941f176d02265d4eb6a07b305ad27a352b743bb1",
+    "tests/test_legacy_batch_bounds.py": "8f587833c764ae08f5e92bd0e47f265717dbd0af6a0b8e44f303435e4dd7598c",
+    "tests/test_legacy_batch_safety.py": "8fa3e538e3bf206524c006d097033cf56579f60b563746410b779fe4eab86aa3",
+    "tests/test_legacy_candidate_merge.py": "8665e98b1ed075db41363316da56fa3dfb5edc3b83e9636be6b474a3640def4b",
+    "tests/test_legacy_category_order.py": "7fa845bd1720508c86bc9c6963b78567022ff9ddf0a7b89cf871d00a4f264298",
+    "tests/test_legacy_epg_logo_differential.py": "1d997973dd683395a7beacacf0c37eb26abbe34b255208aea84fef1b6e90f049",
+    "tests/test_legacy_k3_compatibility.py": "f1f64665c1e989834a6e58d1884b4fa00a4a97d7899c7c569a4272e8d1c996cd",
+    "tests/test_legacy_notes_integrity.py": "cb21368bedb79bcad3517789642de1726112a9b3bc430ab746e256426c1aea3b",
+    "tests/test_legacy_pair_artifact.py": "2cc8b9e2045eadbc9fcd1cefca32cdda698d88a153f5e1789274b87735ab0d10",
+    "tests/test_legacy_parity_cli.py": "d1a481e2c1ef7816aa05608b773b1b0c4723e09953f9ed7697f4cb4faadbda1c",
+    "tests/test_legacy_parity_evidence.py": "c5cbeca9539ff85d29e7240a1a041f6374ac0a9b2f166b80ebc918e9d271e709",
+    "tests/test_legacy_priority_differential_batch.py": "1e5763f98ae8d777d4068b5fb0e60c36571fc7da71bc821a0d2911807b0be94e",
+    "tests/test_legacy_priority_retest.py": "5ec8b1ef9d9ca171957592257ce4e04a28cc719dfcd35761042d44459d133f00",
+    "tests/test_legacy_replacement_mapping_review.py": "6bda632413db419831fc2b0bf186d99a36114a041f9e1ae93b18c2c167eb41dc",
+    "tests/test_legacy_replay_regression.py": "1c20f586834bf3f1f77ba0ab3f600c61e88678b693abc26fa9a77910d78edfa0",
+    "tests/test_legacy_report_export.py": "54091e2c5961f3ac45eaa443852e6c41e5d82089aa7eb01a002aaace8441f8af",
+    "tests/test_legacy_retest_differential_batch.py": "36fc10854ef4b3a5c59cdd5c0b893263f032a77b4c12627a9f18b475f8f7de62",
+    "tests/test_legacy_scoring.py": "07bfb834fc049dc830d260886e9e2ab8d1313208dd980ba6fad781c8e7744310",
+    "tests/test_legacy_scoring_differential_batch.py": "aceade8307707a79c5607afb3e2643ae9d0d211dd6b313ff921b7985a3323ee8",
+    "tests/test_legacy_source_score_vectors.py": "4f7817f520a621794f4ce83860a5fd56953f8edc8b95ca01bc2c413bbc06712d",
+    "tests/test_legacy_stability.py": "74966a8e34c8b00eb5ce286e93735af200c9093b6b95268bb2f14f371ef0d94b",
+    "tests/test_legacy_unified_report.py": "3bbf5a554159df1942a500665c240432f433285fbd4955287c8100e72fb8a51c",
+    "tests/test_main_history_artifact_chain.py": "d949934f65b1d087ec26f5fcb3f3ef021f59691a008eb8679d6c93a6432e1681",
+    "tests/test_maintenance.py": "c0b6e89c5231761bc1c79b764b5a2ce7afd31afe390b83df45f8c7a58782a22e",
+    "tests/test_mapping_review_chain.py": "f0ad4071f050b74a992d202cffcb044034097cfeb64735df8bd238a2eaee827b",
+    "tests/test_migrated_opt_in_contract.py": "18ea13b9162875c6613154ac286200070dd7e5e642b15cff359b7b88458eb802",
+    "tests/test_offline_five_gate.py": "e8c7500a4b8c0a313e8d8b2a440346e2c91c31d7ff1a0501d7cddc02b1a3d0a3",
+    "tests/test_offline_gate.py": "19308abf8fa26a4130d31450017360614fc47c13e4c5573f228b65a5f5d21a70",
+    "tests/test_pair_preparation.py": "3dc49ce4ee24444a2b965c7a034705d154ef31b89c27e69c13c0b867dac59261",
+    "tests/test_pair_replacement_contracts.py": "766c02d33e809ccbdfc503994409641cc20108e145a7c07e01c3d85b6ae2b1dc",
+    "tests/test_parity_consumer_cli.py": "fd7e35fe4f9b3d39ae63bbd9d565c8e6e4d2788bb5cebcca598753baaad23a87",
+    "tests/test_parity_file_boundaries.py": "fa0c095467d129afe45011be12eb036da0d70bdf7ca6faf5a9735c758a59b439",
+    "tests/test_parity_input_receipt.py": "fc7e96b013af42597e2c9fb8bf0379dd472e766c1f992be8ab07adaa720d11bd",
+    "tests/test_parity_manifest_cli.py": "3854024f8ca13111ea5ba3458d8713a8ddb04b089249a1b998e86a15229f42ea",
+    "tests/test_parity_manifest_writer.py": "e848e9ab1eec09a03077c380be3fe814a65df72b3ad39f6483fcf787579accf4",
+    "tests/test_parity_process.py": "4cb4430a63a59195d2f65c6c71d2af84e476f496c7c4a82ab49eb58a8e6205ef",
+    "tests/test_parity_producer_chain.py": "bdfc5bc9d91e3a3b7a9b55193c87d82b08bd91a86a16a04ee49d2b9526c4a807",
+    "tests/test_parity_snapshot_writer.py": "911cf893e3afef41b31d9073621586f3c3b8e864314334f91c52f714af60e1c6",
+    "tests/test_parity_workflow_integration.py": "2c254f85c916a5f0af00c4310f375e7b21176eaa6abfa8d05334b7c2d5b1784e",
+    "tests/test_parity_workflow_preflight.py": "a0d7d9d17f9fb3333cbefba7d00e5a1f535b79c2bdf413a1d71816396a0546bb",
+    "tests/test_parity_workflow_readiness.py": "6bdd61e88d57bfcf99f36c9a2eda26abd993971619e4e251f217d48e9ce074d4",
+    "tests/test_playlist.py": "167ae1928dc268d98935600df6945e0d5bb8ea914145b2c3d91a5c9d5f65d1db",
+    "tests/test_playlist_previews.py": "c0212c425c34c4cffcf833ccbd6198a39e5ba1f70275335a24525a07a542eabc",
+    "tests/test_preflight.py": "4adb04d618e59ba5fe4e43fb6284aeec9e0361e1b35636cddda35a04a48b2ef8",
+    "tests/test_priority_retest_differential.py": "26591e13f93d8d3cb66e1778d226c99594419dc57fe6307234888734f14e8a35",
+    "tests/test_probe_target_gate.py": "6390f11fd70795b1da1520005ed60446bd67adba3bb91c53eb064921dc8b055a",
+    "tests/test_progress_scorecard.py": "55b781ab3b48b0003a802b158f02553cdf279d3bd6280358fc1c919c2cebac09",
+    "tests/test_remaining_report_guards.py": "74dcfb7e97f05251a1b3b5dff5d6f65ae00e3c0d8198104afa6e499d13872a9e",
+    "tests/test_restore_drill.py": "439101aebb7b5369a8962264aa7e01d287933be37d6928ca86bb682d3bc3dee3",
+    "tests/test_source_import.py": "938d025f26a4fc5c8a5a4cb35ffef4fa7f2419d12154954864ee3d0ddc4ad1fd",
+    "tests/test_stage_report_cli.py": "ed1b009d73725cbe241290d1b53fe61ea8fa79c8ae6bda118c6a6bf53274a073",
+    "tests/test_transferred_safety.py": "b37d5bee7be2cf1536e25195b3ea55b4e8524aba65981195e968a332f8e26f47",
+    "tests/test_transferred_workflow_scope.py": "b8fb6304e288ff6cce861d8c9cb9f862b939a701a66d47af011532c4606d6f37",
+    "tests/test_trial_epg_matching.py": "cdc571614be621fcb7d185e9b472e55787807baf43e2ad72f7b17a10be413311",
+    "tests/test_verified_history_workflow_contract.py": "6289482f0193892d6b2d8a1072b3b2c726a6b51908752d1b8e565f1b8ef662e8",
+    "tests/test_workflow_consolidation.py": "53d2fd45137d9fa155d3b89a213659fbe3158f87efc667aea6ff927257e3471c",
+    "tests/test_workflow_security.py": "39e8c3bed4dd18d1d96f16a299524832fb84939b0d1151117336a1df8567d0e7",
+    "tests/test_write_path_audit.py": "c0d91e459d1519f9149ff37f04a8d7bb55453463274d833c1020eac49afd6aa7",
+    "tests/test_github_pair_evidence_chain.py": "96037e66f5f2c987dd7eec002619ae864fbd6e7f3a55fb7aefcf01679737a7ee"
+  },
+  "implemented_chain": [
+    "K1 output preflight before any API/network operation",
+    "validate pinned 92-source catalog and supplied pair metadata",
+    "independently verify both run/artifact/workflow API origins (6 GET responses per pair)",
+    "bounded 2MiB ZIP GET downloads for the two verified artifact identities",
+    "verify archive hashes, strict single manifest, same-input and snapshot bindings",
+    "publish report exclusively only after all supplied pairs validate"
+  ],
+  "negative_checks": [
+    "default mode never calls API/download",
+    "wrong API blob causes no downloads",
+    "corrupt downloaded ZIP causes no output",
+    "missing token/protected output causes no external call",
+    "empty pair input cannot claim verification",
+    "oversized ZIP and bool artifact id rejected",
+    "storage redirect removes bearer token and denies HTTP"
+  ],
+  "production_lookup": {
+    "date": "2026-10-22",
+    "scope": "read_only_github_api_sample_not_global_legacy_exhaustion",
+    "manual_dispatch_total": 9,
+    "manual_dispatch_rows_returned": 9,
+    "manual_dispatch_runs": [
+      {
+        "id": 39686179902,
+        "path": ".github/workflows/madsc-05-bakim.yml",
+        "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1",
+        "created_at": "2026-10-21T22:23:49Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39685661270,
+        "path": ".github/workflows/madsc-05-bakim.yml",
+        "head_sha": "42d8f07956d819016e03941b856be78ac74d02a5",
+        "created_at": "2026-10-21T22:19:36Z",
+        "conclusion": "failure"
+      },
+      {
+        "id": 39622203603,
+        "path": ".github/workflows/madsc-05-bakim.yml",
+        "head_sha": "f19a13949fcd56f45156451dc3a67b1911523702",
+        "created_at": "2026-10-21T15:02:39Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39621934394,
+        "path": ".github/workflows/madsc-05-bakim.yml",
+        "head_sha": "f19a13949fcd56f45156451dc3a67b1911523702",
+        "created_at": "2026-10-21T15:00:49Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39621865996,
+        "path": ".github/workflows/madsc-05-bakim.yml",
+        "head_sha": "f19a13949fcd56f45156451dc3a67b1911523702",
+        "created_at": "2026-10-21T15:00:22Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39621498388,
+        "path": ".github/workflows/madsc-05-bakim.yml",
+        "head_sha": "21d37bc56a0bc4fd76bad1354c6009fe27287c9b",
+        "created_at": "2026-10-21T14:58:00Z",
+        "conclusion": "failure"
+      },
+      {
+        "id": 39620800578,
+        "path": ".github/workflows/madsc-05-bakim.yml",
+        "head_sha": "a8e988167ffd6f2b959ff2c58dcbbae35e964b33",
+        "created_at": "2026-10-21T14:53:14Z",
+        "conclusion": "failure"
+      },
+      {
+        "id": 39609810033,
+        "path": ".github/workflows/madsc-05-bakim.yml",
+        "head_sha": "d4c2885e9b722b4299ae407e05677f5b2c8e54ea",
+        "created_at": "2026-10-21T13:38:50Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39609085929,
+        "path": ".github/workflows/madsc-05-bakim.yml",
+        "head_sha": "cb25c44f6636827ace2d3499e7a2cbe03b684e7a",
+        "created_at": "2026-10-21T13:33:48Z",
+        "conclusion": "failure"
+      }
+    ],
+    "new_repository_latest_sample": [
+      {
+        "id": 39800980208,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "3edbb86331e0df4a3c980b0f7007174a3cc1c5f5",
+        "created_at": "2026-10-22T15:02:00Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39799561697,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "11c68cdab032bdcd5233742ab419c6e41123c005",
+        "created_at": "2026-10-22T14:52:38Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39799539295,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "fdb47ef8aee56049214179970e04120028e61c4b",
+        "created_at": "2026-10-22T14:52:29Z",
+        "conclusion": "failure"
+      },
+      {
+        "id": 39798963765,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "2c7cb9fe79452e391d14e696398f8484410e1970",
+        "created_at": "2026-10-22T14:48:40Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39798947108,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "f8ad76d55e249399e6b0bfb4a3af6ce7bc8d1e13",
+        "created_at": "2026-10-22T14:48:34Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39798797326,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "7e914b403b57aeb07ce56e01ec002cf720aa26e1",
+        "created_at": "2026-10-22T14:47:33Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39798778041,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "b7f82afcbf1f417977fda223c649c3d0afdfd0ed",
+        "created_at": "2026-10-22T14:47:25Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39794550164,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "557c851601c57693cbbcd480cc368d83b40bacf8",
+        "created_at": "2026-10-22T14:18:32Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39794295701,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "4ded804b34bda5963c36e2121c8bfbadf0a7ead5",
+        "created_at": "2026-10-22T14:16:41Z",
+        "conclusion": "success"
+      },
+      {
+        "id": 39794271284,
+        "path": ".github/workflows/madsc-unit-tests.yml",
+        "head_sha": "3e62918e214df97542125448255170049752691a",
+        "created_at": "2026-10-22T14:16:31Z",
+        "conclusion": "success"
+      }
+    ],
+    "sample_artifacts": [
+      {
+        "repository": "Madsc55/Madsc55-Tv",
+        "returned": 26,
+        "pagination_total_not_exposed_by_wrapper": true,
+        "artifacts": [
+          {
+            "id": 12387205009,
+            "name": "madsc-k1-k5-installation-audit",
+            "digest": "sha256:b9b6a13af5c9434aad191030f1935ca5900d2e30f72fe6813ec417f02b56737b",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12387060928,
+            "name": "madsc-batch-k2",
+            "digest": "sha256:ea6ef0b18efebf602a32d7ff8be5a8755d868a59c4e5768b7e640d1c1ff99aab",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12387001247,
+            "name": "madsc-batch-k4",
+            "digest": "sha256:f759c2943de939905d279bee11aa66fbd4fa28d1d40b62ddf44bb7fc1d675bbb",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386905969,
+            "name": "madsc-k4-guarded-evidence",
+            "digest": "sha256:1f4eae30a1a4de866bcaac1550093a6b9724ca0b030cf22470d9dbb5e6309422",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386826032,
+            "name": "madsc-k2-candidate-handoff",
+            "digest": "sha256:e118ae33760c99515a36d1ded755d9aff23297d4cc4e4ba9ae2bb23d527d2bb1",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386741082,
+            "name": "madsc-k2-history-handoff",
+            "digest": "sha256:1f61f91a37c9a5b677e89d8881309496772a300f546044c8a18b18301675ca1c",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386641291,
+            "name": "madsc-k4-restore-drill",
+            "digest": "sha256:a5b18dae7a83273bb6ac21514be3328e1cd62b6206b9ba5264ee31dbc61dd8a7",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386557121,
+            "name": "madsc-k4-restore-acceptance",
+            "digest": "sha256:cf7c642f517fc95f00a9c316c85459c52bf69a22684475af38061cec56011f7c",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386552111,
+            "name": "madsc-k5-history-receipt",
+            "digest": "sha256:11e0b422b3448bdd65cde8f7a54a5a4efefd85adb0a9a5be33045a0b6ec767d6",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386497231,
+            "name": "madsc-test-sonuclari",
+            "digest": "sha256:84649403d7fee251d562c60dad7558aa52710567634c055446e9382094187ee9",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386382243,
+            "name": "madsc-k5-cross-handoff-verification",
+            "digest": "sha256:798ac3183cdb583f08720dadeb9cfa83ce134e7ebf4b4ebaf3dc3b108484fda1",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386322184,
+            "name": "madsc-k5-guarded-evidence",
+            "digest": "sha256:8a770cf151b22f0ac7139752447f8b1497e8283ac19bfcf4eb2ac98be3bfd8de",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386152366,
+            "name": "madsc-k5-k3-safety-gate",
+            "digest": "sha256:bb76395cb11e593043c7d584e1a62c8c97c57971da85fb441401f85bc2a24eb0",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386102617,
+            "name": "madsc-batch-k5",
+            "digest": "sha256:e9b89b5235ac872aa416f1018ab300344ee4f0c6361a7e08399d75da697aca99",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12386002667,
+            "name": "madsc-progress-scorecard",
+            "digest": "sha256:beb106851db391a1d88877a9870d6c5e460eedbb84e48567614ca73cf49151fe",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385967697,
+            "name": "madsc-five-system-acceptance",
+            "digest": "sha256:21cf0c3f1432adb5646ae4d3b407ecbdf2dcb99da9a2a289cfe965c86a10050b",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385947776,
+            "name": "madsc-k5-handoff",
+            "digest": "sha256:2ff7fd4f567bb2a336e829068917242d932c056271e8fe8ee09544d798fc8575",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385942214,
+            "name": "madsc-batch-k1",
+            "digest": "sha256:3ddd8b2423ff179fcc197447ed23972cb0f85cca59f1c16d01bc43d400052f8c",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385902868,
+            "name": "madsc-k5-consolidation-and-task-evidence",
+            "digest": "sha256:5b30ccd76f73821f322014c3c81f9ed6cb2b63ae2999761135a5d1d3c11cf4e7",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385897893,
+            "name": "madsc-cross-handoff-acceptance",
+            "digest": "sha256:06f6cb9a07372f63b757a822b84de059984e48b17a499f0f66df910b4f6faec5",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385837599,
+            "name": "madsc-batch-k3",
+            "digest": "sha256:2c7e25928ae8e6854a4216b89ac1b09eb9d592fc26cb854e343d80f2e019c5cd",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385639542,
+            "name": "madsc-k3-history-receipt",
+            "digest": "sha256:155d3c4dd8c85d8409df533b980a65722b81d5306d2959edf4d89ab12e9df881",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385489654,
+            "name": "madsc-offline-five-stage-gate",
+            "digest": "sha256:9dc651e53c7e070973ad890ba5bf21ebc031fe879a2835c76e975dfcefa1e440",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385469541,
+            "name": "madsc-k3-guarded-evidence",
+            "digest": "sha256:1eafab2eaac7249250523cf5ba0af28ae0271a12288c354d3ef87ce3586f6449",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385424741,
+            "name": "madsc-regression-diagnostics",
+            "digest": "sha256:27d225766aec41efb2f9b01d5cfcee8b4fdb028c02a79d675757c5207bd255fb",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          },
+          {
+            "id": 12385299796,
+            "name": "madsc-k3-handoff",
+            "digest": "sha256:5f6bd24a52aa2edcef066323443815e34374b8433922e8f6912d7c3d69a315e4",
+            "expired": false,
+            "workflow_run": {
+              "id": 39686179902,
+              "repository_id": 1424911544,
+              "head_repository_id": 1424911544,
+              "head_branch": "main",
+              "head_sha": "d5d61317806dc7a00b762567695286e3779ceaf1"
+            }
+          }
+        ]
+      },
+      {
+        "repository": "Madsc55/madsc-tv",
+        "returned": 2,
+        "pagination_total_not_exposed_by_wrapper": true,
+        "artifacts": [
+          {
+            "id": 12421401420,
+            "name": "candidate-logo-pngs",
+            "digest": "sha256:bb5c378f7738f790315149b137c168f8eb5bd2fc9799612612e8397f0e41c02d",
+            "expired": false,
+            "workflow_run": {
+              "id": 39768459333,
+              "repository_id": 1400694287,
+              "head_repository_id": 1400694287,
+              "head_branch": "main",
+              "head_sha": "d9de3771a46fff53293173e59537e665347b73cf"
+            }
+          },
+          {
+            "id": 12420164392,
+            "name": "madsc-kesif-raporu",
+            "digest": "sha256:0b789096582ab979fef7dc95b4b8eb482203d025cc5d25e771d32f7dce059b5c",
+            "expired": false,
+            "workflow_run": {
+              "id": 39768459333,
+              "repository_id": 1400694287,
+              "head_repository_id": 1400694287,
+              "head_branch": "main",
+              "head_sha": "d9de3771a46fff53293173e59537e665347b73cf"
+            }
+          }
+        ]
+      }
+    ],
+    "interpretation": "All 9 returned manual new-repository runs are K5 runs dated October 21; none tests the October 22 new source. Sampled legacy discovery run is on main, not the pinned legacy comparison branch. Sampled metadata does not supply a bound same-input v1 manifest pair. No missing proof is invented.",
+    "tool_limitations": [
+      "Repository-wide artifact listing and workflow-specific run endpoints rejected by connector URL allowlist; used supported run collection and artifact-by-run connector instead. No token probing or bypass.",
+      "Artifact listing wrapper exposes first page without total_count; no global or complete-artifact claim.",
+      "No artifact bytes downloaded in this production lookup; code path tested with local API/ZIP fixtures only."
+    ]
+  },
+  "limitations": [
+    "All integrated validation tests use local API fixtures and ZIPs; no real paired execution verified",
+    "Snapshot agreement and API/byte provenance still do not constitute semantic review or full side-effect evidence",
+    "Missing legacy v1 manifest cannot be manufactured from arbitrary older report artifacts",
+    "No workflow/cron/production/legacy-repository writes, no Actions dispatch, no live stream probing or device tests"
+  ],
+  "acceptance": {
+    "behavioral": "0/92",
+    "runtime_security": "0/26",
+    "full_tasks": "0/22",
+    "production_ready": false
+  }
+}

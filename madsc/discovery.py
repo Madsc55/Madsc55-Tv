@@ -17,11 +17,17 @@ def normalize_url(value: str) -> str:
         port = parts.port
     except ValueError as exc:
         raise ValueError("Invalid candidate host or port") from exc
-    if not host or any(ch.isspace() for ch in parts.netloc) or port == 0:
+    if (not host or any(ch.isspace() for ch in parts.netloc) or port == 0
+            or any(0xD800 <= ord(ch) <= 0xDFFF for ch in host)):
         raise ValueError("Invalid candidate host or port")
     if parts.fragment:
         raise ValueError("URL fragments are not accepted")
-    return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path or "/", parts.query, ""))
+    normalized = urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path or "/", parts.query, ""))
+    try:
+        normalized.encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise ValueError("Invalid candidate URL encoding") from exc
+    return normalized
 
 def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) -> dict:
     if not isinstance(rows, list):

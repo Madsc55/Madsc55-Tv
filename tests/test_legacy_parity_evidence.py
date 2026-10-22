@@ -28,6 +28,13 @@ class EvidenceLedgerTest(unittest.TestCase):
             with self.subTest(path=path), self.assertRaises(ValueError):
                 ledger(bad)
 
+    def test_invalid_candidate_stage_mapping_rejected(self):
+        for value in ("K1", None, {"stage": "K1"}, ["K6"], [None], [True]):
+            bad = inventory()
+            bad["workflows"][0]["candidate_k_stages"] = value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                ledger(bad)
+
     def test_invalid_evidence_fails_before_partial_ledger(self):
         with self.assertRaises(ValueError):
             ledger(inventory(), {".github/workflows/w98.yml": {"unknown": {}}})

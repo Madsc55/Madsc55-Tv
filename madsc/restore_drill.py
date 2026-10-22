@@ -46,11 +46,16 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--isolated-report-root", type=Path)
     args = parser.parse_args()
-    report = run_drill(args.source, args.names)
     if args.isolated_report_root is not None:
         expected = args.isolated_report_root / "reports/k4-isolated-evidence.json"
         if args.output != expected:
             raise ValueError("K4 isolated output must use the protected reports path")
+        enforce_local_output_path(expected)
+    else:
+        destination = args.output if args.output.is_absolute() else Path.cwd() / args.output
+        enforce_local_output_path(destination)
+    report = run_drill(args.source, args.names)
+    if args.isolated_report_root is not None:
         write_stage_report(args.isolated_report_root, "k4",
                            {**report, "category": "k4", "production_ready": False})
         print(json.dumps(report, sort_keys=True))

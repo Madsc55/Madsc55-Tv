@@ -84,7 +84,10 @@
       "bd0aab8b: regression for source label validation precedence; CI pending",
       "39870824796: successful descendant CI on 0e2d5e68, 3 commits after bd0aab8b source-label precedence test",
       "b79ff7a8: enforce 256-character source provenance label limit in parse, corroboration and preview",
-      "91f32d6e: boundary regression 256 accepted, 257 rejected; CI pending"
+      "91f32d6e: boundary regression 256 accepted, 257 rejected; CI pending",
+      "39871021673: successful descendant CI on 41a61d61, 7 commits after source label boundary test 91f32d6e",
+      "53f5850e: fingerprint tvg-id inventory using identity and URL, ignoring presentation-only metadata",
+      "3cebc66d: regression for mirrored tvg-id feeds and distinct name-only identities; CI pending 39871248968"
     ],
     "note": "Offline suite succeeded on descendant SHA 205ad1bf (run 39869009399), covering latest K2 fail-closed metadata and bounded known URL inputs. Real-source/licensing, independent origins, and behavioral acceptance still unverified."
   },

@@ -33,6 +33,20 @@ class K5PipelineChainContractTests(unittest.TestCase):
                        r".*?^    needs: " + prerequisite + r"\s*$")
             self.assertRegex(source, pattern)
 
+    def test_aggregate_gate_rejects_failed_or_skipped_evidence(self):
+        aggregate = self.source.split("\n  toplu-kabul:\n", 1)[1]
+        self.assertIn("if: ${{ always() && !cancelled() }}", aggregate)
+        for step_id in ("history-chain", "k2-handoff", "cross-handoff",
+                        "k4-restore", "kabul"):
+            self.assertRegex(aggregate, r"(?m)^        id: " + step_id + r"\s*$")
+            self.assertIn("steps." + step_id + ".outcome", aggregate)
+        for status in ("K1", "K2", "K3", "K4", "K5",
+                       "KABUL", "K2_HANDOFF", "CROSS_HANDOFF",
+                       "HISTORY_CHAIN", "K4_RESTORE"):
+            self.assertIn(status, aggregate)
+        self.assertIn('if [ "$durum" != success ]; then hata=1; fi', aggregate)
+        self.assertIn('exit "$hata"', aggregate)
+
     def test_k5_cross_stage_evidence_is_required(self):
         k5 = self.source.split("\n  k5:\n", 1)[1]
         for command in ("madsc.handoff_acceptance", "madsc.k5_channel_gate",

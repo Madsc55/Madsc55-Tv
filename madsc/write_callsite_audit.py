@@ -51,7 +51,7 @@ def _call_name(node: ast.Call) -> str:
     if isinstance(func, ast.Name):
         return func.id
     if isinstance(func, ast.Attribute):
-        base = _call_name(ast.Call(func=func.value, args=[], keywords=[])) if isinstance(func.value, ast.Call) else (
+        base = _call_name(func.value) if isinstance(func.value, ast.Call) else (
             func.value.id if isinstance(func.value, ast.Name) else
             func.value.attr if isinstance(func.value, ast.Attribute) else "")
         return f"{base}.{func.attr}" if base else func.attr

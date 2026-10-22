@@ -41,6 +41,14 @@ jobs:
             fi
             exit "$consumer_status"
           fi
+      - name: Upload failed consumer snapshot (explicit opt-in only)
+        if: ${{ failure() && !cancelled() && inputs.allow_parity_evidence == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k4-failed-consumer-snapshot
+          path: reports/madsc-parity-snapshot.json
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Upload K4 restore drill evidence
         uses: actions/upload-artifact@v4
         with:

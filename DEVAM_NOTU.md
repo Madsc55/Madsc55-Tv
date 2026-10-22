@@ -482,3 +482,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Kod 7dd644cf307eed79394cd70be4a65d2fab1fe83d üzerine tests/test_restore_drill.py negatif testleri eklendi: commit 56ca20984f043263579179ee810b04b53f0304ef [skip ci]. Yanlış izole rapor adı ve mevcut normal çıktı hedefi, run_drill çağrılmadan reddedilmelidir. Önceki tekrar-yazma beklentisi K1 ProtectedWriteRejected ile eşleştirildi.
 - Bu çalışma ortamında GitHub deposu yerel kopyalanamadı (github.com DNS erişimi yok). Testler çalıştırılmadı; yeşil sonuç veya 783 yeni test iddiası yok. Actions dispatch yapılmadı. Öncelik: erişilebilir ortamda python -m unittest tests.test_restore_drill ve python -m madsc.offline_gate doğrulaması, sonra K4 tüketici yarış koşulu incelemesi.
 - Korunan veri, eski depo ve cihaz testi değişmedi; gerçek kabul 0/92, 0/26, 0/22.
+
+
+## 22 Ekim 2026 — K4 kanıt okuyucu sertleştirme
+- madsc/k4_evidence.py commit 37f74521295d84705a702da4d4b13d696f50fcb8 [skip ci]: çıktı yolu okumadan önce denetlenir; kanıt os.open/O_NOFOLLOW (varsa), fstat ile regular/single-link, 1 MiB bounded read kullanır. Symlink parent kontrolü korunur. Test commit 80972e5badcc47173df7f4d613891b268daeade5: mevcut çıktı, symlink ve büyük kanıt negatif senaryoları.
+- Kod/test GitHub'a kaydedildi; bu turda yerel test ve offline_gate çalıştırılmadı, Actions tetiklenmedi. O_NOFOLLOW olmayan platformlarda yarış koruması sınırlıdır; parent değişimi yarışına karşı tam fd-tabanlı dizin zinciri henüz yoktur.
+- Öncelik: test_restore_drill ve test_k4_evidence + tüm offline_gate çalıştırıp gerçek sonuçları kaydet; K1-03 gerçek writer denetimine devam et. Gerçek kabul 0/92, 0/26, 0/22; korunan veriye dokunulmadı.

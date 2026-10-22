@@ -9,8 +9,9 @@ from madsc.write_path_audit import enforce_local_output_path
 
 def _open_relative_file_nofollow(root: Path, parts: tuple[str, ...]) -> int:
     """Open a relative file beneath root without following symlinks in any component."""
-    if not parts:
-        raise ValueError("Backup source path must name a file")
+    if (not parts or any(not isinstance(part, str) or part in ("", ".", "..")
+                         or "/" in part or "\\\\" in part for part in parts)):
+        raise ValueError("Unsafe backup source path components")
     # Never silently drop no-follow/dir-fd protection on unsupported platforms.
     nofollow = getattr(os, "O_NOFOLLOW", None)
     directory = getattr(os, "O_DIRECTORY", None)

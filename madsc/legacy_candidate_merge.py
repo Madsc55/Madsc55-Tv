@@ -16,11 +16,11 @@ def _value(row, *keys):
 
 def merge_legacy_candidate_rows(inputs):
     """inputs: ordered (CSV filename stem, parsed DictReader rows) pairs."""
-    if not isinstance(inputs, list):
+    if not isinstance(inputs, list) or len(inputs) > 200:
         raise ValueError("Invalid candidate input")
     checked = []
     for stem, rows in inputs:
-        if not isinstance(stem, str) or not isinstance(rows, list) or any(
+        if not isinstance(stem, str) or not isinstance(rows, list) or len(rows) > 20000 or any(
                 not isinstance(row, dict) for row in rows):
             raise ValueError("Invalid CSV evidence")
         checked.append((stem, rows))

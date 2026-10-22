@@ -13,11 +13,12 @@ FIELDS = ("KANAL", "PUAN", "TEKNIK_DURUM", "24_SAAT_KARARLI", "DURUM",
 
 def legacy_unified_rows(scores: list[dict], stability: list[dict], *,
                         history: dict | None = None, now=None) -> dict:
-    if not isinstance(scores, list) or not isinstance(stability, list):
+    if (not isinstance(scores, list) or not isinstance(stability, list)
+            or len(scores) > 20000 or len(stability) > 20000):
         raise ValueError("Invalid legacy CSV rows")
     if any(not isinstance(r, dict) for r in scores + stability):
         raise ValueError("Invalid legacy CSV row")
-    if history is not None and (not isinstance(history, dict) or now is None):
+    if history is not None and (not isinstance(history, dict) or len(history) > 20000 or now is None):
         raise ValueError("Historical evidence requires a mapping and current time")
     if history is not None:
         if not isinstance(now, datetime) or now.tzinfo is None:

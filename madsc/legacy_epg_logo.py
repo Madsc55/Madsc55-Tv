@@ -5,9 +5,18 @@ from xml.etree import ElementTree as ET
 
 
 def join_pilot(candidates: list[dict], logos: list[dict], xmltv: Path) -> dict:
+    if (not isinstance(candidates, list) or not isinstance(logos, list)
+            or len(candidates) > 20000 or len(logos) > 20000
+            or any(not isinstance(item, dict) for item in candidates + logos)):
+        raise ValueError("Invalid EPG/logo evidence")
+    xmltv = Path(xmltv)
+    if xmltv.is_symlink() or not xmltv.is_file() or xmltv.stat().st_size > 16_000_000:
+        raise ValueError("Invalid XMLTV source")
     root = ET.parse(xmltv).getroot()
     if root.tag != "tv":
         raise ValueError("Invalid XMLTV")
+    if len(root) > 200000:
+        raise ValueError("Oversized XMLTV document")
     channels = {node.get("id") for node in root.findall("channel")}
     counts = Counter(node.get("channel") for node in root.findall("programme"))
     by_digest = {item.get("stream_sha256"): item for item in logos

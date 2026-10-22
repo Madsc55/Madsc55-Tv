@@ -6,7 +6,7 @@ NOTE = "Kanal kimliği elle doğrulanmalı; otomatik ekleme yasak"
 
 
 def priority_rows(rows):
-    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+    if not isinstance(rows, list) or len(rows) > 20000 or any(not isinstance(row, dict) for row in rows):
         raise ValueError("Invalid priority rows")
     def rank(row):
         verified = row.get("DURUM") == "TEKNIK_TEKRAR_DOGRULANDI_KIMLIK_BEKLIYOR"
@@ -19,7 +19,7 @@ def priority_rows(rows):
 
 
 def retest_rows(records, now):
-    if not isinstance(records, dict) or not isinstance(now, datetime) or now.tzinfo is None:
+    if not isinstance(records, dict) or len(records) > 20000 or not isinstance(now, datetime) or now.tzinfo is None:
         raise ValueError("Invalid retest input")
     rows = []
     for url, record in sorted(records.items()):

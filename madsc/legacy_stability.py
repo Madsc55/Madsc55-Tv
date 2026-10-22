@@ -25,7 +25,7 @@ def evaluate_legacy_stability(observations: list[dict], now: datetime) -> dict:
     if not isinstance(now, datetime) or now.tzinfo is None:
         raise ValueError("Invalid current time")
     now = now.astimezone(timezone.utc)
-    if not isinstance(observations, list):
+    if not isinstance(observations, list) or len(observations) > 20000:
         raise ValueError("Invalid history")
     by_time = {}
     for row in observations:

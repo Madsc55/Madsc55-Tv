@@ -132,3 +132,11 @@
 - Ek regresyon assertion'ı `tests/test_fixture_report_writer.py` içine eklendi; güncel offline CI run `39863567977`, SHA `de82210cdea1281b8ad2d1f622925fa1d8d8c397`, kayıt anında in_progress. Sonuç gelmeden başarı kabul edilmez.
 - Üretim yedekleri veya canlı kaynaklar üzerinde işlem yapılmadı; bütün kopyalama/rollback testleri izole fixture'lara yöneliktir. PR #71 birleştirilmedi.
 - Kabul sayaçları değişmedi: 92 workflow 0/92, 26 güvenlik kuralı 0/26, 22 ana görev 0/22.
+
+
+## CI sonucu — K4/K1 rollback düzeltmeleri doğrulandı
+- GitHub Actions run `39863567977` başarılı: [MADSC55 — Offline Unit Tests](https://github.com/Madsc55/Madsc55-Tv/actions/runs/39863567977).
+- Test edilen SHA: `de82210cdea1281b8ad2d1f622925fa1d8d8c397`; `tests_discovered=970`, `test_exit_code=0`, `timed_out=false`, `tests_passed=true`.
+- K1–K5 izole fixture kapısı, beş sistem kurulum envanteri ve beş raporun K5 roundtrip'i başarılı; rapor baytları korunmuş.
+- Güncel main bu test SHA'sından 2 commit ileride; compare sonucu yalnızca `PROJE_HAFIZASI.md` ve bu devir dokümanında değişiklik olduğunu gösteriyor. Bu nedenle kod/test ağacı test edilen SHA ile aynı.
+- CI raporu yine `production_acceptance=false`, `legacy_92_behavioral_acceptance=0`, `runtime_security_26_acceptance=0`, `production_ready=false` diyor. Bu offline test başarısı canlı üretim veya eski workflow eşdeğerliği kabulü değildir.

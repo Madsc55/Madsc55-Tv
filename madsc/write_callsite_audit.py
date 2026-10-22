@@ -41,6 +41,7 @@ _GUARDED_OPEN_FLAGS = {"O_WRONLY", "O_RDWR", "O_CREAT", "O_TRUNC", "O_APPEND"}
 _TEMPFILE_CREATORS = {
     "tempfile.NamedTemporaryFile", "tempfile.TemporaryFile",
     "tempfile.mkstemp", "tempfile.mkdtemp", "tempfile.TemporaryDirectory",
+    "tempfile.SpooledTemporaryFile",
 }
 
 

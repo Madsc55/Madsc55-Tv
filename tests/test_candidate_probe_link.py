@@ -2,7 +2,7 @@ import hashlib
 import unittest
 
 from madsc.artifact_handoff import pack
-from madsc.candidate_probe_link import link_candidate_probes
+from madsc.candidate_probe_link import link_candidate_probes, link_candidate_continuity
 
 
 class CandidateProbeLinkTests(unittest.TestCase):
@@ -56,6 +56,30 @@ class CandidateProbeLinkTests(unittest.TestCase):
         record = {"url_sha256": "A" * 64, "ffprobe": {"streams": [], "format": {"duration": "40"}}}
         with self.assertRaises(ValueError):
             link_candidate_probes(envelope, [record], "1", "b" * 40)
+
+
+    def test_continuity_link_pass_and_missing(self):
+        run, sha = "123", "b" * 40
+        a, b = "a" * 64, "c" * 64
+        envelope = pack({"candidates": [{"url_sha256": a}, {"url_sha256": b}]}, run, sha)
+        base = {"url_sha256": a, "http_status": 200, "video": True,
+                "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": t} for t in (
+            "2026-10-21T10:00:00Z", "2026-10-21T13:00:00Z",
+            "2026-10-21T16:00:00Z")]
+        result = link_candidate_continuity(envelope, {a: samples}, run, sha)
+        self.assertEqual(result["preliminary_window_passes"], 1)
+        self.assertEqual(result["missing_count"], 1)
+        self.assertFalse(result["production_ready"])
+        self.assertFalse(result["actual_network_measurements_verified"])
+
+    def test_continuity_link_rejects_foreign_and_wrong_run(self):
+        run, sha = "123", "b" * 40
+        envelope = pack({"candidates": [{"url_sha256": "a" * 64}]}, run, sha)
+        with self.assertRaises(ValueError):
+            link_candidate_continuity(envelope, {"c" * 64: []}, run, sha)
+        with self.assertRaises(ValueError):
+            link_candidate_continuity(envelope, {}, "124", sha)
 
 
 if __name__ == "__main__":

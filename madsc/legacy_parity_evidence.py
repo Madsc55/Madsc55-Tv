@@ -248,7 +248,8 @@ def compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair, *,
     }
 
 
-def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_root=None):
+def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_root=None,
+                                   behavior_mappings=None):
     """Compare only the pinned 92 behavior workflows with origin-bound pairs."""
     scope = reconcile_legacy_scope(inventory)
     # Pin the full catalog identities, not merely the syntax of each blob SHA.
@@ -267,6 +268,39 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
     if replacement_workflow_root is not None:
         from madsc.parity_workflow_readiness import audit_parity_workflow_readiness
         contract_catalog = audit_parity_workflow_readiness(replacement_workflow_root)
+    mappings = {} if behavior_mappings is None else behavior_mappings
+    if not isinstance(mappings, dict) or set(mappings) - legacy_paths:
+        raise ValueError("Unknown or excluded behavior mapping")
+    if mappings and contract_catalog is None:
+        raise ValueError("Source mappings require current replacement workflow sources")
+    required_mapping = {"legacy_workflow_blob_sha", "replacement_workflow_path",
+                        "replacement_workflow_blob_sha", "consumer_command", "input_path",
+                        "output_label", "output_path"}
+    contracts = {} if contract_catalog is None else {
+        row["workflow_path"]: row for row in contract_catalog["rows"]}
+    for path, mapping in mappings.items():
+        if (not isinstance(mapping, dict) or set(mapping) != required_mapping
+                or any(not isinstance(value, str) or not value or len(value) > 2048
+                       for value in mapping.values())):
+            raise ValueError("Invalid source-bound behavior mapping")
+        contract = contracts.get(mapping["replacement_workflow_path"])
+        if (mapping["legacy_workflow_blob_sha"] != by_path[path]["git_blob_sha"]
+                or contract is None
+                or mapping["replacement_workflow_blob_sha"] != contract["workflow_blob_sha"]
+                or contract["static_file_binding_complete"] is not True
+                or contract["marker_contract_complete"] is not True
+                or contract["input_digest_binding_complete"] is not True):
+            raise ValueError("Behavior mapping source or file contract mismatch")
+        binding = contract["declared_file_binding"]
+        if any(mapping[field] != binding[field] for field in
+               ("consumer_command", "input_path", "output_label", "output_path")):
+            raise ValueError("Behavior mapping does not match current consumer dataflow")
+        if path in pairs:
+            replacement = pairs[path].get("replacement") if isinstance(pairs[path], dict) else None
+            if (not isinstance(replacement, dict)
+                    or replacement.get("workflow_path") != mapping["replacement_workflow_path"]
+                    or replacement.get("workflow_blob_sha") != mapping["replacement_workflow_blob_sha"]):
+                raise ValueError("Execution pair differs from source-bound mapping")
     comparisons = {
         path: compare_provenance_bound_pair(
             path, by_path[path].get("git_blob_sha"), pair,
@@ -285,6 +319,8 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
             "replacement_repository": "Madsc55/Madsc55-Tv", "replacement_branch": "main",
             "replacement_workflow_choices": sorted(CENTRAL_REPLACEMENT_WORKFLOWS),
             "replacement_mapping_review_required": True,
+            "replacement_source_mapping": dict(mappings[path]) if path in mappings else None,
+            "replacement_source_mapping_bound": path in mappings,
             "replacement_contract_catalog_checked": contract_catalog is not None,
             "same_input_sha256": comparisons.get(path, {}).get("same_input_sha256"),
             "execution_pair_metadata_supplied": path in comparisons,
@@ -311,6 +347,8 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
         "pair_preparation_rows": len(rows),
         "replacement_contract_catalog_checked": contract_catalog is not None,
         "replacement_contract_catalog": contract_catalog,
+        "source_mappings_bound": len(mappings),
+        "source_mappings_independently_reviewed": 0,
         "total": 92,
         "pairs_supplied": len(pairs),
         "origin_bindings_complete": sum(

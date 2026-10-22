@@ -1,6 +1,6 @@
 # Madsc55-Tv — DEVAM NOTU
 
-**En yeni kayıt:** 92 pair hazırlığının güncel beş replacement workflow sözleşmesine bağlantısı; 683 yerel test ve beş izole K kapısı başarılı. Ayrıntılar dosyanın sonundadır.
+**En yeni kayıt:** Kaynak ve tüketici/rol doğrulamalı isteğe bağlı davranış eşlemesi mevcut CLI/batch zincirine bağlandı; 698 yerel test ve beş izole K kapısı başarılı. Ayrıntılar dosyanın sonundadır.
 
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
 
@@ -339,3 +339,9 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Mevcut legacy_parity_cli.run ile ağsız/boş gerçek-pair girdisi üzerinde rapor üretildi. docs/PAIR_REPLACEMENT_CONTRACT_KANIT_2026-10-22.json beş güncel sözleşmeyi, 92 checked referansı, CLI rapor SHA256'sını ve test edilen source hashlerini içerir. Gerçek execution/artifact uydurulmadı; 92 pair hâlâ eksik.
 - Kod/test/kanıt/notlar aynı [skip ci] commitinde; kendi SHA'sı Git geçmişindedir. Actions/rerun/live probe, korunan kanal/EPG/yedek/favori/logo/arşiv, workflow/cron/izin, eski repo veya merge işlemi yok. Kabul 0/92, 0/26, 0/22 korunur.
 - Sonraki somut iş: bağımsız pair verisi geldiğinde seçilen replacement tüketici ve input/output role sözleşmesinin eski davranışa gerçekten karşılık geldiğini kaynak-bağlı mapping kaydıyla doğrulamak; metadata match'i davranışsal kabul saymamak. K2/K3 ortak harici input, legacy v1 manifest/artifact ve bağımsız origin/bayt/yan etki kanıtları dış bağımlılık olarak açık.
+
+## 22 Ekim 2026 — Seçilen davranış eşlemesi mevcut karşılaştırıcıya bağlandı
+- Tek hedef Madsc55/Madsc55-Tv/main. Diğer sohbetin kaynak eşleme inceleyicisi ve sekiz testi korunarak 65109d7 tabanına uygulandı. Mevcut batch/CLI isteğe bağlı behavior_mappings alır; pinned legacy blob, güncel replacement blob, tüketici komutu ve input/output rolü birebir doğrulanır. Eksik kaynak, harici-input sözleşmesi, yanlış hedef ve ek approved alanı reddedilir; hatalı CLI girdisinde rapor yazılmaz.
+- Bildirim gerçek eşleme incelemesi değildir. replacement_mapping_review_required=true kalır; gerçek incelenmiş eşleme ve doğrulanmış legacy pair sayısı sıfırdır. Fixture seçimi gerçek 92 davranışa otomatik atanmadı. Bağımsız yürütme/API/artifact baytları/yan etki kanıtı hâlâ gerekir.
+- Yedi yeni regresyonla birleşik python -m madsc.offline_gate: **698 test + beş izole K1–K5 kapısı başarılı**; 92+7 kaynak, 10 yardımcı komut ve 22 görev envanteri geçti. git diff --check temiz. Kanıt docs/BEHAVIOR_MAPPING_BINDING_KANIT_2026-10-22.json. Kod/test/kanıt/notlar aynı [skip ci] commitinde; SHA dosya geçmişindedir.
+- Actions, canlı test, üretim dosyası, eski repo, workflow/cron/izin veya PR değişikliği yok. Kabul 0/92, 0/26, 0/22 korunur. Sonraki iş bağımsız kaynak gerekçeli eşleme incelemesini mevcut pair zincirine taşımak; aynı-input gerçek yürütme kanıtı eksikliğini kabul saymamak.

@@ -26,9 +26,10 @@ def run(inventory_path, snapshots_path, output_path, *, replacement_workflow_roo
     snapshots = load_json(snapshots_path)
     if (isinstance(snapshots, dict)
             and snapshots.get("schema") == "madsc-legacy-provenance-pairs-v1"
-            and set(snapshots) == {"schema", "pairs"}):
+            and set(snapshots) in ({"schema", "pairs"}, {"schema", "pairs", "behavior_mappings"})):
         report = compare_provenance_bound_batch(
-            inventory, snapshots["pairs"], replacement_workflow_root=replacement_workflow_root)
+            inventory, snapshots["pairs"], replacement_workflow_root=replacement_workflow_root,
+            behavior_mappings=snapshots.get("behavior_mappings"))
     else:
         if replacement_workflow_root is not None:
             raise ValueError("Workflow preflight requires provenance-bound pairs")

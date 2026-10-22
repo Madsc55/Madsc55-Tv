@@ -1,0 +1,63 @@
+{
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "base_commit": "65109d7a8d2be8a54ee669ba0629a97a978d99b3",
+  "validation": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 698,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "source_sha256": {
+    "madsc/legacy_parity_evidence.py": "f70b1c38320da61c4a13d52a9bb12334b5574c2c5036dfaffe35d84fb26e2dfd",
+    "madsc/legacy_parity_cli.py": "d8de6e5924bb20b5f2eb1def3cbfca94193d4d775fe3879cac147c75c92107e8",
+    "tests/test_behavior_mapping_binding.py": "8a078c824d899f5583978c385859da7421b42939b1b598320ec4ef54a5b729b1"
+  },
+  "mapping_status": "Source/dataflow binding mechanism only. Supplied mappings are declarations, never reviewed semantic equivalence.",
+  "real_behavior_mappings_reviewed": 0,
+  "real_legacy_execution_pairs_verified": 0,
+  "fixture_scenarios": [
+    "correct declaration remains review-required",
+    "wrong source SHA/consumer/input/output rejected",
+    "external-input contract or missing source root rejected",
+    "pair target cannot differ from mapping",
+    "unknown/excluded workflow and forged approval rejected",
+    "existing CLI includes declaration and emits no report for bad mapping",
+    "matching fixture pair reaches current preflight without acceptance"
+  ],
+  "github_actions_triggered": false,
+  "production_writes": false
+}

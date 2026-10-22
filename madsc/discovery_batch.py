@@ -137,6 +137,10 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
         raise ValueError("Invalid source name")
     if any(not isinstance(body, str) for body in sources.values()):
         raise ValueError("M3U source bodies must be text")
+    # Bound total input size before parsing any feed; each feed is already
+    # individually limited, but 200 feeds could otherwise amplify memory use.
+    if sum(len(body) for body in sources.values()) > 8_000_000:
+        raise ValueError("Combined source text exceeds bounded input limit")
     for source, body in sorted(sources.items()):
         parsed = parse_m3u(body, source)
         if len(rows) + len(parsed["candidate_rows"]) > max_total_candidates:

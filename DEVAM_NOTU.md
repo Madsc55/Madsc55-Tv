@@ -1,6 +1,6 @@
 # Madsc55-Tv — DEVAM NOTU
 
-**En yeni kayıt:** Kaynak ve tüketici/rol doğrulamalı isteğe bağlı davranış eşlemesi mevcut CLI/batch zincirine bağlandı; 698 yerel test ve beş izole K kapısı başarılı. Ayrıntılar dosyanın sonundadır.
+**En yeni kayıt:** Kullanıcının test ekranları yeni K1/K5 karşılıklarıyla doğrulandı; 698 test ve beş izole kapı başarılı. Aktarılanlar ve uygulanmayan eski yayıncı ayrıntıları son kayıtta.
 
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
 
@@ -345,3 +345,9 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Bildirim gerçek eşleme incelemesi değildir. replacement_mapping_review_required=true kalır; gerçek incelenmiş eşleme ve doğrulanmış legacy pair sayısı sıfırdır. Fixture seçimi gerçek 92 davranışa otomatik atanmadı. Bağımsız yürütme/API/artifact baytları/yan etki kanıtı hâlâ gerekir.
 - Yedi yeni regresyonla birleşik python -m madsc.offline_gate: **698 test + beş izole K1–K5 kapısı başarılı**; 92+7 kaynak, 10 yardımcı komut ve 22 görev envanteri geçti. git diff --check temiz. Kanıt docs/BEHAVIOR_MAPPING_BINDING_KANIT_2026-10-22.json. Kod/test/kanıt/notlar aynı [skip ci] commitinde; SHA dosya geçmişindedir.
 - Actions, canlı test, üretim dosyası, eski repo, workflow/cron/izin veya PR değişikliği yok. Kabul 0/92, 0/26, 0/22 korunur. Sonraki iş bağımsız kaynak gerekçeli eşleme incelemesini mevcut pair zincirine taşımak; aynı-input gerçek yürütme kanıtı eksikliğini kabul saymamak.
+
+## 22 Ekim 2026 — Kullanıcının eski depodaki test ekranlarının yeni sistem karşılığı
+- Kullanıcının paylaştığı ekranlardaki ebf7e25, d0ec63a, 28fe155, 1b4474d, ebb3550, 4bc7328 ve 17e9167 değişiklikleri mevcut aktarım kaydı ve yeni kod/testlerle karşılaştırıldı. Tek hedef Madsc55/Madsc55-Tv/main; eski depo değiştirilmedi. Eski kırmızı/yeşil run sonuçları yeni sisteme kanıt sayılmadı.
+- Favori metadata/iç içe korunan yol K1 kapıları, K5 sayfalı eksik geçmiş reddi/current-run/rerun ayrımı ve job/step kaynak kapsamı mevcut yeni uygulamada doğrulandı. Bağımsız kategori kanıtının explicit true gereksinimi mevcut maintenance testiyle doğrulandı. Eski escaped-newline testi farklı workflow metnine körlemesine kopyalanmadı. Yeni runtime'da Git diff/push yayıncısı olmadığı için baseline seçenek enjeksiyonu düzeltmesi uygulanabilir bir üretim yolu olarak gösterilmedi.
+- 0962bc188f712948a03971d012a7d7ad3b381742 üzerinde güncel yerel doğrulama: **698 test + beş izole K1–K5 kapısı başarılı**. Ayrıntı, kaynak SHA256, K etki matrisi ve açık bağımlılıklar docs/SCREENSHOT_TEST_TRANSFER_AUDIT_2026-10-22.json içinde. Bu paket mevcut aktarımı ekrana göre doğrular; yeni işlev/test sayısı artışı değildir.
+- Actions başlatılmadı; üretim/korunan veri/eski repo/workflow değişmedi. Authenticated hata geçmişinin üretimde zorunlu kılındığı veya ekranlardaki eski kırmızı Actions'ın düzeldiği iddia edilmez. Kabul 0/92, 0/26, 0/22. Sonraki iş yeni sistemde bağımsız gerçek yürütme ve kaynak gerekçeli davranış eşlemesi kanıtını tamamlamaktır.

@@ -1,0 +1,132 @@
+{
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "tested_commit": "0962bc188f712948a03971d012a7d7ad3b381742",
+  "source": "User supplied screenshots read directly in conversation; historical run outcomes are not current run evidence.",
+  "validation": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 698,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "screenshot_change_mapping": [
+    {
+      "legacy_commits": [
+        "ebf7e25e5b11b4dd3c6225301f42bb1b3de11c6c"
+      ],
+      "behavior": "favorite metadata and nested protected paths",
+      "new_implementation": [
+        "madsc/write_path_audit.py",
+        "src/madsc_guard.py",
+        "madsc/core.py"
+      ],
+      "status": "adapted_to_existing_K1_guards"
+    },
+    {
+      "legacy_commits": [
+        "d0ec63a5759b7da44b4e57a3bf4b09964bf9c510"
+      ],
+      "behavior": "untrusted Git diff baseline must not become Git options",
+      "status": "not_copied_no_Git_diff_or_push_writer_in_new_runtime",
+      "reason": "New K1 guards explicit output paths; no legacy publisher is added."
+    },
+    {
+      "legacy_commits": [
+        "28fe1550e79360d9b5f95323af4d4ae6309b1398",
+        "1b4474da5ecd2b548b99bd6b39654039907b4eca"
+      ],
+      "behavior": "incomplete paginated failure history cannot allow retry",
+      "new_implementation": [
+        "madsc/maintenance.py",
+        "madsc/core.py"
+      ],
+      "status": "offline_supplied_pages_bound_to_existing_K5_retry_policy",
+      "limitation": "No automatic GitHub fetch, scheduler, authenticated history or production enforcement is claimed; existing new-system default limit 3 is retained."
+    },
+    {
+      "legacy_commits": [
+        "ebb3550172521057cf0704b2940b27b46169a2b8",
+        "4bc73284a24d1a72ced121724384b15a38158b44"
+      ],
+      "behavior": "job/step failure-circuit source context",
+      "new_implementation": [
+        "madsc/legacy_workflow_safety.py",
+        "madsc/legacy_99_bulk_audit.py",
+        "madsc/core.py"
+      ],
+      "status": "adapted_in_existing_source_audit_and_K5_fixture",
+      "limitation": "Pinned 99 source scope is not replaced or rescanned online. Old 24/18/6 counts are not asserted for a new pinned source run."
+    },
+    {
+      "legacy_commits": [
+        "17e9167ff31fe230ff362934899637569b2778bd"
+      ],
+      "behavior": "legacy test newline and independent category evidence check",
+      "status": "not_copied_different_workflow_architecture",
+      "reason": "Existing new-system workflow preflight and all offline tests remain in use."
+    }
+  ],
+  "current_source_sha256": {
+    "tests/test_transferred_safety.py": "b37d5bee7be2cf1536e25195b3ea55b4e8524aba65981195e968a332f8e26f47",
+    "tests/test_transferred_workflow_scope.py": "b8fb6304e288ff6cce861d8c9cb9f862b939a701a66d47af011532c4606d6f37",
+    "tests/test_maintenance.py": "c0b6e89c5231761bc1c79b764b5a2ce7afd31afe390b83df45f8c7a58782a22e",
+    "madsc/core.py": "f19d96871ad8c544bf5e8e31137cf3ccf442dabfc7161a1ddb2ed52f77adfb90",
+    "madsc/maintenance.py": "fb7875c079606a04ec1a03c77e91f6f843aa99859031d0606e46584d9481aba6",
+    "madsc/write_path_audit.py": "4fad0beb9dab108fec23c27ef6d9d62f78db12fbe9888c0b54b29d1c42fe35cb"
+  },
+  "category_evidence_counterpart": {
+    "implementation": "madsc.maintenance.verify_fixture_evidence",
+    "regression": "tests/test_maintenance.py::test_fixture_evidence_requires_explicit_true_checks",
+    "status": "existing independent five-category evidence checks pass locally; legacy newline test not copied"
+  },
+  "k_impact": {
+    "k1": "protected paths deny metadata and nested locations",
+    "k2": "unchanged; isolated discovery gate passed",
+    "k3": "unchanged; isolated technical gate passed",
+    "k4": "unchanged; isolated restore gate passed",
+    "k5": "supplied paginated history, scope analysis and independent category evidence checks"
+  },
+  "github_actions_triggered": false,
+  "legacy_repository_modified": false,
+  "runtime_failure_history_origin_verified": false,
+  "production_acceptance": false,
+  "open_dependencies": [
+    "Authenticated workflow history is not wired to production enforcement.",
+    "No Git diff/push publisher exists in new runtime; baseline option-injection fix is not copied into a nonexistent publisher.",
+    "Historical red Actions screenshots are not proven repaired by local tests.",
+    "Independent real legacy/new same-input execution evidence remains missing."
+  ]
+}

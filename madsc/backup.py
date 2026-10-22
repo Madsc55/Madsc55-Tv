@@ -137,6 +137,19 @@ def verify_independent_restore(source: Path, backup: Path, restored: Path,
             "production_writes": False}
 
 
+
+def _remove_created_tree_if_same(destination: Path, identity: tuple[int, int]) -> None:
+    """Rollback only the exact directory inode created by this operation."""
+    try:
+        current = destination.lstat()
+    except FileNotFoundError:
+        return
+    if (not stat.S_ISDIR(current.st_mode) or stat.S_ISLNK(current.st_mode)
+            or (current.st_dev, current.st_ino) != identity):
+        return
+    import shutil
+    shutil.rmtree(destination)
+
 def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) -> dict:
     """Restore a verified backup into a newly created sandbox, never production.
 
@@ -171,6 +184,8 @@ def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) ->
     original = snapshot_manifest(backup, names)
     enforce_local_output_path(destination.absolute())
     destination.mkdir()
+    created = destination.lstat()
+    created_identity = (created.st_dev, created.st_ino)
     try:
         for entry in original["entries"]:
             relative = Path(entry["path"])
@@ -181,7 +196,7 @@ def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) ->
         if not verify_manifest(backup, original) or not verify_manifest(destination, original):
             raise ValueError("Backup changed or sandbox restore failed integrity verification")
     except BaseException:
-        shutil.rmtree(destination)
+        _remove_created_tree_if_same(destination, created_identity)
         raise
     return {"sandbox_restore_matches": True, "files_restored": len(original["entries"]),
             "external_storage_proven": False, "production_restore_verified": False,
@@ -224,7 +239,7 @@ def backup_to_new_sandbox(source: Path, destination: Path, names: list[str]) -> 
         if not verify_manifest(source, original) or not verify_manifest(destination, original):
             raise ValueError("Source changed or sandbox backup failed integrity verification")
     except BaseException:
-        shutil.rmtree(destination)
+        _remove_created_tree_if_same(destination, created_identity)
         raise
     return {"sandbox_backup_matches": True, "files_backed_up": len(original["entries"]),
             "external_storage_proven": False, "production_writes": False}

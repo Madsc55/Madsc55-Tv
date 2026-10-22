@@ -54,10 +54,12 @@ def export_isolated_previews(source: Path, destination: Path) -> dict:
             manifest["files"][name] = {"sha256": hashlib.sha256(content).hexdigest(),
                                        "bytes": len(content), "channels": report["counts"][bucket]}
         path = destination / "manifest.json"
+        # Register before writing so a partial manifest is removed if
+        # serialization fails; otherwise rmdir can mask the original error.
+        created.append(path)
         with path.open("x", encoding="utf-8") as handle:
             json.dump(manifest, handle, ensure_ascii=False, sort_keys=True, indent=2)
             handle.write("\n")
-        created.append(path)
         return manifest
     except Exception:
         for path in reversed(created):

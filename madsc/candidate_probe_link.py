@@ -82,8 +82,9 @@ def load_evidence(path):
 
     path = Path(path).absolute()
     parts = path.parts
-    descriptor = os.open(parts[0], os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    descriptor = None
     try:
+        descriptor = os.open(parts[0], os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
         for component in parts[1:-1]:
             next_descriptor = os.open(
                 component, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
@@ -98,8 +99,11 @@ def load_evidence(path):
             if not stat.S_ISREG(opened.st_mode) or opened.st_size > 16 * 1024 * 1024:
                 raise ValueError("Evidence must be a bounded regular file")
             raw = handle.read(16 * 1024 * 1024 + 1)
+    except OSError as exc:
+        raise ValueError("Evidence path cannot be opened securely") from exc
     finally:
-        os.close(descriptor)
+        if descriptor is not None:
+            os.close(descriptor)
     if len(raw) > 16 * 1024 * 1024:
         raise ValueError("Invalid or oversized evidence")
     return json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_json_pairs)

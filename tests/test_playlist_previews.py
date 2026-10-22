@@ -56,6 +56,17 @@ class PlaylistPreviewTests(unittest.TestCase):
         self.assertEqual(sum(result["counts"].values()), 2)
         self.assertFalse(result["production_writes"])
 
+    def test_catalog_cannot_claim_production_write_or_readiness(self):
+        rows = [{"name": "A", "url": "https://example.org/a"}]
+        for field, value in (("production_writes", True),
+                             ("production_ready", True),
+                             ("production_writes", 0),
+                             ("production_ready", 0)):
+            catalog = prepare_channel_catalog(rows)
+            catalog[field] = value
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                render_playlist_previews(catalog, rows)
+
     def test_unverified_logo_rejected(self):
         rows = [{"name": "A", "url": "https://example.org/a"}]
         catalog = prepare_channel_catalog(rows)

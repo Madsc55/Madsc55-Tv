@@ -67,23 +67,7 @@ def link_candidate_continuity(envelope: dict, measurements: dict,
     }
 
 
-def main():
-    import argparse
-    import json
-    from pathlib import Path
-    from madsc.batch_acceptance import _unique_json_pairs
-    from madsc.fixture_report_writer import write_stage_report
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--candidates", type=Path, required=True)
-    evidence_group = parser.add_mutually_exclusive_group(required=True)
-    evidence_group.add_argument("--probes", type=Path)
-    evidence_group.add_argument("--continuity", type=Path)
-    parser.add_argument("--run-id", required=True)
-    parser.add_argument("--commit-sha", required=True)
-    parser.add_argument("--isolated-report-root", type=Path, required=True)
-    args = parser.parse_args()
-    def load(path):
+def load_evidence(path):
         if (path.is_symlink() or any(parent.is_symlink() for parent in path.parents)
                 or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024):
             raise ValueError("Invalid or oversized evidence")
@@ -101,12 +85,30 @@ def main():
         if len(raw) > 16 * 1024 * 1024:
             raise ValueError("Invalid or oversized evidence")
         return json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_json_pairs)
-    candidates = load(args.candidates)
+
+
+def main():
+    import argparse
+    import json
+    from pathlib import Path
+    from madsc.batch_acceptance import _unique_json_pairs
+    from madsc.fixture_report_writer import write_stage_report
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--candidates", type=Path, required=True)
+    evidence_group = parser.add_mutually_exclusive_group(required=True)
+    evidence_group.add_argument("--probes", type=Path)
+    evidence_group.add_argument("--continuity", type=Path)
+    parser.add_argument("--run-id", required=True)
+    parser.add_argument("--commit-sha", required=True)
+    parser.add_argument("--isolated-report-root", type=Path, required=True)
+    args = parser.parse_args()
+    candidates = load_evidence(args.candidates)
     if args.continuity is not None:
-        linked = link_candidate_continuity(candidates, load(args.continuity),
+        linked = link_candidate_continuity(candidates, load_evidence(args.continuity),
                                            args.run_id, args.commit_sha)
     else:
-        linked = link_candidate_probes(candidates, load(args.probes),
+        linked = link_candidate_probes(candidates, load_evidence(args.probes),
                                       args.run_id, args.commit_sha)
     report = {"category": "k3", "production_writes": False,
               "production_ready": False, "evidence": linked}

@@ -109,6 +109,22 @@ class DiscoveryBatchTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_m3u8_preview(feeds)
 
+    def test_extinf_quoted_commas_preserve_channel_identity(self):
+        feed = ('#EXTM3U\n#EXTINF:-1 tvg-id="news,tr" group-title="News, World",News, HD\n'
+                'https://example.org/news.m3u8\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(report["candidate_rows"][0]["name"], "News, HD")
+        self.assertEqual(report["candidate_rows"][0]["tvg_id"], "news,tr")
+        self.assertEqual(report["candidate_rows"][0]["group_title"], "News, World")
+
+    def test_extinf_unclosed_quote_fails_closed(self):
+        feed = ('#EXTM3U\n#EXTINF:-1 tvg-id="broken,Channel\n'
+                'https://example.org/news.m3u8\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 0)
+        self.assertEqual(report["parse_errors"][0]["reason"], "missing_channel_name")
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

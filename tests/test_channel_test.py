@@ -65,11 +65,11 @@ class ChannelTests(unittest.TestCase):
         base = {"url_sha256": "a" * 64, "http_status": 200,
                 "video": True, "audio": True, "duration_seconds": 40}
         samples = [{**base, "observed_at": t} for t in
-                   ("2026-10-21T10:00:00+00:00", "2026-10-21T13:00:00+00:00",
-                    "2026-10-21T16:00:00+00:00")]
+                   ("2026-10-21T10:00:00+00:00", "2026-10-21T16:00:00+00:00",
+                    "2026-10-21T22:00:00+00:00")]
         result = evaluate_three_stage_continuity(samples)
         self.assertTrue(result["three_stage_six_hour_preliminary"])
-        self.assertEqual(result["elapsed_hours"], 6)
+        self.assertEqual(result["elapsed_hours"], 12)
         self.assertFalse(result["observation_provenance_verified"])
         self.assertFalse(result["stream_continuity_verified"])
 
@@ -78,8 +78,8 @@ class ChannelTests(unittest.TestCase):
         from madsc.channel_test import evaluate_three_stage_continuity
         base = {"url_sha256": "a" * 64, "http_status": 200,
                 "video": True, "audio": True, "duration_seconds": 40}
-        valid = ["2026-10-21T10:00:00Z", "2026-10-21T13:00:00+00:00",
-                 "2026-10-21T16:00:00.123456Z"]
+        valid = ["2026-10-21T10:00:00Z", "2026-10-21T16:00:00+00:00",
+                 "2026-10-21T22:00:00.123456Z"]
         self.assertTrue(evaluate_three_stage_continuity(
             [{**base, "observed_at": stamp} for stamp in valid]
         )["three_stage_six_hour_preliminary"])

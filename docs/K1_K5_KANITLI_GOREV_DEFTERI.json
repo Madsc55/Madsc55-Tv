@@ -108,9 +108,10 @@
       "4a3eee5: regression tests cover missing, blank, and unmatched programme channel IDs; [skip ci], not yet run in CI",
       "6dcaaac: duplicate M3U tvg-id attributes now rejected fail-closed",
       "73fdc79: regression tests for duplicate tvg-id and whitespace normalization; focused local behavioral checks passed for 5 cases; GitHub Actions not run",
-      "ef72812: fixed first three test fixtures to use actual newline escapes; 9/9 scenarios passed in isolated local harness; repository test file/full suite/Actions not executed"
+      "ef72812: fixed first three test fixtures to use actual newline escapes; 9/9 scenarios passed in isolated local harness; repository test file/full suite/Actions not executed",
+      "GitHub Actions run #89 / 39867960099 on 474dc539: offline-tests succeeded; tests_passed=true, all_offline_gates_passed=true, K1-K5 isolated fixture categories all success; not production certification"
     ],
-    "note": "EPG validator fails closed on malformed XMLTV programme channel refs and duplicate M3U tvg-id attributes. Test fixtures corrected; isolated nine-case behavior harness passed 9/9. Actual repository tests/full CI not run; IBO/Pages live-chain acceptance and device confirmation remain open."
+    "note": "EPG validator hardened; newline fixtures fixed; test suite expanded to 12 cases. GitHub Actions offline gate passed on commit 474dc539 (run #89). K3-13 remains in_progress pending live Pages/XMLTV chain and IBO device acceptance."
   },
   {
     "id": "K3-14",

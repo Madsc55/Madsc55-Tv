@@ -193,7 +193,8 @@ def execute(category: str) -> dict:
         pair_preparation = compare_provenance_bound_batch(source_catalog, {},
             replacement_workflow_root=Path(__file__).resolve().parents[1])
         history_rows = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
-                         "status": "in_progress", "conclusion": None} for i in range(104, 4, -1)]
+                         "status": "in_progress" if i == 104 else "completed",
+                         "conclusion": None if i == 104 else "failure"} for i in range(104, 4, -1)]
         old_failures = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
                          "status": "completed", "conclusion": "failure"} for i in (4, 3, 2)]
         history_result = assess_failure_history([

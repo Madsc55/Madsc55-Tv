@@ -32,7 +32,12 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     for root in (Path(source), Path(backup), Path(restored)):
         actual_files = set()
         actual_dirs = set()
+        inspected = 0
         for item in root.rglob("*"):
+            inspected += 1
+            if inspected > 20000:
+                inventory_matches = False
+                break
             relative = item.relative_to(root).as_posix()
             if item.is_symlink():
                 inventory_matches = False

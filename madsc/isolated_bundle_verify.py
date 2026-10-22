@@ -58,7 +58,7 @@ def verify_bundle(directory: Path) -> dict:
         data = path.read_bytes()
         if hashlib.sha256(data).hexdigest() != meta.get("sha256"):
             errors.append(name + ":digest_mismatch")
-        if not data.startswith(b"#EXTM3U\\n"):
+        if not data.startswith(b"#EXTM3U\n"):
             errors.append(name + ":invalid_header")
         bucket = name[:-4]
         if meta.get("channels") != counts[bucket] or type(meta.get("channels")) is not int:

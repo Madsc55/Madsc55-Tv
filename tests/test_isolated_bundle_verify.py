@@ -13,7 +13,7 @@ class IsolatedBundleVerifyTests(unittest.TestCase):
             source_dir = root / "source"
             source_dir.mkdir()
             source = source_dir / "channels.m3u"
-            source.write_text("#EXTM3U\\n#EXTINF:-1,Test\\nhttps://example.org/live\\n")
+            source.write_text("#EXTM3U\n#EXTINF:-1,Test\nhttps://example.org/live\n")
             output = root / "output"
             export_isolated_previews(source, output)
             self.assertTrue(verify_bundle(output)["verified"])
@@ -27,7 +27,7 @@ class IsolatedBundleVerifyTests(unittest.TestCase):
             source_dir = root / "source"
             source_dir.mkdir()
             source = source_dir / "channels.m3u"
-            source.write_text("#EXTM3U\\n")
+            source.write_text("#EXTM3U\n")
             output = root / "output"
             export_isolated_previews(source, output)
             manifest_path = output / "manifest.json"

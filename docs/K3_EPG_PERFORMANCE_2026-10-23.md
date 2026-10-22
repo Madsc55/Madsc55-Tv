@@ -1,3 +1,13 @@
+## K3 online pilot düzeltmeleri — 2026-10-23
+- `462ef839`: radyo kayıtları 12 TV deneme kotasını tüketmez.
+- `2596caa9`: kaynak taraması en çok 120 satırla sınırlandırılır.
+- `30f7e607`: tekrarlanan TV URL'leri yeniden denenmez; `8837ed91` regresyon testi.
+- `1265a544`: kaynak sınırından sonra gereksiz bir sonraki kaydı çekme ve iki kez SHA-256 hesaplama giderildi.
+- GitHub Actions `39871569940`: 1076 test, exit=0, tüm offline kapılar başarılı; daha sonraki `39872216779` çalıştırmasında K5 arşiv manifesti bütünlük testi hatası vardır. Bu K5 hatası K3 doğrulaması olarak gösterilmemelidir.
+- Gerçek ağ/HLS ses-video, 75 yayın ve 6 saat süreklilik henüz doğrulanmadı. IBO Player Pro cihaz testi kullanıcı tarafından **en son** yapılacak.
+
+---
+
 ## K3 güncelleme — 19 EPG testi ve 1066 offline test (2026-10-23)
 - GitHub Actions run `39871021673` (tested commit `41a61d61b92f0e6c043abd969caeb01100df4b1b`) **completed/success**; `tests_discovered=1066`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`. 19 EPG testini ve XMLTV DTD/entity fail-closed korumasını içerir.
 - `a22684d4a259ccc986c2b4baa8fcb92ecbf02b10`: XMLTV DTD/entity taramasında `upper()` dönüşümü iki kez yerine bir kez hesaplanır. Bu son mikro-optimizasyon, yukarıdaki başarılı koşudan sonra geldi; henüz ayrıca CI kanıtı yok.

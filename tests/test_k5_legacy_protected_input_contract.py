@@ -60,7 +60,9 @@ class K5LegacyProtectedInputContractTests(unittest.TestCase):
 
         with TemporaryDirectory() as directory:
             root = Path(directory)
-            source = root / "CALISANLAR.m3u"
+            source_dir = root / "source"
+            source_dir.mkdir()
+            source = source_dir / "CALISANLAR.m3u"
             original = b"#EXTM3U\\n#EXTINF:-1,Protected\\nhttps://example.org/live\\n"
             source.write_bytes(original)
             destination = root / "isolated-drafts"

@@ -118,6 +118,20 @@ class K4RestoreGateTests(unittest.TestCase):
                     audit_k4_restore(*trees, names)
                 verify.assert_not_called()
 
+    def test_declared_nested_directory_overflow_rejected_before_hashing(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ("source", "backup", "restored")]
+            for root in trees:
+                root.mkdir()
+            # One declared file can expand into more than the safe directory budget.
+            deep_name = "/".join(f"d{i}" for i in range(20001)) + "/file.txt"
+            with patch("madsc.k4_restore_gate.verify_independent_restore") as verify:
+                with self.assertRaisesRegex(ValueError, "safe entry limit"):
+                    audit_k4_restore(*trees, [deep_name])
+                verify.assert_not_called()
+
     def test_nested_tree_rejected(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

@@ -810,5 +810,12 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 ## 23 Ekim 2026 — K2 kaynak bağımsızlığı açıkça doğrulanmamış olarak işaretlendi
 - `corroborate_sources` çıktısına `source_independence_verified: false` ve `source_count_semantics: distinct_semantic_feed_inventories_not_verified_origins` eklendi. Farklı semantik envanter sayıları, gerçek ayrı işletmeci/kaynak kökeni kanıtı olarak yorumlanamaz.
 - Kod commit `e8e686bfa0f2bf31376bcf58230bc8b5aa212a6d`; regresyon testi commit `9c1c8a594849d730f75d9c050265df74b382b8ec`. K2-08 görev defterine CI ve sınırlar işlendi (`42841d5e`).
-- Son bilinen tam offline CI başarısı `39868459061` (commit `a0469c34`); 1016 testlik paket sonraki K3 devir notunda raporlandı. Yeni açık `source_independence_verified` regresyonu için workflow `39868653542` çalışıyor; bu SHA için sonuç henüz doğrulanmadı.
+- Son bilinen tam offline CI başarısı `39868459061` (commit `a0469c34`); 1016 testlik paket sonraki K3 devir notunda raporlandı. Yeni açık `source_independence_verified` regresyonu için workflow `39868653542`, SHA `9c1c8a594849d730f75d9c050265df74b382b8ec` üzerinde `success` ile tamamlandı.
 - K2-05 gerçek kaynak URL/işletmeci/lisans mutabakatı, K2-06 günlük keşif/tetik eşdeğerliği ve K2-07 bağımsız gerçek artifact SHA kanıtı açık. Gerçek kaynak verisi olmadan kabul kapatılmadı; üretim verisi değiştirilmedi.
+
+
+## 23 Ekim 2026 — K3 kaynak M3U içe aktarımında yinelenen metadata öznitelikleri
+- `madsc/source_import.py` artık EXTINF metadata öznitelik adlarını büyük/küçük harf duyarsız karşılaştırıyor ve yinelenen özniteliklerde (ör. iki `tvg-id` veya `tvg-id`/`TVG-ID`) belirsiz EPG/logo eşleşmesi üretmek yerine `ValueError` ile reddediyor. Regex kaçışları ayrıca kontrol edilip düzeltildi.
+- Regresyon testi `tests/test_source_import.py` içinde tam ve büyük/küçük harf farkı olan duplicate `tvg-id` ile duplicate `group-title` durumlarını kapsıyor. Test fixture satır sonları doğrulandı.
+- Entegre offline regression workflow `39868653542` SHA `9c1c8a594849d730f75d9c050265df74b382b8ec` için `success` ile tamamlandı. Bu çalışma yeni duplicate metadata testini içerir; ayrı K3 regex commit çalışması `39868610849` de `success` oldu.
+- Bu değişiklik aday içe aktarım doğrulamasını sıkılaştırır; kaynak M3U değiştirilmedi, gerçek yayın URL'leri denenmedi ve kanal canlı doğrulandı olarak işaretlenmedi.

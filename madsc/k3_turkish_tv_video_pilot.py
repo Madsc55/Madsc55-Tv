@@ -91,6 +91,8 @@ def verify_av(url):
             result = subprocess.run(
                 ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
                  "-of", "json", str(segment)], capture_output=True, timeout=8)
+            if result.returncode != 0:
+                return False, False, "probe_error"
             decoded = json.loads(result.stdout or b"{}")
             if not isinstance(decoded, dict) or not isinstance(decoded.get("streams", []), list):
                 return False, False, "probe_error"

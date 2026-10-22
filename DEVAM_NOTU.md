@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: 27c8b62165e511d09d42b319766a39d77994deb9
+Son geliştirme commit SHA: 79ddf0e7bbec7cdb47fb1a79e285f35d5c5e9b02
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -126,3 +126,12 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Nihai python -m madsc.offline_gate: 587 test, beş izole K kapısı, 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri başarılı. Başarısız test yok; değişen dosyalarda git diff --check temiz. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET10.json.
 - Actions/live probe/production write/eski repo yazısı yok. Kabul sayaçları 0/92, 0/26, 0/22.
 - Açık blocker: mevcut beş workflow ortak gerçek davranış input ve side-effect dosyası üretmiyor; fixture raporunu parity kanıtı diye yeniden adlandırmak yasak. Sonraki güvenli iş workflow job'larını read-only statik denetleyip hangi gerçek çıktının hangi input/side-effect kaydıyla bağlanabileceğini makine-okunur readiness raporunda fail-closed göstermek; eksik olanı acceptance saymamak.
+
+## On birinci önemli geliştirme — beş workflow parity readiness denetimi
+- Son kod commit SHA: 79ddf0e7bbec7cdb47fb1a79e285f35d5c5e9b02; taban f4f14fd668e37ca382f50c2991c4c1616ed7fbd9.
+- parity_workflow_readiness tam olarak depoda kurulu beş merkezi workflow'u okur ve açık opt-in, opt-in koşulu, snapshot CLI, manifest CLI, manifest artifact upload ve üretici sırası işaretlerini fail-closed denetler. Workflow kaynak SHA256'larını rapora bağlar.
+- Whole-line comment örnekleri readiness sayılmaz; symlink, nonregular, boş/büyük ve UTF-8 olmayan workflow kaynağı reddedilir. Rapor yalnız reports/parity-workflow-readiness.json yolunda ortak K1 exclusive writer ile yazılabilir.
+- Gerçek mevcut sonuç: 0/5 workflow marker kontratı tamam. Bu dürüst blocker kaydıdır. Tam marker'lı sentetik test bile runtime_origin_verified, real_behavior_ready ve behavioral_parity_accepted alanlarını false/0 tutar.
+- Nihai python -m madsc.offline_gate: 590 test ve beş izole K kapısı success; 92+7 kapsam, 10 yardımcı komut, 22 görev envanteri geçti. Başarısız test yok; path-scoped git diff --check temiz. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET11.json.
+- Actions/live probe/production write/eski repo yazısı yok. Kabul 0/92, 0/26, 0/22.
+- Açık blocker: gerçek beşli job'larda ortak input/snapshot/side-effect sözleşmesi ve legacy 92 v1 artifactleri yok. Sıradaki güvenli adım, yalnız izole/gerçek dosya çıktısı olan K1-K5 yollarında açık opt-in marker zincirini eklemek için ortak workflow sözleşmesini tasarlamak; ağ/canlı/korunan veri yollarını bu entegrasyona dahil etmemek ve Actions çalıştırmamak.

@@ -1921,3 +1921,11 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Uçtan uca offline zincir testi gerçek input/output dosyalarından snapshot ve manifest üretip tek-entry artifact ZIP'i declared digest/origin manifest doğrulayıcısına bağladı. Bu, GitHub API origin doğrulaması veya legacy pair kabulü değildir.
 - Tam offline_gate 587 test ve K1–K5 fixture gates success; 92+7 pinned kapsam ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET10.json. Actions/live probe/production write yok; 0/92, 0/26, 0/22.
 - Açık: beş workflow ortak gerçek input/side-effect snapshot kontratını henüz üretmiyor. Sonraki iş statik readiness auditor ile her workflow'da gerçek ölçüm bağlarının var/yok durumunu kanıtlamak; fixture çıktılarını parity kabulü olarak yeniden etiketlememek. Eski 92 tarafındaki v1 artifact eksikliği de blocker kalır.
+
+
+## 22 Ekim 2026 — Beş workflow parity hook readiness auditor
+- Kod 79ddf0e7bbec7cdb47fb1a79e285f35d5c5e9b02: parity_workflow_readiness yalnız gerçek kurulu beş workflow'u tarar; açık opt-in/input koşulu, snapshot ve manifest CLI, manifest artifact yolu, upload action ve doğru üretici sırasını ayrı marker olarak kaydeder. Her workflow'un gerçek SHA256'sı rapora eklenir.
+- Whole-line comment marker sayılmaz. Symlink/nonregular/oversize/bozuk UTF-8 workflow reddedilir. Rapor ortak K1 writer ile sabit reports/parity-workflow-readiness.json yolunda exclusive create edilir.
+- Güncel beş workflow sonucu marker_contract_complete=0/5, real_behavior_ready=0 ve behavioral_parity_accepted=0. Sentetik tam marker kontratı dahi statik metinden runtime kanıtı veya acceptance üretmez.
+- Tam offline_gate 590 test ve K1–K5 fixture gates success; 92+7 kapsam ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET11.json. Actions/live probe/production write yok; kabul 0/92, 0/26, 0/22.
+- Sıradaki: ortak opt-in workflow sözleşmesini yalnız gerçek izole input/output dosyası bulunan job'lara ekleyecek tasarım ve kontrat testleri. Canlı ağ/korunan listeler bu bağın dışında kalmalı; legacy v1 artifact eksikliği blocker olmaya devam eder.

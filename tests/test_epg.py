@@ -45,3 +45,31 @@ class EpgTests(unittest.TestCase):
             self.assertEqual(p.read_bytes(), original)
             e.write_text('<tv><channel id="other"/></tv>', encoding="utf-8")
             self.assertFalse(check_epg_mapping(p, e)["matching_verified"])
+
+    def test_programme_without_channel_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/><programme start="20261019010000 +0000" stop="20261019020000 +0000"><title>Test</title></programme></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "programme is missing a nonempty channel"):
+                check_epg_mapping(p, e)
+
+    def test_blank_programme_channel_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/><programme channel="  " start="20261019010000 +0000" stop="20261019020000 +0000"><title>Test</title></programme></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "programme is missing a nonempty channel"):
+                check_epg_mapping(p, e)
+
+    def test_unmatched_programme_channel_blocks_matching(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/><programme channel="missing.tr" start="20261019010000 +0000" stop="20261019020000 +0000"><title>Test</title></programme></tv>', encoding="utf-8")
+            result = check_epg_mapping(p, e)
+            self.assertFalse(result["matching_verified"])
+            self.assertEqual(result["unmatched_programme_ids"], ["missing.tr"])

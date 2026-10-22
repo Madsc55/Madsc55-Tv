@@ -103,7 +103,10 @@ def write_turkish_tv_test_bundle(root: Path, playlist: bytes, report: str) -> di
                 current = path.lstat()
             except FileNotFoundError:
                 continue
-            if (current.st_dev, current.st_ino, current.st_size,\n                    current.st_mtime_ns, current.st_ctime_ns) == (\n                    identity.st_dev, identity.st_ino, identity.st_size,\n                    identity.st_mtime_ns, identity.st_ctime_ns):
+            if (current.st_dev, current.st_ino, current.st_size,
+                    current.st_mtime_ns, current.st_ctime_ns) == (
+                    identity.st_dev, identity.st_ino, identity.st_size,
+                    identity.st_mtime_ns, identity.st_ctime_ns):
                 path.unlink(missing_ok=True)
         raise
     return {

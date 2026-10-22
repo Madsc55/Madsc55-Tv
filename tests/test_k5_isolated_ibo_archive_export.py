@@ -30,6 +30,20 @@ class K5IboArchiveExportTests(unittest.TestCase):
                 export_6115_archive_manifest(self.urls[:-1], destination)
             self.assertFalse(destination.exists())
 
+    def test_readback_mismatch_removes_manifest_and_directory(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            original = json.loads
+            def tamper_readback(payload, *args, **kwargs):
+                result = original(payload, *args, **kwargs)
+                if isinstance(result, dict) and "source_count" in result:
+                    result["source_count"] = -1
+                return result
+            with patch("madsc.isolated_ibo_archive_export.json.loads", side_effect=tamper_readback):
+                with self.assertRaisesRegex(OSError, "readback mismatch"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(destination.exists())
+
     def test_partial_serialization_failure_rolls_back(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"

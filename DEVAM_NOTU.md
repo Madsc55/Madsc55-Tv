@@ -1,5 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
+**En güncel doğrulanmış paket (22 Ekim 2026):** Kod/test/kanıt SHA `e4f68c0b6bf597da1ab21c5ebd8c9480d5b85991`; güncel main üzerinde **760/760 yerel test**, beş izole K kapısı, kurulum envanteri ve beş rapor/K5 round-trip başarılı. Ayrıntı en alttaki kayıtta. Tam kabuller değişmedi: 0/92, 0/26, 0/22.
+
 **En yeni kayıt:** Yeni sohbet devri tamamlandı: SOHBET_DEVIR_2026-10-22_SON.md. Son doğrulanmış paket 757 test+5 kapı+5 rapor/K5; sonraki 3c228e7 modülü henüz test edilmedi. Önce son devir kaydını oku.
 
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
@@ -402,3 +404,12 @@ Kullanıcı tüm ilerlemenin kaydedilip yeni sohbete geçilmesini istedi. Ayrın
 
 ## Eşzamanlı diğer devirle mutabakat
 Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_DEVIR_2026-10-22.md ekledi; metin okundu ve korundu. O belgedeki 707 test bilgisi tarihsel kaldı: 1b30eee paketi 757 test+5 kapı+5 rapor/K5 ile doğrulandı, daha sonraki 3c228e7 dosyaları henüz sınanmadı. Diğer belgenin kullanıcı ekranından aktardığı K4 EPG/logo ve K5 arşiv/bakım hedefleri ile repo teknik K4 yedek/K5 bakım adlandırması arasındaki fark yeni sohbette açık görev eşlemesiyle uzlaştırılmalı; repo isimleri varsayımla değiştirilmemeli. Bu devir kaydı bütün önceki notları tamamlar.
+
+## 22 Ekim 2026 — kurulum kapısı ve zamanlama regresyonu doğrulaması
+- Son kod/test/kanıt commit SHA: `e4f68c0b6bf597da1ab21c5ebd8c9480d5b85991`; taban `554ec5f07a10dcf81041c1cc18a2081a04dc9e4c`. Eşzamanlı gelen `4fa9cf7` ve `554ec5f` kurulum-envanteri fail-closed testini ekledi/düzeltti; eski HEAD üzerine yazılmadı.
+- Güncel kaynakta kurulum envanteri genel offline kapının zorunlu parçası olarak doğrulandı. Odaklı kurulum/offline/round-trip seti 14/14 geçti. Nihai `python -m madsc.offline_gate` sonucu 760/760 test, beş izole K1–K5 kapısı, kurulum envanteri, beş gerçek yerel rapor/K5 byte-koruyan round-trip ve 92+7/10 komut/22 görev envanteri başarılıdır.
+- İlk tam koşu host yükü altında FIFO snapshot 2 saniye ve K1 workflow simülasyonu 10 saniye sınırında iki timeout verdi; ikisi izole tekrarında geçti. İkinci tam koşu, öldürülen alt süreç için PID numarasının yeniden kullanılmasını ayırt etmeyen `/proc` kontrolünde 1 saniyelik sınırı yaklaşık 10 ms aştı. Sadece bekleme süresini artıran ilk deneme yeterli olmadı.
+- Nihai test düzeltmesi süreç kimliğini Linux `/proc/<pid>/stat` starttime alanına bağladı; yeniden kullanılan PID artık eski alt süreç sanılmıyor. Gerçek aynı süreç canlıysa test hâlâ kırmızı kalır. FIFO ve workflow simülasyonu test-harness zamanlama üst sınırları 5 ve 30 saniyeye çıkarıldı; üretim timeout/kill/fail-closed davranışı değiştirilmedi. Üç süreç-kapatma tekrarı ve iki ilgili sınır testi 5/5 geçti.
+- Kanıt: `docs/FIVE_STAGE_INSTALLATION_GATE_KANIT_2026-10-22.json`. `git diff --check` temiz. GitHub Actions, canlı stream probing, cihaz testi, üretim yazma, eski depo yazısı, merge veya PR #71 işlemi yapılmadı; korunan veri değişmedi.
+- Açık işler/engeller: gerçek 92 aynı-input çifti için bağımsız legacy ve replacement execution/artifact kökeni hâlâ yok; K2/K3 canlı/harici kaynaklar, IBO kullanıcı cihaz sonucu ve K4 bağımsız harici restore kanıtı eksik. Tam kabuller 0/92, 0/26, 0/22; fixture sonuçları bu sayaçları artırmaz.
+- Sıradaki somut adım: `five_stage_installation` raporundaki 11 statik sözleşme farkını kaynak gerekçeleriyle gözden geçir; güvenle yerel çözülebilenleri beş ana workflow sözleşmesine taşı. Gerçek aynı-input/bağımsız run-artifact bulunmadan 92 davranış kabulü verme ve mevcut kanıt zincirini sahte metadata ile doldurma.

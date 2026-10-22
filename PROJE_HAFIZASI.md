@@ -2184,3 +2184,12 @@ Kullanıcı tüm ilerlemenin kaydedilip yeni sohbete geçilmesini istedi. Ayrın
 
 ## Eşzamanlı diğer devirle mutabakat
 Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_DEVIR_2026-10-22.md ekledi; metin okundu ve korundu. O belgedeki 707 test bilgisi tarihsel kaldı: 1b30eee paketi 757 test+5 kapı+5 rapor/K5 ile doğrulandı, daha sonraki 3c228e7 dosyaları henüz sınanmadı. Diğer belgenin kullanıcı ekranından aktardığı K4 EPG/logo ve K5 arşiv/bakım hedefleri ile repo teknik K4 yedek/K5 bakım adlandırması arasındaki fark yeni sohbette açık görev eşlemesiyle uzlaştırılmalı; repo isimleri varsayımla değiştirilmemeli. Bu devir kaydı bütün önceki notları tamamlar.
+
+## 22 Ekim 2026 — kurulum envanteri kapısı doğrulandı, test kimliği sağlamlaştırıldı
+- Güncel main tabanı `554ec5f07a10dcf81041c1cc18a2081a04dc9e4c`; kod/test/kanıt commit'i `e4f68c0b6bf597da1ab21c5ebd8c9480d5b85991`. Eşzamanlı main değişiklikleri okundu ve korundu; force/merge yapılmadı.
+- `five_stage_installation` envanterinin istisna/drift halinde aggregate offline kapıyı exit code 6 ile kapattığı odaklı testte doğrulandı. 14/14 odaklı test geçti.
+- Tam regresyonda önce iki host-yükü timeout'u, sonra PID yeniden kullanımına açık `/proc/<pid>` testi gözlendi. FIFO ve workflow testleri izole yeşildi. Süreç-kapatma testi PID ile birlikte Linux starttime değerini kaydedecek biçimde düzeltildi; böylece yeni bir sürece verilmiş aynı PID yanlış “descendant yaşıyor” sonucu üretmiyor. Gerçek süreç kimliği aynı kaldığı sürece Z/X/yok olma koşulu zorunlu.
+- Test-harness sınırları FIFO için 2→5 saniye, workflow gövde simülasyonu için 10→30 saniye oldu. Uygulama timeout'u, SIGKILL process-group davranışı, çıktı kapıları ve üretim güvenlik politikası değişmedi. Üç ardışık süreç testi ve iki ilgili sınır testi 5/5; nihai toplu gate 760/760 ve bütün K1–K5 offline alt kapıları başarılı.
+- Kanıt dosyası `docs/FIVE_STAGE_INSTALLATION_GATE_KANIT_2026-10-22.json`; kaynak SHA256'ları, başarısız ara denemeler ve 0/92–0/26–0/22 kabul durumu içerir.
+- Dış/gerçek kabul engelleri değişmedi: eski 92 için bağımsız aynı-input execution/artifact çiftleri, K2/K3 canlı/harici kanıt, IBO cihaz sonucu ve K4 harici restore gerekir. Actions/production/eski repo/merge/PR71/korunan veri işlemi yapılmadı.
+- Sonraki yerel iş: kurulum raporundaki 11 statik workflow sözleşme farkını kaynak davranış gerekçeleriyle ele almak; gerçek kanıt gerektiren satırları açık blocker olarak bırakmak.

@@ -136,6 +136,10 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("M3U source bodies must be text")
     if sum(len(body) for body in sources.values()) > 8_000_000:
         raise ValueError("Combined source text exceeds bounded input limit")
+    # Validate every source before normalization or cross-source aggregation.
+    # Invalid labels/bodies must not leave a partially trusted report.
+    for source, body in sources.items():
+        parse_m3u(body, source)
     known = {normalize_url(url) for url in (known_urls or set())}
     grouped = defaultdict(lambda: {"sources": set(), "source_fingerprints": set(),
                                     "urls": set(), "names": set()})

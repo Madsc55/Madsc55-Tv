@@ -24,7 +24,7 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
     workflow_rows = readiness["rows"]
     required_contract = {"workflow_path", "workflow_blob_sha", "declared_file_binding",
                          "marker_contract_complete", "static_file_binding_complete",
-                         "input_digest_binding_complete"}
+                         "input_digest_binding_complete", "controlled_process_contract_complete"}
     if (len(workflow_rows) != len(CENTRAL_REPLACEMENT_WORKFLOWS)
             or any(not isinstance(row, dict)
                    or not required_contract <= row.keys()
@@ -35,7 +35,7 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
                    or any(ch not in "0123456789abcdef" for ch in row["workflow_blob_sha"])
                    or any(type(row[field]) is not bool for field in (
                        "marker_contract_complete", "static_file_binding_complete",
-                       "input_digest_binding_complete"))
+                       "input_digest_binding_complete", "controlled_process_contract_complete"))
                    or (row["declared_file_binding"] is not None
                        and (not isinstance(row["declared_file_binding"], dict)
                             or not {"input_path", "output_label", "output_path"}
@@ -83,6 +83,7 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
             role_matches and contract["marker_contract_complete"]
             and contract["static_file_binding_complete"]
             and contract["input_digest_binding_complete"]
+            and contract["controlled_process_contract_complete"]
         )
         results.append({
             "legacy_path": path,

@@ -109,8 +109,9 @@ def run():
     tv_tested = 0
     source_rows = 0
     seen_tv_urls = set()
-    for name, url in candidates():
-        if source_rows >= MAX_SOURCE_ROWS or tv_tested >= LIMIT:
+    from itertools import islice
+    for name, url in islice(candidates(), MAX_SOURCE_ROWS):
+        if tv_tested >= LIMIT:
             break
         source_rows += 1
         cat = category(name)

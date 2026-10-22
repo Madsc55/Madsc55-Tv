@@ -58,6 +58,9 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
         raw = run.get("created_at")
         if not isinstance(raw, str):
             raise ValueError("Missing failure history timestamp")
+        if ("T" not in raw or raw.count("T") != 1 or
+                not (raw.endswith("Z") or "+" in raw[10:] or "-" in raw[10:])):
+            raise ValueError("Invalid failure history timestamp")
         try:
             value = datetime.fromisoformat(raw.replace("Z", "+00:00"))
         except ValueError as exc:

@@ -67,6 +67,18 @@ def verify_execution_origin_api(origin, run, artifact_page, workflow_file):
     workflow_run = artifact.get("workflow_run")
     if not isinstance(workflow_run, dict):
         raise ValueError("Invalid artifact workflow origin")
+    run_repository_id = run["repository"].get("id")
+    head_repository_id = run["head_repository"].get("id")
+    for key, expected in (("repository_id", run_repository_id),
+                          ("head_repository_id", head_repository_id)):
+        if key in workflow_run and expected is not None:
+            if (type(workflow_run[key]) is not int
+                    or type(expected) is not int
+                    or workflow_run[key] != expected):
+                raise ValueError("Artifact repository identity mismatch")
+    if ("head_branch" in workflow_run
+            and workflow_run["head_branch"] != origin.get("branch")):
+        raise ValueError("Artifact branch origin mismatch")
     if (type(workflow_run.get("id")) is not int
             or artifact.get("expired") is not False
             or workflow_run.get("id") != origin.get("run_id")

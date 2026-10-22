@@ -178,6 +178,17 @@ class FixtureReportWriterTests(unittest.TestCase):
                     write_fixture_report(root, "reports/partial.json", "partial payload")
             self.assertFalse(target.exists())
 
+    def test_exclusive_writer_does_not_follow_symlinked_parent(self):
+        from madsc.fixture_report_writer import _exclusive_bytes
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            outside = root / "outside"
+            outside.mkdir()
+            (root / "reports").symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(OSError):
+                _exclusive_bytes(root / "reports/escaped.json", b"blocked")
+            self.assertFalse((outside / "escaped.json").exists())
+
     def test_existing_report_evidence_cannot_be_overwritten(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

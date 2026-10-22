@@ -27,6 +27,7 @@ def _exclusive_bytes(destination: Path, payload: bytes) -> None:
         flags |= os.O_NOFOLLOW
     descriptor = os.open(destination, flags, 0o600)
     completed = False
+    created_identity = os.fstat(descriptor)
     try:
         metadata = os.fstat(descriptor)
         if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
@@ -39,7 +40,14 @@ def _exclusive_bytes(destination: Path, payload: bytes) -> None:
     finally:
         os.close(descriptor)
         if not completed:
-            destination.unlink(missing_ok=True)
+            # A concurrent replacement must never be deleted by cleanup.
+            try:
+                current = destination.lstat()
+            except FileNotFoundError:
+                pass
+            else:
+                if (current.st_dev, current.st_ino) == (created_identity.st_dev, created_identity.st_ino):
+                    destination.unlink(missing_ok=True)
 
 
 def prepare_turkish_tv_test_bundle(root: Path) -> tuple[Path, Path, Path]:

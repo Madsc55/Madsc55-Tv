@@ -75,7 +75,10 @@
       "9b9c4ca8: align existing malformed EXTINF regression with intentional single-diagnostic recovery; new CI pending",
       "39870201168: successful offline CI on descendant commit 21410cc6 including malformed EXTINF regression assertion correction",
       "6ac6eef7: reject invalid UTF-8 surrogate input before K2 downstream hashing/rendering",
-      "a794aeca: surrogate regression for parse/corroboration/preview; CI run 39870351806 pending at first check"
+      "a794aeca: surrogate regression for parse/corroboration/preview; CI run 39870351806 pending at first check",
+      "39870389256: successful descendant CI on 0524a7d0 after UTF-8 regression a794aeca (GitHub compare ahead=5, behind=0)",
+      "a9e193bd: reject ASCII control characters in K2 source provenance labels",
+      "e03b92d1: regression covers newline/tab/NUL/DEL source labels across parser, corroboration and preview; CI pending"
     ],
     "note": "Offline suite succeeded on descendant SHA 205ad1bf (run 39869009399), covering latest K2 fail-closed metadata and bounded known URL inputs. Real-source/licensing, independent origins, and behavioral acceptance still unverified."
   },

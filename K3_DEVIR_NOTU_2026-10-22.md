@@ -72,3 +72,9 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - d372f58: Kanıt girdisi os.open ile O_NOFOLLOW (destekleniyorsa) kullanılarak açılıyor, os.fdopen üzerinden fstat kontrolü ve 16 MiB sınırlı okuma sürüyor.
 - 134c3ee: O_NOFOLLOW/os.open kaynak sözleşmesi regresyon testi eklendi.
 - Üst dizin bileşenleri için atomik dirfd/openat yürüyüşü uygulanmadı; yarış koşullarının tamamen kapandığı iddia edilmemeli. Güncel testler çalıştırılmadı.
+
+## K3 O_NOFOLLOW zorunlu kılındı
+- 70c8ce6: O_NOFOLLOW mevcut değilse kanıt girdisi okunmuyor; zayıf os.O_RDONLY fallback kaldırıldı.
+- 9cc93fd: K3 CLI fail-closed O_NOFOLLOW kaynak sözleşmesi testi güncellendi.
+- Linux/GitHub Actions ortamında destek beklenir; diğer platformlarda CLI bilinçli olarak hata verir. Üst dizin yarışları hâlâ tam atomik korunmuyor.
+- Testlerin güncel HEAD üzerinde çalıştığı henüz kanıtlanmadı; canlı/IBO doğrulaması yok.

@@ -6,7 +6,18 @@ from madsc.channel_test import summarize_offline_probe_evidence, summarize_candi
 def link_candidate_probes(envelope: dict, records: list[dict], run_id: str, commit_sha: str) -> dict:
     discovery = unpack(envelope, run_id, commit_sha)
     candidates = discovery["candidates"]
-    fingerprints = {item["url_sha256"] for item in candidates}
+    if not isinstance(candidates, list) or len(candidates) > 20000:
+        raise ValueError("Invalid K2 candidate list")
+    fingerprints = []
+    for item in candidates:
+        if not isinstance(item, dict):
+            raise ValueError("Invalid K2 candidate")
+        digest = item.get("url_sha256")
+        if (not isinstance(digest, str) or len(digest) != 64
+                or any(ch not in "0123456789abcdef" for ch in digest)):
+            raise ValueError("Invalid K2 candidate fingerprint")
+        fingerprints.append(digest)
+    fingerprints = set(fingerprints)
     if len(fingerprints) != len(candidates):
         raise ValueError("Duplicate K2 candidate")
     summary = summarize_offline_probe_evidence(records)

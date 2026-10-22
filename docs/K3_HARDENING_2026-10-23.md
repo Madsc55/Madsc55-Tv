@@ -1,3 +1,12 @@
+## En güncel doğrulama — 15 EPG testi ve 1017 toplam test başarılı
+- Ortak offline suite run `39868610849`, commit `8e78f26d855f8c4bb89b22f1b8f026d4a6234902`: completed/success.
+- Log kanıtı: `tests_discovered=1017`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`, K3 fixture category success.
+- Test edilen commit'teki `madsc/epg.py` blob'u `03755ace638bf3f788b8d3cfdf95d7d77ef077ed`, `tests/test_epg.py` blob'u `aea48db70cee57802dda5e993d365c1e53ab6480`; 15 EPG test fonksiyonu içeriyor.
+- Bu koşu, `tvg-id` değerini yalnız `#EXTINF` virgülünden önceki nitelik alanında arayan düzeltmeyi ve görünen adında sahte `tvg-id` bulunan kanal regresyonunu kapsıyor.
+- Bu başarı offline suite içindir. Canlı HLS/AV, 6+ saat süreklilik, Pages/XMLTV entegrasyonu ve IBO cihaz kabulü hâlâ ayrı kanıt gerektirir.
+
+---
+
 ## Ek regresyon — EXTINF görünen adından sahte tvg-id alınması
 - Yeni hata: önceki regex tüm `#EXTINF` satırını taradığı için virgülden sonraki görünen kanal adı `News tvg-id="trt1.tr"` ise bu metin gerçek nitelikmiş gibi algılanabilirdi.
 - Düzeltme commit'i: `2e1ee36d2f54b9d8a6b72eb43751ab4e60224c9f`; artık regex yalnız virgülden önceki nitelik bölümünde çalışıyor.

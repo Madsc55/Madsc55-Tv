@@ -255,6 +255,20 @@ class BackupManifestHardeningTests(unittest.TestCase):
                         verify_manifest(root, forged)
             self.assertTrue(verify_manifest(root, original))
 
+    def test_manifest_mode_rejects_string_subclass(self):
+        class StringSubclass(str):
+            pass
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_bytes(b"fixture")
+            original = snapshot_manifest(root, ["good.txt"])
+            forged = dict(original)
+            forged["mode"] = StringSubclass("manifest_only")
+            with self.assertRaisesRegex(ValueError, "Unsupported backup manifest mode"):
+                verify_manifest(root, forged)
+            self.assertTrue(verify_manifest(root, original))
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

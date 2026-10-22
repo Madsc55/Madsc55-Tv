@@ -89,7 +89,7 @@ class DiagnosticApiFailClosedTests(unittest.TestCase):
                     elif mismatch == "head_branch":
                         data["head_branch"] = "untrusted"
                     elif mismatch == "event":
-                        data["event"] = "workflow_dispatch"
+                        data["event"] = "schedule"
                     elif mismatch == "path":
                         data["path"] = ".github/workflows/other.yml"
                 return data

@@ -1,0 +1,48 @@
+{
+  "schema": "madsc-offline-regression-evidence-v1",
+  "date": "2026-10-22",
+  "base_main_sha": "da6700fc31b8378a19363cba7477b6a49f2a248f",
+  "scope": "previously unexecuted diagnostic provenance hardening and pinned 92-scope validation",
+  "tests": {
+    "focused_command": "python -m unittest -v tests.test_failure_diagnostic_artifact tests.test_failure_diagnostic_artifact_regression tests.test_failure_diagnostic_api_fail_closed tests.test_diagnostic_outcome_strictness tests.test_legacy_parity_evidence",
+    "focused_discovered": 48,
+    "focused_passed": true,
+    "full_command": "python -m madsc.offline_gate",
+    "full_discovered": 658,
+    "full_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_behavioral_parity_accepted": 0,
+    "runtime_security_accepted": 0,
+    "task_acceptance": 0
+  },
+  "resolved_test_failure": {
+    "failed": 1,
+    "test": "test_run_head_repository_branch_event_and_workflow_mismatch_rejected (event subtest)",
+    "cause": "The negative fixture assigned workflow_dispatch, which was already the declared origin event, so it did not create a mismatch.",
+    "resolution": "The fixture now assigns schedule; the verifier rejects the actual event mismatch and the same 48 focused tests plus the full 658-test gate pass."
+  },
+  "source_sha256": {
+    "madsc/github_legacy_pair_client.py": "548428b8bca8c2804859d2fb27624174e9f3067c0507a1143ab50c97a655c7bb",
+    "madsc/legacy_pair_artifact.py": "b7121061e95d1e8772f38e4b6838622bac961b1aad9e5889ead10084fc05cf94",
+    "madsc/legacy_parity_evidence.py": "1a39303ad1ce8992cd4a93d726526a18e47bb2c379ec82ba46277690368523aa",
+    "tests/test_failure_diagnostic_api_fail_closed.py": "5958a52ab942961e9d0bf5da5be9b6c8eff5fe730d2edc45c62c3bede6ddb744",
+    "tests/test_diagnostic_outcome_strictness.py": "bd8998559b9e4540a4652bcd511d6f434dbc1e083b293ff847710abf9a03f093",
+    "tests/test_failure_diagnostic_artifact.py": "9e76a840506bf8d9a85dba0189787bd2ac9cdba70e2f3f21a0180f5b9f9a87dd",
+    "tests/test_failure_diagnostic_artifact_regression.py": "b11c194dca5c2f7fc7fcb703ad203aca71271a2eb00f134e0b63319e202e1b0b"
+  },
+  "constraints": {
+    "github_actions_started": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_written": false,
+    "fixture_is_acceptance": false
+  },
+  "blockers": [
+    "No authorized current-code opt-in K1, K4 or K5 GitHub Actions artifact exists for runtime verification.",
+    "The read-only legacy 92 side lacks same-input v1 artifacts paired with independent replacement executions.",
+    "Protected playlist writers cannot be made production-capable by weakening K1 without explicit user approval and a separate publication design."
+  ]
+}

@@ -49,7 +49,7 @@ def reconcile(k2: dict, k3: dict) -> dict:
         raise ValueError("K3 reported manifest count does not match results")
     if k2.get("stream_reachability_tested") is not False or k2.get("device_verified") is not False:
         raise ValueError("K2 discovery must not claim stream or device verification")
-    if k3.get("audio_video_verified") != 0:
+    if type(k3.get("audio_video_verified")) is not int or k3["audio_video_verified"] != 0:
         raise ValueError("K3 manifest pilot must not claim audio/video verification")
     observed = []
     for item in results:

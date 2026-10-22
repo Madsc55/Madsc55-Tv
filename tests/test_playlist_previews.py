@@ -33,7 +33,7 @@ class PlaylistPreviewTests(unittest.TestCase):
 
     def test_playlist_preview_rejects_invalid_channel_name_delimiters(self):
         rows = [{"name": "A", "url": "https://example.org/a"}]
-        for name in ("", "A,B", None, 42, "A\\nB"):
+        for name in ("", None, 42, "A\\nB"):
             catalog = prepare_channel_catalog(rows)
             catalog["channels"][0]["display_name"] = name
             with self.subTest(name=name), self.assertRaises(ValueError):
@@ -66,6 +66,13 @@ class PlaylistPreviewTests(unittest.TestCase):
             catalog[field] = value
             with self.subTest(field=field, value=value), self.assertRaises(ValueError):
                 render_playlist_previews(catalog, rows)
+
+    def test_channel_name_with_comma_roundtrips_as_valid_m3u(self):
+        rows = [{"name": "TRT 1, HD", "url": "https://example.org/live"}]
+        catalog = prepare_channel_catalog(rows)
+        report = render_playlist_previews(catalog, rows)
+        self.assertIn(",TRT 1, HD\nhttps://example.org/live",
+                      report["drafts"]["TEST_BEKLIYOR"])
 
     def test_unverified_logo_rejected(self):
         rows = [{"name": "A", "url": "https://example.org/a"}]

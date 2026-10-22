@@ -10,9 +10,22 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
     source = Path(source)
     if source.is_symlink() or not source.is_file():
         raise ValueError("Invalid source file")
-    if source.stat().st_size > 16 * 1024 * 1024:
-        raise ValueError("Source exceeds 16 MiB safety limit")
-    lines = [x.strip() for x in source.read_text(encoding="utf-8-sig").splitlines() if x.strip()]
+    import os
+    import stat
+    if not hasattr(os, "O_NOFOLLOW") or any(parent.is_symlink() for parent in source.absolute().parents):
+        raise ValueError("Unsafe source path")
+    fd = os.open(source, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0))
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > 16 * 1024 * 1024:
+            raise ValueError("Invalid or oversized source file")
+        with os.fdopen(fd, "rb", closefd=False) as stream:
+            raw = stream.read(16 * 1024 * 1024 + 1)
+        if len(raw) > 16 * 1024 * 1024:
+            raise ValueError("Source exceeds 16 MiB safety limit")
+    finally:
+        os.close(fd)
+    lines = [x.strip() for x in raw.decode("utf-8-sig").splitlines() if x.strip()]
     if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Invalid playlist header")
     rows = []

@@ -1,4 +1,5 @@
 import tempfile
+import os
 import unittest
 from pathlib import Path
 from madsc.source_import import extract_candidates
@@ -99,6 +100,20 @@ class SourceImportTests(unittest.TestCase):
             link.symlink_to(original)
             with self.assertRaises(ValueError):
                 extract_candidates(link)
+
+    def test_hardlinked_and_oversized_sources_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source = root / "original.m3u"
+            source.write_text("#EXTM3U\n", encoding="utf-8")
+            os.link(source, root / "hardlink.m3u")
+            with self.assertRaises(ValueError):
+                extract_candidates(source)
+            oversized = root / "oversized.m3u8"
+            with oversized.open("wb") as stream:
+                stream.truncate(16 * 1024 * 1024 + 1)
+            with self.assertRaises(ValueError):
+                extract_candidates(oversized)
 
     def test_missing_source_rejected(self):
         with tempfile.TemporaryDirectory() as d:

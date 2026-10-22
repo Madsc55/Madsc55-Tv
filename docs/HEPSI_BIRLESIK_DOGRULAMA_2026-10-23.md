@@ -155,3 +155,10 @@
 - Dokuzuncu scheduler kaynağında belirsiz bir davranış riski belgelendi: naive timestamp `astimezone(UTC)` ile runner'ın yerel timezone'una göre yorumlanıyor; testlerde sabit timezone ve naive timestamp politikası eklenmeden eşdeğerlik kabul edilmemeli.
 - Batch 06 doküman commit'i `f66b1b2df807a9b71dfdb53b919395402b4f9d95`.
 - Kalan kabul sayaçları değişmedi: 92 workflow 0/92; runtime security 0/26; independent main tasks 0/22; production acceptance false. Üretim playlist/EPG/cihaz/yedekleri değiştirilmedi.
+
+## K5/legacy devam — Batch 06 ve scheduler timezone düzeltmesi (2026-10-23)
+- K5 birleşik rapor run `39863524500` başarıyla tamamlandı. Log doğrulaması: önceki kararlılık geçmişi cache key `kanal-kararlilik-39863242921` üzerinden restore edildi; `tests/test_kararlilik_gecmis.py` 5/5 geçti; yeni geçmiş `kanal-kararlilik-39863524500` anahtarıyla kaydedildi. Bu kanıt bir restore→update→save çevrimini gösterir; yeni kaydedilen key'in daha sonraki ayrı run tarafından restore edilmesi takip edilmelidir.
+- Batch 06: `besinci-zaman-asimi-test.yml`, `dokuzuncu-akilli-tekrar-test.yml`, `onikinci-hata-siniflandirma-test.yml` statik kaynak incelemesi tamamlandı; belge `docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_06_2026-10-23.md`, commit `f66b1b2df807a9b71dfdb53b919395402b4f9d95`. Kümülatif inceleme 18/92; davranışsal kabul 0/92.
+- Yeni gerçek bug düzeltildi: `akilli_tekrar_test_takvimi.py` naive `last_seen` timestamp'lerini runner yerel timezone'una göre yorumluyordu. Artık timezone bilgisi olmayan tarih, deterministik olarak `now` kabul ediliyor; böylece erken/yanlış due retry tetiklenmiyor. Test `test_akilli_tekrar_test_takvimi.py::test_naive_timestamp_does_not_use_runner_local_timezone` eklendi.
+- Kod commit `b1fb904f8e1219adc505bb03d04ad3d590d481af`; test commit `87debd64e6b46ff8abb116830d95e2cf836af5c9`. Actions runs `39863903611` ve `39863903615` queued; `39863891832` ve `39863892845` in progress (son kontrol). Bu değişiklikler için başarı sonucu henüz doğrulanmadı.
+- Kabul sayaçları değişmez: 92 workflow 0/92, runtime security 0/26, independent main tasks 0/22; production acceptance false.

@@ -149,3 +149,13 @@ class EpgTests(unittest.TestCase):
             result = check_epg_mapping(p, e)
             self.assertEqual(result["missing_tvg_id"], 1)
             self.assertFalse(result["matching_verified"])
+
+    def test_duplicate_playlist_channel_ids_fail_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1 duplicate\nhttps://example.org/b.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            result = check_epg_mapping(p, e)
+            self.assertEqual(result["duplicate_playlist_ids"], ["trt1.tr"])
+            self.assertFalse(result["matching_verified"])

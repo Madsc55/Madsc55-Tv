@@ -41,3 +41,10 @@ Bu dosya yalnız K1/K5'e ait ayrı devir kaydıdır.
 - Bu iki commit GitHub'a yazıldı ancak güncel HEAD üzerinde çalıştırılmış test kanıtı **yok**. Kod incelemesi test çalıştırmasının yerine geçmez.
 - Son main kontrolünde K3 sohbeti ardışık commitler yayımlıyor; K1/K5 bu dosyalara dokunmuyor. Sohbetler arasında gerçek zamanlı kilit yok; yalnız son HEAD/dosya SHA kontrolü ve ayrı dosya sahipliğiyle çakışma riski azaltılıyor.
 - Öncelikler: güncel HEAD üzerinde odaklı K1/K5 testleri ve tam offline gate; K1 20 dinamik yazıcı/subprocess adayı; K5 gerçek eski/yeni davranış çiftleri. 0/92, 0/26, 0/22 gerçek kabul sayaçları değişmedi.
+
+
+## 22 Ekim — sonraki K1/K5 doğrulama devri
+- K1 Unicode NFKC sonrasında alternatif veri akışı `:` ayracını engelleme: `23c1381`; `tests/test_k1_unicode_stream_separators.py`: `ed5dd4e`.
+- K5 tarih damgası doğrulaması: ilk `5a83ec4` ve `8729f06` test; tam RFC3339 biçim kontrolü `5bdd2f6` ve `tests/test_k5_strict_rfc3339.py` `13a830c`. İlgili kod ve testler ana dala yazıldı.
+- **Test engeli teyidi:** çalışma konteynerinde `git ls-remote https://github.com/Madsc55/Madsc55-Tv.git HEAD` komutu DNS çözümleme hatasıyla sonuçlandı (`Could not resolve host: github.com`). GitHub bağlayıcısı kaynak okuma/yazma ve eski Actions sonuçlarını görmeyi sağlıyor; mevcut araçlarla yeni HEAD için tam test koşusu başlatılamadı. Eski yeşil Actions koşusu güncel HEAD'i doğrulamaz.
+- Son incelemede K2/K3/K4 paralel commitleri sürüyor. K1/K5 ayrı dosyaları dışında değişiklik yapılmadı; testler gerçek çalışmadan kabul sayıları artırılmamalı.

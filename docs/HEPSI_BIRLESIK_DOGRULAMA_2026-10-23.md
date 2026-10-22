@@ -205,3 +205,13 @@
 - Artık `reports/` yaratılmadan önce `reports/turkish-tv-batch-validation.json` hedefi `enforce_write_paths` üzerinden kontrol ediliyor. Sabit M3U8 companion kendi exact-name local guard'ını kullanmaya devam ediyor. Kod commit `f5a7c080e94c550fbd741829cf117bb676a2c342`.
 - `test_protected_fixture_root_rejected_before_reports_creation` korunan `FAVORILER` kökünde işlem reddedilirken `reports/` klasörünün oluşmadığını test ediyor. Test commit `6e1916ac9f791a0441bcd9cf7eb431ff8a5c3e4a`.
 - Test run `39864659684` queued; sonuç bekleniyor.
+
+
+## K1-03 final CI doğrulaması — 982 test
+- Run `39864659684`, test SHA `6e1916ac9f791a0441bcd9cf7eb431ff8a5c3e4a`, conclusion success.
+- `tests_discovered=982`, `tests_passed=true`, `five_stage_fixture_gate_passed=true`, `all_offline_gates_passed=true`.
+- K1 write-callsite scanner: 97 Python dosyası, 78 mutation adayı; scanner kapısı başarılı. Adayların her biri review_required. Bu statik sonuç runtime enforcement kanıtı değildir.
+- Bu run, `madsc/core.py` korunan hedefte mkdir öncesi K1 guard'ını ve `madsc/isolated_playlist_bundle.py` protected destination reddini ve `madsc/fixture_report_writer.py` protected root reddini test ediyor. `test_protected_fixture_root_rejected_before_reports_creation` ile `reports/` klasörünün korunan root'ta oluşmadığı doğrulandı.
+- Main bu test SHA'sından sonra yalnızca `PROJE_HAFIZASI.md` ve bu devir notuyla ilerledi; kod/test ağacı aynı.
+- CI raporu `legacy_92_behavioral_equivalence_verified=false`, `production_ready=false` tutuyor. Kabul sayaçları: K1 0/26 bağımsız kabul; legacy 0/92; ana görev 0/22.
+- K5 için `docs/legacy-workflow-contracts/madsc-documentation-check.json` eski workflow kaynak semantiğini sabit SHA ile belgeliyor, ama replacement ve yürütme karşılaştırması yok; davranışsal eşdeğerlik kabul edilmedi.

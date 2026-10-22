@@ -137,6 +137,26 @@ def mutate(path, flags, enabled):
                          ["os.open [flags require review]"] * 4)
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_fdopen_write_modes_and_tempfile_creation_are_reviewed(self):
+        source = '''
+import os
+import tempfile
+def mutate(fd, requested_mode):
+    os.fdopen(fd, "wb")
+    os.fdopen(fd, mode=requested_mode)
+    os.fdopen(fd, "rb")
+    tempfile.NamedTemporaryFile()
+    tempfile.mkstemp()
+'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows], [
+            "os.fdopen",
+            "os.fdopen [dynamic mode]",
+            "tempfile.NamedTemporaryFile [temporary filesystem creation requires review]",
+            "tempfile.mkstemp [temporary filesystem creation requires review]",
+        ])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

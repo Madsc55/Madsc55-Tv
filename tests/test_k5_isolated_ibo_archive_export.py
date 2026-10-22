@@ -32,6 +32,19 @@ class K5IboArchiveExportTests(unittest.TestCase):
             self.assertFalse(payload.endswith(bytes([92, 110])))
             self.assertEqual(payload.count(bytes([10, 10])), 0)
 
+    def test_malformed_https_ports_fail_before_destination_creation(self):
+        with TemporaryDirectory() as tmp:
+            for invalid in ("https://example.invalid:bad/live",
+                            "https://example.invalid:65536/live",
+                            "https://example.invalid:0/live"):
+                with self.subTest(invalid=invalid):
+                    destination = Path(tmp) / "isolated-ibo"
+                    urls = self.urls.copy()
+                    urls[0] = invalid
+                    with self.assertRaises(ValueError):
+                        export_6115_archive_manifest(urls, destination)
+                    self.assertFalse(destination.exists())
+
     def test_bad_input_creates_no_directory(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"

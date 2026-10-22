@@ -2345,3 +2345,10 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - K1 manifest açılışında `O_NOFOLLOW` mevcut değilse eski kod sıfır bayrağıyla dosyayı açabiliyordu. Güvenlik beklentisiyle uyumsuz bu geri dönüş kaldırıldı; özellik yoksa CLI kontrollü hata koduyla kapanıyor: `a2371ec3edce83f459a102e7c5946ceda048e8c3`.
 - `O_NOFOLLOW` desteği yokmuş gibi davranan negatif CLI testi eklendi: `d8b36cad942975bfd9c1536efd869b3685c4583e`.
 - Actions listesinde HEAD `30ef98459b9ee69a70b051b8a3ef59262e7a89ec` için `39861703604` run pending görünüyordu; job henüz listelenebilir değildi. Bu run, bu turdaki [skip ci] değişikliklerini kapsamaz. K1/K2 testleri bu turda çalıştırılmadı; kabul sayıları 0/26, 0/92, 0/22 olarak kaldı.
+
+
+## 23 Ekim 2026 — K1 no-follow platform fail-closed ve koordineli CI takibi
+- K1 manifest guard'da `O_NOFOLLOW` bulunmadığında sıfır bayrağıyla devam etme geri dönüşü kaldırıldı: `a2371ec3edce83f459a102e7c5946ceda048e8c3`; platform desteği yokken reddetme testi: `d8b36cad942975bfd9c1536efd869b3685c4583e`.
+- CI'da `bd9387ab` koşusu 956 testte 1 failure + 1 error verdi: K3 loader AST testinde `ast.Module` üzerinde doğrudan iterasyon, parity consumer testinde beklenen child exit code 1 eski kaldı. Sonraki sohbet commitleri bunları düzeltti: `tests/test_candidate_probe_link.py` artık `ast.walk(parsed)` kullanıyor; `tests/test_parity_consumer_cli.py` ölçülen exit code 2'yi bekliyor. Bu dosyalar bu turda tarafımdan değiştirilmedi.
+- En son görülen Actions koşuları `39861818906` (`057e3fe1`, in_progress) ve `39861826787` (`a4fbd233`, pending) idi. Bu koşuların yeni K1 `a2371ec`/test `d8b36ca` commitlerini kapsadığı garanti değil; K1/K2 testleri için ayrı başarılı kanıt bekleniyor.
+- Testler bu turda yerel çalıştırılmadı; Actions dispatch yapılmadı. Kabul sayaçları 0/26, 0/92, 0/22.

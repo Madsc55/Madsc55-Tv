@@ -1,0 +1,31 @@
+{
+  "mode": "offline_local",
+  "scope": "bounded_same_input_artifact_manifest_verification",
+  "tested_base_commit": "ca2b33fb45d188cbe2ce6a9ea164d677dc084e0e",
+  "production_acceptance": false,
+  "legacy_92_behavioral_acceptance": 0,
+  "runtime_security_26_acceptance": 0,
+  "task_acceptance_22": 0,
+  "tests_discovered": 576,
+  "tests_passed": true,
+  "five_stage_fixture_gate_passed": true,
+  "artifact_contract": {
+    "schema": "madsc-parity-artifact-v1",
+    "archive_max_bytes": 2097152,
+    "manifest_max_bytes": 1048576,
+    "exact_single_manifest_entry": true,
+    "archive_sha256_bound": true,
+    "repository_run_head_workflow_bound": true,
+    "input_sha256_bound": true,
+    "snapshot_bound": true,
+    "zip_symlink_and_bomb_checks": true,
+    "fixture_can_grant_behavioral_acceptance": false
+  },
+  "tested_files_sha256": {
+    "madsc/legacy_pair_artifact.py": "51c7a0de7f5c5459a97dbcb52c0f358f98adcbddc84e250017be7f8133ed4068",
+    "tests/test_legacy_pair_artifact.py": "ee9eb78c86a2c6edeb63158097d32e537ed921a044efc62c38cfe673413309a8"
+  },
+  "network_probes_performed": false,
+  "github_actions_started": false,
+  "note": "The parser can bind same-input snapshots to artifact bytes; real 92 acceptance still needs existing old/new artifacts using this manifest and independent GitHub API origin verification."
+}

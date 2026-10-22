@@ -212,6 +212,19 @@ class CandidateProbeLinkTests(unittest.TestCase):
                     with self.assertRaises((ValueError, UnicodeError)):
                         load_evidence(path)
 
+    def test_evidence_loader_fails_closed_without_no_follow(self):
+        import os
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import patch
+        from madsc.candidate_probe_link import load_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "evidence.json"
+            path.write_text("{}", encoding="utf-8")
+            with patch.object(os, "O_NOFOLLOW", None, create=True):
+                with self.assertRaises((TypeError, ValueError)):
+                    load_evidence(path)
+
     def test_evidence_loader_rejects_fifo_without_waiting_for_writer(self):
         import os
         import tempfile

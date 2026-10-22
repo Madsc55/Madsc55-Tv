@@ -98,5 +98,19 @@ class CandidateProbeLinkTests(unittest.TestCase):
             link_candidate_continuity(envelope, {}, run, sha)
 
 
+    def test_continuity_rejects_clustered_samples_despite_long_total_window(self):
+        run, sha, digest = "123", "b" * 40, "a" * 64
+        envelope = pack({"candidates": [{"url_sha256": digest}]}, run, sha)
+        base = {"url_sha256": digest, "http_status": 200, "video": True,
+                "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": timestamp} for timestamp in (
+            "2026-10-20T00:00:00Z", "2026-10-20T00:01:00Z",
+            "2026-10-20T12:00:00Z")]
+        result = link_candidate_continuity(envelope, {digest: samples}, run, sha)
+        self.assertEqual(result["preliminary_window_passes"], 0)
+        self.assertEqual(result["results"][digest]["status"], "NEEDS_REVIEW")
+        self.assertFalse(result["production_change_allowed"])
+
+
 if __name__ == "__main__":
     unittest.main()

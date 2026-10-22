@@ -1,6 +1,8 @@
 import unittest
+import tempfile
+from pathlib import Path
 
-from madsc.write_callsite_audit import scan_python_source
+from madsc.write_callsite_audit import scan_python_source, scan_python_tree
 
 
 class WriteCallsiteAuditTests(unittest.TestCase):
@@ -207,6 +209,15 @@ def create():
         self.assertEqual(rows[0]["api"],
                          "tempfile.SpooledTemporaryFile [temporary filesystem creation requires review]")
         self.assertTrue(rows[0]["review_required"])
+
+    def test_tree_scan_rejects_symlinked_python_source(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            outside = root / "real.py"
+            outside.write_text("def write(path):\\n    path.write_text('x')\\n", encoding="utf-8")
+            (root / "linked.py").symlink_to(outside)
+            with self.assertRaisesRegex(ValueError, "Symlinked Python source"):
+                scan_python_tree(root)
 
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):

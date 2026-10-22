@@ -124,3 +124,7 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - 92e0f45: Kanıt dosyası yolunun her bileşeni dir_fd ve O_NOFOLLOW kullanılarak açılıyor; dosya türü ve boyutu açılmış descriptor üzerinde doğrulanıyor.
 - f74e2db: Eski yol kontrolü kaynak beklentileri yeni dirfd tasarımına uyarlandı.
 - Bu değişiklikler için unittest/CI doğrulaması henüz yok; üretim onayı verilmedi.
+
+## K3 dizin kanıtı negatif testi
+- ecd85c1: Kanıt dosyası olarak dizin verilirse yükleyicinin hata üretmesini kontrol eden test eklendi.
+- Test henüz CI veya unittest ile çalıştırılmadı; son dirfd değişikliğinin gerçek regresyon çalıştırması önceliklidir.

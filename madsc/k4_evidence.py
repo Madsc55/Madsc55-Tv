@@ -53,8 +53,15 @@ def main():
         os.close(fd)
     report = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_json_pairs)
     result = verify(report)
-    with destination.open("x", encoding="utf-8") as handle:
-        handle.write(json.dumps(result, sort_keys=True) + "\n")
+    # Recheck immediately before the exclusive create: evidence parsing may take time.
+    enforce_local_output_path(destination)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+    output_fd = os.open(destination, flags, 0o600)
+    try:
+        with os.fdopen(output_fd, "w", encoding="utf-8", closefd=False) as handle:
+            handle.write(json.dumps(result, sort_keys=True) + "\n")
+    finally:
+        os.close(output_fd)
     print(json.dumps(result, sort_keys=True))
 
 if __name__ == "__main__":

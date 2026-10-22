@@ -1,3 +1,13 @@
+## K3 EPG/XMLTV güncellemesi — 2026-10-23
+- `madsc/epg.py`: XMLTV programme öğesinde eksik/boş `channel` artık fail-closed; XMLTV'de tanımsız programme channel eşleşmeyi geçersiz kılar. M3U `tvg-id` değerleri kenar boşluklarından arındırılır.
+- Regresyon testleri `tests/test_epg.py` içine eklendi. Kod `62211f43813ef87ec8a75329cf89506dcebac261`, test `4a3eee527902eea22a99afc9f82901ae3e837ed4`.
+- Devir raporu: `docs/K3_EPG_FAIL_CLOSED_PROGRESS_2026-10-23.md`; görev defteri ve DEVAM_NOTU güncellendi.
+- `[skip ci]` nedeniyle bu commit'ler için CI koşusu yok; test sonucu iddia edilmez. Canlı probe / Actions dispatch yapılmadı.
+- Gerçek ffprobe/ffmpeg, bağımsız 6+ saat süreklilik, IBO Player Pro cihaz kabulü, Pages/EPG zinciri ve logo eşlemesi açık. K3 tamamlandı sayılmadı; 0/92, 0/26, 0/22 korunur.
+- Üretim playlist/EPG/favoriler/cihaz/yedek/arşiv verileri değiştirilmedi; PR #71 birleştirilmedi.
+
+---
+
 # MADSC55 TV - Merkezi Proje Hafizasi
 
 ## Kalici calisma kurali (19 Ekim 2026)

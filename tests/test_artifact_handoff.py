@@ -79,3 +79,15 @@ class ArtifactHandoffTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Oversized discovery evidence"):
             pack(discovery, "123", "a" * 40)
 
+
+    def test_noncanonical_evidence_digests_rejected(self):
+        for digest in (self.envelope["digest"].upper(),
+                       self.envelope["digest"][:-1],
+                       self.envelope["digest"] + "0",
+                       "g" * 64, None, 123):
+            with self.subTest(digest=repr(digest)):
+                envelope = dict(self.envelope)
+                envelope["digest"] = digest
+                with self.assertRaisesRegex(ValueError, "Evidence digest mismatch"):
+                    unpack(envelope, "123", "a" * 40)
+

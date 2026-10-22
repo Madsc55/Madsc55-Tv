@@ -74,7 +74,9 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
             raise ValueError("Invalid candidate tvg-id")
         if tvg_id != tvg_id.strip() or any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF or ch == "\\" for ch in tvg_id):
             raise ValueError("Unsafe candidate tvg-id")
-        name = candidate.get("name", "")
+        # Fingerprint-only evidence is valid for provenance handoffs; use a safe
+        # neutral label when display metadata was not supplied.
+        name = candidate.get("name", "Unknown channel")
         logo = candidate.get("tvg_logo", "")
         group = candidate.get("group_title", "")
         if any(not isinstance(value, str) for value in (name, logo, group)):

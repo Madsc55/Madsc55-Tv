@@ -13,7 +13,7 @@ class HTTPSHeadProbeTests(unittest.TestCase):
         self.url = "https://video.example.com/live.m3u8"
         self.run, self.sha = "12345", "a" * 40
         self.envelope = pack({"candidates": [{
-            "url_sha256": hashlib.sha256(self.url.encode()).hexdigest()
+            "url_sha256": hashlib.sha256(self.url.encode()).hexdigest(), "name": "Fixture channel"
         }]}, self.run, self.sha)
 
     def test_opt_in_required_before_dns(self):
@@ -57,7 +57,7 @@ class HTTPSHeadProbeTests(unittest.TestCase):
     def test_non_ascii_path_rejected_before_socket(self):
         url = "https://video.example.com/ç.m3u8"
         envelope = pack({"candidates": [{
-            "url_sha256": hashlib.sha256(url.encode()).hexdigest()
+            "url_sha256": hashlib.sha256(url.encode()).hexdigest(), "name": "Fixture channel"
         }]}, self.run, self.sha)
         with patch("madsc.https_head_probe.subprocess.run",
                    return_value=SimpleNamespace(stdout='["8.8.8.8"]')), \

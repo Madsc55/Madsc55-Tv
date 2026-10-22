@@ -67,7 +67,8 @@ class SharedSnapshotTests(unittest.TestCase):
         digest = hashlib.sha256(b"#EXTM3U\n").hexdigest()
         k2_report = {"mode": "REAL_REMOTE_SOURCE_READ_ONLY",
                      "source": k2.SOURCE, "source_sha256": digest,
-                     "source_bytes": 8, "candidate_hashes": [],
+                     "source_bytes": 8, "stream_reachability_tested": False,
+                     "device_verified": False, "candidate_hashes": [],
                      "production_playlist_modified": False}
         k3_report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
                      "source": k3.SOURCE, "source_sha256": digest,

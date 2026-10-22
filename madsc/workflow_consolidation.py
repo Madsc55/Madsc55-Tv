@@ -58,7 +58,11 @@ def consolidation_plan(root: Path) -> dict:
     folder = root / ".github" / "workflows"
     if not folder.is_dir() or folder.is_symlink():
         raise ValueError("Workflow directory missing or unsafe")
-    files = {p.name for p in folder.iterdir() if p.is_file() and p.suffix in (".yml", ".yaml")}
+    workflow_entries = list(folder.iterdir())
+    # A symlink can make an external file appear to be a trusted workflow.
+    if any(path.is_symlink() for path in workflow_entries):
+        raise ValueError("Symlinked workflow entry")
+    files = {p.name for p in workflow_entries if p.is_file() and p.suffix in (".yml", ".yaml")}
     expected = set(AUXILIARY) | set(MAIN.values())
     # Offline CI is an additional diagnostic workflow, not a production stage.
     permitted_diagnostics = {"madsc-unit-tests.yml", "madsc-online-evidence-join.yml", "madsc-online-pilot-gates.yml"}

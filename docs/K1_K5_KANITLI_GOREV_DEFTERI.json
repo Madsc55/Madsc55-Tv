@@ -70,7 +70,9 @@
       "38d8209a: regression tests for malformed metadata and known URL upper bound; exact run cancelled due concurrent pushes, new combined CI result pending",
       "39869009399: successful offline suite at SHA 205ad1bf6f094a36600a0ad5872f228fc74fe850, descending from K2 commits 8d116818/a5d0d3b4/f82e0cb9/38d8209a",
       "aa6cba29: consume associated URL for missing/empty/unbalanced EXTINF metadata to prevent spurious orphan diagnostics",
-      "1d222cde: regression test for malformed EXTINF recovery; CI run 39869955026 pending at first check"
+      "1d222cde: regression test for malformed EXTINF recovery; CI run 39869955026 pending at first check",
+      "39869976594: CI exposed K2 legacy assertion expecting extra orphan_url after rejected EXTINF; corrected in 9b9c4ca8",
+      "9b9c4ca8: align existing malformed EXTINF regression with intentional single-diagnostic recovery; new CI pending"
     ],
     "note": "Offline suite succeeded on descendant SHA 205ad1bf (run 39869009399), covering latest K2 fail-closed metadata and bounded known URL inputs. Real-source/licensing, independent origins, and behavioral acceptance still unverified."
   },

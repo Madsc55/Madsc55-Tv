@@ -9,6 +9,7 @@ import re
 import urllib.parse
 import urllib.request
 from madsc.write_path_audit import enforce_local_output_path
+from madsc.legacy_workflow_safety import assess_workflow_source
 
 REPO = "Madsc55/madsc-tv"
 BRANCH = "madsc/bes-sistem-toplu-birlestirme"
@@ -97,6 +98,7 @@ def run(output, token):
                                if "upload-artifact" in line or "download-artifact" in line][:50],
             "candidate_k_stages": candidate_stages(item["path"]),
             "stage_mapping_reviewed": False,
+            "failure_circuit_source_scope": assess_workflow_source(source),
             "behavioral_parity_verified": False,
             "behavioral_evidence_status": "BLOCKED_NEEDS_BEHAVIOR_EVIDENCE",
             "evidence_missing": ["legacy_execution", "new_execution",

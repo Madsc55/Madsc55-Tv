@@ -45,6 +45,7 @@ def audit_write_paths(paths: list[str]) -> dict:
                    for part in normalized_parts)
             or any(folded.startswith(prefix.casefold()) for prefix in PROTECTED_PREFIXES)
             or PurePosixPath(folded).suffix in (".m3u", ".m3u8")
+            or PurePosixPath(folded).stem in ("favoriler", "favorites", "hepsi")
             or any(part in ("favoriler", "hepsi", "yedekler",
                                       "epg", "logolar", "logos", "arsiv") for part in normalized_parts)):
             rejected.append(raw)
@@ -110,6 +111,8 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
         relative = path.relative_to(root).as_posix()
     else:
         relative = path.relative_to(path.anchor).as_posix()
+    # A caller-chosen allowed root must not hide protected ancestor names.
+    enforce_write_paths([path.relative_to(path.anchor).as_posix()])
     enforce_write_paths([relative])
     return {"path_checked": True, "production_writes": False,
             "production_write_allowed": False}

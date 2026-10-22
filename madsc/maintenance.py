@@ -1,5 +1,87 @@
 """Pure functions for aggregate status and bounded retry decisions."""
 from __future__ import annotations
+from datetime import datetime
+
+
+def assess_failure_history(pages: list[dict], *, current_run_id: int,
+                           branch: str, limit: int = 3) -> dict:
+    """Apply the existing retry policy to bounded, supplied history pages.
+
+    Offline only: the caller must supply authenticated history separately.
+    Incomplete evidence cannot be interpreted as a zero-failure history.
+    """
+    retry_decision(0, limit)
+    if (type(current_run_id) is not int or current_run_id <= 0
+            or not isinstance(branch, str) or not branch
+            or not isinstance(pages, list) or not 1 <= len(pages) <= 10):
+        raise ValueError("Invalid failure history request")
+    runs = {}
+    received = 0
+    total = None
+    for page in pages:
+        if not isinstance(page, dict) or not isinstance(page.get("workflow_runs"), list):
+            raise ValueError("Invalid failure history page")
+        count = page.get("total_count")
+        batch = page["workflow_runs"]
+        if type(count) is not int or count < 0 or len(batch) > 100:
+            raise ValueError("Invalid failure history total")
+        if total is not None and total != count:
+            raise ValueError("Failure history changed during pagination")
+        total = count
+        if not batch and received < total:
+            raise ValueError("Truncated failure history")
+        for run in batch:
+            if (not isinstance(run, dict) or type(run.get("id")) is not int
+                    or run["id"] <= 0 or run["id"] in runs
+                    or not isinstance(run.get("head_branch"), str)
+                    or run.get("status") not in ("completed", "in_progress", "queued", "requested", "waiting", "pending")):
+                raise ValueError("Invalid or duplicate failure history run")
+            runs[run["id"]] = run
+        received += len(batch)
+    if received > total:
+        raise ValueError("Failure history total mismatch")
+    current = runs.get(current_run_id)
+    if current is None or current.get("head_branch") != branch:
+        raise ValueError("Current run missing from branch history")
+
+    def timestamp(run):
+        raw = run.get("created_at")
+        if not isinstance(raw, str):
+            raise ValueError("Missing failure history timestamp")
+        value = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        if value.tzinfo is None:
+            raise ValueError("Ambiguous failure history timestamp")
+        return value
+
+    current_order = (timestamp(current), current_run_id)
+    prior = []
+    for run in runs.values():
+        if run["id"] == current_run_id or run.get("head_branch") != branch:
+            continue
+        if run.get("status") == "completed":
+            order = (timestamp(run), run["id"])
+            if order < current_order:
+                prior.append((order, run))
+    prior.sort(key=lambda item: item[0], reverse=True)
+    streak = 0
+    boundary = False
+    for _, run in prior:
+        conclusion = run.get("conclusion")
+        if conclusion in ("failure", "timed_out"):
+            streak += 1
+            if streak >= limit:
+                break
+        elif conclusion in ("success", "cancelled", "skipped", "neutral", "action_required", "stale"):
+            boundary = True
+            break
+        else:
+            raise ValueError("Unknown failure history conclusion")
+    complete = received == total
+    if not complete and not boundary and streak < limit:
+        raise ValueError("More failure history pages required before retry")
+    return {**retry_decision(streak, limit), "consecutive_failures": streak,
+            "history_pages_checked": len(pages), "history_complete": complete,
+            "runtime_history_origin_verified": False}
 
 def retry_decision(consecutive_failures: int, limit: int = 3) -> dict:
     if type(consecutive_failures) is not int or consecutive_failures < 0 or type(limit) is not int or not 1 <= limit <= 10:

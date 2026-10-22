@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from madsc.write_path_audit import audit_write_paths
 
 PROTECTED = {"calisanlar.m3u", "yeniler", "yedekler", "hepsi", "favoriler", "epg", "logolar", "arsiv", "playlist.m3u8", "xmltv.xml", "yeni̇ler"}
 def safe_relative_path(raw: str) -> bool:
@@ -15,6 +16,8 @@ def safe_relative_path(raw: str) -> bool:
         return False
     parts = [x.casefold() for x in p.parts]
     if ":" in raw or raw.startswith(("//", "\\\\")):
+        return False
+    if audit_write_paths([raw])["blocked"]:
         return False
     return not any(any(token in part for token in PROTECTED) for part in parts)
 

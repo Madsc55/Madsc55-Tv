@@ -10,7 +10,7 @@ from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verif
 from madsc.channel_test import evaluate_probe, evaluate_repeated_probes, evaluate_ffprobe_json
 from madsc.discovery import classify_candidates
 from madsc.dependencies import validate_batch, plan_task
-from madsc.maintenance import aggregate, retry_decision, summarize_batch, review_candidate_batch
+from madsc.maintenance import aggregate, retry_decision, summarize_batch, review_candidate_batch, assess_failure_history
 from madsc.playlist import compare_snapshots, inspect_playlist
 from madsc.source_import import extract_candidates
 from madsc.handoff import assess_candidates
@@ -22,6 +22,7 @@ from madsc.write_path_audit import audit_write_paths, enforce_local_output_path
 from madsc.fixture_report_writer import write_fixture_report, write_stage_report
 from madsc.history_pair_bridge import bridge_legacy_pair, merge_into_envelope
 from madsc.history_pair_store import decode_pair
+from madsc.legacy_workflow_safety import assess_workflow_source
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -44,7 +45,15 @@ def execute(category: str) -> dict:
             guard_verified = (safe_report["isolated_report_written"]
                               and not safe_report["production_write_allowed"]
                               and denied and not (Path(d) / "CALISANLAR.m3u").exists())
+            metadata_denied = True
+            for name in ("reports/favorites.json", "reports/HEPSI.txt", "reports/cache/logos/logo.png"):
+                try:
+                    write_fixture_report(Path(d), name, "blocked")
+                    metadata_denied = False
+                except PermissionError:
+                    metadata_denied = metadata_denied and not (Path(d) / name).exists()
             evidence = {"fixture_report_write_guard": guard_verified,
+                        "favorite_metadata_and_nested_logo_write_denied": metadata_denied,
                         "protected_write_paths_identified": audit["blocked"] and len(audit["rejected"]) == 2,
                         "audit_does_not_claim_runtime_gate": not audit["runtime_gate_enforced"],
                         "valid_playlist": before["channel_count"] == 1,
@@ -178,6 +187,16 @@ def execute(category: str) -> dict:
                         "external_backup_not_claimed": not manifest["external_backup_verified"],
                         "restore_not_claimed": not manifest["restore_verified"]}
     elif category == "k5":
+        history_rows = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
+                         "status": "in_progress", "conclusion": None} for i in range(104, 4, -1)]
+        old_failures = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
+                         "status": "completed", "conclusion": "failure"} for i in (4, 3, 2)]
+        history_result = assess_failure_history([
+            {"total_count": 103, "workflow_runs": history_rows},
+            {"total_count": 103, "workflow_runs": old_failures}], current_run_id=104, branch="fixture")
+        source_scope = assess_workflow_source("jobs:\n  check:\n    steps:\n"
+            "      - run: python3 tools/workflow_failure_gate.py\n"
+            "  writer:\n    steps:\n      - run: git push origin main\n")
         reports = [{"category": k, "production_writes": False} for k in CATEGORIES]
         result = aggregate([{**r, "status": "success"} for r in reports])
         summary = summarize_batch([{**r, "status": "success"} for r in reports])
@@ -226,6 +245,8 @@ def execute(category: str) -> dict:
         guarded_handoff_ok = (saved_report == k5_payload and rejected_unsafe
                               and rejected_overwrite and guarded_report["production_write_allowed"] is False)
         evidence = {"k1_guards_k5_report_write": guarded_handoff_ok,
+                    "paginated_failure_history_blocks_retry": history_result["blocked"] and not history_result["runtime_history_origin_verified"],
+                    "separate_job_gate_not_false_writer_clearance": source_scope["mutation_signal_count"] == 1 and not source_scope["runtime_verified"],
                     "k4_corruption_blocks_k5_review": (
                         not k4_corrupt_review["independent_sandbox_restore_matches"]
                         and not corrupted_cross_review["review_evidence_complete"]

@@ -32,6 +32,10 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
             self.assertEqual(report["source_tree_sha"], "source-tree")
             self.assertEqual(report["behavioral_parity_verified_count"], 0)
             self.assertEqual(report["blocked_workflow_count"], 99)
+            self.assertTrue(all(row["failure_circuit_source_scope"]["runtime_verified"] is False
+                                for row in report["workflows"]))
+            self.assertTrue(all("jobs" in row["failure_circuit_source_scope"]
+                                for row in report["workflows"]))
             self.assertEqual(set(report["missing_evidence_by_type"].values()), {99})
             self.assertTrue(all(row["behavioral_evidence_status"] ==
                                 "BLOCKED_NEEDS_BEHAVIOR_EVIDENCE"

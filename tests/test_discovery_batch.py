@@ -366,6 +366,19 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(len(result["identity_candidates"]), 2)
 
 
+
+    def test_known_urls_reject_oversized_or_surrogate_values(self):
+        feed = "#EXTM3U\n#EXTINF:-1,Safe\nhttps://example.org/safe\n"
+        for known in ("https://example.org/" + "a" * 8192,
+                      "https://example.org/\ud800"):
+            with self.subTest(known=repr(known[:40])):
+                with self.assertRaisesRegex(ValueError, "oversized or invalid Unicode"):
+                    corroborate_sources({"source": feed}, known_urls={known})
+        result = corroborate_sources(
+            {"source": feed}, known_urls={"https://example.org/safe"})
+        self.assertEqual(result["identity_candidates"], [])
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

@@ -27,3 +27,10 @@ Bu sohbetin yeni commitleri için GitHub Actions sonucuyla eşleşen güncel ba�
 5. Başka sohbetlerin K2/K3/K4 kodunu, üretim dosyalarını veya ortak `DEVAM_NOTU.md` dosyasını bu sohbetten değiştirme.
 
 Bu dosya yalnız K1/K5'e ait ayrı devir kaydıdır.
+
+
+## 22 Ekim — eşzamanlı sohbet koordinasyonu ve yeni K5 düzeltmeleri
+- GitHub main üzerindeki son commitler yeniden kontrol edildi: K2/K3 sohbetleri `madsc` kanıt doğrulaması, keşif zarfı ve regresyon testlerinde aktif. Bu sohbet onların dosyalarını değiştirmedi.
+- K5 `madsc/maintenance.py` ve bağımsız `tests/test_k5_*.py` dosyaları: `0d9ad9a` durum/sonuç tutarlılığı, `e8b9726` test; `174492f` hatalı zaman damgası hatası, `3e680a3` test; `76a17c2` sonuç tipi, `48ce649` test; `ab4c39a` aynı dalda daha yeni çalışmanın eski hedefi geçersiz kılması, `add5501` test; `47e8cbc` 1000 kayıt üst sınırı, `846bb16` sayfalama sınırı testleri.
+- Bunlar `[skip ci]` commitleridir; yeni HEAD üzerinde odaklı veya tam test başarısı doğrulanmadı. Sonradan gelen K2/K3 commitleri de test gerektirir.
+- Sohbetler arasında otomatik kilit/gerçek zamanlı senkronizasyon yok; her yazma öncesinde son HEAD ve dosya SHA kontrol edilmeli. Ortak dosya değişikliklerinden kaçınmak temel kuraldır. Kabul sayaçları 0/92, 0/26, 0/22.

@@ -105,6 +105,8 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Ambiguous duplicate source names")
     if known_urls is not None and not isinstance(known_urls, (set, frozenset)):
         raise ValueError("Known URLs must be a set")
+    if known_urls is not None and len(known_urls) > 20000:
+        raise ValueError("Too many known URLs")
     if known_urls is not None and any(not isinstance(url, str) for url in known_urls):
         raise ValueError("Known URLs must contain strings")
     if any(not isinstance(body, str) for body in sources.values()):

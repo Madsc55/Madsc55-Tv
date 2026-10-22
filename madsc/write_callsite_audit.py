@@ -36,6 +36,11 @@ _PROCESS_LAUNCHERS = {
     "os.system", "os.popen",
 }
 _GUARDED_OPEN_FLAGS = {"O_WRONLY", "O_RDWR", "O_CREAT", "O_TRUNC", "O_APPEND"}
+# These helpers create files even without an explicit writable open() mode.
+_TEMPFILE_CREATORS = {
+    "tempfile.NamedTemporaryFile", "tempfile.TemporaryFile",
+    "tempfile.mkstemp", "tempfile.mkdtemp", "tempfile.TemporaryDirectory",
+}
 
 
 def _call_name(node: ast.Call) -> str:
@@ -55,6 +60,8 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
     leaf = name.rsplit(".", 1)[-1]
     if leaf in _MUTATING_METHODS:
         return True, name
+    if name in _TEMPFILE_CREATORS:
+        return True, name + " [temporary filesystem creation requires review]"
     # os.open uses flags, not a text mode; handle it before generic *.open
     # so the generic branch cannot swallow it and miss O_WRONLY/O_CREAT.
     if name in {"os.open", "posix.open"}:
@@ -72,6 +79,18 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
         # Calls, conditionals, unary expressions and other AST forms can
         # evaluate to O_CREAT/O_TRUNC; an unrecognized expression is NOT read-only.
         return True, name + " [flags require review]"
+    # os.fdopen wraps a descriptor and may expose a writable file object.
+    # Include the wrapper's mode even if its later write() is in a helper.
+    if name == "os.fdopen":
+        mode = node.args[1] if len(node.args) > 1 else None
+        for kw in node.keywords:
+            if kw.arg == "mode":
+                mode = kw.value
+        if mode is None:
+            return False, ""
+        if not isinstance(mode, ast.Constant) or not isinstance(mode.value, str):
+            return True, name + " [dynamic mode]"
+        return (True, name) if any(flag in mode.value for flag in "wax+") else (False, "")
     is_builtin_open = name in {"open", "builtins.open", "io.open"}
     is_path_open = (isinstance(node.func, ast.Attribute) and leaf == "open"
                     and name not in {"os.open", "posix.open", "builtins.open", "io.open"})

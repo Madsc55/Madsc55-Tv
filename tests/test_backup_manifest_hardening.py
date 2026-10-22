@@ -297,6 +297,28 @@ class BackupManifestHardeningTests(unittest.TestCase):
                     snapshot_manifest(root, ["good" + chr(0xD800) + ".txt"])
             self.assertEqual(len(snapshot_manifest(root, ["good.txt"])["entries"]), 1)
 
+    def test_manifest_rejects_noncanonical_entry_types(self):
+        class CustomPath(str):
+            pass
+
+        class CustomEntry(dict):
+            pass
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_bytes(b"fixture")
+            original = snapshot_manifest(root, ["good.txt"])
+            for entry in (
+                {**original["entries"][0], "path": CustomPath("good.txt")},
+                CustomEntry(original["entries"][0]),
+            ):
+                with self.subTest(entry_type=type(entry).__name__):
+                    forged = dict(original)
+                    forged["entries"] = [entry]
+                    with self.assertRaisesRegex(ValueError, "Invalid backup manifest entry"):
+                        verify_manifest(root, forged)
+            self.assertTrue(verify_manifest(root, original))
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -34,7 +34,7 @@ class IsolatedPlaylistBundleTests(unittest.TestCase):
             source_dir = root / "source"
             source_dir.mkdir()
             source = source_dir / "input.m3u"
-            source.write_text("#EXTM3U\\n#EXTINF:-1,Example\\nhttps://example.org/live\\n")
+            source.write_text("#EXTM3U\n#EXTINF:-1,Example\nhttps://example.org/live\n")
             out = root / "output"
             result = subprocess.run(
                 [sys.executable, "-m", "madsc.isolated_playlist_bundle",

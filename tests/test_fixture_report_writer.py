@@ -59,7 +59,8 @@ class FixtureReportWriterTests(unittest.TestCase):
                 calls.append(path)
                 if len(calls) == 1:
                     return real_write(path, payload)
-                playlist.unlink()
+                held = root / "concurrent-replacement-held-inode"
+                playlist.rename(held)
                 playlist.write_bytes(b"concurrent replacement")
                 raise OSError("simulated second write failure")
             with patch("madsc.fixture_report_writer._exclusive_bytes",

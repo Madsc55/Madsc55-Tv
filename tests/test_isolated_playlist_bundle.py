@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -26,13 +28,30 @@ class IsolatedPlaylistBundleTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 export_isolated_previews(source, out)
 
+    def test_cli_exports_isolated_bundle(self):
+        with TemporaryDirectory() as d:
+            root = Path(d)
+            source_dir = root / "source"
+            source_dir.mkdir()
+            source = source_dir / "input.m3u"
+            source.write_text("#EXTM3U\\n#EXTINF:-1,Example\\nhttps://example.org/live\\n")
+            out = root / "output"
+            result = subprocess.run(
+                [sys.executable, "-m", "madsc.isolated_playlist_bundle",
+                 str(source), str(out)],
+                capture_output=True, text=True, check=True)
+            self.assertEqual(len(json.loads(result.stdout)["files"]), 5)
+            self.assertTrue((out / "manifest.json").is_file())
+
     def test_rejects_source_tree_and_symlinked_destination(self):
         with TemporaryDirectory() as d:
             root = Path(d)
-            source = root / "source.m3u"
+            source_dir = root / "source"
+            source_dir.mkdir()
+            source = source_dir / "source.m3u"
             source.write_text("#EXTM3U\n")
             with self.assertRaises(PermissionError):
-                export_isolated_previews(source, root / "nested")
+                export_isolated_previews(source, source.parent / "nested")
             target = root / "target"
             target.mkdir()
             alias = root / "alias"

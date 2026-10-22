@@ -13,8 +13,12 @@ def export_isolated_previews(source: Path, destination: Path) -> dict:
 
     Never overwrite existing data, follow output symlinks, or promote to production.
     """
-    source = Path(source).absolute()
-    destination = Path(destination).absolute()
+    source = Path(source)
+    destination = Path(destination)
+    if any(part in (".", "..") for part in source.parts + destination.parts):
+        raise PermissionError("Ambiguous source or destination path")
+    source = source.absolute()
+    destination = destination.absolute()
     if destination == source.parent or destination.is_relative_to(source.parent):
         raise PermissionError("Output must be outside the source directory tree")
     if destination.exists() or destination.is_symlink():
@@ -57,3 +61,18 @@ def export_isolated_previews(source: Path, destination: Path) -> dict:
             path.unlink(missing_ok=True)
         destination.rmdir()
         raise
+
+def main(argv=None) -> int:
+    """Explicit offline export; never writes production playlists."""
+    import argparse
+    parser = argparse.ArgumentParser(description="Export five isolated M3U drafts")
+    parser.add_argument("source", type=Path)
+    parser.add_argument("destination", type=Path)
+    args = parser.parse_args(argv)
+    manifest = export_isolated_previews(args.source, args.destination)
+    print(json.dumps(manifest, ensure_ascii=False, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

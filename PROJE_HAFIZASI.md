@@ -2339,3 +2339,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Güncel HEAD bu tur başında `f00a404cf67989be993f56c738715feb6ad1e47e` idi. Önceki test düzeltmesinde başlık satırında literal `\\n` kalmış; böylece M3U parser toplam-boyut korumasına gelmeden `Missing M3U header` verebiliyordu. Test satırı mevcut dosya biçimiyle uyumlu gerçek satır sonu kaçışına çevrildi: `196c0e5a502aa5e57cb6a95b025029a85727ece8`.
 - Eski Actions run `39861302612` logu: 950 test, 5 failure, 22 error; bu run `6b5eb355...` SHA'sındadır ve güncel HEAD için kabul kanıtı değildir. Başarısız log içinde ayrıca candidate probe-link metadata beklentisi ve başka sohbetlerin K3/parity/playlist testleri vardı; bu turda yalnız doğrulanmış K2 fixture kusuru değiştirildi.
 - Testler çalıştırılmadı ve Actions dispatch edilmedi. Yeni testin ve güncel offline gate'in başarılı olduğu iddia edilmez. Kabul 0/26, 0/92, 0/22 olarak kalır.
+
+
+## 23 Ekim 2026 — K1 platform no-follow desteği fail-closed
+- K1 manifest açılışında `O_NOFOLLOW` mevcut değilse eski kod sıfır bayrağıyla dosyayı açabiliyordu. Güvenlik beklentisiyle uyumsuz bu geri dönüş kaldırıldı; özellik yoksa CLI kontrollü hata koduyla kapanıyor: `a2371ec3edce83f459a102e7c5946ceda048e8c3`.
+- `O_NOFOLLOW` desteği yokmuş gibi davranan negatif CLI testi eklendi: `d8b36cad942975bfd9c1536efd869b3685c4583e`.
+- Actions listesinde HEAD `30ef98459b9ee69a70b051b8a3ef59262e7a89ec` için `39861703604` run pending görünüyordu; job henüz listelenebilir değildi. Bu run, bu turdaki [skip ci] değişikliklerini kapsamaz. K1/K2 testleri bu turda çalıştırılmadı; kabul sayıları 0/26, 0/92, 0/22 olarak kaldı.

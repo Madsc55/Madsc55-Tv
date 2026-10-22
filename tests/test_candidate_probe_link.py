@@ -161,6 +161,16 @@ class CandidateProbeLinkTests(unittest.TestCase):
                     pack({"candidates": candidates}, run, sha)
 
 
+    def test_k3_loader_module_compiles_and_imports(self):
+        import ast
+        from pathlib import Path
+        source = Path("madsc/candidate_probe_link.py").read_text(encoding="utf-8")
+        parsed = ast.parse(source, filename="madsc/candidate_probe_link.py")
+        self.assertTrue(any(isinstance(node, ast.FunctionDef)
+                            and node.name == "load_evidence" for node in parsed))
+        from madsc.candidate_probe_link import load_evidence
+        self.assertTrue(callable(load_evidence))
+
     def test_evidence_loader_accepts_regular_json_and_rejects_duplicates(self):
         import tempfile
         from pathlib import Path

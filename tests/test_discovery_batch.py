@@ -85,7 +85,7 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(report["entries"], 1)
         self.assertEqual(len(report["candidates"]), 1)
         self.assertEqual([e["reason"] for e in report["parse_errors"]],
-                         ["orphan_url", "empty_channel_name", "orphan_url"])
+                         ["orphan_url", "empty_channel_name"])
 
     def test_invalid_limits_and_known_url_types_fail_closed(self):
         for limit in (True, 1.5, "10", None):

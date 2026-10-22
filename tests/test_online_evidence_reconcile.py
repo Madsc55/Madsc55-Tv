@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 from madsc.online_evidence_reconcile import reconcile
 
@@ -45,6 +48,32 @@ class OnlineEvidenceReconcileTests(unittest.TestCase):
         self.k3["audio_video_verified"] = 1
         with self.assertRaises(ValueError):
             reconcile(self.k2, self.k3)
+
+    def test_cli_rejects_symlink_and_nonregular_input(self):
+        from madsc.online_evidence_reconcile import main
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            k2_path = root / "k2.json"
+            k3_path = root / "k3.json"
+            k2_path.write_text(json.dumps(self.k2), encoding="utf-8")
+            k3_path.write_text(json.dumps(self.k3), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                main([str(root), str(k3_path)])
+            link = root / "k2-link.json"
+            link.symlink_to(k2_path)
+            with self.assertRaises(ValueError):
+                main([str(link), str(k3_path)])
+
+    def test_cli_rejects_oversized_evidence(self):
+        from madsc.online_evidence_reconcile import main
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            k2_path = root / "k2.json"
+            k3_path = root / "k3.json"
+            k2_path.write_bytes(b"x" * 2_000_001)
+            k3_path.write_text(json.dumps(self.k3), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                main([str(k2_path), str(k3_path)])
 
     def test_rejects_production_mutation(self):
         self.k2["production_playlist_modified"] = True

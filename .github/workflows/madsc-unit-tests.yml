@@ -4,6 +4,10 @@ on:
   push:
     paths:
       - '.github/workflows/madsc-unit-tests.yml'
+      - 'madsc/**'
+      - 'tests/**'
+      - 'docs/LEGACY_SOURCE_SCOPE.json'
+      - 'docs/K1_K5_KANITLI_GOREV_DEFTERI.json'
 permissions:
   contents: read
 concurrency:

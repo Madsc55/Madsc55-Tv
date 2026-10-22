@@ -164,7 +164,7 @@ class DiscoveryBatchTests(unittest.TestCase):
             build_m3u8_preview(feeds)
 
     def test_corroboration_rejects_combined_source_text_before_parsing(self):
-        feeds = {"a": "x" * 4_000_000, "b": "y" * 4_000_000}
+        feeds = {"a": "#EXTM3U\\n" + " " * 4_000_000, "b": "#EXTM3U\\n" + " " * 4_000_000}
         with self.assertRaisesRegex(ValueError, "Combined source text"):
             corroborate_sources(feeds)
 

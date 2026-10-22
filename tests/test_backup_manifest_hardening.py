@@ -275,8 +275,8 @@ class BackupManifestHardeningTests(unittest.TestCase):
             root = Path(directory)
             (root / "good.txt").write_bytes(b"fixture")
             original = snapshot_manifest(root, ["good.txt"])
-            for invalid in ("good\\x00.txt", "good\\n.txt", "good\\x7f.txt",
-                            "good\\ud800.txt", "good\\udfff.txt"):
+            for invalid in ("good\x00.txt", "good\n.txt", "good\x7f.txt",
+                            "good\ud800.txt", "good\udfff.txt"):
                 with self.subTest(invalid=repr(invalid)):
                     forged = dict(original)
                     forged["entries"] = [{**original["entries"][0], "path": invalid}]

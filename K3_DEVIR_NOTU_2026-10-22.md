@@ -62,3 +62,8 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - Önceki devir notu yazma girişimi, paralel sohbetin d686a73e8e7b15be0704a0d4200ddae93e087b5 commit'iyle eşzamanlı olduğu için 409 conflict aldı. O denemede not değişmedi; bu kayıt güncel SHA üzerinden yeniden yapılıyor.
 - Seekable kontrolü, açılan dosyanın fstat ile normal dosya ve doğru boyutunun doğrulanmasının eşdeğeri değildir. Bu açık iş sürüyor.
 - Güncel K3 testleri çalıştırılmadı. Canlı kanal testi, IBO cihaz doğrulaması ve üretim onayı yapılmadı. K1/K5 ve K2/K4 kapsamındaki çalışmaları tekrar etme.
+
+## K3 açık güvenlik eksiği düzeltmesi
+- 956d147: CLI kanıt dosyası açıldıktan sonra os.fstat(handle.fileno()) ile normal dosya türü ve 16 MiB üst sınırı doğrulanıyor. Önceki seekable kontrolü kaldırıldı; mevcut yol symlink ve sınırlı okuma kontrolleri korunuyor.
+- 5d087c5: Test sözleşmesi fstat, stat.S_ISREG ve açılmış dosya boyutu kontrolüne uyarlandı.
+- Henüz yerel/CI unittest sonucu alınmadı. Dosya açılışında TOCTOU ve O_NOFOLLOW ile atomik açma konusu ayrıca değerlendirilmeli; fstat tek başına yol değiştirme yarışını çözmez.

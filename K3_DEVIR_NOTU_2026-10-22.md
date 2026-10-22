@@ -78,3 +78,8 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - 9cc93fd: K3 CLI fail-closed O_NOFOLLOW kaynak sözleşmesi testi güncellendi.
 - Linux/GitHub Actions ortamında destek beklenir; diğer platformlarda CLI bilinçli olarak hata verir. Üst dizin yarışları hâlâ tam atomik korunmuyor.
 - Testlerin güncel HEAD üzerinde çalıştığı henüz kanıtlanmadı; canlı/IBO doğrulaması yok.
+
+## K3 son değişiklikler
+- c43318f: Kanıt dosyası açılışında O_NONBLOCK bayrağı eklendi.
+- 48fe6f9: Açılış bayraklarına ilişkin test beklentisi güncellendi.
+- Son commitler için test çalıştırması henüz doğrulanmadı.

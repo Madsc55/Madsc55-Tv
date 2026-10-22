@@ -66,8 +66,17 @@ def run(inventory_path, snapshots_path, output_path, *, replacement_workflow_roo
     if destination.exists() or destination.is_symlink():
         raise ValueError("Refusing to overwrite comparison evidence")
     enforce_local_output_path(destination.absolute())
-    with destination.open("x", encoding="utf-8") as stream:
-        json.dump(report, stream, indent=2, ensure_ascii=False, sort_keys=True)
+    # Exclusive, no-follow creation prevents a late symlink swap at the output leaf.
+    import os
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    fd = os.open(destination, flags, 0o600)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", closefd=False) as stream:
+            json.dump(report, stream, indent=2, ensure_ascii=False, sort_keys=True)
+    finally:
+        os.close(fd)
     return report
 
 

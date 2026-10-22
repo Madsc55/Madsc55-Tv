@@ -23,9 +23,18 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     ids = []
     for line in text.splitlines():
         if line.startswith("#EXTINF:"):
-            if "," not in line:
+            # The channel-name separator is the first comma outside quoted attributes.
+            quoted = False
+            separator = None
+            for position, char in enumerate(line):
+                if char == '"':
+                    quoted = not quoted
+                elif char == "," and not quoted:
+                    separator = position
+                    break
+            if separator is None or quoted:
                 raise ValueError("Malformed M3U EXTINF: missing channel-name separator")
-            attribute_text = line.split(",", 1)[0]
+            attribute_text = line[:separator]
             matches = TVG_ID.findall(attribute_text)
             if len(matches) > 1:
                 raise ValueError("Duplicate M3U tvg-id attribute")

@@ -2425,3 +2425,11 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Diğer çalışma kolunda `madsc/write_callsite_audit.py` eklendi: salt okunur AST taraması Python dosyalarındaki olası dosya sistemi mutasyonlarını listeliyor; her satırı review-required olarak bırakıyor ve runtime enforcement iddiasında bulunmuyor. Scope düzeltmesi, iç fonksiyondaki guard'ın dış fonksiyonu koruyor gibi sayılmasını önlüyor.
 - Actions run `39863928836`, 975 testte 1 failure verdi. Hata davranış kodunda değil, yeni testin beklenen adlarında: tarayıcı `folder.mkdir` / `folder.unlink` nitelemelerini döndürürken test `mkdir` / `unlink` bekliyordu. Beklenti, gözlenen API sözleşmesiyle hizalandı: `166eb7135d7369d27e530ae2a5ac8ac5e7950c77`.
 - Bu test düzeltmesi sonrası yeni CI koşusu bekleniyor. K1 callsite taraması statik aday envanteridir; shell/subprocess ve dinamik alias'lar için ayrı denetim ve tüm adayların tek tek disposition'ı gerekir. Runtime K1 0/26, legacy 0/92, görev 0/22.
+
+
+## 23 Ekim 2026 — K1 yazma noktası envanteri devamı
+- K1-03 için `madsc/write_callsite_audit.py` ve `tests/test_write_callsite_audit.py` eklendi; offline gate artık Python AST yazma-callsite taramasını da raporluyor.
+- İlk rapor: 97 Python dosyası tarandı, 58 mutasyon adayı bulundu. Statik guard satırı sırası yalnızca inceleme yardımıdır; global/runtime enforcement kanıtı değildir. Shell/subprocess, dinamik alias ve çapraz-fonksiyon davranışları ayrıca incelenmeli.
+- `pathlib.Path.open("w")` modu ilk testte tespit edilemedi; `bcd8245` ile Path.open için ilk positional argüman modu olarak okunuyor. Güncel CI run `39864090233` sonucu bekleniyor.
+- Son bilinen doğrulanmış beşli CI: run `39863567977`, 970 test başarılı. Yeni tarama testinin geçişi ve tam gate raporu ayrıca doğrulanmalı.
+- Açık kabul sayaçları: K1 0/26, legacy 0/92, ana görev 0/22. Üretim verilerine dokunma ve PR #71'i birleştirmeme sınırları aynen sürüyor.

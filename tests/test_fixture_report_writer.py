@@ -168,6 +168,16 @@ class FixtureReportWriterTests(unittest.TestCase):
             gate.assert_called_once_with(root / "reports", allowed_root=root)
             self.assertFalse((root / "reports").exists())
 
+    def test_failed_fsync_removes_only_the_partial_evidence_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            target = root / "reports/partial.json"
+            with patch("madsc.fixture_report_writer.os.fsync",
+                       side_effect=OSError("simulated durable-write failure")):
+                with self.assertRaisesRegex(OSError, "simulated durable-write failure"):
+                    write_fixture_report(root, "reports/partial.json", "partial payload")
+            self.assertFalse(target.exists())
+
     def test_existing_report_evidence_cannot_be_overwritten(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

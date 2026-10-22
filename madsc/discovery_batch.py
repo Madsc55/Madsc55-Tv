@@ -28,11 +28,21 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         if line.startswith("#EXTINF:"):
             if pending is not None:
                 errors.append({"line": number, "reason": "missing_url"})
-            if "," not in line:
+            # EXTINF attributes may contain commas inside quoted values.
+            # Only the first comma outside quotes separates metadata from title.
+            quoted = False
+            separator = -1
+            for offset, char in enumerate(line):
+                if char == '"':
+                    quoted = not quoted
+                elif char == "," and not quoted:
+                    separator = offset
+                    break
+            if separator < 0 or quoted:
                 pending = None
                 errors.append({"line": number, "reason": "missing_channel_name"})
                 continue
-            meta, title = line.split(",", 1)
+            meta, title = line[:separator], line[separator + 1:]
             if not title.strip():
                 pending = None
                 errors.append({"line": number, "reason": "empty_channel_name"})

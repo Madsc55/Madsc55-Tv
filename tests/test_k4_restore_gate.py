@@ -59,6 +59,17 @@ class K4RestoreGateTests(unittest.TestCase):
             (trees[0] / "alias").symlink_to(trees[0] / "nested", target_is_directory=True)
             self.assertFalse(audit_k4_restore(*trees, names)["sandbox_restore_accepted"])
 
+    def test_deep_nested_directory_inventory_is_canonical(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ("source", "backup", "restored")]
+            for root in trees:
+                (root / "first" / "second").mkdir(parents=True)
+                (root / "first" / "second" / "file.txt").write_bytes(b"same")
+            result = audit_k4_restore(*trees, ["first/second/file.txt"])
+            self.assertTrue(result["sandbox_restore_accepted"])
+            self.assertFalse(result["external_storage_proven"])
+
     def test_nested_tree_rejected(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

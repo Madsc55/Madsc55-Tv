@@ -253,3 +253,20 @@ class HandoffTests(unittest.TestCase):
         orphan = "f" * 64
         with self.assertRaises(ValueError):
             assess_candidates({"candidates": []}, {}, {orphan: "WORKING"})
+
+    def test_alternative_chain_and_reverse_mapping_rejected(self):
+        discovery = classify_candidates([
+            {"name": "News", "url": "https://example.org/a", "tvg_id": "news"},
+            {"name": "News HD", "url": "https://example.org/b", "tvg_id": "news"},
+            {"name": "News Backup", "url": "https://example.org/c", "tvg_id": "news"},
+        ])
+        a, b, c = [item["url_sha256"] for item in discovery["candidates"]]
+        for child, parent in ((c, b), (a, b)):
+            with self.subTest(child=child, parent=parent):
+                tampered = dict(discovery)
+                tampered["alternatives"] = [
+                    {"url_sha256": child, "alternative_to_sha256": parent}
+                ]
+                with self.assertRaisesRegex(ValueError, "Conflicting alternative channel identity"):
+                    assess_candidates(tampered, {})
+

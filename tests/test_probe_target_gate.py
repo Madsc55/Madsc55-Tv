@@ -45,7 +45,7 @@ class ProbeTargetGateTests(unittest.TestCase):
         url = "https://video.example.com/live.m3u8"
         run, sha = "12345", "a" * 40
         digest = hashlib.sha256(url.encode()).hexdigest()
-        envelope = pack({"candidates": [{"url_sha256": digest}]}, run, sha)
+        envelope = pack({"candidates": [{"url_sha256": digest, "name": "Fixture channel"}]}, run, sha)
         with self.assertRaises(PermissionError):
             validate_probe_handoff(url, envelope, run, sha)
         valid = validate_probe_handoff(url, envelope, run, sha, authorized=True)

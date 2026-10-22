@@ -26,6 +26,13 @@ _OS_MUTATORS = {
     "remove", "unlink", "rename", "replace", "mkdir", "makedirs",
     "rmdir", "removedirs", "symlink", "link", "truncate",
 }
+# Process launchers can perform writes outside Python's filesystem APIs (cp,
+# mv, redirection, scripts, etc.). Record them for command-level review.
+_PROCESS_LAUNCHERS = {
+    "subprocess.run", "subprocess.call", "subprocess.Popen",
+    "subprocess.check_call", "subprocess.check_output",
+    "os.system", "os.popen",
+}
 _GUARDED_OPEN_FLAGS = {"O_WRONLY", "O_RDWR", "O_CREAT", "O_TRUNC", "O_APPEND"}
 
 
@@ -78,6 +85,8 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
             return True, name + " [numeric flags require review]"
     if name.startswith("os.") and leaf in _OS_MUTATORS:
         return True, name
+    if name in _PROCESS_LAUNCHERS:
+        return True, name + " [process command requires review]"
     return False, ""
 
 

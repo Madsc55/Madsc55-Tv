@@ -893,3 +893,9 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - `madsc/backup.py` içinde `_open_relative_file_nofollow` kaynak dosya yol bileşenlerini artık descriptor açmadan önce denetliyor. Boş, `.`, `..`, slash ve tek backslash içeren bileşenler reddediliyor. Nihai düzeltme commit `7df85585bd152e07fef2703a2c6497414ae7e594`.
 - `tests/test_backup_manifest_hardening.py` içine doğrudan düşük seviyeli fonksiyonun traversal ve backslash girdilerini reddetmesini doğrulayan test eklendi. Nihai test commit `0524a7d0bca2a79da83d5abd47bb136169c9a7df`.
 - Son gözlem: ilgili Actions `39870389256` henüz pending; yeni test için başarılı CI kanıtı bekleniyor. Gerçek harici yedek, bağımsız harici restore ve ayın 1/15 zamanlayıcı kabulü hâlâ açık. Korunan IPTV, EPG, favori, cihaz ve üretim yedek dosyaları değiştirilmedi.
+
+
+## 23 Ekim 2026 — K2 kaynak etiketleri denetimi; cihaz doğrulaması ertelendi
+- Önceki Unicode surrogate regresyonu (`a794aeca`) daha sonraki `0524a7d0bca2a79da83d5abd47bb136169c9a7df` commit'inde başarılı GitHub Actions `39870389256` ile kapsandı; GitHub compare `ahead=5`, `behind=0`.
+- `parse_m3u` kaynak köken etiketlerindeki ASCII kontrol karakterlerini (satır sonu, tab, NUL, DEL) reddediyor (`a9e193bd2ea8de8d8f0ce0be937042dbcce894b4`). Bu, rapor ve köken kayıtlarının kontrol karakterleriyle kirletilmesini engeller. Parser, kaynak mutabakatı ve önizleme için regresyon `e03b92d13a41a3e1d48e06c73981c1e7299473e1`; yeni CI sonucu henüz doğrulanmadı.
+- K2-08 görev defterine kanıt işlendi, kabul kapatılmadı. Gerçek kaynak/lisans, günlük keşif eşdeğerliği ve gerçek artifact SHA kökeni hâlâ açık. IBO Player Pro cihaz testini en sonda kullanıcı yapacak; cihaz doğrulandı iddiası yok. Korunan üretim verisine dokunulmadı.

@@ -369,3 +369,8 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - `tests/test_legacy_replacement_mapping_review.py` fixture'ı beş merkezi workflow'u içeriyor; eksik/tekrarlı kayıt için iki regresyon testi eklendi.
 - Commitler `cd2e667a63589a5f02e3d9d996fd6571b8a6772c`, `4943508c668a6e151070243e0596f1c00cd1584e`; ikisi de `[skip ci]`.
 - Bu turda testler çalıştırılmadı; Actions `#482/#483` gerçek run ID/logları henüz bulunamadı. GitHub run numarası API run ID değildir. Üretim/EPG/playlist/yedek/favori/workflow/cron değiştirilmedi; gerçek kabul 0/92, 0/26, 0/22.
+
+## 22 Ekim 2026 — mapping dosya bağları fail-closed
+- `madsc/legacy_replacement_mapping_review.py` replacement `declared_file_binding` içindeki `input_path`, `output_label`, `output_path` değerlerini dolu string olarak doğrular; liste/boş değer kontrollü ValueError ile reddedilir.
+- `tests/test_legacy_replacement_mapping_review.py` iki negatif regresyon senaryosu eklendi.
+- Yeni `Madsc55/Madsc55-Tv/main` commitleri: `91e625b1fe1e0dd5c8a8c9e5aa14f326deb9ccc8`, `483c75c9374e258402f3ae28485d3ad01c5465e8` (`[skip ci]`). Testler bu turda çalıştırılmadı; Actions #482/#483 logları henüz doğrulanmadı. Üretim dosyaları, workflow'lar, eski repo değişmedi. Kabul 0/92, 0/26, 0/22.

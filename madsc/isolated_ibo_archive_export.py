@@ -16,6 +16,8 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
     if any(part in (".", "..") for part in raw.replace(chr(92), "/").split("/")):
         raise PermissionError("Ambiguous destination")
     destination = Path(destination).absolute()
+    if destination.parent == destination:
+        raise PermissionError('Root output forbidden')
     if destination.name in ('', '.', '..'):
         raise PermissionError('Invalid destination')
     if destination.exists() or destination.is_symlink():

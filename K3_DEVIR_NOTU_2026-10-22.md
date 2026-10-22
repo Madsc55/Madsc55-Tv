@@ -133,3 +133,8 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - 90c9202: Dirfd yol açma sırasında oluşan OSError artık ValueError olarak raporlanıyor; önceki symlink reddi testleriyle hata sözleşmesi tutarlı.
 - e18cb02: Dizin girdisi testinin beklediği hata açık mesajla kesinleştirildi.
 - Henüz yeni unittest/CI çalışması doğrulanmadı. Kod ve test commitleri [skip ci] ile gönderildi.
+
+## K3 izole yürütme doğrulaması (2026-10-22)
+- Güncel load_evidence uygulamasının izole edilmiş kopyası üzerinde Python unittest ile 9 senaryo çalıştırıldı: normal JSON, duplicate key, symlink dosya, symlink üst dizin, dizin, FIFO, geçersiz UTF-8, 16 MiB üzeri dosya, eksik dosya. Sonuç: 9/9 başarılı.
+- Bu test depo HEAD veya tam K3/K2 entegrasyon testi DEĞİLDİR; izole kopya ve yerel duplicate-key yardımcı işlevi kullanıldı. CI yeşil sonucu iddia edilmemelidir.
+- Sonraki öncelik: tam depo unittest/Actions doğrulaması, kalan test sözleşmeleri ve K2/K3 entegrasyonu.

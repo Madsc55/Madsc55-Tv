@@ -67,6 +67,16 @@ class GithubLegacyPairClientTests(unittest.TestCase):
         self.assertFalse(result["behavioral_parity_accepted"])
         self.assertFalse(result["production_ready"])
 
+    def test_artifact_run_attempt_must_match_when_api_supplies_it(self):
+        for value in (0, True, 2, "1"):
+            def mismatched_attempt(url, record):
+                if "/artifacts?" in url:
+                    record["artifacts"][0]["workflow_run"]["run_attempt"] = value
+                return record
+            fetch, _ = self.fetcher(mutate=mismatched_attempt)
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, "run attempt"):
+                verify_provenance_pair_api(LEGACY_PATH, LEGACY_BLOB, self.pair, fetch=fetch)
+
     def test_missing_digest_and_wrong_workflow_blob_fail_closed(self):
         def missing_digest(url, value):
             if "/artifacts?" in url:

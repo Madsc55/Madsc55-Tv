@@ -2267,3 +2267,8 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 ## 22 Ekim 2026 — K4 JSON/üst-dizin negatif testleri
 - tests/test_k4_evidence.py commit b853106868f1cc13bc2172051c22bd71641ec7a8 [skip ci]: yinelenen files_checked JSON anahtarı ve sembolik bağlantılı kanıt üst dizini reddi; başarısız doğrulamada çıktı yokluğu. Kod davranışı değişmedi.
 - Yerel ortam github.com DNS çözümleyemiyor; testler/offline_gate bu yeni SHA'da çalıştırılmadı, Actions dispatch yok. Gerçek kabul 0/92, 0/26, 0/22. Öncelik erişilebilir test koşucusunda odaklı testler ve tam offline_gate; test sonucu olmadan yeşil iddia edilmez.
+
+
+## 22 Ekim 2026 — K4 hardlink negatif testi
+- tests/test_k4_evidence.py commit 9facdef81be2553e145465e9c65cbff889b11b2f [skip ci]: kanıt dosyasının stat.st_nlink != 1 durumunda reddi ve çıktı yokluğu kontrolü; üretim verisine dokunulmadı.
+- Bu oturumda git ls-remote github.com DNS çözümleme hatası verdi. Yerel testler/offline_gate çalıştırılmadı, GitHub Actions tetiklenmedi. Test sonucu doğrulanana kadar gerçek kabul 0/92, 0/26, 0/22 olarak kalır.

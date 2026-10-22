@@ -84,6 +84,25 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
                                 data.index("path: reports/madsc-parity-evidence.json"))
                 self.assertIn('inputs.allow_parity_evidence', data)
 
+    def test_failed_consumers_keep_nonzero_exit_and_optional_snapshot(self):
+        cases = {
+            "madsc-01-guvenlik.yml": "guard=reports/k1-guard.txt",
+            "madsc-04-yedek.yml": "restore=reports/k4-restore-drill.json",
+            "madsc-05-bakim.yml": "candidates=reports/k2-candidates.json",
+        }
+        for filename, observation in cases.items():
+            data = (WORKFLOWS / filename).read_text(encoding="utf-8")
+            with self.subTest(workflow=filename):
+                self.assertIn("consumer_status=", data)
+                self.assertIn('if [[ "$consumer_status" -ne 0 ]]; then', data)
+                self.assertIn('exit "$consumer_status"', data)
+                self.assertIn('--exit-code "$consumer_status"', data)
+                self.assertIn("--output " + observation, data)
+                self.assertLess(data.index('--exit-code "$consumer_status"'),
+                                data.index('exit "$consumer_status"'))
+                self.assertLess(data.index('exit "$consumer_status"'),
+                                data.index('python -m madsc.parity_snapshot_cli --exit-code 0'))
+
     def test_every_parity_hook_is_default_off_and_conditioned(self):
         for filename in ("madsc-01-guvenlik.yml", "madsc-04-yedek.yml",
                          "madsc-05-bakim.yml"):

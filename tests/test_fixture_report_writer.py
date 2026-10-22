@@ -21,6 +21,15 @@ class FixtureReportWriterTests(unittest.TestCase):
                 write_turkish_tv_test_bundle(root, b"changed", "changed")
             self.assertEqual(playlist.read_bytes(), b"#EXTM3U\n")
 
+    def test_protected_fixture_root_rejected_before_reports_creation(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "FAVORILER"
+            root.mkdir()
+            with self.assertRaises(PermissionError):
+                write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}\\n")
+            self.assertFalse((root / "reports").exists(),
+                             "protected fixture root must fail before mkdir")
+
     def test_turkish_tv_bundle_rejects_symlinked_reports_before_write(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

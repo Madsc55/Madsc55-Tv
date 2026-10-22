@@ -168,7 +168,7 @@ def verify_parity_artifact_manifest(origin, archive):
                 raise ValueError("Artifact must contain exactly the parity manifest")
             info = infos[0]
             mode = info.external_attr >> 16
-            if (info.is_dir() or info.file_size > MAX_MANIFEST_BYTES
+            if (info.is_dir() or info.flag_bits & 1 or info.file_size > MAX_MANIFEST_BYTES
                     or info.compress_size > MAX_ARCHIVE_BYTES
                     or (info.compress_size and info.file_size > info.compress_size * 100)
                     or stat.S_ISLNK(mode)):

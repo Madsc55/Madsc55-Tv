@@ -173,9 +173,12 @@
       "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_09_2026-10-23.md: three additional frozen-source workflow contracts; identifies protected-playlist workspace mutation in two legacy scripts",
       "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_10_2026-10-23.md: three additional frozen-source workflow contracts and deterministic logo publisher/protected-write-gate scope conflict; static review only, no parity acceptance",
       "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_11_2026-10-23.md: three additional frozen-source workflow contracts (MADSC 01 security, 02 discovery, 03 channel tests); static review only, no parity acceptance",
-      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_12_2026-10-23.md: archive/backup, central maintenance evidence provenance, and main-list health review; identified double-escaped newline in frozen legacy parser-order fixture; static review only"
+      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_12_2026-10-23.md: archive/backup, central maintenance evidence provenance, and main-list health review; identified double-escaped newline in frozen legacy parser-order fixture; static review only",
+      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_13_2026-10-23.md: combined discovery publisher, warning-only Friday channel/EPG audit, and documentation smoke-check; static only",
+      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_14_2026-10-23.md: manual source scan write permissions, static cutover preflight, and IBO placeholder; static only",
+      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_15_2026-10-23.md: three backup classification workflows rewrite CALISANLAR.m3u in runner workspace but conflict with protected-write gate; static only"
     ],
-    "note": "99 YAML source inventory; batches 01-12 document 36/92 static workflow reviews, 56 remain subject to canonical exclusions/deduplication. Batch 12 reviewed archive/restore and central same-run artifact provenance; found legacy main-list health test's multi-row fixture double-escapes newline sequences. K5 isolated export regression workflow succeeded on HEAD a0469c34ec9a8642acffdddfbda55dadf9d39aba (run 39868459061); this validates offline regression suite only, not legacy parity. Behavioral parity remains 0/92; runtime security 0/26; main tasks 0/22."
+    "note": "99 YAML source inventory; batches 01-15 document 45/92 static workflow reviews, 47 remain subject to canonical exclusions/deduplication. Batches 12-15 cover restore provenance, channel-health fixture newline bug, broad-write discovery publishers, static cutover readiness, and three IBO archive scripts that mutate CALISANLAR.m3u but should be denied by the protected-write gate. K5 isolated export regression workflow succeeded on SHA a0469c34ec9a8642acffdddfbda55dadf9d39aba (run 39868459061); this is offline-only. Behavioral parity 0/92; runtime security 0/26; main tasks 0/22."
   },
   {
     "id": "K5-20",

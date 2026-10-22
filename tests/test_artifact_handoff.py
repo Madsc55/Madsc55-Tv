@@ -91,3 +91,10 @@ class ArtifactHandoffTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Evidence digest mismatch"):
                     unpack(envelope, "123", "a" * 40)
 
+
+    def test_run_id_length_bound(self):
+        self.assertEqual(pack(self.discovery, "9" * 20, "a" * 40)["run_id"], "9" * 20)
+        for run_id in ("", "9" * 21, "1" * 10000):
+            with self.subTest(length=len(run_id)), self.assertRaisesRegex(ValueError, "Invalid run id"):
+                pack(self.discovery, run_id, "a" * 40)
+

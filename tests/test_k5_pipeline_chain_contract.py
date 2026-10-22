@@ -47,6 +47,21 @@ class K5PipelineChainContractTests(unittest.TestCase):
         self.assertIn('if [ "$durum" != success ]; then hata=1; fi', aggregate)
         self.assertIn('exit "$hata"', aggregate)
 
+    def test_k5_requires_upstream_artifacts_and_five_category_review(self):
+        k5 = self.source.split("\n  k5:\n", 1)[1].split("\n  toplu-kabul:\n", 1)[0]
+        for artifact in (
+            "madsc-k2-candidate-handoff",
+            "madsc-k2-history-handoff",
+            "madsc-k3-handoff",
+            "madsc-k3-guarded-evidence",
+        ):
+            self.assertIn("name: " + artifact, k5)
+        self.assertIn("pattern: madsc-batch-k[1-4]", k5)
+        self.assertIn("madsc.stage_report_cli --stage k5", k5)
+        self.assertIn("--batch-evidence-root reports/k5-actual-evidence", k5)
+        self.assertIn("--isolated-report-root reports", k5)
+        self.assertIn("path: reports/reports/k5-isolated-evidence.json", k5)
+
     def test_k5_cross_stage_evidence_is_required(self):
         k5 = self.source.split("\n  k5:\n", 1)[1].split("\n  toplu-kabul:\n", 1)[0]
         for command in ("madsc.handoff_acceptance", "madsc.k5_channel_gate",

@@ -147,8 +147,10 @@
     "stage": "K5",
     "title": "92 eski otomasyonun gerçek davranışsal kabulü",
     "status": "in_progress",
-    "evidence": [],
-    "note": "99 YAML kaynak envanteri var; 92 davranışsal eşdeğerlik kabulü henüz 0."
+    "evidence": [
+      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_07_2026-10-23.md: three additional frozen-source workflow contracts; static review only, no parity acceptance"
+    ],
+    "note": "99 YAML kaynak envanteri; altı önceki batch 18 workflow, batch 07 ile 21/92 statik inceleme. 71 statik inceleme bekliyor. Davranışsal eşdeğerlik kabulü 0/92; batch 07 kaynak incelemesi kabul sayacını artırmaz."
   },
   {
     "id": "K5-20",

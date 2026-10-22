@@ -849,3 +849,10 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Batch 15: üç IBO yedek sınıflandırma script'i `CALISANLAR.m3u` dosyasını runner çalışma alanında yeniden yazıyor. Protected-write gate tüm `.m3u` değişikliklerini reddettiği için bu staged main-list değişiklikleri kaynakta fail-closed bloklanmalı. Sınıflandırma kullanıcı bildirimi; doğrulanmış playback/kimlik değil. Üretim değişikliği veya workflow dispatch yapılmadı.
 - Kümülatif K5 statik kaynak incelemesi 45/92, 47 kaldı; behavioral parity 0/92, runtime security 0/26, ana görev 0/22. Statik incelemeler kabul sayacı artırmaz. K5 export regression Actions run `39868459061`, SHA `a0469c34ec9a8642acffdddfbda55dadf9d39aba`, `success` (yalnız offline suite).
 - Korunan playlist/EPG/favoriler/logolar/yedekler/cihazlar değiştirilmedi; eski `Madsc55/madsc-tv` deposu salt okunur; PR #71 merge edilmedi. Sonraki adım: Batch 16'dan üç sabit kaynak workflow incelemesi daha ve yeni depoda isolated archive regression fixture'ları; her yeni CI sonucunu tam SHA ile doğrula.
+
+
+## 23 Ekim 2026 — K1 AST disk-etkisi envanteri genişletildi
+- `os.open` icin callable/conditional/unary ve taninmayan flags ifadeleri artik elle inceleme adayi; kod `ab8d2d28`, regresyon `f510ba4c`.
+- `os.fdopen` yazma modlari ve `tempfile.NamedTemporaryFile/TemporaryFile/mkstemp/mkdtemp/TemporaryDirectory` dosya/dizin olusturmalari artik envanterde; kod `946ab465`, regresyon `3e3cc524`.
+- Bu statik aday tespiti otomatik runtime enforcement degildir. Onceki 75 aday sayisi eski tarayici kapsamindan geldigi icin yeni sayim yapilmadan guncel toplam sayilmaz. Tum adaylar manuel disposition bekler.
+- Yeni commitler GitHub main dosyalarinda dogrulandi; bu SHA'lar icin offline CI basarisi henuz dogrulanmadi. 26 runtime kural 0/26, 22 gorev 0/22, uretim kabul false. Korunan playlist, EPG, yedekler degistirilmedi.

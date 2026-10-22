@@ -148,6 +148,19 @@ class FailureDiagnosticArtifactTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     verify_failure_diagnostic_artifact(origin, artifact, archive)
 
+    def test_unsupported_compression_fails_closed(self):
+        origin, artifact, archive = evidence()
+        archive = bytearray(archive)
+        # Modify the first diagnostic member's compression method in both headers.
+        for signature, offset in ((b"PK\x03\x04", 8), (b"PK\x01\x02", 10)):
+            start = archive.find(signature)
+            self.assertGreaterEqual(start, 0)
+            archive[start + offset:start + offset + 2] = (99).to_bytes(2, "little")
+        archive = bytes(archive)
+        artifact["sha256"] = hashlib.sha256(archive).hexdigest()
+        with self.assertRaisesRegex(ValueError, "Invalid diagnostic artifact ZIP"):
+            verify_failure_diagnostic_artifact(origin, artifact, archive)
+
     def test_artifact_identity_digest_and_failure_state_are_required(self):
         for mutation in ("name", "run_id", "sha256", "conclusion"):
             origin, artifact, archive = evidence()

@@ -94,7 +94,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
         from pathlib import Path
         source = Path("madsc/candidate_probe_link.py").read_text(encoding="utf-8")
         self.assertIn("any(parent.is_symlink() for parent in path.parents)", source)
-        self.assertIn('if not hasattr(os, "O_NOFOLLOW"):', source)
+        self.assertIn('if not isinstance(getattr(os, "O_NOFOLLOW", None), int):', source)
         self.assertIn('raise ValueError("Secure evidence opening is unavailable")', source)
         self.assertIn('flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK', source)
         self.assertIn('os.open(path, flags)', source)
@@ -222,7 +222,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
             path = Path(directory) / "evidence.json"
             path.write_text("{}", encoding="utf-8")
             with patch.object(os, "O_NOFOLLOW", None, create=True):
-                with self.assertRaises((TypeError, ValueError)):
+                with self.assertRaisesRegex(ValueError, "Secure evidence opening is unavailable"):
                     load_evidence(path)
 
     def test_evidence_loader_rejects_fifo_without_waiting_for_writer(self):

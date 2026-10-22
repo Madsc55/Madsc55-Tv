@@ -30,7 +30,7 @@ def evaluate_probe(probe: dict) -> dict:
 
 def evaluate_repeated_probes(probes: list[dict], minimum_passes: int = 2) -> dict:
     """Evaluate independently supplied measurements, without claiming a live run."""
-    if not isinstance(probes, list) or not probes or len(probes) > 20000 or type(minimum_passes) is not int or minimum_passes < 2:
+    if not isinstance(probes, list) or not probes or len(probes) > 20000 or type(minimum_passes) is not int or not 2 <= minimum_passes <= 20000:
         raise ValueError("Invalid repeated-probe evidence")
     if len(probes) < minimum_passes:
         raise ValueError("Insufficient independent samples")
@@ -141,7 +141,8 @@ def evaluate_three_stage_continuity(samples: list[dict], minimum_hours: float = 
 def summarize_candidate_continuity(candidate_fingerprints: list[str],
                                    measurements: dict[str, list[dict]]) -> dict:
     """Batch-evaluate real-shaped evidence without inventing missing measurements."""
-    if not isinstance(candidate_fingerprints, list) or not isinstance(measurements, dict):
+    if (not isinstance(candidate_fingerprints, list) or len(candidate_fingerprints) > 20000
+            or not isinstance(measurements, dict) or len(measurements) > 20000):
         raise ValueError("Invalid continuity batch")
     if any(not isinstance(key, str) for key in candidate_fingerprints):
         raise ValueError("Invalid candidate fingerprint")

@@ -66,7 +66,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
             # A bare or unquoted tvg-id could otherwise turn a channel into a
             # misleading name-only match instead of a rejected candidate.
             remainder = ATTR.sub("", meta)
-            if re.search(r'(?i)(?:^|\\s)(?:tvg-id|tvg-logo|group-title)\\s*=', remainder):
+            if re.search(r'(?i)(?:^|\s)(?:tvg-id|tvg-logo|group-title)\s*=', remainder):
                 pending = None
                 errors.append({"line": number, "reason": "invalid_metadata_attribute"})
                 discard_url_for_rejected_entry = True

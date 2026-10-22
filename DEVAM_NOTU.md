@@ -687,3 +687,12 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Bulgu `docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md` içine eklendi; görev defterinde K4-18 not/evidence güncellendi. Commitler: `7713d91e4a35a86973d8120701c2a6d112a7ae56`, `bfed9d956a8ce4c2cf4f437b5d5eafaf6f5ddabe`.
 - Bu iki değişiklik dokümantasyon/kayıt niteliğinde; test başarısı iddia edilmiyor. Önceki genel CI run `39867650745` (SHA `a83211a36e9ad1dd1c6047b74888970ddc33b381`) bu sırada kontrol edildi ve o an `in_progress` idi; nihai sonucu doğrulanmadan başarılı sayılmamalı. Güncel main HEAD'i her devam adımında yeniden oku; paralel K1/K2/K3/K5 çalışmaları nedeniyle aynı dosyaları eski SHA ile güncelleme.
 - K4-15/16/17/18 kabulü hâlâ tamamlanmadı. Harici sağlayıcı makbuzu/gerçek restore kanıtı yok; üretim dosyaları ve cihazlar değişmedi, Actions dispatch/rerun yapılmadı.
+
+
+## 23 Ekim 2026 — K1 izole kanıt yazıcısında descriptor-relative güvenlik düzeltmesi
+- Bulgu: `_exclusive_bytes` önce hedefin tam yolunu `os.open(destination, ...)` ile açıyordu. Önceki symlink kontrollerine rağmen doğrulama ile açma arasında üst dizin değiştirilirse TOCTOU penceresi kalıyordu. Hata durumunda cleanup kimliği de yazma öncesi fstat'tan alındığından kısmi yazım sonrası dosya boyutu/zamanları değişince kendi kısmi dosyasını temizleyemeyebilirdi.
+- Düzeltme commit'i: `967977def72e1f184c7e2920d323401f4afb035b`. Yazıcı artık her üst dizini `O_DIRECTORY|O_NOFOLLOW` ve `dir_fd` ile adım adım açıyor, son dosyayı açık parent descriptor'ına göre `O_EXCL|O_NOFOLLOW` ile oluşturuyor; hata cleanup'ı aynı açık dizin descriptor'ında inode/metadata eşleşmesiyle sınırlı.
+- Regresyon commit'leri: `6d9624592a93a885fddd5aaccab2cfcc5f8f1d95` kısmi yazım/fsync başarısızlığında temizlik; `32fd75b48d334068efe5687b085daeb86603a0b4` symlink parent üzerinden kaçışın engellenmesi.
+- Doğrulama: dosyalar main üzerinde SHA ile tekrar okundu; fakat bu commitler için doğrulanmış Actions/check sonucu henüz yok. Önceki 990 test baseline'ı bu değişiklikleri kapsamaz.
+- Kapsam: bu koruma paylaşılan izole kanıt yazıcısını güçlendirir; tüm Python/shell yazma noktalarının merkezi K1 kapısından geçtiğini kanıtlamaz. K1 0/26, K1-03 in_progress, production_ready=false. Üretim dosyalarına dokunulmadı.
+- Sonraki adım: yeni test SHA için otomatik CI sonucunu doğrula; sonra 75 mutasyon adayının kalanlarını çağıran zinciri ve gerçek yan etkileriyle sınıflandır.

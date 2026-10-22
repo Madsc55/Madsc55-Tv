@@ -113,3 +113,9 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 ## K3 UTF-8 regresyon testi düzeltmesi
 - b2bc426: Geçersiz UTF-8 testi artık kaçış karakterleri yerine gerçek 0xff baytını bytes([255]) ile kullanıyor.
 - Test sonucu henüz doğrulanmadı; canlı kanal veya üretim dosyaları değiştirilmedi.
+
+## K3 güvenli açma desteği regresyonu
+- 1282551: O_NOFOLLOW geçersiz olduğunda yükleyicinin reddetmesini sınayan test eklendi.
+- 60ef3ec: O_NOFOLLOW desteği geçerli int değilse ValueError ile fail-closed davranışına geçildi.
+- 9140300: Kaynak sözleşmesi ve regresyon testi yeni açık hata beklentisine uyarlandı.
+- Bu commitlerin unittest sonucu henüz doğrulanmadı; üretim onayı verilmedi.

@@ -95,7 +95,9 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
         raise ValueError("Backup source path exceeds bounded length")
     entries = []
     for name in sorted(paths):
-        if any(ord(c) < 32 or ord(c) == 127 for c in name) or ":" in name or name.startswith("~"):
+        if (any(ord(c) < 32 or ord(c) == 127
+                or 0xD800 <= ord(c) <= 0xDFFF for c in name)
+                or ":" in name or name.startswith("~")):
             raise ValueError("Unsafe backup source path")
         requested = Path(name)
         if (requested.is_absolute() or "\\" in name or

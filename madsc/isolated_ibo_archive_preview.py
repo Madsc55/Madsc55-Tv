@@ -32,7 +32,7 @@ def build_6115_archive_preview(urls: Sequence[str]) -> dict:
             raise ValueError("Unsafe, missing or duplicate URL in ordered fixture") from exc
         if (parsed.scheme != "https" or not parsed.hostname or port == 0
                 or parsed.username is not None or parsed.password is not None
-                or parsed.fragment or url != url.strip()
+                or parsed.fragment or "\\" in url or url != url.strip()
                 or any(ch.isspace() or ord(ch) < 32 or ord(ch) == 127 for ch in url)
                 or url in seen):
             raise ValueError("Unsafe, missing or duplicate URL in ordered fixture")

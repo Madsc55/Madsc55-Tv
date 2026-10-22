@@ -2510,3 +2510,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - K1/K5 için kritik bulgu: `scripts/automatic_png_logos.py` korunan `CALISANLAR.m3u` dosyasını doğrudan `playlist.write_text(updated,...)` ile yazıyor. Workflow sonrasında diff görürse `git restore -- CALISANLAR.m3u` çalıştırıyor; write-then-restore, protected path'e hiç yazmama garantisi değildir. Replacement parity, izole fixture kopyası ve sıfır protected-path write ile kanıtlanmalı. Bu eski workflow çalıştırılmadı; playlist değişmedi.
 - Birleşik durum workflow'u snapshot JSON'ları üretir ve sadece generated health report yazar; tarihsel snapshot'ı canlı durum gibi sunmamalı. Geniş kanal taraması 9 public M3U kaynağı ve ffprobe kullandığı için gerçek ağ/probe işidir; fixture/parity amaçlı tetiklenmedi.
 - Statik inceleme toplamı 21/92; statik inceleme bekleyen 71. Bu kabul değildir: davranışsal parity 0/92, runtime güvenlik 0/26, ana görev kabulü 0/22, production_ready=false.
+
+
+## 23 Ekim 2026 — K1 AST yazma envanteri düzeltmeleri
+`madsc/write_callsite_audit.py` artık sabit olmayan positional/keyword dosya açma modlarını (`open(path, mode_var)`, `path.open(mode_var)`) `dynamic mode` adayı olarak sayıyor; ayrıca `subprocess.run/call/Popen/check_call/check_output`, `os.system`, `os.popen` çağrılarını harici yan etki incelemesine alıyor. İlgili regresyonlar `tests/test_write_callsite_audit.py` içine eklendi.
+Kod commitleri: `c6affc2824a1c8e5288da16eff853f7bb690e1ca`, `d6f1ce5c98c85658336198b542d0a7ccb65a6394`. Test commitleri: `2a0796ebe98b03db88905534c6546153dd92020a`, `cb0a046252e1a75d119ae12e0af6c76028b3379c`.
+CI sonucu bu not yazılırken doğrulanamadı; combined status endpoint'i status/check döndürmedi. Eski 990-test sonucu bu commitleri kapsamıyor. K1 26 runtime kuralı kabulü 0/26; 75 eski adayın tümü kapanmış sayılmaz. Sonraki adım: yeni SHA için erişilebilir Actions sonucu kontrolü ve adayların tek tek gerçek etkisine göre sınıflandırılması.

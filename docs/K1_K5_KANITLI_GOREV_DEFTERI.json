@@ -146,9 +146,10 @@
     "title": "Harici yedekten gerçek izole geri yükleme",
     "status": "in_progress",
     "evidence": [
-      "docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md: explicit external-source and isolated-restore acceptance requirements; planning evidence only"
+      "docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md: explicit external-source and isolated-restore acceptance requirements; planning evidence only",
+      "docs/K4_MANIFEST_CONCURRENT_MUTATION_EVIDENCE_2026-10-23.md: K4 manifest mutation guard + exact three-tree inventory gate, CI #39868739848 (1020 offline) and #39869009399 (1027 offline); sandbox only, no external restore acceptance"
     ],
-    "note": "Sandbox restore fixture exists; real restore from external storage remains unproven. The K4 evidence-gate document defines required provider receipt, run IDs, per-file SHA-256, independent restore tree, negative controls, and reviewer evidence; this documentation does not change acceptance."
+    "note": "Sandbox manifest consistency and exact file inventory controls passed offline CI. Real offsite provider backup receipt and independent external restore are still unavailable; K4-16 remains in_progress, not accepted."
   },
   {
     "id": "K4-17",

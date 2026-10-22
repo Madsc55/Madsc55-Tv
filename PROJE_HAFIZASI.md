@@ -2502,3 +2502,11 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - K3: duplicate/eksik XMLTV ID fail-closed kod ve testleri güncel CI'ya dahil; gerçek HLS/IBO Player Pro/EPG cihaz kanıtı eksik. K4: descriptor-relative kaynak/hedef sandbox kopyalama testleri CI'da başarılı; harici backup ve bağımsız restore kanıtı eksik.
 - K1: 97 Python dosyasında 75 AST mutasyon adayı manuel tasnif bekliyor. K5 92 workflow için birebir runtime parity, yan etki, artifact, retry/timeout ve reviewer kanıtı eksik.
 - Eski depoya yazma, PR #71 merge, canlı IPTV/EPG/favori/cihaz/yedek/arşiv değişikliği ve izinsiz workflow_dispatch yapılmadı. Yeni sohbette HEAD ve Actions'ı tekrar doğrula; diğer paralel sohbetleri ezme.
+
+
+## 23 Ekim 2026 — K5 legacy workflow batch 07 (salt-okunur kaynak incelemesi)
+- Yeni kaynak inceleme belgesi: `docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_07_2026-10-23.md`; commit `bf2db8d7e19898a91f1d3ac70baa3cc765c6e4d9`.
+- Frozen `Madsc55/madsc-tv@ca374df3b9585c0d76a078db9536150ebbc260f7` üzerinde üç yeni workflow incelendi: `automatic-png-logos.yml`, `birlesik-durum-raporu.yml`, `genis-kanal-tarama.yml`. Workflow SHA'ları kaynak envanteriyle eşleşti; eski depoya yazılmadı.
+- K1/K5 için kritik bulgu: `scripts/automatic_png_logos.py` korunan `CALISANLAR.m3u` dosyasını doğrudan `playlist.write_text(updated,...)` ile yazıyor. Workflow sonrasında diff görürse `git restore -- CALISANLAR.m3u` çalıştırıyor; write-then-restore, protected path'e hiç yazmama garantisi değildir. Replacement parity, izole fixture kopyası ve sıfır protected-path write ile kanıtlanmalı. Bu eski workflow çalıştırılmadı; playlist değişmedi.
+- Birleşik durum workflow'u snapshot JSON'ları üretir ve sadece generated health report yazar; tarihsel snapshot'ı canlı durum gibi sunmamalı. Geniş kanal taraması 9 public M3U kaynağı ve ffprobe kullandığı için gerçek ağ/probe işidir; fixture/parity amaçlı tetiklenmedi.
+- Statik inceleme toplamı 21/92; statik inceleme bekleyen 71. Bu kabul değildir: davranışsal parity 0/92, runtime güvenlik 0/26, ana görev kabulü 0/22, production_ready=false.

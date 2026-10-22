@@ -114,3 +114,11 @@
 - K1/K4 kod değişiklikleriyle offline CI otomatik tetiklendi: run `39863482320`, commit `0d25b09bdc2d3e029c368376e700d7c14ced9ab3`; yazım anında queued. Sonucu gelmeden başarılı sayma.
 - Bu iki düzeltme canlı dosyalara değil, rollback ve izole test verilerine ilişkindir. Üretim IPTV/EPG/favori/cihaz/yedek/arşiv verileri değişmedi; PR #71 birleştirilmedi.
 - Kabul sayaçları değişmez: 92 workflow 0/92, 26 güvenlik kuralı 0/26, 22 ana görev 0/22.
+
+## K5 devam — kararlılık geçmişi timestamp güvenliği (2026-10-23)
+- Önceki birleşik aday raporu workflow düzeltmesi `Madsc55/madsc-tv` commit `ad57ba6eca0f06cef3f31dddf1563f367d197c04` için run `39863242921` başarıyla tamamlandı. Bu doğrulama workflow run'ın başarıyla bittiğini gösterir; cache'in sonraki run'da gerçekten restore edildiği henüz ayrı bir iki-run testiyle doğrulanmadı.
+- Kaynak incelemesinde ek mantık hatası bulundu: geçmiş filtresi `age <= 7 days` kullanıyordu; gelecek tarihli gözlemde age negatif olduğu için kabul edilebiliyordu ve kararlılık aralığını yapay olarak uzatabilirdi. Saat dilimi olmayan timestamp'ler de güvenli biçimde ayrıştırılmıyordu.
+- Düzeltme: `scripts/kararlilik_gecmis.py` içindeki `normalize_history()` yalnızca timezone-aware, geçmişte ve son 7 gün içinde olan gözlemleri tutuyor; bozuk/naive/future/eskimiş kayıtları hariç bırakıyor. Tracker bunu kullanıyor.
+- Regresyon testleri `tests/test_kararlilik_gecmis.py` dosyasına eklendi (gelecek, naive, bozuk, eski, UTC offset ve 7 günlük sınır). Birleşik rapor workflow'una bu testleri ffmpeg kurulumu ve canlı aday işlemlerinden önce çalıştıran kapı eklendi.
+- İlgili kaynak commit'leri: `f5ad1c7816f2722c9618f8a099462abce90e294d`, `2fbe6a0f5299ab120fc236bd10152f34222b08f4`, `d143692c78fc1b8748ad53778a37ec9587ac0c11`, `4a0d38c390d343299e289e03a558fca1e08a9d01`, `796ce918399e1cea60c44d3d856f0ec8187bd419`.
+- Run `39863524500` (unified report workflow) queued at last check; run `39863499174` (stability tracker) in progress. Test result not yet confirmed. No behavioral acceptance counters changed; legacy 92 parity remains 0/92, runtime security 0/26, main task acceptance 0/22.

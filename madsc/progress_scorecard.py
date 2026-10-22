@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+from madsc.write_path_audit import enforce_local_output_path
 
 BASELINE = {"overall_reference_completed_percent": 47, "overall_reference_remaining_percent": 53}
 INVENTORY = {"legacy_yaml_source_review": {"done": 99, "total": 99},
@@ -84,6 +85,7 @@ def main():
     parser.add_argument("--tasks", type=Path, help="K1-K5 task evidence JSON list")
     parser.add_argument("--verified-ci", action="store_true")
     args = parser.parse_args()
+    enforce_local_output_path(args.output.absolute())
     default_ledger = Path(__file__).resolve().parent.parent / "docs" / "K1_K5_KANITLI_GOREV_DEFTERI.json"
     ledger = args.tasks if args.tasks is not None else default_ledger
     tasks = json.loads(ledger.read_text(encoding="utf-8")) if ledger.is_file() else None

@@ -5,6 +5,7 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
+from madsc.fixture_report_writer import write_fixture_report
 from urllib.parse import urljoin, urlsplit
 
 from madsc.k3_live_manifest_pilot import candidates, probe
@@ -124,10 +125,8 @@ def run():
               "playlist_modified": False, "language_confirmed_by_audio": False,
               "results": results, "verified_metadata": verified}
     out = Path("reports/k3-turkish-tv-video-pilot.json")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     report["reason_counts"] = {reason: sum(x["status"] == reason for x in results) for reason in sorted({x["status"] for x in results})}
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_fixture_report(Path.cwd(), out.as_posix(), json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k not in ("results", "verified_metadata")}))
 
 

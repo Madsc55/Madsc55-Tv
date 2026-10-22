@@ -5,6 +5,7 @@ Mirrors legacy protected_write_gate path policy; does not enforce Git pushes.
 from __future__ import annotations
 from pathlib import Path, PurePosixPath
 import unicodedata
+import stat
 
 PROTECTED_EXACT = frozenset({
     "CALISANLAR.m3u", "CALISMAYANLAR.txt", "YENILER.m3u",
@@ -71,7 +72,8 @@ def enforce_write_paths(paths: list[str]) -> dict:
             "write_performed": False, "runtime_gate_enforced": True}
 
 
-def enforce_local_output_path(destination: Path, *, allowed_root: Path | None = None) -> dict:
+def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
+                        allow_existing_regular_file: bool) -> dict:
     """K1 local output preflight; reject protected ancestors and symlinks.
 
     Does not authorize production writes or intercept unrelated callers.
@@ -86,8 +88,13 @@ def enforce_local_output_path(destination: Path, *, allowed_root: Path | None = 
         raise ProtectedWriteRejected("Output must be an absolute path")
     if any(part in (".", "..") for part in path.parts) or str(path) != str(path.absolute()):
         raise ProtectedWriteRejected("Ambiguous or traversing output path")
-    if path.exists() or path.is_symlink():
-        raise ProtectedWriteRejected("Output already exists or is a symlink")
+    if path.is_symlink():
+        raise ProtectedWriteRejected("Symlink output")
+    if path.exists():
+        metadata = path.lstat()
+        if (not allow_existing_regular_file or not stat.S_ISREG(metadata.st_mode)
+                or metadata.st_nlink != 1):
+            raise ProtectedWriteRejected("Existing, nonregular or hardlinked output")
     parent = path.parent
     if not parent.is_dir():
         raise ProtectedWriteRejected("Output parent must exist")
@@ -106,3 +113,19 @@ def enforce_local_output_path(destination: Path, *, allowed_root: Path | None = 
     enforce_write_paths([relative])
     return {"path_checked": True, "production_writes": False,
             "production_write_allowed": False}
+
+
+def enforce_local_output_path(destination: Path, *, allowed_root: Path | None = None) -> dict:
+    """Validate a new evidence path; never permit replacing existing data."""
+    return _enforce_local_path(destination, allowed_root=allowed_root,
+                               allow_existing_regular_file=False)
+
+
+def enforce_local_append_path(destination: Path) -> dict:
+    """Validate an explicitly requested summary append, including protected ancestors.
+
+    Existing targets must be regular files with a single hardlink. This does
+    not authorize appending to production files or intercept other writers.
+    """
+    return _enforce_local_path(destination, allowed_root=None,
+                               allow_existing_regular_file=True)

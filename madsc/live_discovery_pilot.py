@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from madsc.fixture_report_writer import write_fixture_report
 from urllib.request import Request, urlopen
 
 from madsc.discovery import classify_candidates
@@ -50,8 +51,7 @@ def run():
         "note": "Live source ingestion only; no playback or stream verification",
     }
     out = Path("reports/k2-live-pilot.json")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    write_fixture_report(Path.cwd(), out.as_posix(), json.dumps(report, indent=2, ensure_ascii=False) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k != "candidate_hashes"}))
 
 

@@ -20,6 +20,7 @@ def main():
     p.add_argument("--run-id", required=True)
     p.add_argument("--commit-sha", required=True)
     a = p.parse_args()
+    enforce_local_output_path(a.output.absolute())
     if a.action == "produce":
         result = pack_history(import_legacy_pair(a.legacy_folder), a.run_id, a.commit_sha)
     elif a.action == "consume":
@@ -34,7 +35,6 @@ def main():
     if a.output.is_symlink():
         raise ValueError("Symlinked output")
     enforce_write_paths([a.output.name])
-    a.output.parent.mkdir(parents=True, exist_ok=True)
     enforce_local_output_path(a.output.absolute())
     with a.output.open("x", encoding="utf-8") as handle:
         handle.write(json.dumps(result, sort_keys=True) + "\n")

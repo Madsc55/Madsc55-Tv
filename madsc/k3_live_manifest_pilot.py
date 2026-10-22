@@ -3,6 +3,7 @@ import hashlib
 import ipaddress
 import json
 from pathlib import Path
+from madsc.fixture_report_writer import write_fixture_report
 import socket
 import subprocess
 from urllib.parse import urlsplit
@@ -72,8 +73,7 @@ def run():
               "audio_video_verified": 0, "production_playlist_modified": False,
               "results": results}
     out = Path("reports/k3-real-manifest-pilot.json")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_fixture_report(Path.cwd(), out.as_posix(), json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k != "results"}))
 
 

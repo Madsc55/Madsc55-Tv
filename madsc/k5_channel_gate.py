@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from madsc.write_path_audit import enforce_local_output_path
 from madsc.batch_acceptance import _unique_json_pairs
 from madsc.artifact_handoff import unpack
 
@@ -89,6 +90,7 @@ def main():
     p.add_argument("--run-id", required=True)
     p.add_argument("--commit-sha", required=True)
     args = p.parse_args()
+    enforce_local_output_path(args.output.absolute())
     if args.k3.is_symlink() or not args.k3.is_file() or args.k3.stat().st_size > 1024 * 1024:
         raise ValueError("Invalid K3 input")
     report = json.loads(args.k3.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
@@ -98,7 +100,7 @@ def main():
     result = evaluate_k3_evidence(report, k2, args.run_id, args.commit_sha)
     if args.output.is_symlink() or args.output.exists():
         raise FileExistsError("Refusing to overwrite K5 safety evidence")
-    args.output.parent.mkdir(parents=True, exist_ok=True)
+    enforce_local_output_path(args.output.absolute())
     with args.output.open("x", encoding="utf-8") as f:
         f.write(json.dumps(result, sort_keys=True) + "\n")
     print(json.dumps(result, sort_keys=True))

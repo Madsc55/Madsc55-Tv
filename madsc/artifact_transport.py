@@ -18,6 +18,10 @@ def main():
     p.add_argument("--output", type=Path, help="Optional K3/K5 verification report")
     args = p.parse_args()
     if args.mode == "produce":
+        enforce_local_output_path(args.path.absolute())
+    elif args.output is not None:
+        enforce_local_output_path(args.output.absolute())
+    if args.mode == "produce":
         if args.source is not None:
             from madsc.source_import import extract_candidates
             if args.source.is_symlink() or not args.source.is_file():
@@ -40,7 +44,6 @@ def main():
             if args.output.is_symlink():
                 raise ValueError("Invalid report output")
             enforce_write_paths([args.output.name])
-            args.output.parent.mkdir(parents=True, exist_ok=True)
             enforce_local_output_path(args.output.absolute())
             with args.output.open("x", encoding="utf-8") as handle:
                 handle.write(json.dumps({"schema": "madsc-handoff-verification-v1", "run_id": args.run_id,
@@ -49,7 +52,6 @@ def main():
                 "network_probed": False, "production_ready": False}, sort_keys=True) + "\n")
     if args.mode == "produce":
         enforce_write_paths([args.path.name])
-        args.path.parent.mkdir(parents=True, exist_ok=True)
         enforce_local_output_path(args.path.absolute())
         with args.path.open("x", encoding="utf-8") as handle:
             handle.write(json.dumps(result, sort_keys=True) + "\n")

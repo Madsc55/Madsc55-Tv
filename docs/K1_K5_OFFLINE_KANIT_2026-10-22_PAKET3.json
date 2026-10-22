@@ -1,0 +1,65 @@
+{
+  "mode": "offline_local",
+  "scope": "unit_regression_and_isolated_five_stage_fixture",
+  "production_acceptance": false,
+  "legacy_92_behavioral_acceptance": 0,
+  "runtime_security_26_acceptance": 0,
+  "test_exit_code": 0,
+  "timed_out": false,
+  "tests_discovered": 562,
+  "tests_passed": true,
+  "five_stage_fixture_gate_passed": true,
+  "all_offline_gates_passed": true,
+  "workflow_and_task_inventory_passed": true,
+  "auxiliary_workflows_mapped": 10,
+  "auxiliary_commands_integrated_in_main": 10,
+  "task_requirements_inventoried": 22,
+  "legacy_scope_source_workflows": 99,
+  "legacy_scope_behavior_workflows": 92,
+  "legacy_scope_excluded": [
+    ".github/workflows/k1-protected-write-tests.yml",
+    ".github/workflows/madsc-01-guvenlik.yml",
+    ".github/workflows/madsc-02-kesif.yml",
+    ".github/workflows/madsc-03-kanal-test.yml",
+    ".github/workflows/madsc-04-arsiv-yedek.yml",
+    ".github/workflows/madsc-05-genel-bakim.yml",
+    ".github/workflows/madsc-hizli-on-kontrol.yml"
+  ],
+  "workflow_inventory_error": null,
+  "task_inventory_error": null,
+  "five_stage_fixture_categories": {
+    "k1": "success",
+    "k2": "success",
+    "k3": "success",
+    "k4": "success",
+    "k5": "success"
+  },
+  "five_stage_fixture_errors": {},
+  "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification.",
+  "tested_base_commit": "d70479db18814251247b7da6cae72520982a56b3",
+  "tested_files_sha256": {
+    "madsc/artifact_transport.py": "65af34e6722b6f7ec4470e75b1107a88646a639ca6651c22431d7a4b63b949ac",
+    "madsc/ci_diagnostics.py": "d1425eb7a9bcd780adede2aab7f6a6e4fa69638aee4f714a47c86802c33bf099",
+    "madsc/history_artifact_download.py": "1e755e98ab0d6ac5db1d60a83d61aecc0c2a24a257cad70d00ecbdb2a5154399",
+    "madsc/history_transport.py": "add4ea61a5926540da3d079840e7d692188820829410a01955092b04928abb89",
+    "madsc/k3_live_manifest_pilot.py": "d31213c48742b9cca9d22936e01c79844edaaae950b26393b7b9a96686853791",
+    "madsc/k3_turkish_tv_video_pilot.py": "c78eda7dc898db792a389f0fc94925a5c400eec335014cf3d8fff5d90a3f514e",
+    "madsc/k5_channel_gate.py": "3ad9de773eb849b5ac2c4be7fde8cf7b192aa0e5dd777859fe7ed99254c8f863",
+    "madsc/legacy_multisource_discovery.py": "7955ac136df9738ccedd84ab58e400bf1f8c08ba57b19aaa9634d5e9bc38b283",
+    "madsc/legacy_report_export.py": "7cc7a4c82ae1d45da7ce801ec664b68e716bcbaedbe392d71010e9e0211c4277",
+    "madsc/live_discovery_pilot.py": "f21d20bebaaa937eb988b64fd05d1e1e5906d232662a1eb575c4ad865ac448d7",
+    "madsc/progress_scorecard.py": "40fe0c963e2a4f2185eb53ad083ed90873bb89f73ff9db4b6b86ce351a9419f4",
+    "madsc/write_path_audit.py": "8a693371aa5506979f0389a92808ea0d53e346e04a2e2fe0081fa7a624b2ddfc",
+    "tests/test_remaining_report_guards.py": "74dcfb7e97f05251a1b3b5dff5d6f65ae00e3c0d8198104afa6e499d13872a9e"
+  },
+  "resolved_test_failures": [
+    {
+      "test": "LegacyReportExportTests.test_exports_separate_legacy_artifacts",
+      "cause": "Existing destination guard changed ValueError to PermissionError",
+      "resolution": "Preserved existing ValueError check before K1 output guard",
+      "final_status": "passed"
+    }
+  ],
+  "network_probes_performed": false,
+  "github_actions_started": false
+}

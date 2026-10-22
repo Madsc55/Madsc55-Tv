@@ -4,7 +4,10 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import os
+import stat
 from pathlib import Path
+from madsc.write_path_audit import enforce_local_output_path, enforce_local_append_path
 
 CASE = re.compile(r"^(FAIL|ERROR): (.+?) \((.+?)\)$", re.MULTILINE)
 TOTAL = re.compile(r"Ran (\d+) tests? in ([\d.]+)s")
@@ -34,12 +37,24 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--summary", type=Path)
     args = parser.parse_args()
+    enforce_local_output_path(args.output.absolute())
+    if args.summary:
+        if args.summary.absolute() == args.output.absolute():
+            raise PermissionError("Summary and JSON report must be separate")
+        enforce_local_append_path(args.summary.absolute())
     report = diagnose(args.log.read_text(encoding="utf-8", errors="replace")
                       if args.log.exists() else "")
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    enforce_local_output_path(args.output.absolute())
+    with args.output.open("x", encoding="utf-8") as handle:
+        handle.write(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
     if args.summary:
-        with args.summary.open("a", encoding="utf-8") as handle:
+        enforce_local_append_path(args.summary.absolute())
+        descriptor = os.open(args.summary, os.O_WRONLY | os.O_APPEND | os.O_CREAT |
+                             os.O_NOFOLLOW | os.O_NONBLOCK, 0o600)
+        with os.fdopen(descriptor, "a", encoding="utf-8") as handle:
+            metadata = os.fstat(handle.fileno())
+            if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
+                raise PermissionError("Summary must be an independent regular file")
             handle.write("\n### Regresyon hata teşhisi\n")
             handle.write(f"- Test sayısı: {report['tests_run']}\n")
             handle.write(f"- Sonuç: {report['result']}\n")

@@ -9,6 +9,7 @@ import json
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+from madsc.write_path_audit import enforce_local_output_path
 from madsc.legacy_unified_report import legacy_unified_rows
 
 OUTPUT_CSV = "BIRLESIK_ADAY_ONAY_RAPORU.csv"
@@ -45,9 +46,10 @@ def export_legacy_report(scores_csv: str, stability_csv: str, output_dir: str, *
             now = datetime.now(timezone.utc)
     else:
         history = None
-    dest = Path(output_dir).resolve()
+    dest = Path(output_dir).absolute()
     if dest.exists() or dest == Path.cwd().resolve() or dest in sources:
         raise ValueError("Output must be a new report directory")
+    enforce_local_output_path(dest)
     if dest.is_relative_to(Path.cwd().resolve()):
         raise ValueError("Output directory must be outside the repository checkout")
     if any(dest == src.parent or dest in src.parents for src in sources):

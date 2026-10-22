@@ -1,6 +1,7 @@
 """Isolated manifest checks: never overwrite or restore production files."""
 from __future__ import annotations
 import hashlib
+import stat
 from pathlib import Path
 from madsc.write_path_audit import enforce_local_output_path
 
@@ -30,6 +31,9 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
         digest = hashlib.sha256()
         size = 0
         with candidate.open("rb") as source:
+            metadata = source.stat()
+            if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
+                raise ValueError("Backup source must be a singly linked regular file")
             for chunk in iter(lambda: source.read(1024 * 1024), b""):
                 digest.update(chunk)
                 size += len(chunk)

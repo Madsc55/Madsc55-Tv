@@ -43,6 +43,19 @@ class IsolatedPlaylistBundleTests(unittest.TestCase):
             self.assertEqual(len(json.loads(result.stdout)["files"]), 5)
             self.assertTrue((out / "manifest.json").is_file())
 
+    def test_protected_destination_rejected_before_directory_creation(self):
+        with TemporaryDirectory() as d:
+            root = Path(d)
+            source_dir = root / "source"
+            source_dir.mkdir()
+            source = source_dir / "input.m3u"
+            source.write_text("#EXTM3U\\n#EXTINF:-1,Fixture\\nhttps://example.org/live\\n")
+            destination = root / "FAVORILER"
+            with self.assertRaises(PermissionError):
+                export_isolated_previews(source, destination)
+            self.assertFalse(destination.exists(),
+                             "K1 must reject protected destination before mkdir")
+
     def test_rejects_source_tree_and_symlinked_destination(self):
         with TemporaryDirectory() as d:
             root = Path(d)

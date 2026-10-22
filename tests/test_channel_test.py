@@ -353,3 +353,13 @@ class ChannelTests(unittest.TestCase):
                     {**base, "observed_at": "2026-10-20T06:00:00Z"},
                     {**base, "observed_at": "2026-10-20T12:00:00Z"}])
 
+    def test_continuity_rejects_future_dated_samples(self):
+        from datetime import datetime, timedelta, timezone
+        from madsc.channel_test import evaluate_three_stage_continuity
+        base = {"url_sha256": "a" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        now = datetime.now(timezone.utc)
+        stamps = [(now + timedelta(hours=1 + i * 6)).isoformat() for i in range(3)]
+        samples = [{**base, "observed_at": stamp} for stamp in stamps]
+        with self.assertRaisesRegex(ValueError, "Future-dated"):
+            evaluate_three_stage_continuity(samples)

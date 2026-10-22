@@ -35,6 +35,13 @@ def audit_write_paths(paths: list[str]) -> dict:
             or any(part in ("", ".", "..") for part in normalized_parts)
             or folded.startswith("/") or folded.startswith("~")
             or any(part.endswith((" ", ".")) for part in normalized_parts)
+            # Windows treats these stems as devices, even with extensions;
+            # reject them on every platform to avoid path aliasing.
+            or any(part.split(".", 1)[0].rstrip(" ") in
+                   ({"con", "prn", "aux", "nul"} |
+                    {f"com{i}" for i in range(1, 10)} |
+                    {f"lpt{i}" for i in range(1, 10)})
+                   for part in normalized_parts)
             or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw)
             # Format controls (bidi overrides, zero-width joins) can disguise
             # protected filenames in reviews and logs; reject them outright.

@@ -18,7 +18,8 @@ def normalize_url(value: str) -> str:
     except ValueError as exc:
         raise ValueError("Invalid candidate host or port") from exc
     if (not host or any(ch.isspace() for ch in parts.netloc) or port == 0
-            or any(0xD800 <= ord(ch) <= 0xDFFF for ch in host)):
+            or any(0xD800 <= ord(ch) <= 0xDFFF for ch in host)
+            or any(ord(ch) < 33 or ord(ch) == 127 for ch in host)):
         raise ValueError("Invalid candidate host or port")
     if parts.fragment:
         raise ValueError("URL fragments are not accepted")

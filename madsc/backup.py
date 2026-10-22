@@ -137,6 +137,12 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
 def verify_manifest(root: Path, manifest: dict) -> bool:
     if not isinstance(manifest, dict) or not isinstance(manifest.get("entries"), list):
         raise ValueError("Invalid backup manifest")
+    # Unknown top-level fields can masquerade as independent external evidence.
+    # This API only verifies the exact local checksum-manifest schema.
+    allowed_fields = {"entries", "mode", "external_backup_verified",
+                      "restore_verified", "production_writes"}
+    if set(manifest) - allowed_fields:
+        raise ValueError("Unsupported backup manifest fields")
     # Local manifests cannot be relabeled as an externally verified backup.
     if "mode" in manifest and (type(manifest["mode"]) is not str
                                or manifest["mode"] != "manifest_only"):

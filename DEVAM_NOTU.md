@@ -379,3 +379,8 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - `madsc/legacy_replacement_mapping_review.py` statik adaylık için `controlled_process_contract_complete` alanını zorunlu kıldı; eksik alan fail-closed, false alan `mapping_contract_blocked`. Kaynak: `madsc/parity_workflow_readiness.py` güncel sözleşme satırları.
 - `tests/test_legacy_replacement_mapping_review.py` beşli fixture'lara bu alanı ekledi, iki negatif regresyon testi oluşturuldu.
 - Commitler `11e1f12a50ce91c412a2fb8d13db417f7753608c` ve `768150c2ed7d3af99f419001caa1d7d575d0c9c3` (`[skip ci]`). Bu turda CI ve offline test çalıştırılmadı. Üretim, Actions, eski depo değiştirilmedi. Kabul 0/92, 0/26, 0/22.
+
+## 22 Ekim 2026 — K2/K3 harici kaynak mapping blokajı
+- `madsc/legacy_replacement_mapping_review.py` K2 ve K3 için statik kaynak sözleşmesi alanları true olsa bile eşleme adayını `mapping_contract_blocked` tutar. Bu aşamaların harici/canlı girdileri bağımsız karşılaştırma olmadan kabul edilemez.
+- `tests/test_legacy_replacement_mapping_review.py` K2 ve K3 için yanlışlıkla tüm flaglerin true olduğu negatif senaryoları ekledi.
+- Yeni sistem commitleri `6e01ae808056e7ebac50d9ab95666bbe1d603fb3`, `2c6d680bbc39ee3e9d0467228670f8ddcf3c0f75` (`[skip ci]`). Bu turda testler yürütülmedi; Actions #482/#483 logları elde edilmedi. Üretim/EPG/yedek/favori/workflow/cron/legacy repo değiştirilmedi. Kabul 0/92, 0/26, 0/22.

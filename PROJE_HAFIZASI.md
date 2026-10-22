@@ -1882,3 +1882,12 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Yapısal fixture bağı gerçek API doğrulaması sayılmaz: independent_origins_api_verified=0 ve behavioral_parity_accepted=0. CLI eski salt snapshot şemasını geriye uyumlu okur, yeni şemayı ayrıca işler.
 - Nihai yerel sonuç: 570 test, K1–K5 izole kapıları, 92+7 kapsam ve 22 görev envanteri success. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET5.json. Actions/live probe yok; kabul 0/92, 0/26, 0/22.
 - Sıradaki: salt-okunur GitHub run/artifact sorgularını şemaya besleyen ve API cevabıyla repository/workflow/head/run/artifact kimliğini bağımsız doğrulayan client. Gerçek eski/yeni çifti yoksa kabul verme.
+
+
+## 22 Ekim 2026 — K5 bağımsız GitHub run/artifact origin verifier
+- Kod 7b4855293564c1baafdca8246f932ca1a1e5986e: github_legacy_pair_client, pair'in her tarafında GitHub run kaydı, artifact listesi ve head SHA'daki workflow blob'unu ayrı okur; repo/dal/workflow/blob/run/attempt/head/event/conclusion ile artifact id/name/run/head/SHA256 digest bağlarını fail-closed doğrular.
+- İki taraf için altı salt-okunur API kaydı gerekir. Artifact pagination eksikliği, digest yokluğu, expired/ambiguous artifact, yanlış workflow blob veya run repository reddedilir. Dispatch, rerun, artifact download veya production write yapmaz.
+- Snapshot eşleşmesi ve API origin doğrulaması tek başına behavioral acceptance değildir; sonuçta production_ready=false ve behavioral_parity_accepted=false korunur.
+- Yerel sonuç 573 test + beş izole K kapısı success; kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET6.json. Unscoped git diff --check bir kere signal 11 verdi; path-scoped kontrol ve offline_gate geçti, kaynak/test dosyalarında whitespace hatası yok.
+- Gerçek salt-okunur artifact metadata kontrolü: yeni #39686179902 ve eski #39590927353 artifact kayıtlarında SHA256 digest ve run/head bağı mevcut. Eski run pinned 92 dışında k1-protected-write-tests.yml olduğundan gerçek legacy pair sayılmadı; aynı input manifesti metadata'dan doğrulanamadı. Kabul 0/92, 0/26, 0/22.
+- Sıradaki: artifact ZIP içindeki sınırlı manifesti güvenli okuyup input SHA256 ve snapshot hashini doğrulanan artifact digest/run originine bağla. Eski depoya yazma ve Actions çalıştırma yok.

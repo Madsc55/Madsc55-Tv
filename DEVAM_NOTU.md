@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: f222a81ce96901a8adc0dbc92a5213cf149500c9
+Son geliştirme commit SHA: 7b4855293564c1baafdca8246f932ca1a1e5986e
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -81,3 +81,13 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Nihai yerel test: 570 test ve beş K kapısı success; docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET5.json. Başarısız test yok, git diff --check temiz; Actions/ağ/cihaz yok.
 - Sıradaki somut iş: GitHub salt-okunur run ve artifact metadata doğrulamasını bu v1 kontratına bağlayan bağımsız verifier/client ekle. Gerçek legacy ve replacement run çifti bulunmadan 92 sayaçlarını artırma.
 - Korunan listeler/EPG/yedek/yeni/favoriler, eski depo ve PR #71 değişmedi; merge ve Actions dispatch yapılmadı.
+
+## Altıncı önemli geliştirme — bağımsız GitHub origin doğrulayıcısı
+- Son kod commit SHA: 7b4855293564c1baafdca8246f932ca1a1e5986e; taban main 80bcb8dc4328351660d586730f9f4676307d4e6f.
+- github_legacy_pair_client her execution için üç ayrı salt-okunur GitHub kaydı ister: run, run artifact listesi ve run head SHA'sındaki workflow blob'u. İki taraf için toplam altı API okuması yapar; dispatch/rerun/yazma yoktur.
+- Repository, branch, workflow path, run id/attempt/head/event/conclusion, workflow blob SHA ve artifact id/name/run/head/SHA256 digest bağları fail-closed doğrulanır. Eksik digest, eksik pagination, yanlış blob veya repository reddedilir.
+- İki origin API düzeyinde doğrulansa ve snapshot eşleşse bile behavioral_parity_accepted ve production_ready false kalır; reviewer/gerçek davranış kabulü ayrıca gerekir.
+- Yerel toplu sonuç: 573 test ve K1–K5 izole kapıları başarılı. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET6.json. Başarısız unit test yok. Kapsamsız git diff --check bir kez signal 11 verdi; iki değişen dosyada scoped diff --check ve tam offline_gate geçti.
+- Salt-okunur gerçek kontrol: yeni run 39686179902 artifactleri ve eski run 39590927353 artifactleri SHA256 digest taşıyor. Ancak eski run k1-protected-write-tests.yml, pinned 92 davranış kapsamının dışındaki yedi dosyadan biridir; bu iki run aynı-girdi 92 çifti değildir ve kabul verilmedi.
+- Sıradaki somut iş: artifact içindeki manifestten input SHA256 ve snapshot bağını güvenli biçimde çıkarıp GitHub artifact digest/run origin doğrulamasına bağla. Sadece metadata içindeki beyanı aynı-girdi kanıtı sayma.
+- Kabul sayaçları 0/92, 0/26 ve 0/22. Korunan veriler, eski depo ve PR #71 değişmedi; Actions başlatılmadı.

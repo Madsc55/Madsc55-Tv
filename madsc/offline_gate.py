@@ -118,6 +118,17 @@ def main():
         roundtrip_passed = False
     if not roundtrip_passed and exit_code == 0:
         exit_code = 5
+    # Read-only K1 write-callsite inventory. Findings are review candidates,
+    # not proof of enforcement; any parse failure blocks the offline gate.
+    try:
+        from madsc.write_callsite_audit import scan_python_tree
+        write_callsite_inventory = scan_python_tree(root)
+        write_callsite_audit_passed = write_callsite_inventory.get("schema") == "madsc-k1-write-callsite-inventory-v1"
+    except Exception as exc:
+        write_callsite_inventory = {"error": type(exc).__name__, "runtime_gate_enforced": False}
+        write_callsite_audit_passed = False
+    if not write_callsite_audit_passed and exit_code == 0:
+        exit_code = 7
     report = {
         "mode": "offline_local",
         "scope": "unit_regression_and_isolated_five_stage_fixture",
@@ -129,11 +140,15 @@ def main():
         "tests_discovered": test_count,
         "tests_passed": unittest_passed,
         "five_stage_fixture_gate_passed": five_stage_passed,
-        "all_offline_gates_passed": unittest_passed and five_stage_passed and inventory_passed and roundtrip_passed and installation_passed,
+        "all_offline_gates_passed": unittest_passed and five_stage_passed and inventory_passed and roundtrip_passed and installation_passed and write_callsite_audit_passed,
         "five_stage_installation_inventory_passed": installation_passed,
         "five_stage_installation_inventory_error": installation.get("error"),
         "five_report_roundtrip_passed": roundtrip_passed,
         "five_report_roundtrip": roundtrip,
+        "write_callsite_audit_passed": write_callsite_audit_passed,
+        "write_callsite_files_scanned": write_callsite_inventory.get("files_scanned", 0),
+        "write_callsite_candidate_count": write_callsite_inventory.get("candidate_callsite_count", 0),
+        "write_callsite_inventory": write_callsite_inventory,
         "workflow_and_task_inventory_passed": inventory_passed,
         "operational_contract_gate": operational_contract,
         "auxiliary_workflows_mapped": workflow_plan.get("auxiliary_count"),

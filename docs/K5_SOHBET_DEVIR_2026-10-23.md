@@ -11,3 +11,11 @@ CI başarıları: Actions 39870824796, 39871268955, 39871751853, 39872482282. Ac
 Legacy workflow statik inceleme 48/92, batch 01–16. 44 bekliyor; davranışsal kabul 0/92. 26 güvenlik runtime ve 22 ana görev kabulü bekliyor. docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_* ve ortak görev defterlerini güncellik için kontrol et.
 
 Sonraki: main HEAD ve Actions kontrolü, offline test hatalarını teşhis/düzelt, manifest export güvenliğini tamamla, batch 17+ inceleme, diğer ajanlarla çakışma yok. Cihaz doğrulaması en son.
+
+## 23 Ekim ek K5 uygulama ve CI teşhisi
+
+- Actions 39872580939 job logu incelendi: 1089 testten 1 hata. `test_write_callsite_audit.WriteCallsiteAuditTests.test_metadata_mutations_are_inventoried` testinde beklenen `Path.chmod` / `Path.lchmod`, gerçek `chmod` / `lchmod`. Bu ortak K1 yazma denetimi kapsamındadır; K5 diğer ajanın dosyasını değiştirmedi. CI yeşil değildir.
+- K5 manifest URL doğrulamasına ters eğik çizgi reddi eklendi: a7f2fe1. İlgili regresyon testi: fb185da.
+- İzole manifest export dizini için dosya fsync sonrasında dizin fsync eklendi: 0fdccba7. Dizin fsync hata temizliği regresyon testi: 0677388. Dizin fsync açılışına O_NOFOLLOW eklendi: 347104a.
+- Bu commitler `[skip ci]` içerir. Yeni testlerin CI başarısı veya gerçek cihaz doğrulaması iddia edilmez.
+- Bekleyenler: K5 testlerinin bağımsız koşulması ve CI doğrulaması, manifest güvenliğinin kalan risklerinin değerlendirilmesi, legacy workflow batch 17+ incelemesi ve davranışsal kabul kanıtları. 48/92 statik sayısını yeni kanıt olmadan artırma. Cihaz testi son aşamada kullanıcıya aittir.

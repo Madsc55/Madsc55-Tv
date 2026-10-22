@@ -35,3 +35,10 @@ Son görülen başarılı GitHub Offline Unit Tests çalışması 39800980208, H
 5. Her değişiklikten hemen önce ilgili dosyanın güncel SHA'sını oku; paralel sohbetlerle çakışma yaratma; commit mesajlarında [skip ci] kullan.
 
 Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (diğer sohbetler tarafından değişebilir).
+
+## Ek ilerleme — 22 Ekim, son tur
+- def4af8: Geçersiz adayların K2 pack() sınırında reddedildiği testlerde doğru aşama beklentisi.
+- c70f243: Mükerrer aday testleri pack() sınırına uyarlandı.
+- 4f7314a: Sahte kanıt zarfı, yanlış commit SHA ve aday/ölçüm kimlik uyuşmazlığı testleri eklendi.
+- Yerel çalışma ortamında GitHub DNS çözümlemesi başarısız: `Could not resolve host: github.com`. Bu yüzden güncel testler çalıştırılamadı; yeşil kabul edilmemeli.
+- GitHub'dan K3 kod ve test dosyalarının güncel içerikleri SHA ile tekrar okundu; paralel sohbetlerde değişen dosyalar için SHA tabanlı yazma sürdürüldü.

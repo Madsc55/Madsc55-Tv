@@ -176,6 +176,8 @@ def review_candidate_batch(coordination: dict, backup_evidence: dict) -> dict:
     for item in candidates:
         if not isinstance(item, dict):
             raise ValueError("Malformed candidate evidence")
+        if len(item) > 32:
+            raise ValueError("Oversized candidate evidence record")
         digest = item.get("url_sha256")
         if (not isinstance(digest, str) or len(digest) != 64
                 or any(c not in "0123456789abcdef" for c in digest) or digest in seen):

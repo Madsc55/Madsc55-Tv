@@ -236,7 +236,7 @@ class BackupManifestHardeningTests(unittest.TestCase):
             with patch("madsc.backup._open_relative_file_nofollow",
                        side_effect=AssertionError("unexpected source file read")):
                 with self.assertRaisesRegex(ValueError, "bounded entry limit"):
-                    snapshot_manifest(root, ["good.txt"] * 10001)
+                    snapshot_manifest(root, [f"file-{index}" for index in range(10001)])
                 with self.assertRaisesRegex(ValueError, "bounded length"):
                     snapshot_manifest(root, ["x" * 4097])
             self.assertEqual(len(snapshot_manifest(root, ["good.txt"])["entries"]), 1)

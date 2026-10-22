@@ -26,16 +26,27 @@ def _prepare_fixture_root(root: Path) -> Path:
 
 
 def _exclusive_bytes(destination: Path, payload: bytes) -> None:
+    """Create an exclusive evidence file through no-follow directory descriptors."""
     nofollow = getattr(os, "O_NOFOLLOW", None)
-    if not isinstance(nofollow, int):
-        raise PermissionError("Secure exclusive output is unavailable without O_NOFOLLOW")
-    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | nofollow
-    descriptor = os.open(destination, flags, 0o600)
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    if not isinstance(nofollow, int) or not isinstance(directory_flag, int):
+        raise PermissionError("Secure descriptor-relative output is unavailable")
+    destination = Path(destination)
+    if not destination.is_absolute() or any(part in ("", ".", "..") for part in destination.parts[1:]):
+        raise PermissionError("Evidence output must be an unambiguous absolute path")
+    directory_flags = os.O_RDONLY | directory_flag | nofollow
+    parent_fd = os.open(destination.anchor, directory_flags)
+    descriptor = None
     completed = False
     created_identity = None
     try:
+        for part in destination.parent.parts[1:]:
+            next_fd = os.open(part, directory_flags, dir_fd=parent_fd)
+            os.close(parent_fd)
+            parent_fd = next_fd
+        descriptor = os.open(destination.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | nofollow,
+                             0o600, dir_fd=parent_fd)
         metadata = os.fstat(descriptor)
-        created_identity = metadata
         if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
             raise PermissionError("Evidence output must be an independent regular file")
         with os.fdopen(descriptor, "wb", closefd=False) as handle:
@@ -44,21 +55,25 @@ def _exclusive_bytes(destination: Path, payload: bytes) -> None:
             os.fsync(handle.fileno())
         completed = True
     finally:
-        os.close(descriptor)
-        if not completed:
-            # A concurrent replacement must never be deleted by cleanup.
+        if descriptor is not None:
             try:
-                current = destination.lstat()
+                created_identity = os.fstat(descriptor)
+            except OSError:
+                created_identity = None
+            os.close(descriptor)
+        if not completed and created_identity is not None:
+            try:
+                current = os.stat(destination.name, dir_fd=parent_fd, follow_symlinks=False)
             except FileNotFoundError:
                 pass
             else:
-                if (created_identity is not None and
-                        (current.st_dev, current.st_ino, current.st_size,
-                         current.st_mtime_ns, current.st_ctime_ns) ==
-                        (created_identity.st_dev, created_identity.st_ino,
-                         created_identity.st_size, created_identity.st_mtime_ns,
-                         created_identity.st_ctime_ns)):
-                    destination.unlink(missing_ok=True)
+                if (current.st_dev, current.st_ino, current.st_size,
+                        current.st_mtime_ns, current.st_ctime_ns) == (
+                        created_identity.st_dev, created_identity.st_ino,
+                        created_identity.st_size, created_identity.st_mtime_ns,
+                        created_identity.st_ctime_ns):
+                    os.unlink(destination.name, dir_fd=parent_fd)
+        os.close(parent_fd)
 
 
 

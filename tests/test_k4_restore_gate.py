@@ -125,11 +125,12 @@ class K4RestoreGateTests(unittest.TestCase):
             trees = [base / name for name in ("source", "backup", "restored")]
             for root in trees:
                 root.mkdir()
-            # One declared file can expand into more than the safe directory budget.
-            deep_name = "/".join(f"d{i}" for i in range(20001)) + "/file.txt"
+            # 10,001 distinct two-level directories plus their files exceed
+            # the total inventory budget without requiring extreme path depth.
+            names = [f"folder_{i}/child/file.txt" for i in range(10001)]
             with patch("madsc.k4_restore_gate.verify_independent_restore") as verify:
                 with self.assertRaisesRegex(ValueError, "safe entry limit"):
-                    audit_k4_restore(*trees, [deep_name])
+                    audit_k4_restore(*trees, names)
                 verify.assert_not_called()
 
     def test_nested_tree_rejected(self):

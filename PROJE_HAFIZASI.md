@@ -2359,3 +2359,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - K1'de NFKC yalnızca duplicate-path kontrolüne uygulanıyor, protected-path ve `artifacts/` prefix denetimi ham metinle çalışıyordu. Böylece fullwidth Unicode karakterleriyle yazılan korunan hedefler politika kontrolünü aşabilirdi. `validate_manifest` artık önce NFKC normalize edilmiş yolları hem güvenli yol hem izinli kök kontrolünden geçiriyor: `5a02fd322789b3c4b6b94bbe4262b48d3a0e665c`.
 - Korunan playlist/EPG adlarının fullwidth taklitlerini ve normalize edilmemiş artifacts kökünü reddeden test: `ba46a1d3d8044f5cd5459cbf21ed888cb3bcba9f`.
 - Bu turdaki yeni K1 testleri çalıştırılmadı; Actions yeniden başlatılmadı. Güncel HEAD bu eklerden sonra ayrıca doğrulanmalı. Kabul sayaçları 0/26, 0/92, 0/22 olarak kaldı.
+
+
+## 23 Ekim 2026 — K1 Unicode test sonucu ve güncel düzeltme
+- GitHub Actions run `39861985074`, SHA `c40c7657`, başarısız: 958 testte 1 failure. `test_nfkc_normalization_precedes_protected_path_check` içinde `ａｒｔｉｆａｃｔｓ/report.json` için ValueError beklenmiş fakat testin çalıştığı commit'te canonical spelling reddi henüz yokmuş.
+- Güncel main'de bu gerçek sorun K1 kaynak kodunda zaten giderilmiş: commit `7c2aae9d028bdebd5159a2f157141420b8cfc855` Unicode NFKC eşdeğeri olan canonical olmayan tüm yolları açıkça reddediyor. Bu nedenle full-width artifacts kökünün ham yoldan dışarı çıkma riski de kapatılıyor. Bu yeni commit için Actions sonucu henüz yok; eski failure güncel HEAD kabulü sayılmaz.
+- Son Actions listesinde güncel `7c2aae9` için yeni koşu görünmüyor; bu turda Actions başlatılmadı. Kabul sayaçları 0/26, 0/92, 0/22 olarak kalır. Sıradaki adım güncel HEAD'de tam offline gate ve K1/K2 odaklı testleri doğrulamak.

@@ -23,8 +23,18 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         raise ValueError("Missing M3U header")
     candidates, errors = [], []
     pending = None
+    discard_url_for_rejected_entry = False
     for number, raw in enumerate(lines[1:], 2):
         line = raw.strip()
+        if discard_url_for_rejected_entry:
+            if line.startswith("#EXTINF:"):
+                # A new entry started before a URL; do not consume its metadata.
+                discard_url_for_rejected_entry = False
+            elif line and not line.startswith("#"):
+                # The URL belonging to the rejected metadata row is consumed,
+                # preventing a duplicate diagnostic for the same malformed entry.
+                discard_url_for_rejected_entry = False
+                continue
         if line.startswith("#EXTINF:"):
             if pending is not None:
                 errors.append({"line": number, "reason": "missing_url"})
@@ -58,6 +68,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
             if len(attr_names) != len(set(attr_names)):
                 pending = None
                 errors.append({"line": number, "reason": "duplicate_metadata_attribute"})
+                discard_url_for_rejected_entry = True
                 continue
             attrs = {name.casefold(): value for name, value in attr_pairs}
             pending = {"name": title.strip(), "tvg_id": attrs.get("tvg-id", ""),

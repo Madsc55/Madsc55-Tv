@@ -2605,3 +2605,7 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Batch 14 reviewed the manual broad-source scan with write permissions and downstream dispatch, static cutover preflight, and an IBO workflow placeholder that performs no actual classification.
 - Batch 15 found three backup archive scripts rewrite `CALISANLAR.m3u` in the runner workspace; the protected-write gate rejects all M3U mutations, so these pushes should fail closed. User classification is not proof of identity or playback.
 - `DEVAM_NOTU.md` and `docs/K1_K5_KANITLI_GOREV_DEFTERI.json` updated. Behavioral parity remains 0/92; runtime security 0/26; main-task acceptance 0/22. Offline K5 export tests succeeded on SHA `a0469c34ec9a8642acffdddfbda55dadf9d39aba` (Actions run `39868459061`) but this is not production or legacy-parity acceptance.
+
+
+## 23 Ekim 2026 — K1 yeni disk mutation callsite kapsami
+`madsc/write_callsite_audit.py` icin `os.open` taninmayan flags ifadesi false negative duzeltildi (`ab8d2d28`, test `f510ba4c`). Ayrica `os.fdopen` yazma modlari ve `tempfile` dosya/dizin olusturuculari statik inceleme adaylarina alindi (`946ab465`, test `3e3cc524`). Eski 75-aday envanteri genisleyen tarayici icin guncel sayi degildir; yeni full repo scan ve tek tek kanitli siniflandirma gereklidir. Yeni SHA CI sonucu dogrulanmadi; K1 0/26, production_ready=false.

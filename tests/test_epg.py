@@ -14,6 +14,24 @@ class EpgTests(unittest.TestCase):
             self.assertEqual(result["playlist_channels"], 0)
             self.assertFalse(result["matching_verified"])
 
+    def test_duplicate_xmltv_channel_ids_fail_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\\nhttps://example.org/a.m3u8\\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Duplicate XMLTV channel id"):
+                check_epg_mapping(p, e)
+
+    def test_xmltv_channel_without_id_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\\nhttps://example.org/a.m3u8\\n', encoding="utf-8")
+            e.write_text('<tv><channel/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "missing a nonempty id"):
+                check_epg_mapping(p, e)
+
     def test_playlist_m3u8_and_xmltv_match(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "playlist.m3u8"

@@ -41,7 +41,7 @@ class K5LegacyProtectedInputContractTests(unittest.TestCase):
             source_dir = root / "source"
             source_dir.mkdir()
             source = source_dir / "CALISANLAR.m3u"
-            original = b"#EXTM3U\n#EXTINF:-1,Protected input\nhttps://example.org/live\n"
+            original = b"\n".join((b"#EXTM3U", b"#EXTINF:-1,Protected input", b"https://example.org/live", b""))
             source.write_bytes(original)
             before = hashlib.sha256(source.read_bytes()).hexdigest()
             protected_destination = root / "FAVORILER"

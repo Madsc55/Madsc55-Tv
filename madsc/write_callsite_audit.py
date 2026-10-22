@@ -231,6 +231,12 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
     root = Path(root).resolve(strict=True)
     if not root.is_dir():
         raise ValueError("Source root must be a directory")
+    # pathlib.rglob("*.py") may not descend into symlinked directories.
+    # Reject linked directories before enumerating sources, rather than
+    # silently declaring an incomplete inventory.
+    for entry in root.rglob("*"):
+        if entry.is_symlink() and entry.is_dir():
+            raise ValueError(f"Symlinked source directory requires review: {entry.relative_to(root)}")
     files = sorted(root.rglob("*.py"))
     rows = []
     scanned = []

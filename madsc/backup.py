@@ -112,6 +112,15 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
             for chunk in iter(lambda: source.read(1024 * 1024), b""):
                 digest.update(chunk)
                 size += len(chunk)
+            # A checksum of bytes read during concurrent modification is not
+            # necessarily a consistent source snapshot. Fail closed when the
+            # descriptor's identity, size or timestamps changed mid-read.
+            after = os.fstat(source.fileno())
+            if (metadata.st_dev, metadata.st_ino, metadata.st_size,
+                    metadata.st_mtime_ns, metadata.st_ctime_ns) != (
+                    after.st_dev, after.st_ino, after.st_size,
+                    after.st_mtime_ns, after.st_ctime_ns) or size != after.st_size:
+                raise ValueError("Backup source changed during manifest read")
         entries.append({"path": requested.as_posix(),
                         "bytes": size, "sha256": digest.hexdigest()})
     return {"entries": entries, "mode": "manifest_only", "external_backup_verified": False,

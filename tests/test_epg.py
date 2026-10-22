@@ -73,3 +73,22 @@ class EpgTests(unittest.TestCase):
             result = check_epg_mapping(p, e)
             self.assertFalse(result["matching_verified"])
             self.assertEqual(result["unmatched_programme_ids"], ["missing.tr"])
+
+    def test_duplicate_playlist_tvg_id_attributes_fail_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr" tvg-id="other.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/><channel id="other.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Duplicate M3U tvg-id attribute"):
+                check_epg_mapping(p, e)
+
+    def test_whitespace_around_playlist_tvg_id_is_normalized(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id=" trt1.tr ",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            result = check_epg_mapping(p, e)
+            self.assertTrue(result["matching_verified"])
+            self.assertEqual(result["unmatched_playlist_ids"], [])

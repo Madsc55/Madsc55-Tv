@@ -168,6 +168,18 @@ def write(path, options):
         self.assertEqual(len(rows), 3)
         self.assertTrue(all("[dynamic mode]" in row["api"] for row in rows))
 
+    def test_fdopen_keyword_unpacking_requires_review(self):
+        source = '''
+import os
+def mutate(fd, options):
+    os.fdopen(fd, **options)
+    os.fdopen(fd, "rb", **options)
+    os.fdopen(fd, mode="rb", **options)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 3)
+        self.assertTrue(all(row["api"] == "os.fdopen [dynamic mode]" for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

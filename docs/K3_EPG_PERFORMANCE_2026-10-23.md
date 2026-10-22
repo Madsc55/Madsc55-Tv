@@ -1,3 +1,11 @@
+## K3 güncelleme — 19 EPG testi ve 1066 offline test (2026-10-23)
+- GitHub Actions run `39871021673` (tested commit `41a61d61b92f0e6c043abd969caeb01100df4b1b`) **completed/success**; `tests_discovered=1066`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`. 19 EPG testini ve XMLTV DTD/entity fail-closed korumasını içerir.
+- `a22684d4a259ccc986c2b4baa8fcb92ecbf02b10`: XMLTV DTD/entity taramasında `upper()` dönüşümü iki kez yerine bir kez hesaplanır. Bu son mikro-optimizasyon, yukarıdaki başarılı koşudan sonra geldi; henüz ayrıca CI kanıtı yok.
+- IBO Player Pro cihaz testi kullanıcı talimatı gereği en son yapılacak, kullanıcı sonucu bildirecek. Gerçek HLS video/ses, 6+ saat süreklilik, Pages/XMLTV ve logolar henüz açık.
+- Üretim playlist, XMLTV, favori, logo, cihaz, arşiv ve yedek dosyaları değiştirilmedi.
+
+---
+
 ## K3 XMLTV güvenlik kontrolü — 2026-10-23
 - IBO Player Pro cihaz doğrulaması en son kullanıcı tarafından yapılacak; bu aşamada cihaz testini isteme.
 - Run `39870824796`, tested commit `0e2d5e6844f93f4e04970f9992018d00ad593eaf`: **success**, `tests_discovered=1056`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`; 18 EPG testini içerir.

@@ -87,7 +87,10 @@
       "91f32d6e: boundary regression 256 accepted, 257 rejected; CI pending",
       "39871021673: successful descendant CI on 41a61d61, 7 commits after source label boundary test 91f32d6e",
       "53f5850e: fingerprint tvg-id inventory using identity and URL, ignoring presentation-only metadata",
-      "3cebc66d: regression for mirrored tvg-id feeds and distinct name-only identities; CI pending 39871248968"
+      "3cebc66d: regression for mirrored tvg-id feeds and distinct name-only identities; CI pending 39871248968",
+      "39871279885: successful descendant CI on a22684d4, 2 commits after mirrored feed fingerprint test 3cebc66d",
+      "ea305e16: reject known URLs longer than 8192 or containing surrogate codepoints before normalization",
+      "a11999c7: regression for known URL length/Unicode rejection and normal known-URL exclusion; CI pending 39871566283"
     ],
     "note": "Offline suite succeeded on descendant SHA 205ad1bf (run 39869009399), covering latest K2 fail-closed metadata and bounded known URL inputs. Real-source/licensing, independent origins, and behavioral acceptance still unverified."
   },

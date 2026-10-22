@@ -5,12 +5,17 @@ Never probes URLs, writes playlists or upgrades candidates to live channels.
 from __future__ import annotations
 
 import re
+import unicodedata
 from collections import defaultdict
 from hashlib import sha256
 
 from madsc.discovery import classify_candidates, normalize_url
 
 ATTR = re.compile(r'([\w-]+)="([^"]*)"')
+
+
+def _canonical_source_name(name: str) -> str:
+    return unicodedata.normalize("NFKC", name.strip()).casefold()
 
 
 def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
@@ -126,7 +131,7 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Require 1-200 named M3U sources")
     if any(not isinstance(name, str) or not name.strip() for name in sources):
         raise ValueError("Invalid source name")
-    if len({name.strip().casefold() for name in sources}) != len(sources):
+    if len({_canonical_source_name(name) for name in sources}) != len(sources):
         raise ValueError("Ambiguous duplicate source names")
     if any(len(name) > 256 for name in sources):
         raise ValueError("Source name exceeds bounded length")
@@ -216,7 +221,7 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
 
     if not isinstance(sources, dict) or not sources or len(sources) > 200:
         raise ValueError("Require 1-200 named M3U sources")
-    if len({name.strip().casefold() for name in sources if isinstance(name, str)}) != len(sources):
+    if len({_canonical_source_name(name) for name in sources if isinstance(name, str)}) != len(sources):
         raise ValueError("Ambiguous duplicate source names")
     if any(isinstance(name, str) and len(name) > 256 for name in sources):
         raise ValueError("Source name exceeds bounded length")

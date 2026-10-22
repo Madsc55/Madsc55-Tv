@@ -494,3 +494,8 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - madsc/k4_evidence.py commit d8e5e1925c7ea9994f3e0649b4640cf5569b038a: parse/doğrulama sonrası çıktı yolunu tekrar denetle; os.open(O_EXCL|O_CREAT|O_NOFOLLOW varsa) ile tek seferlik çıktı oluştur. tests/test_k4_evidence.py commit bc21ebd0954250b65b0ae4665d40775242ecee91: geçerli kanıttan çıktı, production_ready=false, external_storage_proven=false ve ikinci yazmayı reddetme senaryosu.
 - Yerel depo indirme github.com DNS hatası nedeniyle mümkün olmadı; bu yeni SHA için testler/offline_gate çalıştırılmış değildir, GitHub Actions tetiklenmedi. Elde doğrulanmış yeni test sonucu yoktur. Tam parent-ancestor TOCTOU koruması halen açık; K1 runtime kabul iddiası yok.
 - Sonraki öncelik: erişilebilir çalıştırma ortamında test_restore_drill, test_k4_evidence ve python -m madsc.offline_gate; gerçek sonuçlar gelmeden 783 sayısını güncel sayma. Gerçek kabul 0/92, 0/26, 0/22. Korunan dosyalar, eski depo ve IBO cihaz testi değişmedi.
+
+
+## 22 Ekim 2026 — K4 JSON/üst-dizin negatif testleri
+- tests/test_k4_evidence.py commit b853106868f1cc13bc2172051c22bd71641ec7a8 [skip ci]: yinelenen files_checked JSON anahtarı ve sembolik bağlantılı kanıt üst dizini reddi; başarısız doğrulamada çıktı yokluğu. Kod davranışı değişmedi.
+- Yerel ortam github.com DNS çözümleyemiyor; testler/offline_gate bu yeni SHA'da çalıştırılmadı, Actions dispatch yok. Gerçek kabul 0/92, 0/26, 0/22. Öncelik erişilebilir test koşucusunda odaklı testler ve tam offline_gate; test sonucu olmadan yeşil iddia edilmez.

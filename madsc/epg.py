@@ -20,8 +20,10 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     ids = []
     for line in text.splitlines():
         if line.startswith("#EXTINF:"):
-            match = TVG_ID.search(line)
-            ids.append(match.group(1).strip() if match else "")
+            matches = TVG_ID.findall(line)
+            if len(matches) > 1:
+                raise ValueError("Duplicate M3U tvg-id attribute")
+            ids.append(matches[0].strip() if matches else "")
 
     root = ET.fromstring(xmltv.read_bytes())
     if root.tag != "tv":

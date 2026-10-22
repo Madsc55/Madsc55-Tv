@@ -113,7 +113,7 @@ def evaluate_three_stage_continuity(samples: list[dict], minimum_hours: float = 
         if not isinstance(sample, dict) or not isinstance(sample.get("observed_at"), str):
             raise ValueError("Timestamped sample required")
         stamp = sample["observed_at"]
-        if not re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?(?:Z|[+-]\\d{2}:\\d{2})", stamp):
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})", stamp):
             raise ValueError("Observation must use RFC3339 timestamp")
         try:
             instant = datetime.fromisoformat(stamp.replace("Z", "+00:00"))

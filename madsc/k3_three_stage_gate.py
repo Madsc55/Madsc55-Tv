@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+import re
 
 from madsc.channel_test import evaluate_probe
 
@@ -18,8 +19,11 @@ def assess_three_stage_probes(samples: list[dict]) -> dict:
     for sample in samples:
         if not isinstance(sample, dict) or not isinstance(sample.get("captured_at"), str):
             raise ValueError("Timestamp required")
+        stamp = sample["captured_at"]
+        if not re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z", stamp):
+            raise ValueError("UTC RFC3339 timestamp required")
         try:
-            when = datetime.fromisoformat(sample["captured_at"].replace("Z", "+00:00"))
+            when = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
         except ValueError as exc:
             raise ValueError("Invalid timestamp") from exc
         if when.tzinfo is None or when.utcoffset() != timedelta(0):

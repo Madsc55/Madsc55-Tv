@@ -19,15 +19,32 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
     if not isinstance(mapping_rows, list) or len(mapping_rows) > len(eligible):
         raise ValueError("Invalid mapping rows")
     readiness = audit_parity_workflow_readiness(replacement_workflow_root)
+    if not isinstance(readiness, dict) or not isinstance(readiness.get("rows"), list):
+        raise ValueError("Missing replacement workflow catalog")
     workflow_rows = readiness["rows"]
-    if (not isinstance(workflow_rows, list)
-            or any(not isinstance(row, dict) or "workflow_path" not in row
-                   for row in workflow_rows)
-            or len({row["workflow_path"] for row in workflow_rows}) != len(workflow_rows)
-            or set(row["workflow_path"] for row in workflow_rows)
-            != CENTRAL_REPLACEMENT_WORKFLOWS):
-        raise ValueError("Replacement workflow catalog is incomplete or ambiguous")
+    required_contract = {"workflow_path", "workflow_blob_sha", "declared_file_binding",
+                         "marker_contract_complete", "static_file_binding_complete",
+                         "input_digest_binding_complete"}
+    if (len(workflow_rows) != len(CENTRAL_REPLACEMENT_WORKFLOWS)
+            or any(not isinstance(row, dict)
+                   or not required_contract <= row.keys()
+                   or not isinstance(row["workflow_path"], str)
+                   or row["workflow_path"] not in CENTRAL_REPLACEMENT_WORKFLOWS
+                   or not isinstance(row["workflow_blob_sha"], str)
+                   or len(row["workflow_blob_sha"]) != 40
+                   or any(ch not in "0123456789abcdef" for ch in row["workflow_blob_sha"])
+                   or any(type(row[field]) is not bool for field in (
+                       "marker_contract_complete", "static_file_binding_complete",
+                       "input_digest_binding_complete"))
+                   or (row["declared_file_binding"] is not None
+                       and (not isinstance(row["declared_file_binding"], dict)
+                            or not {"input_path", "output_label", "output_path"}
+                            <= row["declared_file_binding"].keys()))
+                   for row in workflow_rows)):
+        raise ValueError("Malformed replacement workflow catalog")
     current = {row["workflow_path"]: row for row in workflow_rows}
+    if len(current) != len(CENTRAL_REPLACEMENT_WORKFLOWS):
+        raise ValueError("Replacement workflow catalog is incomplete or ambiguous")
     seen = set()
     results = []
     required = {"legacy_path", "legacy_blob_sha", "replacement_workflow_path",

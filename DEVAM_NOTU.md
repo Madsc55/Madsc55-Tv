@@ -1,3 +1,13 @@
+# EN YENİ K3 GÜNCELLEMESİ — cihaz testi en sona (2026-10-23)
+- Kullanıcı talimatı: IBO Player Pro cihaz kabulünü **en sona bırak**; kullanıcı cihazda kendisi deneyip sonucu bildirecek. Cihaz testi yapılmış gibi gösterme, kullanıcıdan şu aşamada isteme.
+- `madsc/epg.py`: playlist içinde tekrar eden aynı `tvg-id` değerlerini `duplicate_playlist_ids` alanında raporlar ve `matching_verified=false` yapar. Kod commit `c2419d1f700b04752c0fb0c7d0e51b142707990a`.
+- `tests/test_epg.py`: bu davranışı doğrulayan regresyonla toplam 16 EPG testi; commit `2dddb7493762b35519073cd619b1ce324c22818a`.
+- GitHub Actions offline run `39870201168`, tested commit `21410cc6101ca5fad8b4500a74e9c955f23e9ecd`: **success**, `tests_discovered=1039`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`. Test edilen commit 16 EPG testini ve duplicate tvg-id kodunu içeriyor.
+- Sonraki işler: K3 gerçek HTTPS manifest/video/ses pilotlarının kontrollü kanıtları, 6+ saat bağımsız süreklilik, Pages/XMLTV canlı zinciri, logo/kanal kimliği; **en son** kullanıcı tarafından IBO Player Pro cihaz kabulü.
+- Üretim playlist, XMLTV, favori, logo, yedek, arşiv, cihaz verilerine dokunma; PR #71 merge etme. K3-13 canlı kabul bitene kadar açık.
+
+---
+
 # EN YENİ K3 GÜNCELLEMESİ — 15 EPG testi içeren offline suite başarılı (2026-10-23)
 - M3U başlığı ve tvg-id ayrıştırması sıkılaştırıldı. `tvg-id` yalnız `#EXTINF` virgülünden önceki nitelik alanında aranıyor; görünen kanal adındaki sahte metin kabul edilmiyor.
 - GitHub Actions run `39868761301`, tested commit `bbb975e650456ae29d89d5c66dbc4ce51e7c2f6a`: **success**. Log: 1020 test keşfedildi, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`, K3 fixture success.

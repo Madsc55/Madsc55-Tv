@@ -254,3 +254,10 @@
 - Kod: `967977def72e1f184c7e2920d323401f4afb035b`. Testler: `6d9624592a93a885fddd5aaccab2cfcc5f8f1d95` (fsync hatasında kısmi dosya temizliği), `32fd75b48d334068efe5687b085daeb86603a0b4` (symlink parent kaçışı).
 - GitHub'da kod/test dosyaları doğrulandı; bu SHA'lar için CI sonucu henüz doğrulanmadı. Önceki 990 testlik baseline yeni değişikliklerin kanıtı değildir.
 - Bu, paylaşılan izole rapor yazıcısını sertleştirir; repository çapında tüm yazma noktaları kapısı veya 26 kural kabulü değildir. K1 0/26, production_ready=false.
+
+
+## 23 Ekim 2026 — K2 aynı içerikli kaynakların oy şişirmesini engelleme
+- `madsc/discovery_batch.py::corroborate_sources` her feed gövdesi için SHA-256 fingerprint çıkarır; birebir aynı içerik farklı kaynak etiketleriyle verilse bile `source_count` değerine yalnız bir oy ekler. Etiketler raporda görünür kalır; bu mekanizma yalnız birebir aynı gövdeyi saptar, farklı biçimlenmiş kopyaların bağımsızlığını kanıtlamaz.
+- Kod commit: `3ea2415ba29b08994c892dca2cdcfd23b42bd9e5`. Regresyon testi commit: `70433a0079dff063187ce5c094cd5c70d4f828be`.
+- CI durumu henüz doğrulanmadı; workflow dispatch aracı kullanılmadı ve yeni SHA için combined-status sonucu boş. Bu nedenle testler geçmiştir denmiyor. Sonraki iş: kaynak URL/kurum kökenini gerçek kanıtla modellemek ve yalnız farklı, doğrulanmış kökenleri bağımsız oy saymak.
+- K2 kabul sayaçları değiştirilmedi; gerçek kaynak/lisans, günlük keşif eşdeğerliği ve artifact SHA kökeni açık. Üretim playlist/EPG/favoriler/yedekler ile eski depo değişmedi.

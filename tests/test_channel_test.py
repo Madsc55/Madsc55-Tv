@@ -73,6 +73,25 @@ class ChannelTests(unittest.TestCase):
         self.assertFalse(result["observation_provenance_verified"])
         self.assertFalse(result["stream_continuity_verified"])
 
+
+    def test_continuity_requires_strict_rfc3339_timestamp(self):
+        from madsc.channel_test import evaluate_three_stage_continuity
+        base = {"url_sha256": "a" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        valid = ["2026-10-21T10:00:00Z", "2026-10-21T13:00:00+00:00",
+                 "2026-10-21T16:00:00.123456Z"]
+        self.assertTrue(evaluate_three_stage_continuity(
+            [{**base, "observed_at": stamp} for stamp in valid]
+        )["three_stage_six_hour_preliminary"])
+        for malformed in ("2026-10-21 10:00:00Z", "2026-10-21",
+                          "2026-10-21T10:00Z", "2026-10-21T10:00:00",
+                          "2026-10-21T10:00:00.1234567Z"):
+            with self.subTest(stamp=malformed), self.assertRaises(ValueError):
+                evaluate_three_stage_continuity(
+                    [{**base, "observed_at": malformed}] +
+                    [{**base, "observed_at": stamp} for stamp in valid[1:]]
+                )
+
     def test_three_stage_rejects_short_or_out_of_order_evidence(self):
         from madsc.channel_test import evaluate_three_stage_continuity
         base = {"url_sha256": "a" * 64, "http_status": 200,

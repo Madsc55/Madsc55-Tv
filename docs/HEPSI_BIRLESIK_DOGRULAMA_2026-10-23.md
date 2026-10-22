@@ -300,3 +300,10 @@
 ## K2 CI sonuç güncellemesi — 23 Ekim 2026
 - Güncelleme: `source_independence_verified` korumasını içeren kod/test commit'i `9c1c8a594849d730f75d9c050265df74b382b8ec` için GitHub Actions run `39868653542` başarıyla tamamlandı: https://github.com/Madsc55/Madsc55-Tv/actions/runs/39868653542
 - Böylece bu regresyon için önceki “CI bekleniyor” notu geçersizdir. Görev defterine başarılı koşum kanıtı eklendi. Bu başarı gerçek kaynak/lisans kanıtı veya günlük tetik eşdeğerliği anlamına gelmez; K2-05/06/07 ve gerçek kaynak davranış kabulü açık kalır.
+
+
+## 23 Ekim 2026 — K2 metadata ve kaynak liste sınırı sertleştirmesi
+- `madsc/discovery_batch.py::corroborate_sources` `known_urls` girdisini en fazla 20.000 öğeyle sınırlar (`8d116818`). Çok büyük giriş hatayla reddedilir.
+- `parse_m3u` kimlik alanları (`tvg-id`, `tvg-logo`, `group-title`) yanlış veya tırnaksız yazıldığında sessizce metadata düşürmez: `invalid_metadata_attribute` üretir ve ilişkili URL'yi aday kataloğuna almaz. Kod `a5d0d3b4`, kaçış düzeltmesi `f82e0cb9`.
+- İki regresyon testi `38d8209adce32f8d2afa964a6a32ed77c35959b8` commit'inde. Bu commitin doğrudan Actions koşusu iptal edildi; ancak onun iki commit ilerideki soyundan gelen `205ad1bf6f094a36600a0ad5872f228fc74fe850` commit'i için Actions `39869009399` başarıyla tamamlandı. GitHub compare sonucu `ahead`, ahead_by=2, behind_by=0 olarak doğrulandı.
+- K2-08 görev defteri yeni kanıtla güncellendi; tamamlandı statüsüne geçirilmedi. K2-05 gerçek kaynak/lisans, K2-06 günlük tetik davranışsal eşdeğerlik, K2-07 bağımsız gerçek artifact köken/SHA kanıtı hâlâ açık. Korunan üretim dosyalarına, eski depoya ve IBO cihazına dokunulmadı.

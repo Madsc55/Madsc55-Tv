@@ -672,3 +672,11 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Görev defteri K5-19 yeni kanıtla güncellendi: commit `826411b90f37cbe8863f966d874cb4d5925cf6ab`. Bu belge/defter değişiklikleri `[skip ci]`; yeni CI başarısı iddia edilmiyor. En son gözlenen başarılı offline run `39867301153`, test SHA `cb0a046252e1a75d119ae12e0af6c76028b3379c`; bu, daha sonraki HEAD'i veya üretim kabulünü doğrulamaz.
 - Sonraki iş: bu üç workflow için güvenli fixture tabanlı differential testleri eklemek; önce deterministik kaynak puanlama ve IBO artifact seçimini test et. Gerçek keşif/ffprobe/IBO/üretim işlemi için yetki ve bağımsız kanıt olmadan çalıştırma.
 - Korunan playlist, EPG, favori, cihaz, logo, yedek/arşiv dosyalarına dokunulmadı; eski `Madsc55/madsc-tv` deposu salt okunur kaldı; Actions dispatch/rerun ve merge yapılmadı.
+
+
+## 23 Ekim 2026 — K2 metadata çakışması düzeltmesi ve devir
+- `madsc/discovery_batch.py` yinelenen EXTINF metadata adlarını case-insensitive kontrol ederek `duplicate_metadata_attribute` ile reddeder; metadata anahtarları normalize edilir.
+- Kod: `a83211a36e9ad1dd1c6047b74888970ddc33b381`, `b0ab88f2ab2043ecbd24620bd76066a0cd924b45`. Regresyonlar: `b4b13f9de4913af05f5ddcc21e714fff8227c667`, `75d1fa756a232d4ee594bb5ae28faa01abba931b`.
+- Birleşik doğrulama raporu güncellendi: `5fab36193e467b302c5bfe6d90b5558fe42b2547`. Merkezi proje hafızası güncellendi: `89d5a1d03aee84207fecfcc7bd2ed4c684d6bdec`.
+- CI durumu doğrulanmadı; workflow `workflow_dispatch` gerektiriyor ve manuel dispatch yapılmadı. 990 testlik eski baseline yeni kodu kapsamıyor. Testleri başarılı olarak raporlama.
+- Sonraki: güncel HEAD'i tekrar oku; erişilebilir CI sonucu elde edildiğinde regresyonları doğrula. K2-05/06/07/08 durumlarını kanıtsız kapatma. Gerçek kaynak/lisans, günlük eşdeğerlik ve bağımsız artifact SHA kanıtı açık. Üretim listeleri ve eski depo değişmedi.

@@ -27,6 +27,8 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         digest = alternative.get("url_sha256")
         parent = alternative.get("alternative_to_sha256")
         if (not isinstance(digest, str) or not isinstance(parent, str)
+                or any(len(value) != 64 or any(ch not in "0123456789abcdef" for ch in value)
+                       for value in (digest, parent))
                 or digest == parent or digest in alternative_map):
             raise ValueError("Invalid alternative mapping")
         alternative_map[digest] = parent

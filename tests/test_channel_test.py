@@ -37,6 +37,29 @@ class ChannelTests(unittest.TestCase):
                              hashlib.sha256(playlist.read_bytes()).hexdigest())
             self.assertFalse(report["production_approved"])
 
+    def test_batch_probe_limits_fail_closed(self):
+        from madsc.channel_test import (
+            evaluate_repeated_probes, summarize_offline_probe_evidence,
+            summarize_candidate_continuity,
+        )
+        with self.assertRaises(ValueError):
+            evaluate_repeated_probes([], minimum_passes=20001)
+        with self.assertRaises(ValueError):
+            summarize_offline_probe_evidence([{}] * 20001)
+        with self.assertRaises(ValueError):
+            summarize_candidate_continuity(["a" * 64] * 20001, {})
+
+    def test_probe_rejects_nonfinite_duration_and_boolean_status(self):
+        for duration in (float("nan"), float("inf"), -1):
+            with self.subTest(duration=duration), self.assertRaises(ValueError):
+                evaluate_probe({"url_sha256": "a" * 64, "http_status": 200,
+                                "video": True, "audio": True,
+                                "duration_seconds": duration})
+        with self.assertRaises(ValueError):
+            evaluate_probe({"url_sha256": "a" * 64, "http_status": True,
+                            "video": True, "audio": True,
+                            "duration_seconds": 40})
+
     def test_three_stage_six_hour_preliminary_window(self):
         from madsc.channel_test import evaluate_three_stage_continuity
         base = {"url_sha256": "a" * 64, "http_status": 200,

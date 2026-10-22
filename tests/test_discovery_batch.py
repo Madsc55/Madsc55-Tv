@@ -137,6 +137,15 @@ class DiscoveryBatchTests(unittest.TestCase):
             with self.subTest(entrypoint=entrypoint.__name__), self.assertRaises(ValueError):
                 entrypoint({"feed": None})
 
+    def test_quoted_comma_round_trip_in_preview(self):
+        feed = ('#EXTM3U\\n'
+                '#EXTINF:-1 tvg-id="tr,news" group-title="News, World",News, HD\\n'
+                'https://example.org/live.m3u8\\n')
+        result = build_m3u8_preview({"source": feed})
+        self.assertEqual(result["channel_count"], 1)
+        self.assertIn("News, HD", result["content"])
+        self.assertFalse(result["production_ready"])
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

@@ -7,6 +7,16 @@ class CandidateCoordinationTests(unittest.TestCase):
         self.rows = [{"name": "Sample", "url": "https://example.org/live.m3u8"}]
         self.digest = classify_candidates(self.rows)["candidates"][0]["url_sha256"]
 
+    def test_batch_candidate_and_evidence_limits_fail_closed(self):
+        for rows, probes, attempts in (
+            ([{}] * 20001, {}, {}),
+            (self.rows, {str(i): None for i in range(20001)}, {}),
+            (self.rows, {}, {str(i): 0 for i in range(20001)}),
+        ):
+            with self.subTest(size=(len(rows), len(probes), len(attempts))):
+                with self.assertRaises(ValueError):
+                    coordinate(rows, probes, attempts)
+
     def test_empty_metadata_identifier_is_rejected(self):
         for kwargs in ({"epg_ids": {""}}, {"logo_ids": {"  "}}):
             with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):

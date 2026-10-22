@@ -91,6 +91,26 @@ class PlaylistPreviewTests(unittest.TestCase):
             self.assertEqual(original, source.read_bytes())
             self.assertFalse(result["production_writes"])
 
+    def test_offline_cli_emits_five_drafts_without_writing_files(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+        from pathlib import Path
+        from madsc.playlist_previews import main
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "input.m3u8"
+            source.write_text("#EXTM3U\\n#EXTINF:-1,One\\nhttps://example.org/a\\n", encoding="utf-8")
+            before = source.read_bytes()
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(main([str(source)]), 0)
+            report = json.loads(out.getvalue())
+            self.assertEqual(len(report["drafts"]), 5)
+            self.assertEqual(report["counts"]["TEST_BEKLIYOR"], 1)
+            self.assertEqual(source.read_bytes(), before)
+            self.assertEqual({p.name for p in Path(directory).iterdir()}, {"input.m3u8"})
+
     def test_unverified_logo_rejected(self):
         rows = [{"name": "A", "url": "https://example.org/a"}]
         catalog = prepare_channel_catalog(rows)

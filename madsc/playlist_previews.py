@@ -84,3 +84,21 @@ def preview_imported_m3u(source, *, measurements=None, logos=None,
             "duplicate_count": inventory["duplicate_channel_count"],
             "rejected_count": inventory["rejected_channel_count"],
             "catalog_summary": catalog["summary"], **previews}
+
+
+def main(argv=None) -> int:
+    """Offline CLI: print preview JSON to stdout, never write source or output files."""
+    import argparse
+    import json
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser(description="Offline K2/K3/K5 M3U playlist previews")
+    parser.add_argument("source", type=Path, help="Local read-only .m3u/.m3u8 source")
+    args = parser.parse_args(argv)
+    report = preview_imported_m3u(args.source)
+    print(json.dumps(report, ensure_ascii=False, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

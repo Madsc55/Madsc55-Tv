@@ -65,8 +65,8 @@ class CandidateProbeLinkTests(unittest.TestCase):
         base = {"url_sha256": a, "http_status": 200, "video": True,
                 "audio": True, "duration_seconds": 40}
         samples = [{**base, "observed_at": t} for t in (
-            "2026-10-21T10:00:00Z", "2026-10-21T13:00:00Z",
-            "2026-10-21T16:00:00Z")]
+            "2026-10-21T10:00:00Z", "2026-10-21T16:00:00Z",
+            "2026-10-21T22:00:00Z")]
         result = link_candidate_continuity(envelope, {a: samples}, run, sha)
         self.assertEqual(result["preliminary_window_passes"], 1)
         self.assertEqual(result["missing_count"], 1)

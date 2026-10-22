@@ -519,3 +519,8 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 ## 22 Ekim 2026 — K5 davranış karşılaştırma çıktısı, test bekliyor
 - madsc/legacy_parity_cli.py commit 108de8e7c049bf8abab52fa69ae587133ba420f4: K5 karşılaştırma raporu exclusive os.open(O_CREAT|O_EXCL, varsa O_NOFOLLOW) ile açılıyor; ikinci yol kontrolü korunuyor. tests/test_legacy_parity_cli.py commit 1f4d31a03f3ca7b61bd06b28c4693bd3e3142867: ikinci kontrol sonrasında sembolik bağlantı değişiminde hedefin korunmasını denetleyen regresyon eklendi.
 - Bu SHA için test sonucu yok; GitHub Actions tetiklenmedi. K5 gerçek davranış eşdeğerliği 0/92, 26 runtime güvenlik 0/26, görev kabulü 0/22. Öncelik test_legacy_parity_cli, tam offline_gate, sonra eksik gerçek eski/yeni çalışma çiftlerini toplu kanıtlama. Korunan veriye dokunulmadı.
+
+
+## 22 Ekim 2026 — Playlist K2/K3→K5 güvenli taslak hattı
+- madsc/playlist_previews.py: katalogdaki yinelenen source_index ve URL SHA256 reddi (db091a3f88e7ce515858310d70c6d754925eec5d); üretim yazısı/hazırlığı iddiası taşıyan kataloglar reddediliyor (88ceeb937285d5adc5433f659de67f2d62a2945a). Regresyon testleri tests/test_playlist_previews.py (c9a88cc750bf8c98272ef4ef23cca13f84583fd1 ve c8f5592d1399fc21b8a7b1c312451fbf49b18f59).
+- Kod ve testler commit edildi, bu SHA için test yürütülmedi. Mevcut playlist/YEDEKLER/YENILER/FAVORILER/EPG değiştirilmedi; Actions tetiklenmedi. İzole taslak üretimi canlı otomatik playlist güncellemesinin kanıtı değildir. 92 davranışsal kabul, 26 runtime güvenlik kabulü ve 22 görev kabulü değişmedi.

@@ -67,3 +67,8 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - 956d147: CLI kanıt dosyası açıldıktan sonra os.fstat(handle.fileno()) ile normal dosya türü ve 16 MiB üst sınırı doğrulanıyor. Önceki seekable kontrolü kaldırıldı; mevcut yol symlink ve sınırlı okuma kontrolleri korunuyor.
 - 5d087c5: Test sözleşmesi fstat, stat.S_ISREG ve açılmış dosya boyutu kontrolüne uyarlandı.
 - Henüz yerel/CI unittest sonucu alınmadı. Dosya açılışında TOCTOU ve O_NOFOLLOW ile atomik açma konusu ayrıca değerlendirilmeli; fstat tek başına yol değiştirme yarışını çözmez.
+
+## K3 dosya açılışı sertleştirmesi
+- d372f58: Kanıt girdisi os.open ile O_NOFOLLOW (destekleniyorsa) kullanılarak açılıyor, os.fdopen üzerinden fstat kontrolü ve 16 MiB sınırlı okuma sürüyor.
+- 134c3ee: O_NOFOLLOW/os.open kaynak sözleşmesi regresyon testi eklendi.
+- Üst dizin bileşenleri için atomik dirfd/openat yürüyüşü uygulanmadı; yarış koşullarının tamamen kapandığı iddia edilmemeli. Güncel testler çalıştırılmadı.

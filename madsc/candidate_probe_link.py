@@ -89,9 +89,9 @@ def main():
             raise ValueError("Invalid or oversized evidence")
         import os
         import stat
-        flags = os.O_RDONLY
-        if hasattr(os, "O_NOFOLLOW"):
-            flags |= os.O_NOFOLLOW
+        if not hasattr(os, "O_NOFOLLOW"):
+            raise ValueError("Secure evidence opening is unavailable")
+        flags = os.O_RDONLY | os.O_NOFOLLOW
         descriptor = os.open(path, flags)
         with os.fdopen(descriptor, "rb") as handle:
             opened = os.fstat(handle.fileno())

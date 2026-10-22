@@ -82,7 +82,8 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
                           else ("name_group", child["name"].casefold(), child["group_title"].casefold()))
         primary_identity = (("tvg_id", primary["tvg_id"].casefold()) if primary["tvg_id"]
                             else ("name_group", primary["name"].casefold(), primary["group_title"].casefold()))
-        if child_identity != primary_identity or child["alternative_to_sha256"] != parent:
+        if (child_identity != primary_identity or child["alternative_to_sha256"] != parent
+                or identity_primary.get(child_identity) != parent):
             raise ValueError("Conflicting alternative channel identity")
     if any(key not in seen for key in continuity_samples):
         raise ValueError("Unlinked continuity evidence fingerprint")

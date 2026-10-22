@@ -49,3 +49,9 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - 31b2fb2: K3 CLI kanıt dosyalarında üst dizin symlink reddi ve 16 MiB+1 baytla sınırlı okuma eklendi.
 - b014281: CLI dosya okuma korumaları için regresyon sözleşmesi testi eklendi.
 - Bu son değişikliklerin unittest sonucu henüz doğrulanmadı; gerçek canlı ölçüm veya üretim onayı yapılmadı.
+
+## Paralel sohbet koordinasyonu — 22 Ekim son kontrol
+- main son sekiz commit kontrol edildi: diğer sohbetlerde K1/K5 devir notları, K2→K3 zarf doğrulaması ve K3 regresyonları da ilerliyor. Bu sohbet bunları yeniden uygulamayacak.
+- K3 bu sohbetin değişiklik alanı: madsc/candidate_probe_link.py, tests/test_candidate_probe_link.py ve bu devir notu; ortak madsc/channel_test.py üzerinde değişiklik öncesi güncel SHA ve son commit sahipliği yeniden kontrol edilecek.
+- GitHub üzerinden commit ve blob SHA denetimi yapılıyor; sohbetler arasında gerçek zamanlı kilit veya mesajlaşma yok. Çakışma ihtimali sıfır değil.
+- Açık güvenlik konusu: CLI kanıt okumasında dosya açıldıktan sonra descriptor/fstat doğrulaması; önceki yazma girişimi araç güvenlik kontrolünde engellendi, commit oluşmadı.

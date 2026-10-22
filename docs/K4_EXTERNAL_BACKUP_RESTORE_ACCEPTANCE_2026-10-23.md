@@ -47,3 +47,9 @@ Kabul için gereken asgari kanıt:
 
 ## Güvenlik sınırları
 Gerçek playlist/M3U, XMLTV/EPG, FAVORILER, YENILER, YEDEKLER, HEPSI, logolar, cihaz verileri, üretim arşivi/VOD değiştirilmez. Harici servis, kullanıcı cihazı veya üretim hesabına erişim varsayılmaz. Actions dispatch/rerun, merge ve PR #71 merge yapılmaz. Her yeni yazımdan önce canlı HEAD ve hedef blob SHA tekrar kontrol edilir.
+
+
+## Ek kaynak incelemesi — K4 workflow tetik kapsamı (23 Ekim 2026)
+İncelenen kaynak: `.github/workflows/madsc-04-yedek.yml` (blob `28910baa5840da87c97834a9fe4d2708db99a949`). Workflow yalnızca `workflow_dispatch` tetikleyicisine sahip; `schedule`/cron tanımı yok. `permissions: contents: read`, job 10 dakika ile sınırlı ve çıktılar 14 günlük GitHub Actions artifact'ları olarak yükleniyor. Akış gerçek bir dış sağlayıcıya yedek yazmıyor; yalnız `reports/k4-source/nested/sample.txt` test fixture'ı oluşturup izole restore drill / rapor çalıştırıyor. Bu nedenle mevcut K4 workflow'u gerçek ayın 1'i/15'i yedek scheduler'ı olarak kabul edilemez ve sadece cron ekleyerek üretim yedeklemesi haline getirilmemelidir.
+
+K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen K4 workflow'unda iki aylık tetik tanımı da yok. Çözüm, üretim/harici depolama hedefi ve yetkili kimlik bilgileri tasarlanıp ayrı güvenlik incelemesinden geçmeden scheduler'ı üretim gibi göstermemektir. Test fixture'ı gerçek veriye bağlanmamalı.

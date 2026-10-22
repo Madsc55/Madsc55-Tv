@@ -214,6 +214,20 @@ class BackupManifestHardeningTests(unittest.TestCase):
                     verify_manifest(root, forged)
             self.assertTrue(verify_manifest(root, original))
 
+    def test_manifest_rejects_oversized_path_without_reading_files(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_bytes(b"fixture")
+            original = snapshot_manifest(root, ["good.txt"])
+            forged = dict(original)
+            forged["entries"] = [{**original["entries"][0], "path": "x" * 4097}]
+            with patch("madsc.backup.snapshot_manifest",
+                       side_effect=AssertionError("unexpected filesystem access")):
+                with self.assertRaisesRegex(ValueError, "bounded length"):
+                    verify_manifest(root, forged)
+            self.assertTrue(verify_manifest(root, original))
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

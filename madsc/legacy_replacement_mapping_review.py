@@ -84,6 +84,9 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
             and contract["static_file_binding_complete"]
             and contract["input_digest_binding_complete"]
             and contract["controlled_process_contract_complete"]
+            and replacement_path not in (
+                ".github/workflows/madsc-02-kesif.yml",
+                ".github/workflows/madsc-03-kanal-test.yml")
         )
         results.append({
             "legacy_path": path,

@@ -11,6 +11,10 @@ def pack(discovery, run_id, commit_sha):
         raise ValueError("Invalid commit SHA")
     if not isinstance(discovery, dict) or not isinstance(discovery.get("candidates"), list):
         raise ValueError("Invalid discovery")
+    if len(discovery["candidates"]) > 20000:
+        raise ValueError("Too many candidates in discovery")
+    if len(discovery.get("alternatives", [])) > 20000:
+        raise ValueError("Too many alternatives in discovery")
     assess_candidates(discovery, {})
     body = {"schema": 1, "run_id": run_id, "commit_sha": commit_sha, "discovery": discovery}
     digest = hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()

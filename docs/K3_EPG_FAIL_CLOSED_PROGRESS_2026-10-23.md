@@ -1,3 +1,13 @@
+## İkinci K3 sertleştirme turu — M3U tvg-id (2026-10-23)
+- `madsc/epg.py`, aynı `#EXTINF` satırında birden fazla `tvg-id` niteliği bulunduğunda artık `ValueError("Duplicate M3U tvg-id attribute")` ile fail-closed davranır. Böylece regex'in ilk değeri alıp çakışan metadata'yı sessizce yok sayması önlenir.
+- Tek `tvg-id` değerinin çevresindeki boşluklar normalize edilerek eşleme yapılır.
+- Kod commit: `6dcaaace0f8cb4faad0185584f6aafa319090159`; test commit: `73fdc790449f6c571b644729aa988d8f954d7304`; K3-13 görev defteri güncellemesi: `15e3ca6a4a3787f8b0c16e648179ec833843524a`.
+- Bu turda mevcut doğrulama mantığının odaklı yerel davranış denemeleri 5/5 geçti: duplicate tvg-id reddi, eksik/boş programme channel reddi, tanımsız programme channel eşlemesinin başarısız olması ve tvg-id kenar boşluğu normalizasyonu. Bu, tam depo test paketi veya GitHub Actions başarısı değildir.
+- Üç yeni birim testi değil, bu turda `tests/test_epg.py` dosyasına iki regresyon testi daha eklendi; toplam 9 test fonksiyonu var.
+- Actions bilerek tetiklenmedi. Canlı yayın, IBO Player Pro, Pages zinciri ve gerçek EPG görüntülemesi hâlâ kanıtlanmadı.
+
+---
+
 # K3 — EPG/XMLTV eşleme sertleştirmesi ve açık kabul boşlukları
 Tarih: 2026-10-23 (Europe/Stockholm)
 Depo: Madsc55/Madsc55-Tv, main

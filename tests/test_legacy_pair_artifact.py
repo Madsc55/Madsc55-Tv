@@ -52,7 +52,7 @@ class LegacyPairArtifactTests(unittest.TestCase):
             "legacy": execution("Madsc55/madsc-tv", "madsc/bes-sistem-toplu-birlestirme",
                                 PATH, BLOB, 11, 21),
             "replacement": execution("Madsc55/Madsc55-Tv", "main",
-                                     ".github/workflows/madsc-05-genel-bakim.yml",
+                                     ".github/workflows/madsc-05-bakim.yml",
                                      "2" * 40, 12, 22),
         }
 

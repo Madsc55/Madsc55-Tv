@@ -145,7 +145,7 @@ def compare_snapshot_batch(inventory, snapshots):
 CENTRAL_REPLACEMENT_WORKFLOWS = frozenset({
     f".github/workflows/madsc-0{stage}-{name}.yml"
     for stage, name in ((1, "guvenlik"), (2, "kesif"), (3, "kanal-test"),
-                        (4, "arsiv-yedek"), (5, "genel-bakim"))
+                        (4, "yedek"), (5, "bakim"))
 })
 
 

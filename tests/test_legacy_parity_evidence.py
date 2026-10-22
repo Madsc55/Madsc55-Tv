@@ -182,7 +182,7 @@ class LegacyScopeTests(unittest.TestCase):
             "legacy": origin("Madsc55/madsc-tv", "madsc/bes-sistem-toplu-birlestirme",
                              path, blob, 101, 201),
             "replacement": origin("Madsc55/Madsc55-Tv", "main",
-                                  ".github/workflows/madsc-05-genel-bakim.yml",
+                                  ".github/workflows/madsc-05-bakim.yml",
                                   "e" * 40, 102, 202),
         }
 

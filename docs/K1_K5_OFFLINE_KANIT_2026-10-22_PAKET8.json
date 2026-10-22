@@ -1,0 +1,41 @@
+{
+  "schema": "madsc-k1-k5-offline-evidence-v1",
+  "date": "2026-10-22",
+  "package": 8,
+  "base_main_sha": "f4198b56cd9e3e40c45797cb9ae74b934a1fa043",
+  "scope": "replacement parity manifest producer and exact five-workflow identity correction",
+  "tests": {
+    "command": "python -m madsc.offline_gate",
+    "discovered": 580,
+    "passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "legacy_source_workflows": 99,
+    "legacy_behavior_workflows": 92,
+    "behavioral_parity_accepted": 0,
+    "runtime_security_accepted": 0,
+    "task_acceptance": 0
+  },
+  "changes": [
+    "Deterministic v1 parity manifest is derived from actual bounded input bytes and a validated execution snapshot.",
+    "The shared K1 isolated report writer provides exclusive-create, root, ancestor and symlink protection.",
+    "Only Madsc55/Madsc55-Tv main and the five workflow files actually installed in the repository are accepted.",
+    "The stale replacement names madsc-04-arsiv-yedek.yml and madsc-05-genel-bakim.yml are rejected; those names remain valid only in the pinned legacy scope exclusions.",
+    "Generated evidence explicitly keeps behavioral_parity_accepted and production_ready false."
+  ],
+  "source_sha256": {
+    "madsc/legacy_parity_evidence.py": "0a06ae545b95adc3ce1e5b1712eec82bc287ac15fd4f2c3fedbd8a20777603e3",
+    "madsc/parity_manifest_writer.py": "7fc79fa0ed7f4030437efcb4332bf4a8ad94c201a69214798950df51bad4a94d",
+    "tests/test_parity_manifest_writer.py": "e848e9ab1eec09a03077c380be3fe814a65df72b3ad39f6483fcf787579accf4",
+    "tests/test_legacy_pair_artifact.py": "8425dab3793051e7a3c2ad125899eb0e4dfe32faa138a9cd884b1e21b6886e7c",
+    "tests/test_legacy_parity_evidence.py": "ec8339728a5abd72ca83ab73cbfa4f4915cc72e930d23861f51d492ed5a7ba01",
+    "tests/test_github_legacy_pair_client.py": "781fa8085f99cdaf67a32f7689f31a5078c3a899bc2aeb87d30a09d74b07d845"
+  },
+  "constraints": {
+    "github_actions_started": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_written": false,
+    "fixture_is_acceptance": false
+  }
+}

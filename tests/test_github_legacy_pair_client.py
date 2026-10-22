@@ -5,7 +5,7 @@ from madsc.github_legacy_pair_client import verify_provenance_pair_api
 
 LEGACY_PATH = ".github/workflows/example.yml"
 LEGACY_BLOB = "1" * 40
-NEW_PATH = ".github/workflows/madsc-05-genel-bakim.yml"
+NEW_PATH = ".github/workflows/madsc-05-bakim.yml"
 
 
 def origin(repository, branch, workflow_path, workflow_blob, run_id, artifact_id):

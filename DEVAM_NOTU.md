@@ -1,6 +1,6 @@
 # Madsc55-Tv — DEVAM NOTU
 
-**En yeni kayıt:** Güncel birleşik kaynakta 757 test, beş izole kapı ve beş gerçek yerel raporun K5 tüketimi başarılı. Tam kabul hâlâ eksik; toplu açık kanıt listesi son kayıt ve FIVE_SYSTEM_BULK_VALIDATION raporunda.
+**En yeni kayıt:** Yeni sohbet devri tamamlandı: SOHBET_DEVIR_2026-10-22_SON.md. Son doğrulanmış paket 757 test+5 kapı+5 rapor/K5; sonraki 3c228e7 modülü henüz test edilmedi. Önce son devir kaydını oku.
 
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
 
@@ -394,3 +394,11 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Actions/merge/PR71/canlı probing/korunan IPTV-EPG-yedek-favori-logo-arşiv ve eski repo yazısı yapılmadı. Bu [skip ci] paketinin SHA'sı Git geçmişindedir. Sonraki iş rapordaki bağımsız dış kanıt engellerini ve 11 kaynak sözleşme farkını ana beşli sistem içinde çözmek; küçük fixture testlerini gerçek 92 davranış tamamlandı gibi sunmamak.
 
 - Yayın sırasında diğer sohbetin yalnız docs/K1_K5_KURULUM_DURUMU_2026-10-22.md ekleyen a39cdfa commit'i geldi; içerik okundu ve korundu. Test edilen Python/test/workflow kaynakları değişmedi; dal eski HEAD üzerine zorlanmadı.
+
+
+## 22 Ekim 2026 — Bu sohbetin son devri
+Kullanıcı tüm ilerlemenin kaydedilip yeni sohbete geçilmesini istedi. Ayrıntılı toplu devir: SOHBET_DEVIR_2026-10-22_SON.md. Yanlış eski repo çalışması ve yeni sisteme aktarım, bütün ilgili commit/kanıt dosyaları, başarısız testler ve düzeltmeleri, 757 test+5 kapı+5 dosya/K5 doğrulaması, açık 11 sözleşme farkı ve 92/26/22 bağımsız kabul eksikleri kaydedildi. Bu devir hazırlanırken HEAD 3c228e7340b090ae4edf49d3d7b49382a4ef6d69; bu HEAD'in eklediği five_stage_installation modülü ve iki testi okundu ama çalıştırılmadı. İlk iş güncel HEAD'de bunları ve tam offline_gate'i doğrulamak. 757 testi sonraki kaynak sürümüne otomatik mal etme. Korunan veriler/eski repo/PR71/izinsiz Actions ve canlı test sınırları değişmedi; IBO testi kullanıcıda. Bu commit yalnız dokümandır, yeni test sonucu değildir.
+
+
+## Eşzamanlı diğer devirle mutabakat
+Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_DEVIR_2026-10-22.md ekledi; metin okundu ve korundu. O belgedeki 707 test bilgisi tarihsel kaldı: 1b30eee paketi 757 test+5 kapı+5 rapor/K5 ile doğrulandı, daha sonraki 3c228e7 dosyaları henüz sınanmadı. Diğer belgenin kullanıcı ekranından aktardığı K4 EPG/logo ve K5 arşiv/bakım hedefleri ile repo teknik K4 yedek/K5 bakım adlandırması arasındaki fark yeni sohbette açık görev eşlemesiyle uzlaştırılmalı; repo isimleri varsayımla değiştirilmemeli. Bu devir kaydı bütün önceki notları tamamlar.

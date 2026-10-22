@@ -30,3 +30,11 @@
 - Kullanıcı diğer sohbetin çalışmasının bittiğini teyit etti. Son GitHub HEAD kontrolünde `ccda375bde9e6e06650dc14b64a726346c6bb135` görüldü; daha yeni başka sohbet commit'i henüz görünmüyor. Herhangi bir eksik sohbet mesajının otomatik taşındığı iddia edilmez.
 - `DEVAM_NOTU.md` diğer sohbetin `71ba4ae` diagnostic outcome strictness testlerini ve bu sohbetin `e34b948` API run-state testlerini birlikte içeriyor. Bu belge ikisini de kapsar; hiçbir eski değişiklik üzerine yazılmadı.
 - Yeni sohbette artık **tek kanonik çalışma akışı** kullan: önce güncel HEAD'i oku, bu belgeyi ve iki ana notu oku, yeni testleri gerçekten çalıştır, kanıt yoksa kabulü değiştirme. Mevcut test engeli ve 0/92, 0/26, 0/22 sınırları aynen geçerlidir.
+
+
+## 22 Ekim 2026 — Bu sohbetin son devri
+Kullanıcı tüm ilerlemenin kaydedilip yeni sohbete geçilmesini istedi. Ayrıntılı toplu devir: SOHBET_DEVIR_2026-10-22_SON.md. Yanlış eski repo çalışması ve yeni sisteme aktarım, bütün ilgili commit/kanıt dosyaları, başarısız testler ve düzeltmeleri, 757 test+5 kapı+5 dosya/K5 doğrulaması, açık 11 sözleşme farkı ve 92/26/22 bağımsız kabul eksikleri kaydedildi. Bu devir hazırlanırken HEAD 3c228e7340b090ae4edf49d3d7b49382a4ef6d69; bu HEAD'in eklediği five_stage_installation modülü ve iki testi okundu ama çalıştırılmadı. İlk iş güncel HEAD'de bunları ve tam offline_gate'i doğrulamak. 757 testi sonraki kaynak sürümüne otomatik mal etme. Korunan veriler/eski repo/PR71/izinsiz Actions ve canlı test sınırları değişmedi; IBO testi kullanıcıda. Bu commit yalnız dokümandır, yeni test sonucu değildir.
+
+
+## Eşzamanlı diğer devirle mutabakat
+Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_DEVIR_2026-10-22.md ekledi; metin okundu ve korundu. O belgedeki 707 test bilgisi tarihsel kaldı: 1b30eee paketi 757 test+5 kapı+5 rapor/K5 ile doğrulandı, daha sonraki 3c228e7 dosyaları henüz sınanmadı. Diğer belgenin kullanıcı ekranından aktardığı K4 EPG/logo ve K5 arşiv/bakım hedefleri ile repo teknik K4 yedek/K5 bakım adlandırması arasındaki fark yeni sohbette açık görev eşlemesiyle uzlaştırılmalı; repo isimleri varsayımla değiştirilmemeli. Bu devir kaydı bütün önceki notları tamamlar.

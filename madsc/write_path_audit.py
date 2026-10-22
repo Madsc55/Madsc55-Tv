@@ -37,6 +37,10 @@ def audit_write_paths(paths: list[str]) -> dict:
             or any(part.endswith((" ", ".")) for part in normalized_parts)
             or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw)
             or any(part.endswith((" ", ".")) for part in parts)
+            # Never allow the guarded writer to alter Git internals or
+            # repository automation configuration via a proposed data path.
+            or any(part in (".git", ".github") for part in normalized_parts)
+            or any(part in (".gitmodules", ".gitattributes") for part in normalized_parts)
             or ":" in name
             or "\x00" in name
             or name.startswith("~")

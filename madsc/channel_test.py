@@ -121,6 +121,11 @@ def evaluate_three_stage_continuity(samples: list[dict], minimum_hours: float = 
             raise ValueError("Invalid observation time") from exc
         if instant.tzinfo is None or instant.utcoffset() is None:
             raise ValueError("Timezone-aware observation required")
+        now = datetime.now(timezone.utc)
+        if instant.astimezone(timezone.utc) > now:
+            raise ValueError("Future-dated continuity evidence is invalid")
+        if instant.year < 2020:
+            raise ValueError("Implausibly old continuity evidence is invalid")
         parsed.append((instant.astimezone(timezone.utc), evaluate_probe(sample)))
     if any(a[0] >= b[0] for a, b in zip(parsed, parsed[1:])):
         raise ValueError("Samples must be strictly chronological")

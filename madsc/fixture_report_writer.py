@@ -27,9 +27,10 @@ def _exclusive_bytes(destination: Path, payload: bytes) -> None:
         flags |= os.O_NOFOLLOW
     descriptor = os.open(destination, flags, 0o600)
     completed = False
-    created_identity = os.fstat(descriptor)
+    created_identity = None
     try:
         metadata = os.fstat(descriptor)
+        created_identity = metadata
         if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
             raise PermissionError("Evidence output must be an independent regular file")
         with os.fdopen(descriptor, "wb", closefd=False) as handle:
@@ -46,7 +47,9 @@ def _exclusive_bytes(destination: Path, payload: bytes) -> None:
             except FileNotFoundError:
                 pass
             else:
-                if (current.st_dev, current.st_ino) == (created_identity.st_dev, created_identity.st_ino):
+                if (created_identity is not None and
+                        (current.st_dev, current.st_ino) ==
+                        (created_identity.st_dev, created_identity.st_ino)):
                     destination.unlink(missing_ok=True)
 
 

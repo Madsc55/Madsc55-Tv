@@ -35,6 +35,44 @@ def _open_relative_file_nofollow(root: Path, parts: tuple[str, ...]) -> int:
                 pass
 
 
+def _create_relative_file_nofollow(root: Path, parts: tuple[str, ...],
+                                   expected_root_identity: tuple[int, int] | None = None) -> int:
+    """Exclusively create a file beneath root using directory descriptors only."""
+    if (not parts or any(not isinstance(part, str) or part in ("", ".", "..")
+                         or "/" in part or "\\\\" in part for part in parts)):
+        raise ValueError("Unsafe sandbox destination path")
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    directory = getattr(os, "O_DIRECTORY", None)
+    if (type(nofollow) is not int or type(directory) is not int
+            or os.open not in os.supports_dir_fd or os.mkdir not in os.supports_dir_fd):
+        raise ValueError("Secure no-follow destination creation is unavailable")
+    directory_flags = os.O_RDONLY | directory | nofollow
+    opened_dirs: list[int] = []
+    try:
+        current = os.open(root, directory_flags)
+        opened_dirs.append(current)
+        root_stat = os.fstat(current)
+        if (expected_root_identity is not None and
+                (root_stat.st_dev, root_stat.st_ino) != expected_root_identity):
+            raise ValueError("Sandbox destination root changed during copy")
+        for component in parts[:-1]:
+            try:
+                os.mkdir(component, mode=0o700, dir_fd=current)
+            except FileExistsError:
+                pass
+            child = os.open(component, directory_flags, dir_fd=current)
+            opened_dirs.append(child)
+            current = child
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | nofollow
+        return os.open(parts[-1], flags, 0o600, dir_fd=current)
+    finally:
+        for descriptor in reversed(opened_dirs):
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+
+
 def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     root = Path(root)
     if root.is_symlink() or not root.is_dir():
@@ -219,10 +257,9 @@ def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) ->
     try:
         for entry in original["entries"]:
             relative = Path(entry["path"])
-            target = destination / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
             descriptor = _open_relative_file_nofollow(backup, relative.parts)
-            with os.fdopen(descriptor, "rb") as reader, target.open("xb") as writer:
+            target_descriptor = _create_relative_file_nofollow(destination, relative.parts, created_identity)
+            with os.fdopen(descriptor, "rb") as reader, os.fdopen(target_descriptor, "wb") as writer:
                 metadata = os.fstat(reader.fileno())
                 if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
                     raise ValueError("Sandbox copy source must be an independent regular file")
@@ -268,10 +305,9 @@ def backup_to_new_sandbox(source: Path, destination: Path, names: list[str]) -> 
     try:
         for entry in original["entries"]:
             relative = Path(entry["path"])
-            target = destination / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
             descriptor = _open_relative_file_nofollow(source, relative.parts)
-            with os.fdopen(descriptor, "rb") as reader, target.open("xb") as writer:
+            target_descriptor = _create_relative_file_nofollow(destination, relative.parts, created_identity)
+            with os.fdopen(descriptor, "rb") as reader, os.fdopen(target_descriptor, "wb") as writer:
                 metadata = os.fstat(reader.fileno())
                 if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
                     raise ValueError("Sandbox copy source must be an independent regular file")

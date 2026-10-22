@@ -85,12 +85,19 @@ def write_turkish_tv_test_bundle(root: Path, playlist: bytes, report: str) -> di
     created = []
     try:
         _exclusive_bytes(playlist_path, playlist)
-        created.append(playlist_path)
+        created.append((playlist_path, playlist_path.lstat()))
         _exclusive_bytes(report_path, report.encode("utf-8"))
-        created.append(report_path)
+        created.append((report_path, report_path.lstat()))
     except Exception:
-        for path in reversed(created):
-            path.unlink(missing_ok=True)
+        # Roll back only the exact inodes this call created. A concurrent
+        # replacement must not be removed as if it were our own evidence.
+        for path, identity in reversed(created):
+            try:
+                current = path.lstat()
+            except FileNotFoundError:
+                continue
+            if (current.st_dev, current.st_ino) == (identity.st_dev, identity.st_ino):
+                path.unlink(missing_ok=True)
         raise
     return {
         "isolated_bundle_written": True,

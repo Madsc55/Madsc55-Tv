@@ -175,7 +175,8 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
                 ("tvg", entry["tvg_id"].casefold()) if entry["tvg_id"] else
                 ("name", entry["name"].casefold(), entry["group_title"].casefold()),
             )
-            for entry in report["candidates"]
+            for entry, original in zip(report["candidates"], report["candidate_rows"])
+            if normalize_url(original["url"]) not in known
         )
         source_fingerprint = sha256(repr(semantic_rows).encode("utf-8")).hexdigest()
         for entry, original in zip(report["candidates"], report["candidate_rows"]):

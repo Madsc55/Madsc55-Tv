@@ -240,6 +240,10 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
             continue
         if any(part in {".git", "__pycache__"} for part in file.parts):
             continue
+        # Never follow a linked source file outside the audited tree.
+        # Reject rather than silently omitting an untrusted Python entry.
+        if file.is_symlink():
+            raise ValueError(f"Symlinked Python source requires review: {relative}")
         scanned.append(relative)
         rows.extend(scan_python_source(file.read_text(encoding="utf-8"), relative))
     return {

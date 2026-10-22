@@ -1,0 +1,60 @@
+{
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "base_commit": "37e52ab3647e9198e4ed2d207f47aaf81b87f59d",
+  "validation": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 707,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "regression_before_fix": {
+    "tests": 5,
+    "failures": 4
+  },
+  "change": "Reject reordered supplied history across and within pages; validate timestamps before filtering active runs.",
+  "source_sha256": {
+    "madsc/maintenance.py": "0f13532929714c186fde4ad5d171864844806ed091a500ef1b578626d013be9a",
+    "tests/test_failure_history_order.py": "ef6349d474bff5925eb32eeb83da722cdca696eb25d3617f3ca47ed29148b4ab"
+  },
+  "github_actions_triggered": false,
+  "runtime_history_origin_verified": false,
+  "limitations": [
+    "Ordering alone cannot prove missing pages absent or authenticate GitHub history.",
+    "Supplied history remains offline; production enforcement not added."
+  ],
+  "production_acceptance": false
+}

@@ -9,6 +9,7 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
 
     Offline only: the caller must supply authenticated history separately.
     Incomplete evidence cannot be interpreted as a zero-failure history.
+    Pages must preserve descending creation-time/id order, including active runs.
     """
     retry_decision(0, limit)
     if (type(current_run_id) is not int or current_run_id <= 0
@@ -53,13 +54,19 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
             raise ValueError("Ambiguous failure history timestamp")
         return value
 
-    current_order = (timestamp(current), current_run_id)
+    # Validate the supplied page sequence before filtering or sorting. Otherwise
+    # an out-of-order older success could falsely terminate a partial history.
+    orders = {run["id"]: (timestamp(run), run["id"]) for run in runs.values()}
+    sequence = list(orders.values())
+    if any(previous <= following for previous, following in zip(sequence, sequence[1:])):
+        raise ValueError("Failure history page order is not descending")
+    current_order = orders[current_run_id]
     prior = []
     for run in runs.values():
         if run["id"] == current_run_id or run.get("head_branch") != branch:
             continue
         if run.get("status") == "completed":
-            order = (timestamp(run), run["id"])
+            order = orders[run["id"]]
             if order < current_order:
                 prior.append((order, run))
     prior.sort(key=lambda item: item[0], reverse=True)

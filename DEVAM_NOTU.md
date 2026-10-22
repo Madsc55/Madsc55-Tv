@@ -1,6 +1,6 @@
 # Madsc55-Tv — DEVAM NOTU
 
-**En yeni kayıt:** Gerekçeli eşleme incelemesi mevcut provenance CLI/batch ve pair hazırlığına bağlandı; 702 yerel test ve beş izole K kapısı başarılı. Ayrıntılar son kayıtta.
+**En yeni kayıt:** K5 supplied hata geçmişinde sayfa/satır sırası ve aktif timestamp doğrulaması eklendi; 707 yerel test ve beş izole K kapısı başarılı. Ayrıntılar son kayıtta.
 
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
 
@@ -357,3 +357,8 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - İnceleme gerekçesi ilgili pair_preparation satırına taşınır; supplied aday sayısı ayrı raporlanır. Bunlar bağımsız onay değildir: review_required=true, independently_reviewed=0, behavioral acceptance=0 kalır. Fixture eşlemesi gerçek legacy davranış incelemesi gibi kaydedilmedi.
 - Dört yeni bütünleşik regresyon: gerekçenin aynı satıra taşınması, yanlış kaynak/rol/ek approved/duplicate/kaynaksız bildirim reddi, boş ve hiç verilmemiş inceleme ayrımı, mevcut CLI'nin hatalı incelemede çıktı yazmaması. python -m madsc.offline_gate: **702 test + beş izole K1–K5 kapısı başarılı**; 92+7 kaynak/10 yardımcı komut/22 görev envanteri geçti. git diff --check temiz. Kanıt docs/MAPPING_REVIEW_CHAIN_KANIT_2026-10-22.json.
 - K1 çıktı koruması değişmedi; K2/K3 canlı input ve K4 yedek/restore yolu değişmedi; K5 karşılaştırma raporu genişledi. Actions, production, eski repo, workflow/cron/izin, PR değişmedi. Kod/test/kanıt/notlar aynı [skip ci] commitinde, SHA geçmiştedir. Kabul 0/92, 0/26, 0/22. Gerçek kaynak gerekçeli davranış incelemesi ve bağımsız aynı-input yürütme/API/artifact/yan etki kanıtları hâlâ açık; yeni sahte metadata ekleyerek kabul üretme.
+
+## 22 Ekim 2026 — K5 sayfalı hata geçmişi sıra doğrulaması
+- Tek hedef Madsc55/Madsc55-Tv/main, taban 37e52ab3647e9198e4ed2d207f47aaf81b87f59d. Eksik ve sırası bozuk supplied history eski success sınırını kullanarak RETRY_LATER verebiliyordu. Mevcut assess_failure_history artık filtrelemeden önce bütün aktif/tamamlanmış satırların timestamp/id sırasını sayfa içinde ve sayfalar arasında azalan olarak doğrular; bozuk aktif timestamp de reddedilir. Varsayılan üç hata eşiği ve sıralı prefix success sınırı politikası değişmedi.
+- Beş regresyonun dördü düzeltme öncesi beklenen ValueError oluşmadığı için başarısızdı. Düzeltme sonrası toplu python -m madsc.offline_gate: **707 test + beş izole K1–K5 kapısı başarılı**; 92+7 kaynak, 10 yardımcı komut, 22 görev envanteri geçti. git diff --check temiz. Kanıt docs/FAILURE_HISTORY_ORDER_KANIT_2026-10-22.json.
+- K5 retry kararı sıkılaştırıldı; K1 çıktı kapısı, K2/K3 keşif/kanal ve K4 yedek yolları değişmedi, beş izole kapı birlikte geçti. Actions/production/eski repo/workflow/cron/izin/PR değişikliği yok. Kod/test/kanıt/notlar aynı [skip ci] commitinde; SHA geçmiştedir. Sıra doğrulaması tek başına API kökenini veya atlanmış satır bulunmadığını kanıtlamaz; authenticated history ve gerçek bağımsız yürütme kanıtı hâlâ eksiktir. Kabul 0/92, 0/26, 0/22 korunur.

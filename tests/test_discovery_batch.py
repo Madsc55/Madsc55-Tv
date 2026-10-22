@@ -234,6 +234,13 @@ class DiscoveryBatchTests(unittest.TestCase):
                             for row in report["identity_candidates"]))
         self.assertTrue(all(row["sources"] == ["source-a", "source-b"]
                             for row in report["identity_candidates"]))
+        self.assertFalse(report["source_independence_verified"])
+        self.assertEqual(
+            report["source_count_semantics"],
+            "distinct_semantic_feed_inventories_not_verified_origins",
+        )
+        self.assertTrue(all(not row["source_independence_verified"]
+                            for row in report["identity_candidates"]))
 
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):

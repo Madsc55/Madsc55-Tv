@@ -66,5 +66,22 @@ class K4EvidenceTests(unittest.TestCase):
                         main()
                     self.assertFalse(output.exists())
 
+    def test_cli_writes_isolated_result_once_without_production_claim(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            report = root / "evidence.json"
+            output = root / "verified.json"
+            report.write_text(json.dumps(GOOD))
+            args = ["k4_evidence", "--report", str(report), "--output", str(output)]
+            with patch("sys.argv", args):
+                main()
+            result = json.loads(output.read_text())
+            self.assertTrue(result["k4_isolated_restore_verified"])
+            self.assertFalse(result["production_ready"])
+            self.assertFalse(result["external_storage_proven"])
+            with patch("sys.argv", args), self.assertRaises(ProtectedWriteRejected):
+                main()
+            self.assertEqual(json.loads(output.read_text()), result)
+
 if __name__ == "__main__":
     unittest.main()

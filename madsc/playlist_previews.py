@@ -18,6 +18,8 @@ def render_playlist_previews(catalog: dict, source_rows: list[dict]) -> dict:
     """Return separate in-memory drafts; never treat preliminary tests as acceptance."""
     if not isinstance(catalog, dict) or not isinstance(source_rows, list):
         raise ValueError("Invalid catalog or source rows")
+    if catalog.get("production_writes") is not False or catalog.get("production_ready") is not False:
+        raise ValueError("Playlist preview requires a read-only, non-production catalog")
     entries = catalog.get("channels")
     if not isinstance(entries, list):
         raise ValueError("Missing catalog channels")

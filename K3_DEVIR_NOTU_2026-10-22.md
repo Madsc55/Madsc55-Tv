@@ -42,3 +42,6 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - 4f7314a: Sahte kanıt zarfı, yanlış commit SHA ve aday/ölçüm kimlik uyuşmazlığı testleri eklendi.
 - Yerel çalışma ortamında GitHub DNS çözümlemesi başarısız: `Could not resolve host: github.com`. Bu yüzden güncel testler çalıştırılamadı; yeşil kabul edilmemeli.
 - GitHub'dan K3 kod ve test dosyalarının güncel içerikleri SHA ile tekrar okundu; paralel sohbetlerde değişen dosyalar için SHA tabanlı yazma sürdürüldü.
+
+- b5018df: Aynı UTC anını farklı saat dilimiyle tekrarlayan ölçümler ve karışık kanal SHA256 aşamaları için regresyon testleri eklendi.
+- GitHub Actions geçmişinde son görülen offline test çalışması 39800980208 başarılı, fakat HEAD 3edbb863 sürümüne ait; yeni K3 commit'lerinin doğrulaması değildir. Yeni Actions çalışması tetiklenmedi.

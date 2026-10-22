@@ -58,6 +58,18 @@ class GuardTests(unittest.TestCase):
                     main()
                 self.assertEqual(caught.exception.code, 2)
 
+    def test_cli_fails_closed_without_no_follow_support(self):
+        import os
+        from src.madsc_guard import main
+        with tempfile.TemporaryDirectory() as folder:
+            manifest = Path(folder) / "valid.json"
+            manifest.write_text('{"production_write": false, "output_paths": ["artifacts/report.json"]}')
+            with patch.object(os, "O_NOFOLLOW", None, create=True):
+                with patch("sys.argv", ["madsc_guard", str(manifest)]):
+                    with self.assertRaises(SystemExit) as caught:
+                        main()
+                    self.assertEqual(caught.exception.code, 2)
+
     def test_allowed(self):
         validate_manifest({"production_write": False, "output_paths": ["artifacts/report.json"]})
     def test_denied(self):

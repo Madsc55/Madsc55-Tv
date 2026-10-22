@@ -211,3 +211,7 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Kod/test commit: 0abc1e5ab3243eb0a4bfd7d5df268153e597067b. tests/test_parity_workflow_integration.py içinde K1/K4/K5 için girdi hash kaydı < gerçek tüketici < ilk hash doğrulaması < manifest CLI < ikinci hash doğrulaması < artifact upload sırasını statik olarak denetleyen test eklendi.
 - Test çalıştırılmadı: yerel container GitHub DNS çözümlemesi başarısız (Could not resolve host: github.com); GitHub Actions kota izni olmadığı için dispatch/rerun yapılmadı. 605 eski kanıt yeni commit için geçerli sayılmaz.
 - Sonraki adım: erişilebilir checkout ile tek offline_gate, statik test ve YAML doğrulaması; hataları düzeltip kanıt SHA'larıyla kaydet. Tam kabul 0/92, 0/26, 0/22. Korunan üretim verileri, eski repo ve PR #71 değişmedi.
+
+## 22 Ekim 2026 — 3/3 statik hash sırası kontrolü
+- Kaynak HEAD ddebbac51b15a16e6d86e67633a504f9c6ca8a0c üzerinde K1/K4/K5 YAML dosyaları GitHub'dan yeniden okunarak tam sıralama koşulları 3/3 sağlandı. Kanıt: docs/PARITY_HASH_ORDER_STATIC_KANIT_2026-10-22.json (commit de0baa35997eb7eadcab996291c339651ae9970e).
+- Bu sonuç yalnızca statik string/konum kontrolüdür; Python unittest, YAML parser, offline_gate, GitHub Actions ve gerçek davranışsal parity testleri ÇALIŞTIRILMADI. Yerel git clone DNS engelli; Actions izinsiz tetiklenmedi. Sonraki iş erişilebilir yerel checkout ile gerçek toplu test, hata düzeltmesi ve güvenli kanıt.

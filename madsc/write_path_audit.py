@@ -16,8 +16,8 @@ PROTECTED_PREFIXES = ("yedekler/", "YEDEKLER/", "FAVORILER/", "HEPSI/",
                       "EPG/", "logolar/", "logos/", "arsiv/")
 
 def audit_write_paths(paths: list[str]) -> dict:
-    if not isinstance(paths, list):
-        raise ValueError("Paths must be a list")
+    if not isinstance(paths, list) or not paths:
+        raise ValueError("Paths must be a nonempty list")
     rejected = []
     seen = set()
     for raw in paths:

@@ -57,6 +57,10 @@ def _exclusive_bytes(destination: Path, payload: bytes) -> None:
                     destination.unlink(missing_ok=True)
 
 
+
+# Rollback identity includes timestamps and size as well as inode to avoid
+# deleting a concurrent replacement if the filesystem reuses an inode.
+
 def prepare_turkish_tv_test_bundle(root: Path) -> tuple[Path, Path, Path]:
     """Create only the reports directory and preflight both fixed outputs."""
     root = _prepare_fixture_root(root)

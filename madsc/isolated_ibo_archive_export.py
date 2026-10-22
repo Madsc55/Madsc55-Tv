@@ -49,6 +49,13 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
             raise OSError("Archive manifest readback mismatch")
         if hashlib.sha256(saved).digest() != hashlib.sha256(payload).digest():
             raise OSError("Archive manifest byte integrity mismatch")
+        # Ensure the new directory entry is durable as well as the file bytes.
+        if hasattr(os, "O_DIRECTORY"):
+            directory_fd = os.open(destination, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
         return manifest
     except BaseException:
         target.unlink(missing_ok=True)

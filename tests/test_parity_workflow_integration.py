@@ -96,6 +96,8 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
                 self.assertIn("consumer_status=", data)
                 self.assertIn('if [[ "$consumer_status" -ne 0 ]]; then', data)
                 self.assertIn('exit "$consumer_status"', data)
+                self.assertIn("preserving original consumer exit status", data)
+                self.assertIn("|| echo", data)
                 self.assertIn('--exit-code "$consumer_status"', data)
                 self.assertIn("--output " + observation, data)
                 self.assertLess(data.index('--exit-code "$consumer_status"'),

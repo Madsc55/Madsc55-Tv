@@ -129,3 +129,13 @@ class EpgTests(unittest.TestCase):
             e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "Invalid M3U8 playlist"):
                 check_epg_mapping(p, e)
+
+    def test_tvg_id_substring_in_another_attribute_is_not_accepted(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 not-tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            result = check_epg_mapping(p, e)
+            self.assertEqual(result["missing_tvg_id"], 1)
+            self.assertFalse(result["matching_verified"])

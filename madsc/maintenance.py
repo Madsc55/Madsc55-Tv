@@ -105,6 +105,15 @@ def aggregate(reports: list[dict]) -> dict:
     complete = categories == expected and len(reports) == 5
     safe = complete and all(report.get("production_writes") is False for report in reports)
     successful = safe and all(report.get("status") == "success" for report in reports)
+    # A report that only declares read-only status is not runtime evidence.
+    # Reject duplicate/unknown categories and require explicit five-way identity.
+    identity_valid = (len(reports) == 5 and
+                      all(type(report.get("category")) is str and
+                          report["category"] in expected for report in reports) and
+                      len(categories) == 5)
+    complete = complete and identity_valid
+    safe = complete and all(report.get("production_writes") is False for report in reports)
+    successful = safe and all(report.get("status") == "success" for report in reports)
     return {"all_five_present": complete, "all_read_only": safe,
             "all_five_successful": successful,
             "all_reports_explicitly_read_only": safe,

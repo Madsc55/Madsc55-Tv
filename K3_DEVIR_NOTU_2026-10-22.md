@@ -97,3 +97,7 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 ## K3 sözdizimi onarımı
 - b2a0c20: load_evidence ayrıştırma işleminden kalan yanlış girintiler düzeltildi; modülün import edilmesini engelleyen kaynak hatası giderildi.
 - Bu değişiklik GitHub'a yazıldı ancak mevcut HEAD üzerinde Python unittest/CI sonucu henüz alınmadı.
+
+## K3 özel dosya ve üst dizin testleri
+- b5b9cb1: FIFO kanıt girdisinin beklemeden reddedilmesi ve symlink üst dizin girdisinin reddedilmesi için yürütülebilir regresyon testleri eklendi.
+- Bu testler henüz çalıştırılmadı. Gerçek zamanlı üst dizin değiştirme yarışına karşı atomik koruma ayrıca gerekli.

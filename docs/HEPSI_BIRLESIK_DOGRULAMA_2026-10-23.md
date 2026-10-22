@@ -181,3 +181,11 @@
 - Regresyon testi `test_protected_report_rejected_before_reports_directory_creation`, `reports/playlist.m3u8` isteğinin reddedildiğini ve `reports/` dizininin hiç yaratılmadığını kontrol ediyor. Test commit `fe82f2f000c54b1a5a2547f9cac6d06ba4faa1f8`.
 - Yeni K1 core düzeltmesi/testi için run `39864306236` queued; sonuç bekleniyor. Son başarılı run `39864090233` yalnızca SHA `bcd8245...` ve ondan önceki kod için geçerlidir.
 - Kabul sayaçları değişmedi: K1 0/26, legacy 92 0/92, 22 ana görev 0/22. Üretim playlist/EPG/favori/cihaz/yedek/arşiv verileri değişmedi; PR #71 birleştirilmedi.
+
+
+## K1-03 — Yeni offline gate CI ve ikinci hedef-yol düzeltmesi
+- Run `39864306236`, SHA `fe82f2f000c54b1a5a2547f9cac6d06ba4faa1f8`, başarılı: 980 test keşfedildi, tests_passed true, five-stage fixture ve tüm offline gate'ler true. K1 AST taraması 97 Python dosyası/78 mutation adayı bildirdi.
+- `madsc/core.py::run` korunan rapor hedefinde dizin yaratmadan önce `enforce_write_paths` çağırıyor ve rapor kökü üst dizinlerini symlink açısından kontrol ediyor; regresyon testi korunan `reports/playlist.m3u8` için `reports/` klasörünün oluşmadığını doğruluyor.
+- Aynı AST incelemesi K5 `madsc/isolated_playlist_bundle.py::export_isolated_previews` içinde hedef dizin yaratılmadan önce K1 path policy çağrısının olmadığını gösterdi. Artık hedefin tam mutlak yoluna `enforce_write_paths` çağrısı `destination.mkdir` öncesine eklendi. Regresyon testi `FAVORILER` hedefinin hiç yaratılmadığını kontrol eder. Kod commit `1d48c0f64ab95f78855a79a20deb3f3d027f08d1`; test commit `90ba1b993ab81830252f69b78a380167529fb1c3`.
+- Yeni CI run `39864450322` queued; sonuç bekleniyor. Başarı gelmeden bu yeni değişiklik kabul edilmez.
+- Açık sayaçlar değişmez: K1 0/26, legacy 92 0/92, 22 görev 0/22. Canlı playlist/EPG/favori/cihaz/yedek/arşiv verileri değiştirilmedi; PR #71 birleştirilmedi.

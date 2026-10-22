@@ -1,0 +1,34 @@
+{
+  "mode": "offline_local",
+  "scope": "provenance_bound_legacy_comparison_contract",
+  "tested_base_commit": "fe40f60aa989c121144cdbdca0bdd38f7d67f607",
+  "production_acceptance": false,
+  "legacy_92_behavioral_acceptance": 0,
+  "runtime_security_26_acceptance": 0,
+  "task_acceptance_22": 0,
+  "tests_discovered": 570,
+  "tests_passed": true,
+  "five_stage_fixture_gate_passed": true,
+  "legacy_scope_source_workflows": 99,
+  "legacy_scope_behavior_workflows": 92,
+  "provenance_contract": {
+    "same_input_sha256_required": true,
+    "legacy_repository_and_branch_pinned": true,
+    "legacy_workflow_blob_sha_required": true,
+    "replacement_repository_main_required": true,
+    "replacement_central_workflow_required": true,
+    "run_id_attempt_head_sha_bound": true,
+    "artifact_repository_run_head_sha_bound": true,
+    "distinct_execution_and_artifact_origins_required": true,
+    "independent_api_verification_performed": false,
+    "fixture_can_grant_acceptance": false
+  },
+  "tested_files_sha256": {
+    "madsc/legacy_parity_evidence.py": "38821105632eba74e8ae2d31c64b73883776c3ced35e7eb677dcff530ca43574",
+    "madsc/legacy_parity_cli.py": "16f898334ce3a0b2a86f4fbd74ddbb8c022dd6d127dab532d4c591ff58c32e48",
+    "tests/test_legacy_parity_evidence.py": "c4315a1f822c9e3e539990b60b9129e42a9737a5d0a09144c16c97250e523b5e"
+  },
+  "network_probes_performed": false,
+  "github_actions_started": false,
+  "note": "The v1 schema closes structural binding gaps but real GitHub run and artifact origin verification is still required before any of 92 workflows can be accepted."
+}

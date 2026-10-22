@@ -142,6 +142,137 @@ def compare_snapshot_batch(inventory, snapshots):
             "behavioral_parity_accepted": 0, "rows": results}
 
 
+CENTRAL_REPLACEMENT_WORKFLOWS = frozenset({
+    f".github/workflows/madsc-0{stage}-{name}.yml"
+    for stage, name in ((1, "guvenlik"), (2, "kesif"), (3, "kanal-test"),
+                        (4, "arsiv-yedek"), (5, "genel-bakim"))
+})
+
+
+def _lower_hex(value, size):
+    return (isinstance(value, str) and len(value) == size
+            and all(char in "0123456789abcdef" for char in value))
+
+
+def _validate_execution_origin(origin, *, role, legacy_path, legacy_blob_sha):
+    required = {"repository", "branch", "workflow_path", "workflow_blob_sha",
+                "run_id", "run_attempt", "head_sha", "event", "conclusion",
+                "artifact", "input_sha256", "snapshot"}
+    if not isinstance(origin, dict) or set(origin) != required:
+        raise ValueError("Incomplete execution origin")
+    expected_repository = "Madsc55/madsc-tv" if role == "legacy" else "Madsc55/Madsc55-Tv"
+    expected_branch = "madsc/bes-sistem-toplu-birlestirme" if role == "legacy" else "main"
+    if origin["repository"] != expected_repository or origin["branch"] != expected_branch:
+        raise ValueError("Execution repository or branch mismatch")
+    if role == "legacy":
+        if (not _lower_hex(legacy_blob_sha, 40)
+                or origin["workflow_path"] != legacy_path
+                or origin["workflow_blob_sha"] != legacy_blob_sha):
+            raise ValueError("Legacy workflow is not bound to pinned source")
+    elif (origin["workflow_path"] not in CENTRAL_REPLACEMENT_WORKFLOWS
+          or not _lower_hex(origin["workflow_blob_sha"], 40)):
+        raise ValueError("Replacement workflow is not one of the five central systems")
+    if (type(origin["run_id"]) is not int or origin["run_id"] <= 0
+            or type(origin["run_attempt"]) is not int or origin["run_attempt"] <= 0
+            or not _lower_hex(origin["head_sha"], 40)
+            or origin["event"] not in {"workflow_dispatch", "workflow_call", "push", "schedule"}
+            or origin["conclusion"] not in {"success", "failure", "cancelled", "timed_out"}
+            or not _lower_hex(origin["input_sha256"], 64)):
+        raise ValueError("Invalid execution identity")
+    artifact = origin["artifact"]
+    if (not isinstance(artifact, dict)
+            or set(artifact) != {"id", "name", "repository", "run_id", "head_sha", "sha256"}
+            or type(artifact["id"]) is not int or artifact["id"] <= 0
+            or not isinstance(artifact["name"], str) or not artifact["name"]
+            or len(artifact["name"]) > 256
+            or artifact["repository"] != origin["repository"]
+            or artifact["run_id"] != origin["run_id"]
+            or artifact["head_sha"] != origin["head_sha"]
+            or not _lower_hex(artifact["sha256"], 64)):
+        raise ValueError("Artifact is not bound to its execution origin")
+    compare_execution_snapshots(origin["snapshot"], origin["snapshot"])
+    return origin
+
+
+def compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair):
+    """Validate a same-input, separately originated legacy/replacement pair.
+
+    Supplied metadata is structurally bound but is not independently verified
+    against GitHub APIs here, so this function can never grant acceptance.
+    """
+    if not isinstance(pair, dict) or set(pair) != {"legacy", "replacement"}:
+        raise ValueError("Incomplete provenance-bound execution pair")
+    legacy = _validate_execution_origin(
+        pair["legacy"], role="legacy", legacy_path=legacy_path,
+        legacy_blob_sha=legacy_blob_sha)
+    replacement = _validate_execution_origin(
+        pair["replacement"], role="replacement", legacy_path=legacy_path,
+        legacy_blob_sha=legacy_blob_sha)
+    if legacy["input_sha256"] != replacement["input_sha256"]:
+        raise ValueError("Execution pair does not use the same input hash")
+    legacy_execution = (legacy["repository"], legacy["run_id"], legacy["run_attempt"])
+    replacement_execution = (replacement["repository"], replacement["run_id"],
+                             replacement["run_attempt"])
+    legacy_artifact = (legacy["artifact"]["repository"], legacy["artifact"]["id"])
+    replacement_artifact = (replacement["artifact"]["repository"],
+                            replacement["artifact"]["id"])
+    if legacy_execution == replacement_execution or legacy_artifact == replacement_artifact:
+        raise ValueError("Execution and artifact origins must be independent")
+    comparison = compare_execution_snapshots(legacy["snapshot"], replacement["snapshot"])
+    return {
+        "same_input_sha256": legacy["input_sha256"],
+        "execution_origins_distinct": True,
+        "artifact_origins_distinct": True,
+        "origin_binding_complete": True,
+        "independent_origin_api_verified": False,
+        **comparison,
+        "provenance_verified": False,
+        "behavioral_parity_accepted": False,
+    }
+
+
+def compare_provenance_bound_batch(inventory, pairs):
+    """Compare only the pinned 92 behavior workflows with origin-bound pairs."""
+    scope = reconcile_legacy_scope(inventory)
+    legacy_paths = set(scope["legacy_paths"])
+    if not isinstance(pairs, dict) or set(pairs) - legacy_paths:
+        raise ValueError("Unknown or excluded workflow pair")
+    by_path = {row["path"]: row for row in validate_inventory(inventory)}
+    comparisons = {
+        path: compare_provenance_bound_pair(path, by_path[path].get("git_blob_sha"), pair)
+        for path, pair in pairs.items()
+    }
+    rows = []
+    for path in scope["legacy_paths"]:
+        if path not in comparisons:
+            rows.append({"path": path, "status": "missing_provenance_bound_pair",
+                         "behavioral_parity_accepted": False})
+            continue
+        comparison = comparisons[path]
+        rows.append({"path": path,
+                     "status": ("snapshot_match_origin_unverified"
+                                if comparison["snapshot_fields_match"]
+                                else "snapshot_mismatch_origin_unverified"),
+                     **comparison})
+    return {
+        "schema": "madsc-legacy-provenance-pairs-v1",
+        "total": 92,
+        "pairs_supplied": len(pairs),
+        "origin_bindings_complete": sum(
+            row.get("origin_binding_complete") is True for row in rows),
+        "snapshot_matches": sum(
+            row["status"] == "snapshot_match_origin_unverified" for row in rows),
+        "snapshot_mismatches": sum(
+            row["status"] == "snapshot_mismatch_origin_unverified" for row in rows),
+        "missing_pairs": sum(
+            row["status"] == "missing_provenance_bound_pair" for row in rows),
+        "independent_origins_api_verified": 0,
+        "behavioral_parity_accepted": 0,
+        "production_ready": False,
+        "rows": rows,
+    }
+
+
 # Exact exclusions from pinned legacy five_category_92_workflow_audit.py.
 # Count reconciliation is source evidence, never behavioral acceptance.
 SCOPE_EXCLUSIONS = frozenset({

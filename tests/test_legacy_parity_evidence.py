@@ -163,6 +163,63 @@ if __name__ == "__main__":
 
 
 class LegacyScopeTests(unittest.TestCase):
+    @staticmethod
+    def provenance_pair(path, blob):
+        snapshot = {"exit_code": 0, "timed_out": False,
+                    "outputs": {"report": "d" * 64}, "side_effects": {}}
+        def origin(repository, branch, workflow, workflow_blob, run_id, artifact_id):
+            return {
+                "repository": repository, "branch": branch,
+                "workflow_path": workflow, "workflow_blob_sha": workflow_blob,
+                "run_id": run_id, "run_attempt": 1, "head_sha": "a" * 40,
+                "event": "workflow_dispatch", "conclusion": "success",
+                "artifact": {"id": artifact_id, "name": "comparison-evidence",
+                             "repository": repository, "run_id": run_id,
+                             "head_sha": "a" * 40, "sha256": "b" * 64},
+                "input_sha256": "c" * 64, "snapshot": snapshot,
+            }
+        return {
+            "legacy": origin("Madsc55/madsc-tv", "madsc/bes-sistem-toplu-birlestirme",
+                             path, blob, 101, 201),
+            "replacement": origin("Madsc55/Madsc55-Tv", "main",
+                                  ".github/workflows/madsc-05-genel-bakim.yml",
+                                  "e" * 40, 102, 202),
+        }
+
+    def test_provenance_bound_batch_uses_pinned_92_and_never_accepts_fixture(self):
+        import json
+        from pathlib import Path
+        from madsc.legacy_parity_evidence import (compare_provenance_bound_batch,
+                                                  reconcile_legacy_scope)
+        source = json.loads((Path(__file__).resolve().parents[1] /
+                             "docs/LEGACY_SOURCE_SCOPE.json").read_text())
+        path = reconcile_legacy_scope(source)["legacy_paths"][0]
+        blob = next(row["git_blob_sha"] for row in source["workflows"] if row["path"] == path)
+        report = compare_provenance_bound_batch(
+            source, {path: self.provenance_pair(path, blob)})
+        self.assertEqual((report["total"], report["pairs_supplied"],
+                          report["origin_bindings_complete"], report["snapshot_matches"],
+                          report["missing_pairs"], report["behavioral_parity_accepted"]),
+                         (92, 1, 1, 1, 91, 0))
+        self.assertEqual(report["independent_origins_api_verified"], 0)
+
+    def test_provenance_pair_rejects_input_and_artifact_origin_mismatch(self):
+        import json
+        from pathlib import Path
+        from madsc.legacy_parity_evidence import compare_provenance_bound_batch, reconcile_legacy_scope
+        source = json.loads((Path(__file__).resolve().parents[1] /
+                             "docs/LEGACY_SOURCE_SCOPE.json").read_text())
+        path = reconcile_legacy_scope(source)["legacy_paths"][0]
+        blob = next(row["git_blob_sha"] for row in source["workflows"] if row["path"] == path)
+        pair = self.provenance_pair(path, blob)
+        pair["replacement"]["input_sha256"] = "f" * 64
+        with self.assertRaises(ValueError):
+            compare_provenance_bound_batch(source, {path: pair})
+        pair = self.provenance_pair(path, blob)
+        pair["replacement"]["artifact"]["run_id"] = 999
+        with self.assertRaises(ValueError):
+            compare_provenance_bound_batch(source, {path: pair})
+
     def test_pinned_source_scope_is_92_plus_seven(self):
         import json
         from pathlib import Path

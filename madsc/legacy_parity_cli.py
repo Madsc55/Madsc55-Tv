@@ -2,7 +2,8 @@
 import argparse
 import json
 from pathlib import Path
-from madsc.legacy_parity_evidence import compare_snapshot_batch
+from madsc.legacy_parity_evidence import (compare_snapshot_batch,
+                                         compare_provenance_bound_batch)
 from madsc.write_path_audit import enforce_local_output_path
 
 
@@ -23,7 +24,12 @@ def unique_pairs(pairs):
 def run(inventory_path, snapshots_path, output_path):
     inventory = load_json(inventory_path)
     snapshots = load_json(snapshots_path)
-    report = compare_snapshot_batch(inventory, snapshots)
+    if (isinstance(snapshots, dict)
+            and snapshots.get("schema") == "madsc-legacy-provenance-pairs-v1"
+            and set(snapshots) == {"schema", "pairs"}):
+        report = compare_provenance_bound_batch(inventory, snapshots["pairs"])
+    else:
+        report = compare_snapshot_batch(inventory, snapshots)
     destination = Path(output_path)
     if destination.exists() or destination.is_symlink():
         raise ValueError("Refusing to overwrite comparison evidence")

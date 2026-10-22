@@ -80,7 +80,10 @@ def main(argv=None) -> int:
         flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
         if path.is_symlink():
             raise ValueError("Invalid evidence input")
-        descriptor = os.open(path, flags)
+        try:
+            descriptor = os.open(path, flags)
+        except OSError as exc:
+            raise ValueError("Invalid evidence input") from exc
         try:
             metadata = os.fstat(descriptor)
             if not stat.S_ISREG(metadata.st_mode) or metadata.st_size > 2_000_000:

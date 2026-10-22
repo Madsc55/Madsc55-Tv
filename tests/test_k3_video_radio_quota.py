@@ -28,3 +28,18 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+    def test_radio_only_source_scan_is_bounded(self):
+        rows = [("Radyo FM", f"https://example.org/r{i}.m3u8") for i in range(pilot.MAX_SOURCE_ROWS + 10)]
+        with tempfile.TemporaryDirectory() as d:
+            with patch.object(pilot, "candidates", return_value=iter(rows)), \
+                 patch.object(pilot, "verify_video") as verify, \
+                 patch.object(pilot, "write_fixture_report") as write, \
+                 patch.object(pilot.Path, "cwd", return_value=Path(d)):
+                pilot.run()
+        verify.assert_not_called()
+        report = json.loads(write.call_args.args[2])
+        self.assertEqual(report["tested"], 0)
+        self.assertEqual(report["source_rows_scanned"], pilot.MAX_SOURCE_ROWS)
+        self.assertEqual(report["radio_excluded"], pilot.MAX_SOURCE_ROWS)
+        self.assertEqual(len(report["results"]), pilot.MAX_SOURCE_ROWS)

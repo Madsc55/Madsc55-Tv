@@ -50,6 +50,8 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         group = candidate.get("group_title", "")
         if any(not isinstance(value, str) for value in (name, logo, group)):
             raise ValueError("Invalid candidate display metadata")
+        if (not name.strip() or any(ord(ch) < 32 or ord(ch) == 127 or ch == "\\" for value in (name, logo, group) for ch in value)):
+            raise ValueError("Unsafe candidate display metadata")
         probe = probes.get(digest)
         if probe is None:
             status = "UNTESTED"

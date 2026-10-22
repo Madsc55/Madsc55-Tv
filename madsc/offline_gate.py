@@ -76,6 +76,27 @@ def main():
         inventory_passed = False
     if not inventory_passed and exit_code == 0:
         exit_code = 4
+    # The latest read-only installation inventory is a mandatory part of this gate.
+    # This validates wiring and evidence gaps, never production acceptance.
+    try:
+        from madsc.five_stage_installation import assess_installation
+        installation = assess_installation(root)
+        installation_passed = (
+            set(installation["stages"]) == {"K1", "K2", "K3", "K4", "K5"}
+            and installation["main_workflows_installed"] == 5
+            and installation["auxiliary_commands_integrated"] == 10
+            and installation["legacy_behavior_workflows"] == 92
+            and installation["task_count"] == 22
+            and installation["production_ready"] is False
+            and installation["github_actions_triggered"] is False
+            and installation["production_writes"] is False
+            and all(not stage["runtime_verified"] and not stage["production_accepted"]
+                    for stage in installation["stages"].values()))
+    except Exception as exc:
+        installation = {"error": type(exc).__name__}
+        installation_passed = False
+    if not installation_passed and exit_code == 0:
+        exit_code = 6
     # Verify actual report serialization and K5 consumption in the same gate.
     from madsc.offline_five_gate import assess_report_roundtrip
     try:
@@ -100,7 +121,8 @@ def main():
         "tests_discovered": test_count,
         "tests_passed": unittest_passed,
         "five_stage_fixture_gate_passed": five_stage_passed,
-        "all_offline_gates_passed": unittest_passed and five_stage_passed and inventory_passed and roundtrip_passed,
+        "all_offline_gates_passed": unittest_passed and five_stage_passed and inventory_passed and roundtrip_passed and installation_passed,
+        "five_stage_installation_inventory_passed": installation_passed,\n        "five_stage_installation_inventory_error": installation.get("error"),
         "five_report_roundtrip_passed": roundtrip_passed,
         "five_report_roundtrip": roundtrip,
         "workflow_and_task_inventory_passed": inventory_passed,

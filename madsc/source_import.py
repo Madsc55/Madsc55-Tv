@@ -38,9 +38,16 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
             if len(parts) != 2:
                 raise ValueError("Invalid EXTINF metadata")
             attrs, channel_name = parts[0], parts[1].strip()
-            match = re.search(r'(?:^|\s)tvg-id="([^"]*)"', attrs)
-            logo = re.search(r'(?:^|\s)tvg-logo="([^"]*)"', attrs)
-            group = re.search(r'(?:^|\s)group-title="([^"]*)"', attrs)
+            # M3U metadata attributes must be unique case-insensitively. Picking
+            # the first duplicate silently can bind a channel to the wrong EPG ID
+            # or logo, so reject ambiguous rows before extracting any values.
+            attr_names = re.findall(r'(?:^|\\s)([\\w-]+)="[^"]*"', attrs)
+            folded_names = [name.casefold() for name in attr_names]
+            if len(folded_names) != len(set(folded_names)):
+                raise ValueError("Duplicate metadata attribute")
+            match = re.search(r'(?:^|\\s)tvg-id="([^"]*)"', attrs)
+            logo = re.search(r'(?:^|\\s)tvg-logo="([^"]*)"', attrs)
+            group = re.search(r'(?:^|\\s)group-title="([^"]*)"', attrs)
             pending = {"name": channel_name, "tvg_id": match.group(1) if match else "",
                        "tvg_logo": logo.group(1) if logo else "",
                        "group_title": group.group(1) if group else ""}

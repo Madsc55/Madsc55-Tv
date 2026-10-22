@@ -2365,3 +2365,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - GitHub Actions run `39861985074`, SHA `c40c7657`, başarısız: 958 testte 1 failure. `test_nfkc_normalization_precedes_protected_path_check` içinde `ａｒｔｉｆａｃｔｓ/report.json` için ValueError beklenmiş fakat testin çalıştığı commit'te canonical spelling reddi henüz yokmuş.
 - Güncel main'de bu gerçek sorun K1 kaynak kodunda zaten giderilmiş: commit `7c2aae9d028bdebd5159a2f157141420b8cfc855` Unicode NFKC eşdeğeri olan canonical olmayan tüm yolları açıkça reddediyor. Bu nedenle full-width artifacts kökünün ham yoldan dışarı çıkma riski de kapatılıyor. Bu yeni commit için Actions sonucu henüz yok; eski failure güncel HEAD kabulü sayılmaz.
 - Son Actions listesinde güncel `7c2aae9` için yeni koşu görünmüyor; bu turda Actions başlatılmadı. Kabul sayaçları 0/26, 0/92, 0/22 olarak kalır. Sıradaki adım güncel HEAD'de tam offline gate ve K1/K2 odaklı testleri doğrulamak.
+
+
+## 23 Ekim 2026 — Güncel offline gate başarılı
+- Actions run `39862185213`, commit `fb4a738e1be8860acc9fcd508ec580511cfeb951`, job `offline-tests` başarıyla tamamlandı. Log raporu: `tests_discovered=958`, `test_exit_code=0`, `tests_passed=true`, `five_stage_fixture_gate_passed=true`, `all_offline_gates_passed=true`, beş rapor round-trip başarılı.
+- Bu sonuç önceki K1 Unicode negatif testindeki 1 başarısızlığı kapatan sonraki test/kod durumu için gerçek CI kanıtıdır. Ancak raporda açıkça `production_acceptance=false`, `runtime_security_26_acceptance=0`, `legacy_92_behavioral_acceptance=0`; dolayısıyla offline suite yeşil olsa da üretim kabulü ve 26/92 kanıtları tamamlanmış sayılmaz.
+- Bu turda yeni kod değişikliği yapılmadı; son doğrulanmış kanıt, yukarıdaki run ve SHA ile sınırlıdır. Actions yeniden çalıştırılmadı.

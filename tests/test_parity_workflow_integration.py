@@ -105,6 +105,27 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
                 self.assertLess(data.index('exit "$consumer_status"'),
                                 data.index('python -m madsc.parity_snapshot_cli --exit-code 0'))
 
+    def test_failure_snapshot_shell_fallback_preserves_original_status(self):
+        import subprocess
+
+        for original, snapshot in ((23, 0), (23, 31), (124, 31)):
+            script = (
+                "set -e\\n"
+                "set +e\\n"
+                f"bash -c 'exit {original}'\\n"
+                "consumer_status=$?\\n"
+                "set -e\\n"
+                "if [[ \\"$consumer_status\\" -ne 0 ]]; then\\n"
+                f"  bash -c 'exit {snapshot}' || echo 'snapshot unavailable' >&2\\n"
+                "  exit \\"$consumer_status\\"\\n"
+                "fi\\n"
+            )
+            with self.subTest(consumer_exit=original, snapshot_exit=snapshot):
+                result = subprocess.run(
+                    ["bash", "-c", script], capture_output=True, text=True,
+                    timeout=5, check=False)
+                self.assertEqual(result.returncode, original)
+
     def test_every_parity_hook_is_default_off_and_conditioned(self):
         for filename in ("madsc-01-guvenlik.yml", "madsc-04-yedek.yml",
                          "madsc-05-bakim.yml"):

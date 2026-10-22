@@ -2371,3 +2371,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Actions run `39862185213`, commit `fb4a738e1be8860acc9fcd508ec580511cfeb951`, job `offline-tests` başarıyla tamamlandı. Log raporu: `tests_discovered=958`, `test_exit_code=0`, `tests_passed=true`, `five_stage_fixture_gate_passed=true`, `all_offline_gates_passed=true`, beş rapor round-trip başarılı.
 - Bu sonuç önceki K1 Unicode negatif testindeki 1 başarısızlığı kapatan sonraki test/kod durumu için gerçek CI kanıtıdır. Ancak raporda açıkça `production_acceptance=false`, `runtime_security_26_acceptance=0`, `legacy_92_behavioral_acceptance=0`; dolayısıyla offline suite yeşil olsa da üretim kabulü ve 26/92 kanıtları tamamlanmış sayılmaz.
 - Bu turda yeni kod değişikliği yapılmadı; son doğrulanmış kanıt, yukarıdaki run ve SHA ile sınırlıdır. Actions yeniden çalıştırılmadı.
+
+
+## 23 Ekim 2026 — K1 ortak kanıt yazıcısında O_NOFOLLOW fail-closed
+- İnceleme, `madsc/fixture_report_writer.py::_exclusive_bytes` için bir güvenlik boşluğu buldu: `O_NOFOLLOW` mevcut değilse eski uygulama bu bayrağı atlayıp dosyayı açıyordu. K1 manifest CLI'daki fail-closed davranışı ortak kanıt yazıcısına da uygulandı; platform desteği yoksa yazma başlamadan `PermissionError`: `0d4dda4f4f87c47376989ee70701db2a3c0a4747`.
+- Negatif test, `O_NOFOLLOW` desteği yokken dosyanın oluşmadığını doğruluyor: `b4166318466967fda4d9a4543882c949f4152ce0`.
+- Önceki offline CI run `39862185213` 958 testi geçirdi; fakat HEAD daha sonra yalnız belge commitleriyle ilerledi. Bu yeni kod/test commitleri için henüz test sonucu yok. GitHub Actions bu turda başlatılmadı. Kabul: runtime K1 0/26, legacy 0/92, görev 0/22.

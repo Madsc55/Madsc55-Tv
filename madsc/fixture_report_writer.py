@@ -22,9 +22,10 @@ def _prepare_fixture_root(root: Path) -> Path:
 
 
 def _exclusive_bytes(destination: Path, payload: bytes) -> None:
-    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
-    if hasattr(os, "O_NOFOLLOW"):
-        flags |= os.O_NOFOLLOW
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    if not isinstance(nofollow, int):
+        raise PermissionError("Secure exclusive output is unavailable without O_NOFOLLOW")
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | nofollow
     descriptor = os.open(destination, flags, 0o600)
     completed = False
     created_identity = None

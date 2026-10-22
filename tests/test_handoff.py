@@ -334,3 +334,21 @@ class HandoffTests(unittest.TestCase):
                         else:
                             assess_candidates(discovery, {}, ibo_results=evidence)
 
+
+    def test_alternative_mapping_rejects_malformed_fingerprints(self):
+        discovery = classify_candidates([
+            {"name": "News", "url": "https://example.org/a", "tvg_id": "news"},
+            {"name": "News HD", "url": "https://example.org/b", "tvg_id": "news"},
+        ])
+        child = discovery["alternatives"][0]["url_sha256"]
+        parent = discovery["alternatives"][0]["alternative_to_sha256"]
+        for field, value in (("url_sha256", "A" * 64),
+                             ("url_sha256", "g" * 64),
+                             ("alternative_to_sha256", parent[:-1]),
+                             ("alternative_to_sha256", "G" * 64)):
+            with self.subTest(field=field, value=value):
+                altered = dict(discovery)
+                altered["alternatives"] = [{**discovery["alternatives"][0], field: value}]
+                with self.assertRaisesRegex(ValueError, "Invalid alternative mapping"):
+                    assess_candidates(altered, {})
+

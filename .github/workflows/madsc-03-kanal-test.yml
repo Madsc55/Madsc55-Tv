@@ -61,3 +61,27 @@ jobs:
             reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8
           if-no-files-found: error
           retention-days: 14
+      - name: Yardımcı paket sözleşmesini koru — madsc-k3-live-manifest-pilot.yml
+        if: ${{ always() && !cancelled() && inputs.allow_live_probes == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k3-real-manifest-pilot
+          path: reports/k3-real-manifest-pilot.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Yardımcı paket sözleşmesini koru — madsc-k3-turkish-tv-video.yml
+        if: ${{ always() && !cancelled() && inputs.allow_live_probes == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k3-turkish-tv-video-pilot
+          path: reports/k3-turkish-tv-video-pilot.json
+          retention-days: 14
+      - name: Yardımcı paket sözleşmesini koru — madsc-turkish-tv-batch.yml
+        if: ${{ always() && !cancelled() && inputs.allow_bulk_turkish_tv == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: turkish-tv-batch-validation
+          path: |
+            reports/turkish-tv-batch-validation.json
+            reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8
+          retention-days: 14

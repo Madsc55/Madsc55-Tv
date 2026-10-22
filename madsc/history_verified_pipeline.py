@@ -15,9 +15,18 @@ from madsc.history_source_gate import load_verified_source
 from madsc.write_path_audit import enforce_local_output_path
 
 
+SOURCE_WORKFLOWS = (
+    ".github/workflows/madsc-k2-real-history-source.yml",
+    ".github/workflows/madsc-02-kesif.yml",
+)
+
+
 def produce_verified_history(manifest_path, output_path, *, current_sha, run_id,
-                             token=None, verify_origin=verify_live_github_origin,
+                             token=None, source_workflow_path=SOURCE_WORKFLOWS[0],
+                             verify_origin=verify_live_github_origin,
                              download=download_verified_history_artifact):
+    if source_workflow_path not in SOURCE_WORKFLOWS:
+        raise ValueError("Unapproved real history source workflow")
     manifest_path, output_path = Path(manifest_path), Path(output_path)
     # K1 guards the destination before network verification or artifact download.
     enforce_local_output_path(output_path if output_path.is_absolute() else Path.cwd() / output_path)
@@ -30,7 +39,7 @@ def produce_verified_history(manifest_path, output_path, *, current_sha, run_id,
         raise ValueError("GitHub artifact token required")
     origin = verify_origin(
         manifest, repository="Madsc55/Madsc55-Tv", branch="main",
-        workflow_path=".github/workflows/madsc-k2-real-history-source.yml",
+        workflow_path=source_workflow_path,
         current_sha=current_sha, token=token)
     with tempfile.TemporaryDirectory(prefix="madsc-verified-history-") as tmp:
         folder = Path(tmp) / "source"

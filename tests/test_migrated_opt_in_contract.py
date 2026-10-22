@@ -10,8 +10,10 @@ SPECS = {
             "python -m madsc.legacy_multisource_discovery",
             "python -m madsc.live_discovery_pilot",
         ),
-        "allow_verified_history": (
+        "allow_history_source_publish": (
             "python -m madsc.history_real_source_publish",
+        ),
+        "allow_verified_history": (
             "python -m madsc.history_verified_workflow",
         ),
     },

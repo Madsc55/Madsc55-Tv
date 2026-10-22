@@ -451,6 +451,23 @@ jobs:
             ESKI_SISTEM_NOTLARI.md
           if-no-files-found: error
           retention-days: 30
+      - name: Yardımcı paket sözleşmesini koru — madsc-legacy-99-bulk-audit.yml
+        if: ${{ success() && inputs.allow_legacy_source_audit == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-legacy-99-source-audit
+          path: reports/legacy-99-source-audit.json
+          if-no-files-found: error
+      - name: Yardımcı paket sözleşmesini koru — madsc-legacy-notes-bulk-merge.yml
+        if: ${{ success() && inputs.allow_legacy_notes_merge == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-eski-notlar-tek-dosya-ve-sha256
+          path: |
+            ESKI_SISTEM_NOTLARI.md
+            reports/eski-notlar-dogrulama.json
+          if-no-files-found: error
+          retention-days: 30
       - name: K5 on yardimci workflow ve 22 gorev kaynak envanteri
         run: |
           mkdir -p reports

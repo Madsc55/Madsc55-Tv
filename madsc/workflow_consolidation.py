@@ -251,13 +251,12 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
 
 
 def contract_gate(root: Path) -> dict:
-    """Block lost operational contracts; keep bundle renames visible for review."""
+    """Block lost operational contracts, including published artifact identities."""
     matrix = auxiliary_behavior_matrix(root)
     blocking = [{"source": row["source"],
-                 "gaps": [gap for gap in row["static_contract_gaps"]
-                          if gap != "artifact_name"]}
+                 "gaps": row["static_contract_gaps"]}
                 for row in matrix["rows"]
-                if any(gap != "artifact_name" for gap in row["static_contract_gaps"])]
+                if row["static_contract_gaps"]]
     return {
         "schema": "madsc-contract-gate-v1",
         "checked": matrix["auxiliary_count"],

@@ -2,6 +2,18 @@ name: MADSC K2 — Kesif
 on:
   workflow_dispatch:
     inputs:
+      allow_history_source_publish:
+        description: 'Bağımsız sağlanan geçmiş çiftini kaynak paketi olarak doğrula ve sakla'
+        type: boolean
+        required: true
+        default: false
+      history_source_workflow:
+        description: 'Geçmiş manifestindeki kaynak koşusunu üreten iş akışı'
+        type: choice
+        default: '.github/workflows/madsc-k2-real-history-source.yml'
+        options:
+          - '.github/workflows/madsc-k2-real-history-source.yml'
+          - '.github/workflows/madsc-02-kesif.yml'
       allow_verified_history:
         description: 'Opt-in independently supplied real history validation (no fixture fallback)'
         type: boolean
@@ -39,8 +51,8 @@ jobs:
       - name: Public candidate discovery (explicit opt-in only)
         if: ${{ success() && inputs.allow_network_discovery == true }}
         run: python -m madsc.live_discovery_pilot
-      - name: Validate independent real history pair (explicit opt-in only)
-        if: ${{ inputs.allow_verified_history == true }}
+      - name: Bağımsız geçmiş çiftini kaynak paketi için doğrula
+        if: ${{ inputs.allow_history_source_publish == true }}
         run: |
           test -f verified-history-source/gecmis.json
           test -f verified-history-source/ana_liste_test_gecmisi.json
@@ -50,9 +62,10 @@ jobs:
         if: ${{ inputs.allow_verified_history == true }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          HISTORY_SOURCE_WORKFLOW: ${{ inputs.history_source_workflow }}
         run: |
           test -f verified-history-source/manifest.json
-          python -m madsc.history_verified_workflow --manifest verified-history-source/manifest.json --output reports/verified-k2-history.json
+          python -m madsc.history_verified_workflow --manifest verified-history-source/manifest.json --output reports/verified-k2-history.json --source-workflow "$HISTORY_SOURCE_WORKFLOW"
       - name: Upload isolated evidence
         if: ${{ always() && !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -65,5 +78,38 @@ jobs:
             reports/k2-real-history-source/gecmis.json
             reports/k2-real-history-source/ana_liste_test_gecmisi.json
             reports/verified-k2-history.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Yardımcı paket sözleşmesini koru — madsc-k2-legacy-multisource.yml
+        if: ${{ always() && !cancelled() && inputs.allow_network_discovery == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k2-legacy-multisource-report
+          path: reports/k2-legacy-multisource.json
+          retention-days: 14
+      - name: Yardımcı paket sözleşmesini koru — madsc-k2-live-pilot.yml
+        if: ${{ always() && !cancelled() && inputs.allow_network_discovery == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k2-real-channel-discovery-pilot
+          path: reports/k2-live-pilot.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Yardımcı paket sözleşmesini koru — madsc-k2-real-history-source.yml
+        if: ${{ success() && inputs.allow_history_source_publish == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k2-history-source
+          path: |
+            reports/k2-real-history-source/gecmis.json
+            reports/k2-real-history-source/ana_liste_test_gecmisi.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Yardımcı paket sözleşmesini koru — madsc-k2-verified-history.yml
+        if: ${{ success() && inputs.allow_verified_history == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-verified-k2-history
+          path: reports/verified-k2-history.json
           if-no-files-found: error
           retention-days: 14

@@ -61,6 +61,61 @@ class BackupManifestHardeningTests(unittest.TestCase):
                     snapshot_manifest(root, ["stable.bin"])
             self.assertEqual(len(observations), 2)
 
+    def test_copy_inode_audit_rejects_symlink_swap_after_snapshots(self):
+        from unittest.mock import patch
+        from madsc import backup as module
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source, target = base / "source", base / "target"
+            source.mkdir()
+            target.mkdir()
+            (source / "file.bin").write_bytes(b"original")
+            (target / "file.bin").write_bytes(b"original")
+            outside = base / "outside.bin"
+            outside.write_bytes(b"secret")
+            original_snapshot = module.snapshot_manifest
+            calls = []
+
+            def swap_after_snapshots(root, names):
+                result = original_snapshot(root, names)
+                calls.append(root)
+                if len(calls) == 2:
+                    (target / "file.bin").unlink()
+                    (target / "file.bin").symlink_to(outside)
+                return result
+
+            with patch("madsc.backup.snapshot_manifest", side_effect=swap_after_snapshots):
+                with self.assertRaises(OSError):
+                    module.compare_copy(source, target, ["file.bin"])
+            self.assertEqual(outside.read_bytes(), b"secret")
+
+    def test_three_tree_inode_audit_rejects_symlink_swap(self):
+        from unittest.mock import patch
+        from madsc import backup as module
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            roots = [base / name for name in ("source", "backup", "restore")]
+            for root in roots:
+                root.mkdir()
+                (root / "file.bin").write_bytes(b"original")
+            outside = base / "outside.bin"
+            outside.write_bytes(b"secret")
+            original_snapshot = module.snapshot_manifest
+            calls = []
+
+            def swap_after_snapshots(root, names):
+                result = original_snapshot(root, names)
+                calls.append(root)
+                if len(calls) == 3:
+                    (roots[2] / "file.bin").unlink()
+                    (roots[2] / "file.bin").symlink_to(outside)
+                return result
+
+            with patch("madsc.backup.snapshot_manifest", side_effect=swap_after_snapshots):
+                with self.assertRaises(OSError):
+                    module.verify_independent_restore(*roots, ["file.bin"])
+            self.assertEqual(outside.read_bytes(), b"secret")
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

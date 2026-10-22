@@ -76,6 +76,19 @@ def main():
         inventory_passed = False
     if not inventory_passed and exit_code == 0:
         exit_code = 4
+    # Verify actual report serialization and K5 consumption in the same gate.
+    from madsc.offline_five_gate import assess_report_roundtrip
+    try:
+        roundtrip = assess_report_roundtrip()
+        roundtrip_passed = (roundtrip.get("passed") is True
+                            and roundtrip.get("reports_written") == 5
+                            and roundtrip.get("consumer_preserved_report_bytes") is True
+                            and roundtrip.get("production_ready") is False)
+    except Exception as exc:
+        roundtrip = {"error": type(exc).__name__}
+        roundtrip_passed = False
+    if not roundtrip_passed and exit_code == 0:
+        exit_code = 5
     report = {
         "mode": "offline_local",
         "scope": "unit_regression_and_isolated_five_stage_fixture",
@@ -87,7 +100,9 @@ def main():
         "tests_discovered": test_count,
         "tests_passed": unittest_passed,
         "five_stage_fixture_gate_passed": five_stage_passed,
-        "all_offline_gates_passed": unittest_passed and five_stage_passed and inventory_passed,
+        "all_offline_gates_passed": unittest_passed and five_stage_passed and inventory_passed and roundtrip_passed,
+        "five_report_roundtrip_passed": roundtrip_passed,
+        "five_report_roundtrip": roundtrip,
         "workflow_and_task_inventory_passed": inventory_passed,
         "auxiliary_workflows_mapped": workflow_plan.get("auxiliary_count"),
         "auxiliary_commands_integrated_in_main": workflow_plan.get("commands_integrated_in_main"),

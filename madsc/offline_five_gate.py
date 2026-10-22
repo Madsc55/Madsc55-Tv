@@ -37,5 +37,37 @@ def main():
     return 0 if result["fixture_gate_passed"] else 1
 
 
+def assess_report_roundtrip():
+    """Run all actual isolated producers through the on-disk K5 consumer.
+
+    Temporary files are fixture evidence, never independent Actions artifacts.
+    """
+    import hashlib
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+    from madsc.core import run
+    from madsc.batch_acceptance import collect
+
+    with TemporaryDirectory(prefix="madsc-offline-") as directory:
+        root = Path(directory)
+        before = {}
+        for category in CATEGORIES:
+            package = root / f"madsc-batch-{category}"
+            package.mkdir()
+            path = package / f"{category}.json"
+            run(category, path)
+            before[path.relative_to(root).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+        acceptance = collect(root)
+        after = {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in before}
+        passed = (acceptance["five_isolated_reports_valid"] is True
+                  and acceptance["k5_fixture_evidence_verified"] is True
+                  and acceptance["production_ready"] is False and before == after
+                  and len(before) == 5)
+        return {"passed": passed, "reports_written": len(before),
+                "reports_sha256": before, "consumer_preserved_report_bytes": before == after,
+                "acceptance": acceptance, "independent_execution_evidence": False,
+                "production_ready": False}
+
+
 if __name__ == "__main__":
     raise SystemExit(main())

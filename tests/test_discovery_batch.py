@@ -138,12 +138,14 @@ class DiscoveryBatchTests(unittest.TestCase):
                 entrypoint({"feed": None})
 
     def test_quoted_comma_round_trip_in_preview(self):
-        feed = ('#EXTM3U\\n'
-                '#EXTINF:-1 tvg-id="tr,news" group-title="News, World",News, HD\\n'
-                'https://example.org/live.m3u8\\n')
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="tr,news" group-title="News, World",News, HD\n'
+                'https://example.org/live.m3u8\n')
         result = build_m3u8_preview({"source": feed})
         self.assertEqual(result["channel_count"], 1)
-        self.assertIn("News, HD", result["content"])
+        self.assertIn("NEWS, HD", result["content"])
+        self.assertIn('tvg-id="tr,news"', result["content"])
+        self.assertIn('group-title="News, World"', result["content"])
         self.assertFalse(result["production_ready"])
 
     def test_large_source_fails_closed(self):

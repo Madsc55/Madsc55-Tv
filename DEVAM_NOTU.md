@@ -1,6 +1,6 @@
 # Madsc55-Tv — DEVAM NOTU
 
-**En yeni kayıt:** K5 supplied hata geçmişinde sayfa/satır sırası ve aktif timestamp doğrulaması eklendi; 707 yerel test ve beş izole K kapısı başarılı. Ayrıntılar son kayıtta.
+**En yeni kayıt:** Güncel birleşik kaynakta 757 test, beş izole kapı ve beş gerçek yerel raporun K5 tüketimi başarılı. Tam kabul hâlâ eksik; toplu açık kanıt listesi son kayıt ve FIVE_SYSTEM_BULK_VALIDATION raporunda.
 
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
 
@@ -384,3 +384,13 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - `madsc/legacy_replacement_mapping_review.py` K2 ve K3 için statik kaynak sözleşmesi alanları true olsa bile eşleme adayını `mapping_contract_blocked` tutar. Bu aşamaların harici/canlı girdileri bağımsız karşılaştırma olmadan kabul edilemez.
 - `tests/test_legacy_replacement_mapping_review.py` K2 ve K3 için yanlışlıkla tüm flaglerin true olduğu negatif senaryoları ekledi.
 - Yeni sistem commitleri `6e01ae808056e7ebac50d9ab95666bbe1d603fb3`, `2c6d680bbc39ee3e9d0467228670f8ddcf3c0f75` (`[skip ci]`). Bu turda testler yürütülmedi; Actions #482/#483 logları elde edilmedi. Üretim/EPG/yedek/favori/workflow/cron/legacy repo değiştirilmedi. Kabul 0/92, 0/26, 0/22.
+
+## 22 Ekim 2026 — Beşli sistem toplu rapor üretimi ve K5 uçtan uca yerel kapısı
+- Yalnız Madsc55/Madsc55-Tv/main; taban 2ea58e800156e3c99eb63f882f838045fc0714eb. Güncel diğer sohbet kodu korundu. Önceki yerel ortam kaybolduğu için yeni checkout alındı; geçmiş 707 testi güncel kodun kanıtı sayılmadı. Birleşik kaynakta ilk toplu test: 754 test, 1 failure/4 error. Eksik EXT M3U başlıklı üç test girdisi ve literal backslash-n içeren iki fixture düzeltildi. Preview testi mevcut büyük harfli ad sözleşmesiyle, virgüllü id/grup korunumu da doğrulanarak güncellendi. Üretim parser'ları gevşetilmedi.
+- Mevcut offline_five_gate içine assess_report_roundtrip eklendi: gerçek core.run beş kategorinin raporlarını ayrı geçici artifact dizinlerine yazar; gerçek batch_acceptance.collect bunları K5 olarak okur; bütün dosya SHA256'ları tüketim öncesi/sonrası aynı olmalıdır. Mevcut offline_gate bu aşamayı artık zorunlu kılar; eksik/bozuk çıktı veya exception exit_code=5 ile yeşil unit test sonucunu engeller. Yeni workflow/zamanlayıcı/üretim yazıcısı yok.
+- K1 korumalı rapor yazısı, K2 keşif ve geçmiş fixture'ı, K3 teknik/IBO/EPG fixture'ı, K4 izole restore ve K5 toplu tüketim aynı pakette yürütüldü. Üç yeni regresyon: gerçek beş rapor tüketimi ve byte korunumu; eksik üretici çıktısının reddi; başarılı unit testin bozuk roundtrip'i örtememesi. Geliştirme sırasında eksik dosya testinde yanlış exception beklentisi bir hata verdi; FileNotFoundError beklentisiyle düzeltildi.
+- Nihai python -m madsc.offline_gate **757 test, beş izole K1–K5 kapısı, beş gerçek yerel rapor/K5 roundtrip ve 92+7/10 komut/22 görev envanteri başarılı**. git diff --check temiz. Kaynak hashleri, rapor hashleri, bütün görevlerin açık kanıt listesi ve yardımcı sözleşme farkları docs/FIVE_SYSTEM_BULK_VALIDATION_2026-10-22.json içinde.
+- Tam bitmiş değildir: kurulumda 16 YAML vardır (beş ana + ekler); on yardımcı komut ana sisteme bağlıdır fakat 11 statik sözleşme farkı açık. 125 statik yazıcı çağrı adayı tümü runtime denetlendi sayılmaz. Defter 0 completed/7 in_progress/15 pending; kabul 0/92, 0/26, 0/22. Eski bağımsız aynı-input execution/artifact, canlı/zaman aralıklı K3, kullanıcının IBO cihaz testi, harici yedek/restore ve gerçek uçtan uca güvenlik kanıtları eksik. Gerçek kabul olmadan eski otomasyonları kapatma veya defteri completed yapma.
+- Actions/merge/PR71/canlı probing/korunan IPTV-EPG-yedek-favori-logo-arşiv ve eski repo yazısı yapılmadı. Bu [skip ci] paketinin SHA'sı Git geçmişindedir. Sonraki iş rapordaki bağımsız dış kanıt engellerini ve 11 kaynak sözleşme farkını ana beşli sistem içinde çözmek; küçük fixture testlerini gerçek 92 davranış tamamlandı gibi sunmamak.
+
+- Yayın sırasında diğer sohbetin yalnız docs/K1_K5_KURULUM_DURUMU_2026-10-22.md ekleyen a39cdfa commit'i geldi; içerik okundu ve korundu. Test edilen Python/test/workflow kaynakları değişmedi; dal eski HEAD üzerine zorlanmadı.

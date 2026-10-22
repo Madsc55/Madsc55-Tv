@@ -1,0 +1,962 @@
+{
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "base_commit": "2ea58e800156e3c99eb63f882f838045fc0714eb",
+  "validation": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 757,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "five_report_roundtrip_passed": true,
+    "five_report_roundtrip": {
+      "passed": true,
+      "reports_written": 5,
+      "reports_sha256": {
+        "madsc-batch-k1/k1.json": "c90b245ccd1f9229862847c88e34cf4ee4933c094d0a26386bcf9a7a5057ceeb",
+        "madsc-batch-k2/k2.json": "13f280ab821643ba312e696672ca9f0bb0306ea8d50242897fdaffb3ac2419fb",
+        "madsc-batch-k3/k3.json": "a1fdc536dc6a9dd122bb8c01bcfafc3c47a1198df69028169bbdb77fc05660f8",
+        "madsc-batch-k4/k4.json": "b28d803a31f47d48a2b7d5f51d58fa0dbbc86ac8d8f1efa0d8247de47d7e7f8f",
+        "madsc-batch-k5/k5.json": "92799ff583ae2214525d1dbb90fca0745ca8b6324159f670449a02ae5c0cf0ff"
+      },
+      "consumer_preserved_report_bytes": true,
+      "acceptance": {
+        "category_order": [
+          "k1",
+          "k2",
+          "k3",
+          "k4",
+          "k5"
+        ],
+        "categories": {
+          "k1": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "security",
+            "fixture_checks": 7,
+            "fixture_check_names": [
+              "audit_does_not_claim_runtime_gate",
+              "favorite_metadata_and_nested_logo_write_denied",
+              "fixture_report_write_guard",
+              "integrity_comparison",
+              "no_playlist_mutation",
+              "protected_write_paths_identified",
+              "valid_playlist"
+            ]
+          },
+          "k2": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "discovery",
+            "fixture_checks": 8,
+            "fixture_check_names": [
+              "both_m3u_and_m3u8",
+              "duplicates_separated",
+              "invalid_rejected",
+              "legacy_history_bridge_isolated",
+              "no_production_mutation",
+              "source_inventory_reconciled",
+              "sources_unchanged",
+              "unique_candidates"
+            ]
+          },
+          "k3": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "channel_testing",
+            "fixture_checks": 14,
+            "fixture_check_names": [
+              "ffprobe_json_fixture_not_live",
+              "handoff_read_only",
+              "ibo_fixture_not_live_device_evidence",
+              "ibo_report_not_device_verified",
+              "ibo_working_survives_technical_failure",
+              "k2_to_k3_handoff",
+              "legacy_390_offline_decode_contract",
+              "legacy_epg_logo_pilot_join",
+              "no_device_approval",
+              "no_production_approval",
+              "preliminary_classification",
+              "preliminary_not_approved",
+              "repeated_measurements_fixture_only",
+              "xmltv_id_matching"
+            ]
+          },
+          "k4": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "backup",
+            "fixture_checks": 7,
+            "fixture_check_names": [
+              "external_backup_not_claimed",
+              "independent_restore_reports_no_production_proof",
+              "manifest_integrity",
+              "restore_not_claimed",
+              "sandbox_copy_integrity",
+              "sandbox_restore_audit",
+              "three_tree_restore_fixture"
+            ]
+          },
+          "k5": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "maintenance",
+            "fixture_checks": 20,
+            "fixture_check_names": [
+              "all_92_pair_requirements_bound_without_acceptance",
+              "batch_failure_summary",
+              "candidate_k2_k3_k5_consistent",
+              "candidate_k2_k3_k5_join",
+              "candidate_metadata_counts",
+              "candidate_report_read_only",
+              "cross_category_handoff",
+              "failure_limit",
+              "five_categories",
+              "five_fixture_reports_successful",
+              "k1_guards_k5_report_write",
+              "k2_k3_k4_k5_candidate_restore_review",
+              "k4_corruption_blocks_k5_review",
+              "no_legacy_shutdown",
+              "no_schedule_activation",
+              "paginated_failure_history_blocks_retry",
+              "production_not_approved",
+              "read_only",
+              "separate_job_gate_not_false_writer_clearance",
+              "single_batch_no_extra_triggers"
+            ]
+          }
+        },
+        "k5_fixture_evidence_verified": true,
+        "five_isolated_reports_valid": true,
+        "runtime_rules_verified": false,
+        "legacy_92_behavioral_equivalence_verified": false,
+        "ibo_device_verified": false,
+        "external_restore_verified": false,
+        "production_ready": false,
+        "automatic_schedule_enabled": false
+      },
+      "independent_execution_evidence": false,
+      "production_ready": false
+    },
+    "workflow_and_task_inventory_passed": true,
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "baseline_validation": {
+    "tests": 754,
+    "failures": 1,
+    "errors": 4
+  },
+  "source_sha256": {
+    "madsc/offline_five_gate.py": "396872c8893db8d1b9c1cdb15e70871e1f07a95ea0003614ddcb0bce1fbaa703",
+    "madsc/offline_gate.py": "e38aa5e005319bc98e65761bbb5d127a8c3bb4f5613ff5002c921f9c2b32b002",
+    "tests/test_discovery_batch.py": "da3256e32659f247b750655043ee6ce202b325998305c53ee5347e04200ab629",
+    "tests/test_legacy_k3_compatibility.py": "f1f64665c1e989834a6e58d1884b4fa00a4a97d7899c7c569a4272e8d1c996cd",
+    "tests/test_legacy_replay_regression.py": "1c20f586834bf3f1f77ba0ab3f600c61e88678b693abc26fa9a77910d78edfa0",
+    "tests/test_five_report_roundtrip.py": "c366629417e53e2b28351c196a04804e353e13599dbe2cb34a60e1005e67413f"
+  },
+  "installation_summary": {
+    "main_workflows_present": true,
+    "total_workflow_files": 16,
+    "tasks_completed": 0,
+    "tasks_in_progress": 7,
+    "tasks_pending": 15,
+    "additional_workflows_requiring_consolidation_review": [
+      "01-guvenlik.yml",
+      "madsc-k2-legacy-multisource.yml",
+      "madsc-k2-live-pilot.yml",
+      "madsc-k2-real-history-source.yml",
+      "madsc-k2-verified-history.yml",
+      "madsc-k3-live-manifest-pilot.yml",
+      "madsc-k3-turkish-tv-video.yml",
+      "madsc-legacy-99-bulk-audit.yml",
+      "madsc-legacy-notes-bulk-merge.yml",
+      "madsc-turkish-tv-batch.yml",
+      "madsc-unit-tests.yml"
+    ],
+    "writer_callsite_candidates_count": 125,
+    "all_writer_callsites_manually_verified": false
+  },
+  "remaining_task_evidence": {
+    "schema": "madsc-k1-k5-evidence-requirements-v1",
+    "tasks": {
+      "K1": [
+        {
+          "id": "K1-01",
+          "title": "26 güvenlik kuralının gerçek çalışma zamanı kabulü",
+          "ledger_status": "pending",
+          "requires_external_evidence": false,
+          "missing_evidence": [
+            "runtime_rule_26_evidence"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K1-02",
+          "title": "Korunan üretim dosyalarının değişmezlik kanıtı",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "production_file_before_after_hashes"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K1-03",
+          "title": "Tüm yazma noktalarının merkezi güvenlik kapısına bağlanması",
+          "ledger_status": "in_progress",
+          "requires_external_evidence": false,
+          "missing_evidence": [
+            "all_writer_callsite_inventory",
+            "runtime_guard_enforcement"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K1-04",
+          "title": "18 görev denetiminin eksik 10 görevi",
+          "ledger_status": "pending",
+          "requires_external_evidence": false,
+          "missing_evidence": [
+            "security_task_18_of_18_evidence"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        }
+      ],
+      "K2": [
+        {
+          "id": "K2-05",
+          "title": "Gerçek kaynak mutabakatı ve lisans doğrulaması",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "source_license_review",
+            "source_reconciliation"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K2-06",
+          "title": "Günlük keşif üretim döngüsü ve tetik eşdeğerliği",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "daily_trigger_equivalence",
+            "discovery_output_provenance"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K2-07",
+          "title": "Gerçek geçmiş artifact köken ve SHA256 doğrulaması",
+          "ledger_status": "in_progress",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "independent_artifact_sha256",
+            "artifact_origin"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K2-08",
+          "title": "Aday alternatif ve tekrar ayrımı",
+          "ledger_status": "in_progress",
+          "requires_external_evidence": false,
+          "missing_evidence": [
+            "candidate_duplicate_alternative_differential"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        }
+      ],
+      "K3": [
+        {
+          "id": "K3-09",
+          "title": "75 adayın saatlere yayılan yeniden testleri",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "75_candidate_timed_retests"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K3-10",
+          "title": "Üç aşama ve altı saat süreklilik değerlendirmesi",
+          "ledger_status": "in_progress",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "three_independent_samples_six_hours_apart",
+            "continuity_measurements"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K3-11",
+          "title": "Gerçek ffprobe/ffmpeg yayın kanıtı",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "real_ffprobe_ffmpeg_evidence"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K3-12",
+          "title": "IBO cihazda kullanıcı kabulü",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "ibo_real_device_user_acceptance"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K3-13",
+          "title": "EPG XMLTV tvg-id ve Pages yayın zinciri",
+          "ledger_status": "in_progress",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "xmltv_tvg_id_live_pages_chain"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K3-14",
+          "title": "Logo görsel ve kanal kimliği doğrulaması",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "logo_visual_channel_identity"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        }
+      ],
+      "K4": [
+        {
+          "id": "K4-15",
+          "title": "Bağımsız harici yedek oluşturma kanıtı",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "independent_external_backup_receipt"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K4-16",
+          "title": "Harici yedekten gerçek izole geri yükleme",
+          "ledger_status": "in_progress",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "external_backup_isolated_restore"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K4-17",
+          "title": "Korunan arşivler ve VOD eşdeğerliği",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "vod_archive_behavioral_parity"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K4-18",
+          "title": "Ayın 1 ve 15'i yedek davranış eşdeğerliği",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "first_and_fifteenth_backup_trigger_parity"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        }
+      ],
+      "K5": [
+        {
+          "id": "K5-19",
+          "title": "92 eski otomasyonun gerçek davranışsal kabulü",
+          "ledger_status": "in_progress",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "92_of_92_behavioral_evidence"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K5-20",
+          "title": "K1-K5 uçtan uca gerçek veri kanıt zinciri",
+          "ledger_status": "pending",
+          "requires_external_evidence": true,
+          "missing_evidence": [
+            "real_end_to_end_evidence_chain"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K5-21",
+          "title": "Hata, timeout, retry ve artifact eşdeğerliği",
+          "ledger_status": "pending",
+          "requires_external_evidence": false,
+          "missing_evidence": [
+            "timeout_retry_failure_artifact_parity"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        },
+        {
+          "id": "K5-22",
+          "title": "Tek Türkçe kapanış ve üretim kabul raporu",
+          "ledger_status": "pending",
+          "requires_external_evidence": false,
+          "missing_evidence": [
+            "turkish_final_acceptance_report"
+          ],
+          "evidence_checklist_complete": false,
+          "production_acceptance_proven_by_this_report": false
+        }
+      ]
+    },
+    "total": 22,
+    "pending_in_ledger": 15,
+    "in_progress_in_ledger": 7,
+    "completed_in_ledger": 0,
+    "requirements_missing_tasks": 22,
+    "requires_external_evidence_tasks": 16,
+    "production_ready": false,
+    "github_actions_triggered": false,
+    "tests_executed": false,
+    "production_writes": false
+  },
+  "auxiliary_contracts": {
+    "auxiliary_count": 10,
+    "rows": [
+      {
+        "source": "01-guvenlik.yml",
+        "stages": "K1",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            10
+          ],
+          "artifact_names": [],
+          "actions_read": false,
+          "always_upload": false
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              10
+            ],
+            "artifact_names": [
+              "madsc-k1-failed-consumer-snapshot",
+              "madsc-k1-guard-parity-evidence",
+              "madsc-k1-isolated-evidence"
+            ],
+            "actions_read": false,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [],
+        "requires_manual_behavior_review": false,
+        "artifact_renamed_in_consolidation": false,
+        "timeout_insufficient": false,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": false
+      },
+      {
+        "source": "madsc-k2-legacy-multisource.yml",
+        "stages": "K2",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            7
+          ],
+          "artifact_names": [
+            "madsc-k2-legacy-multisource-report"
+          ],
+          "actions_read": false,
+          "always_upload": true
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              15
+            ],
+            "artifact_names": [
+              "madsc-k2-isolated-evidence"
+            ],
+            "actions_read": true,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [
+          "artifact_name"
+        ],
+        "requires_manual_behavior_review": true,
+        "artifact_renamed_in_consolidation": true,
+        "timeout_insufficient": false,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": true
+      },
+      {
+        "source": "madsc-k2-live-pilot.yml",
+        "stages": "K2",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            5
+          ],
+          "artifact_names": [
+            "madsc-k2-real-channel-discovery-pilot"
+          ],
+          "actions_read": false,
+          "always_upload": true
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              15
+            ],
+            "artifact_names": [
+              "madsc-k2-isolated-evidence"
+            ],
+            "actions_read": true,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [
+          "artifact_name"
+        ],
+        "requires_manual_behavior_review": true,
+        "artifact_renamed_in_consolidation": true,
+        "timeout_insufficient": false,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": true
+      },
+      {
+        "source": "madsc-k2-real-history-source.yml",
+        "stages": "K2",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            10
+          ],
+          "artifact_names": [
+            "madsc-k2-history-source"
+          ],
+          "actions_read": true,
+          "always_upload": false
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              15
+            ],
+            "artifact_names": [
+              "madsc-k2-isolated-evidence"
+            ],
+            "actions_read": true,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [
+          "artifact_name"
+        ],
+        "requires_manual_behavior_review": true,
+        "artifact_renamed_in_consolidation": true,
+        "timeout_insufficient": false,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": false
+      },
+      {
+        "source": "madsc-k2-verified-history.yml",
+        "stages": "K2",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            10
+          ],
+          "artifact_names": [
+            "madsc-verified-k2-history"
+          ],
+          "actions_read": true,
+          "always_upload": false
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              15
+            ],
+            "artifact_names": [
+              "madsc-k2-isolated-evidence"
+            ],
+            "actions_read": true,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [
+          "artifact_name"
+        ],
+        "requires_manual_behavior_review": true,
+        "artifact_renamed_in_consolidation": true,
+        "timeout_insufficient": false,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": true
+      },
+      {
+        "source": "madsc-k3-live-manifest-pilot.yml",
+        "stages": "K3",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            5
+          ],
+          "artifact_names": [
+            "madsc-k3-real-manifest-pilot"
+          ],
+          "actions_read": false,
+          "always_upload": true
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              60
+            ],
+            "artifact_names": [
+              "madsc-k3-isolated-evidence"
+            ],
+            "actions_read": false,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [
+          "artifact_name"
+        ],
+        "requires_manual_behavior_review": true,
+        "artifact_renamed_in_consolidation": true,
+        "timeout_insufficient": false,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": true
+      },
+      {
+        "source": "madsc-k3-turkish-tv-video.yml",
+        "stages": "K3",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            8
+          ],
+          "artifact_names": [
+            "madsc-k3-turkish-tv-video-pilot"
+          ],
+          "actions_read": false,
+          "always_upload": true
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              60
+            ],
+            "artifact_names": [
+              "madsc-k3-isolated-evidence"
+            ],
+            "actions_read": false,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [
+          "artifact_name"
+        ],
+        "requires_manual_behavior_review": true,
+        "artifact_renamed_in_consolidation": true,
+        "timeout_insufficient": false,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": true
+      },
+      {
+        "source": "madsc-legacy-99-bulk-audit.yml",
+        "stages": "K5",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            25
+          ],
+          "artifact_names": [
+            "madsc-legacy-99-source-audit"
+          ],
+          "actions_read": false,
+          "always_upload": false
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "artifact_names": [
+              "madsc-k1-k5-installation-audit",
+              "madsc-offline-five-stage-gate",
+              "madsc-regression-diagnostics",
+              "madsc-batch-k1",
+              "madsc-k2-failed-consumer-snapshot",
+              "madsc-k2-history-handoff",
+              "madsc-k2-candidate-handoff",
+              "madsc-k2-handoff-parity-evidence",
+              "madsc-batch-k2",
+              "madsc-k2-candidate-handoff",
+              "madsc-k2-history-handoff",
+              "madsc-k3-history-receipt",
+              "madsc-k3-handoff",
+              "madsc-k3-guarded-evidence",
+              "madsc-batch-k3",
+              "madsc-k4-guarded-evidence",
+              "madsc-k4-restore-drill",
+              "madsc-batch-k4",
+              "madsc-k2-candidate-handoff",
+              "madsc-k2-history-handoff",
+              "madsc-k5-history-receipt",
+              "madsc-k5-handoff",
+              "madsc-k3-handoff",
+              "madsc-k5-cross-handoff-verification",
+              "madsc-k3-guarded-evidence",
+              "madsc-k5-k3-safety-gate",
+              "madsc-k5-guarded-evidence",
+              "madsc-k5-legacy-source-evidence",
+              "madsc-k5-consolidation-and-task-evidence",
+              "madsc-progress-scorecard",
+              "madsc-batch-k5",
+              "madsc-k2-candidate-handoff",
+              "madsc-cross-handoff-acceptance",
+              "madsc-k4-restore-drill",
+              "madsc-k4-restore-acceptance",
+              "madsc-five-system-acceptance",
+              "madsc-test-sonuclari"
+            ],
+            "actions_read": true,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [
+          "timeout",
+          "artifact_name"
+        ],
+        "requires_manual_behavior_review": true,
+        "artifact_renamed_in_consolidation": true,
+        "timeout_insufficient": true,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": true
+      },
+      {
+        "source": "madsc-legacy-notes-bulk-merge.yml",
+        "stages": "K5",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            15
+          ],
+          "artifact_names": [
+            "madsc-eski-notlar-tek-dosya-ve-sha256"
+          ],
+          "actions_read": false,
+          "always_upload": false
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "artifact_names": [
+              "madsc-k1-k5-installation-audit",
+              "madsc-offline-five-stage-gate",
+              "madsc-regression-diagnostics",
+              "madsc-batch-k1",
+              "madsc-k2-failed-consumer-snapshot",
+              "madsc-k2-history-handoff",
+              "madsc-k2-candidate-handoff",
+              "madsc-k2-handoff-parity-evidence",
+              "madsc-batch-k2",
+              "madsc-k2-candidate-handoff",
+              "madsc-k2-history-handoff",
+              "madsc-k3-history-receipt",
+              "madsc-k3-handoff",
+              "madsc-k3-guarded-evidence",
+              "madsc-batch-k3",
+              "madsc-k4-guarded-evidence",
+              "madsc-k4-restore-drill",
+              "madsc-batch-k4",
+              "madsc-k2-candidate-handoff",
+              "madsc-k2-history-handoff",
+              "madsc-k5-history-receipt",
+              "madsc-k5-handoff",
+              "madsc-k3-handoff",
+              "madsc-k5-cross-handoff-verification",
+              "madsc-k3-guarded-evidence",
+              "madsc-k5-k3-safety-gate",
+              "madsc-k5-guarded-evidence",
+              "madsc-k5-legacy-source-evidence",
+              "madsc-k5-consolidation-and-task-evidence",
+              "madsc-progress-scorecard",
+              "madsc-batch-k5",
+              "madsc-k2-candidate-handoff",
+              "madsc-cross-handoff-acceptance",
+              "madsc-k4-restore-drill",
+              "madsc-k4-restore-acceptance",
+              "madsc-five-system-acceptance",
+              "madsc-test-sonuclari"
+            ],
+            "actions_read": true,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [
+          "timeout",
+          "artifact_name"
+        ],
+        "requires_manual_behavior_review": true,
+        "artifact_renamed_in_consolidation": true,
+        "timeout_insufficient": true,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": false
+      },
+      {
+        "source": "madsc-turkish-tv-batch.yml",
+        "stages": "K2+K3",
+        "command_present": true,
+        "source_contract": {
+          "timeout_minutes": [
+            60
+          ],
+          "artifact_names": [
+            "turkish-tv-batch-validation"
+          ],
+          "actions_read": false,
+          "always_upload": true
+        },
+        "main_contracts": [
+          {
+            "timeout_minutes": [
+              15
+            ],
+            "artifact_names": [
+              "madsc-k2-isolated-evidence"
+            ],
+            "actions_read": true,
+            "always_upload": true
+          },
+          {
+            "timeout_minutes": [
+              60
+            ],
+            "artifact_names": [
+              "madsc-k3-isolated-evidence"
+            ],
+            "actions_read": false,
+            "always_upload": true
+          }
+        ],
+        "missing_artifact_paths": [],
+        "artifact_paths_declared_only": true,
+        "artifact_files_produced_verified": false,
+        "static_contract_gaps": [
+          "artifact_name"
+        ],
+        "requires_manual_behavior_review": true,
+        "artifact_renamed_in_consolidation": true,
+        "timeout_insufficient": false,
+        "behavioral_parity_verified": false,
+        "external_evidence_required": true
+      }
+    ],
+    "missing_commands": [],
+    "static_gaps_total": 11,
+    "behavioral_parity_verified": false,
+    "production_writes": false
+  },
+  "github_actions_triggered": false,
+  "protected_data_modified": false,
+  "legacy_repository_modified": false,
+  "production_ready": false,
+  "note": "Five temporary local reports were produced by real core.run and consumed by real K5 collect. They are not independent legacy/replacement execution artifacts. Extra workflows have not been deleted."
+}

@@ -45,7 +45,7 @@ class LegacyK3CompatibilityTests(unittest.TestCase):
     def test_390_missing_audio_is_rejected(self):
         def fake(args, **kwargs):
             return SimpleNamespace(returncode=0, stdout="video\n", stderr="")
-        result = evaluate_entries(parse_entries("#EXTINF:-1,No Audio\nhttp://example.invalid/b"),
+        result = evaluate_entries(parse_entries("#EXTM3U\n#EXTINF:-1,No Audio\nhttp://example.invalid/b"),
                                   runner=fake)
         self.assertEqual(result["technical_pass_count"], 0)
         self.assertEqual(result["technical_m3u"], "#EXTM3U\n")
@@ -75,7 +75,7 @@ class LegacyK3CompatibilityTests(unittest.TestCase):
             calls.append(args[0])
             return SimpleNamespace(returncode=1 if args[0] == "ffmpeg" else 0,
                                    stdout="video\naudio\n", stderr="decode error")
-        rows = parse_entries("#EXTINF:-1,Fail\nhttps://example.invalid/stream")
+        rows = parse_entries("#EXTM3U\n#EXTINF:-1,Fail\nhttps://example.invalid/stream")
         report = evaluate_entries(rows, runner=fake, workers=1)
         self.assertEqual(calls, ["ffprobe", "ffmpeg"])
         self.assertEqual(report["technical_pass_count"], 0)
@@ -86,7 +86,7 @@ class LegacyK3CompatibilityTests(unittest.TestCase):
     def test_390_probe_exception_stays_failed(self):
         def broken(args, **kwargs):
             raise TimeoutError("fixture timeout")
-        rows = parse_entries("#EXTINF:-1,Timeout\nhttps://example.invalid/stream")
+        rows = parse_entries("#EXTM3U\n#EXTINF:-1,Timeout\nhttps://example.invalid/stream")
         report = evaluate_entries(rows, runner=broken, workers=1)
         self.assertEqual(report["technical_pass_count"], 0)
         self.assertIn("fixture timeout", report["csv_text"])

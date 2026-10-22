@@ -46,5 +46,5 @@ class LegacyReplayTests(unittest.TestCase):
 
     def test_retest_parser_rejects_headerless_input(self):
         with self.assertRaises(ValueError):
-            parse_entries("#EXTINF:-1,Example\\nhttps://example.org/live")
-        self.assertEqual(len(parse_entries("#EXTM3U\\n#EXTINF:-1,Example\\nhttps://example.org/live")), 1)
+            parse_entries("#EXTINF:-1,Example\nhttps://example.org/live")
+        self.assertEqual(len(parse_entries("#EXTM3U\n#EXTINF:-1,Example\nhttps://example.org/live")), 1)

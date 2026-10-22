@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 from madsc.playlist_previews import BUCKETS, preview_imported_m3u
+from madsc.write_path_audit import enforce_write_paths
 
 
 def export_isolated_previews(source: Path, destination: Path) -> dict:
@@ -25,6 +26,8 @@ def export_isolated_previews(source: Path, destination: Path) -> dict:
         raise FileExistsError("Isolated output must be a fresh directory")
     if not destination.parent.is_dir() or destination.parent.is_symlink():
         raise PermissionError("Output parent must be an existing regular directory")
+    # Apply K1 path policy before creating the output directory or any M3U draft.
+    enforce_write_paths([destination.relative_to(destination.anchor).as_posix()])
     for ancestor in (destination.parent, *destination.parent.parents):
         if ancestor.is_symlink():
             raise PermissionError("Symlinked output ancestor")

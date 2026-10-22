@@ -34,10 +34,14 @@ def validate_manifest(manifest: dict) -> None:
         raise ValueError("explicit nonempty output_paths required")
     if not all(isinstance(p, str) for p in paths):
         raise ValueError("Output paths must be strings")
-    normalized = [unicodedata.normalize("NFKC", p).casefold() for p in paths]
+    normalized_paths = [unicodedata.normalize("NFKC", p) for p in paths]
+    # Reject compatibility characters instead of silently rewriting path identity.
+    # This prevents full-width path components from bypassing protected-path policy.
+    if any(original != normalized for original, normalized in zip(paths, normalized_paths)):
+        raise ValueError("Non-canonical Unicode output path")
+    normalized = [p.casefold() for p in normalized_paths]
     if len(normalized) != len(set(normalized)):
         raise ValueError("Duplicate output paths")
-    normalized_paths = [unicodedata.normalize("NFKC", p) for p in paths]
     if any(not safe_relative_path(p) or not p.startswith("artifacts/") for p in normalized_paths):
         raise ValueError("outputs must stay under artifacts/ and outside protected paths")
 

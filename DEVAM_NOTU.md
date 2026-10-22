@@ -886,3 +886,10 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Önceki K2 `orphan_url` regresyon düzeltmesi, daha sonraki commit `21410cc6101ca5fad8b4500a74e9c955f23e9ecd` için başarılı Actions `39870201168` ile doğrulandı.
 - K2 `parse_m3u`, metin veya kaynak etiketindeki Unicode surrogate karakterleri UTF-8 olarak kodlanamayacağı için girişte `ValueError` ile reddediyor (`6ac6eef780e14559854740539d96cdd8dfd39912`). `parse_m3u`, `corroborate_sources` ve `build_m3u8_preview` yolları için regresyon testi eklendi (`a794aeca142581eb5a70db90ec4ae51d5a1b63de`). Bu yeni testin CI sonucu ilk kontrolde bekliyordu (`39870351806`), başarı iddia edilmez.
 - Gerçek kaynak/lisans, günlük keşif eşdeğerliği, gerçek artifact köken/SHA ve K2-08 gerçek kaynak davranış kabulü açık. Korunan üretim verisi değiştirilmedi.
+
+
+## 23 Ekim 2026 — K4 düşük seviyeli güvenli dosya açma ve cihaz doğrulama sırası
+- Kullanıcı talimatı: **IBO Player Pro üzerindeki gerçek cihaz doğrulaması en son yapılacak; cihazı kullanıcı bizzat deneyip sonucu bildirecek.** K1–K5 kod, test, kaynak ve yedekleme eksikleri önce tamamlanmalı; cihaz testinin sonucu varsayılmamalı ve hiçbir otomatik cihaz doğrulaması tetiklenmemeli.
+- `madsc/backup.py` içinde `_open_relative_file_nofollow` kaynak dosya yol bileşenlerini artık descriptor açmadan önce denetliyor. Boş, `.`, `..`, slash ve tek backslash içeren bileşenler reddediliyor. Nihai düzeltme commit `7df85585bd152e07fef2703a2c6497414ae7e594`.
+- `tests/test_backup_manifest_hardening.py` içine doğrudan düşük seviyeli fonksiyonun traversal ve backslash girdilerini reddetmesini doğrulayan test eklendi. Nihai test commit `0524a7d0bca2a79da83d5abd47bb136169c9a7df`.
+- Son gözlem: ilgili Actions `39870389256` henüz pending; yeni test için başarılı CI kanıtı bekleniyor. Gerçek harici yedek, bağımsız harici restore ve ayın 1/15 zamanlayıcı kabulü hâlâ açık. Korunan IPTV, EPG, favori, cihaz ve üretim yedek dosyaları değiştirilmedi.

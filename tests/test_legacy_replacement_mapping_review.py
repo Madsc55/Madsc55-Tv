@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch
 
 from madsc.legacy_replacement_mapping_review import review_replacement_mappings
+from madsc.legacy_parity_evidence import CENTRAL_REPLACEMENT_WORKFLOWS
 
 LEGACY = ".github/workflows/old.yml"
 REPLACEMENT = ".github/workflows/madsc-01-guvenlik.yml"
@@ -20,6 +21,13 @@ class MappingReviewTests(unittest.TestCase):
             "static_file_binding_complete": True,
             "input_digest_binding_complete": True,
         }]}
+        self.readiness["rows"].extend(
+            {"workflow_path": path, "workflow_blob_sha": "c" * 40,
+             "declared_file_binding": None,
+             "marker_contract_complete": False,
+             "static_file_binding_complete": False,
+             "input_digest_binding_complete": False}
+            for path in sorted(CENTRAL_REPLACEMENT_WORKFLOWS - {REPLACEMENT}))
         self.row = {
             "legacy_path": LEGACY, "legacy_blob_sha": "a" * 40,
             "replacement_workflow_path": REPLACEMENT,
@@ -66,6 +74,16 @@ class MappingReviewTests(unittest.TestCase):
     def test_unknown_legacy_rejected(self):
         with self.assertRaises(ValueError):
             self.review([{**self.row, "legacy_path": ".github/workflows/unknown.yml"}])
+
+    def test_missing_replacement_workflow_rejected(self):
+        self.readiness["rows"].pop()
+        with self.assertRaises(ValueError):
+            self.review([self.row])
+
+    def test_duplicate_replacement_workflow_rejected(self):
+        self.readiness["rows"].append(dict(self.readiness["rows"][0]))
+        with self.assertRaises(ValueError):
+            self.review([self.row])
 
     def test_missing_rationale_rejected(self):
         with self.assertRaises(ValueError):

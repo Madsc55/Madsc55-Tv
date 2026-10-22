@@ -2635,3 +2635,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Önceki Unicode surrogate regresyonu (`a794aeca`) daha sonraki `0524a7d0bca2a79da83d5abd47bb136169c9a7df` commit'inde başarılı GitHub Actions `39870389256` ile kapsandı; GitHub compare `ahead=5`, `behind=0`.
 - `parse_m3u` kaynak köken etiketlerindeki ASCII kontrol karakterlerini (satır sonu, tab, NUL, DEL) reddediyor (`a9e193bd2ea8de8d8f0ce0be937042dbcce894b4`). Bu, rapor ve köken kayıtlarının kontrol karakterleriyle kirletilmesini engeller. Parser, kaynak mutabakatı ve önizleme için regresyon `e03b92d13a41a3e1d48e06c73981c1e7299473e1`; yeni CI sonucu henüz doğrulanmadı.
 - K2-08 görev defterine kanıt işlendi, kabul kapatılmadı. Gerçek kaynak/lisans, günlük keşif eşdeğerliği ve gerçek artifact SHA kökeni hâlâ açık. IBO Player Pro cihaz testini en sonda kullanıcı yapacak; cihaz doğrulandı iddiası yok. Korunan üretim verisine dokunulmadı.
+
+
+## 23 Ekim 2026 — K2 kaynak etiketinin URL mutabakatından önce doğrulanması
+- Kaynak etiketindeki kontrol karakterleri ve UTF-8 surrogate kod noktaları `corroborate_sources` girişinde bilinen URL normalizasyonundan önce reddedilir. Gereksiz çift M3U ayrıştırması kaldırıldı. Son kod `eb4b3fc841852d09ede8599de2984985f710167d`; regresyon `bd0aab8bfb24596d20f9716cb7cbefcd1ce85387`.
+- Önceki kaynak etiketi regresyonunun birebir SHA `e03b92d1` Actions `39870604494` sonucu `success`. Yeni `bd0aab8b` koşusu `39870812620` eşzamanlı push nedeniyle `cancelled`; yeni regresyon için başarılı CI henüz teyit edilmedi.
+- K2-08 in_progress; K2-05/06/07 gerçek kaynak/lisans, günlük keşif eşdeğerliği ve gerçek artifact köken kanıtı açık. Cihaz doğrulaması en sona bırakıldı; IBO Player Pro denemesini kullanıcı yapacak. Üretim verisine dokunulmadı.

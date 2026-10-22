@@ -284,3 +284,9 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 ## 22 Ekim 2026 — Paralel sohbet çakışma denetimi ve tanı API regresyonu
 - main HEAD okunarak çalışıldı; önceki diagnostic ZIP/API doğrulayıcıları ve testleri tekrar yazılmadı. Ayrı tests/test_failure_diagnostic_api_fail_closed.py eklendi: commit 2aa79162627663cb8b11c7efbaba2765a47dfc34. Dört negatif senaryo: API run_attempt, artifact workflow_run.id, artifact workflow_run.head_sha ve artifact digest uyuşmazlığı ValueError ile reddedilmeli.
 - Bu yeni test henüz ÇALIŞTIRILMADI; mevcut 632 test kanıtına eklenemez. GitHub Actions izinsiz tetiklenmedi. Başka sohbet main üzerinde eşzamanlı çalışıyor: her sonraki işlem öncesi HEAD ve dosya SHA yeniden okunmalı, var olan çalışma ezilmemeli. Kabul 0/92, 0/26, 0/22.
+
+
+## 22 Ekim 2026 — Diagnostic outcome strictness regresyonu
+- Yeni test commit 71ba4aeb3e79456855ac8392b09ee9fe3740f0d3; tests/test_diagnostic_outcome_strictness.py içinde duplicate JSON key, timeout conclusion/measurement mismatch ve yanlış consumer identity için üç fail-closed senaryo eklendi. Mevcut diagnostic ZIP/API testleri tekrar yazılmadı.
+- Yerel GitHub git ls-remote hâlâ DNS 'Could not resolve host: github.com' verdi. Yeni testler ve tam offline_gate ÇALIŞTIRILMADI; 632 önceki test bu commit'i kapsamaz. GitHub Actions/üretim tetiklenmedi.
+- Sonraki iş: erişilebilir checkout üzerinde python -m unittest tests.test_diagnostic_outcome_strictness -v ve python -m madsc.offline_gate; başarısızlıkları düzelt, gerçek diagnostic artifact API/byte doğrulamasını bağımsız execution kanıtıyla sınamaya devam et. Kabul 0/92, 0/26, 0/22; tüm korumalar geçerli. Paralel sohbet için her yazmadan önce main/dosya SHA yeniden okunmalı.

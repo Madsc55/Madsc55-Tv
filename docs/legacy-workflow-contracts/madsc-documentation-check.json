@@ -1,0 +1,100 @@
+{
+  "schema": "madsc-legacy-workflow-behavior-contract-v1",
+  "contract_status": "SOURCE_BEHAVIOR_DOCUMENTED_REPLACEMENT_MAPPING_UNVERIFIED",
+  "legacy_source": {
+    "repository": "Madsc55/madsc-tv",
+    "branch": "madsc/bes-sistem-toplu-birlestirme",
+    "source_tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+    "source_commit": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+    "path": ".github/workflows/madsc-documentation-check.yml",
+    "git_blob_sha": "0678a8a201eb194503f9097265fe37e68b1e4d3d",
+    "bytes": 472
+  },
+  "intent": "Manually run a lightweight repository-record consistency check.",
+  "triggers": {
+    "workflow_dispatch": true,
+    "push": false,
+    "pull_request": false,
+    "schedule": false,
+    "workflow_call": false
+  },
+  "permissions": {
+    "contents": "read",
+    "other_explicit_permissions": "none"
+  },
+  "runner": {
+    "os": "ubuntu-latest",
+    "checkout": "actions/checkout@v4",
+    "python": "not configured"
+  },
+  "ordered_commands": [
+    {
+      "command": "test -s AGENTS.md",
+      "meaning": "Fail unless AGENTS.md exists and is nonempty."
+    },
+    {
+      "command": "test -s OZELLIK_ENVANTERI.md",
+      "meaning": "Fail unless OZELLIK_ENVANTERI.md exists and is nonempty."
+    },
+    {
+      "command": "test -s DEVAM_NOTU.md",
+      "meaning": "Fail unless DEVAM_NOTU.md exists and is nonempty."
+    },
+    {
+      "command": "grep -q 'Kural 25' AGENTS.md",
+      "meaning": "Require the literal marker Kural 25 in AGENTS.md."
+    },
+    {
+      "command": "grep -q 'build_epg.py' OZELLIK_ENVANTERI.md",
+      "meaning": "Require the literal build_epg.py marker in the feature inventory."
+    },
+    {
+      "command": "head -n 1 CALISANLAR.m3u | grep -q '#EXTM3U'",
+      "meaning": "Read only the first line of CALISANLAR.m3u and require an M3U header."
+    }
+  ],
+  "exit_behavior": {
+    "expected_success_code": 0,
+    "first_failed_command_stops_job": true,
+    "explicit_retries": false,
+    "explicit_timeout_minutes": null,
+    "artifact_upload": false,
+    "deploy": false,
+    "network_probe": false
+  },
+  "data_and_side_effects": {
+    "repository_checkout_writes_ephemeral_runner_workspace": true,
+    "repository_files_modified_by_script": false,
+    "protected_playlist_read_only": true,
+    "playlist_scope": "header line only",
+    "epg_favorites_backup_device_access": false,
+    "production_side_effects_not_performed_by_commands": true
+  },
+  "replacement_mapping": {
+    "replacement_workflow_path": null,
+    "mapping_reviewed": false,
+    "reason": "No current main workflow was proven to preserve this exact manual trigger and six ordered assertions. The five-stage offline gate is not behaviorally equivalent by filename or intent alone."
+  },
+  "equivalence_evidence": {
+    "legacy_execution_run_id": null,
+    "new_execution_run_id": null,
+    "input_output_comparison": null,
+    "side_effect_comparison": null,
+    "failure_timeout_comparison": null,
+    "independent_reviewer_approval": null,
+    "behavioral_parity_verified": false,
+    "evidence_missing": [
+      "legacy_execution",
+      "new_execution",
+      "input_output_comparison",
+      "side_effect_comparison",
+      "failure_timeout_comparison",
+      "reviewer_approval"
+    ]
+  },
+  "safety_notes": [
+    "Do not dispatch the legacy workflow solely to claim parity; its final assertion reads the protected playlist header.",
+    "A future isolated equivalent should test the six assertions against a fixture checkout and must not access the production playlist.",
+    "This contract records source semantics only; it does not assert execution or equivalence."
+  ]
+}

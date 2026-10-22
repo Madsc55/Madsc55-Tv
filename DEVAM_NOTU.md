@@ -1,3 +1,12 @@
+# EN YENİ K3 GÜNCELLEMESİ — EPG test fixture hatası düzeltildi (2026-10-23)
+- `tests/test_epg.py` içindeki ilk üç M3U fixture'ında çift kaçışlı satır sonları düzeltildi; artık gerçek `\n` kaçışları kullanılıyor.
+- Test düzeltme commit'i: `ef728129a4bdebf8b1a84c14bb6cae806d2cf267`; rapor güncellemesi: `1d92ad7902bb589e8eb4776cb1caa86c9895e505`; görev defteri güncellemesi: `8222a57863020218e9e4017f5993a41d9d059539`.
+- Ayrı yerel davranış harness'i: 9/9 senaryo geçti. Repo test dosyası ve tam depo test paketi bu turda çalıştırılmadı; Actions çalıştırılmadı.
+- K3 gerçek yayın/ffprobe, 6+ saat bağımsız süreklilik, IBO cihaz kabulü, Pages EPG zinciri ve logo doğrulaması açık. Üretim playlist/EPG/cihaz verilerine dokunulmadı; PR #71 merge edilmedi; sayaçlar 0/92, 0/26, 0/22.
+- Sonraki adım: test fixture düzeltmesini mevcut ana test koşumunda çalıştırıp gerçek CI kanıtı elde et; sonra dış ağ/cihaz kabulüne ilerle.
+
+---
+
 # EN YENİ K3 GÜNCELLEMESİ — M3U tvg-id sertleştirmesi (2026-10-23)
 - Aynı M3U `#EXTINF` satırında duplicate `tvg-id` artık reddediliyor; tek değer çevresindeki boşluklar normalize ediliyor.
 - Kod: `6dcaaace0f8cb4faad0185584f6aafa319090159`; test: `73fdc790449f6c571b644729aa988d8f954d7304`; K3-13 görev defteri: `15e3ca6a4a3787f8b0c16e648179ec833843524a`; rapor: `7badc4f3a7d4ebc9a9ca298ffbd956bc1458184e`.

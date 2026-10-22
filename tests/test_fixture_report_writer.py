@@ -65,7 +65,7 @@ class FixtureReportWriterTests(unittest.TestCase):
             with patch("madsc.fixture_report_writer._exclusive_bytes",
                        side_effect=replace_before_second_write):
                 with self.assertRaisesRegex(OSError, "simulated"):
-                    write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}\\n")
+                    write_turkish_tv_test_bundle(root, b"#EXTM3U\n", "{}\n")
             self.assertEqual(playlist.read_bytes(), b"concurrent replacement")
 
     def test_exclusive_writer_fails_closed_without_nofollow(self):

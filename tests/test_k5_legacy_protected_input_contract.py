@@ -32,6 +32,10 @@ class K5LegacyProtectedInputContractTests(unittest.TestCase):
             self.assertFalse(manifest["production_writes"])
             self.assertTrue(all((destination / name).is_file()
                                 for name in manifest["files"]))
+            for name, evidence in manifest["files"].items():
+                payload = (destination / name).read_bytes()
+                self.assertEqual(evidence["sha256"], hashlib.sha256(payload).hexdigest())
+                self.assertEqual(evidence["bytes"], len(payload))
             self.assertFalse(any((source_dir / name).exists()
                                  for name in manifest["files"]))
 

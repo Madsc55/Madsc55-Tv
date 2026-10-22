@@ -164,7 +164,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
         source = Path("madsc/candidate_probe_link.py").read_text(encoding="utf-8")
         parsed = ast.parse(source, filename="madsc/candidate_probe_link.py")
         self.assertTrue(any(isinstance(node, ast.FunctionDef)
-                            and node.name == "load_evidence" for node in parsed))
+                            and node.name == "load_evidence" for node in ast.walk(parsed)))
         from madsc.candidate_probe_link import load_evidence
         self.assertTrue(callable(load_evidence))
 

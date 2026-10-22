@@ -90,3 +90,9 @@
 - Altıncı aday tekrar testinde due schedule, en fazla 5 aday, HLS doğrulaması ve hata sonrası artifact davranışı; genel medya testinde ilk 30 aday, 6 worker, 16s ffprobe timeout ve zorunlu artifact kabul kanıtı gerektiriyor.
 - Önceki EPG fix commit 483bce535b585e5c750b7cfa54b87fb9f578d72 için run 39862697684 başarılı. Ayrı test commit c865c1a5 başarısız olmuştu; bu yüzden kod commit'i başarılı olan run ile doğrulandı, test commit'i için regresyonun tekrar ayrıca onaylanması gerekir.
 - Production acceptance false; 92 eski workflow, 26 runtime güvenlik kuralı ve 22 ana görev kabulü açık.
+
+## Düzeltme — birleşik aday raporunda kararlılık geçmişinin kaydedilmesi
+- Eski kaynak depodaki `.github/workflows/birlesik-aday-raporu.yml` incelendi ve somut bir eksik doğrulandı: workflow geçmişi `actions/cache/restore@v4` ile geri yüklüyor, `scripts/kanal_kararlilik_takip.py` dosyayı güncelliyor, ancak aynı workflow içinde cache/save adımı yoktu.
+- Düzeltme kaynak depoya kaydedildi: `Madsc55/madsc-tv` commit `ad57ba6eca0f06cef3f31dddf1563f367d197c04`. `Stability evidence` adımından sonra `actions/cache/save@v4` eklendi; `KARARLILIK_GECMISI.json`, `kanal-kararlilik-${{ github.run_id }}` anahtarıyla kaydediliyor. Böylece sonraki çalıştırmanın `kanal-kararlilik-` restore prefix'iyle bu geçmişi bulabilmesi amaçlanıyor.
+- Kaynak commit `ad57ba6eca0f` için Birlesik Aday Onay Raporu run `39863242921` tetiklendi ve son kontrolde queued durumundaydı; cache'in iki ardışık çalıştırmada gerçekten geri yüklenmesi henüz doğrulanmadı.
+- Bu değişiklik donmuş karşılaştırma tabanı `ca374df3b9585c0d76a078db9536150ebbc260f7` üzerinde bir sonraki kaynak revizyonudur; baseline içeriği geriye dönük değiştirilmedi. Davranışsal parity kabulü bu nedenle hâlâ 0/92.

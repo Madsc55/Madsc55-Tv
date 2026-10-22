@@ -1,5 +1,6 @@
 """Read-only K2 to K3 candidate evidence envelope."""
 import hashlib
+import hmac
 import json
 import re
 from madsc.handoff import assess_candidates
@@ -35,6 +36,8 @@ def unpack(envelope, run_id, commit_sha):
     if envelope["schema"] != 1 or envelope["run_id"] != run_id or envelope["commit_sha"] != commit_sha:
         raise ValueError("Evidence provenance mismatch")
     expected = pack(envelope["discovery"], run_id, commit_sha)
-    if not isinstance(envelope["digest"], str) or envelope["digest"] != expected["digest"]:
+    if (not isinstance(envelope["digest"], str)
+            or not re.fullmatch(r"[0-9a-f]{64}", envelope["digest"])
+            or not hmac.compare_digest(envelope["digest"], expected["digest"])):
         raise ValueError("Evidence digest mismatch")
     return envelope["discovery"]

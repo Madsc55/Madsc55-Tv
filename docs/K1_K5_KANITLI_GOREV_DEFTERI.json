@@ -72,7 +72,10 @@
       "aa6cba29: consume associated URL for missing/empty/unbalanced EXTINF metadata to prevent spurious orphan diagnostics",
       "1d222cde: regression test for malformed EXTINF recovery; CI run 39869955026 pending at first check",
       "39869976594: CI exposed K2 legacy assertion expecting extra orphan_url after rejected EXTINF; corrected in 9b9c4ca8",
-      "9b9c4ca8: align existing malformed EXTINF regression with intentional single-diagnostic recovery; new CI pending"
+      "9b9c4ca8: align existing malformed EXTINF regression with intentional single-diagnostic recovery; new CI pending",
+      "39870201168: successful offline CI on descendant commit 21410cc6 including malformed EXTINF regression assertion correction",
+      "6ac6eef7: reject invalid UTF-8 surrogate input before K2 downstream hashing/rendering",
+      "a794aeca: surrogate regression for parse/corroboration/preview; CI run 39870351806 pending at first check"
     ],
     "note": "Offline suite succeeded on descendant SHA 205ad1bf (run 39869009399), covering latest K2 fail-closed metadata and bounded known URL inputs. Real-source/licensing, independent origins, and behavioral acceptance still unverified."
   },

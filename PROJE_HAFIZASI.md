@@ -2463,3 +2463,10 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Aynı kural `madsc/isolated_playlist_bundle.py::export_isolated_previews` üzerine uygulandı: destination path K1 guard'dan geçmeden output directory yaratılmıyor. Test `FAVORILER` hedefinin yaratılmadığını doğrular. Kod `1d48c0f`, test `90ba1b9`.
 - CI run `39864450322` bu son değişikliği test ediyor; sonuç bekleniyor.
 - Kabul sayaçları K1 0/26, eski workflow 0/92, ana görevler 0/22. Üretim verileri korunur; PR #71 merge edilmez.
+
+
+## 23 Ekim 2026 — K1-03 ve K5 legacy sözleşme kaydı
+- Run `39864450322` SHA `90ba1b9` başarıyla tamamlandı: 981 test, tüm offline gate'ler başarılı, AST taraması 97 Python dosyası ve 78 mutation adayı. Kod/test ağacı sonraki main commit'lerinde değişmedi; yalnızca dokümanlar eklendi.
+- K1: `madsc/core.py::run` ve `madsc/isolated_playlist_bundle.py::export_isolated_previews` artık K1 path policy'yi hedef klasörünü oluşturmadan önce uygular. Regresyonlar sırasıyla protected `reports/playlist.m3u8` ve `FAVORILER` dizininin yaratılmadığını test eder.
+- K5: `docs/legacy-workflow-contracts/madsc-documentation-check.json` eski workflow'un sabit SHA ve altı komutunu belgeler. Replacement mapping ve execution parity kanıtı yok; kabul sayacı 0/92 kalır.
+- Başarılı offline test üretim kabulü değildir. Açık sayaçlar K1 0/26, legacy 0/92, görev 0/22; canlı üretim verilerine müdahale yok; PR #71 merge edilmedi.

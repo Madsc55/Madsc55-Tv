@@ -30,6 +30,15 @@ class IsolationTests(unittest.TestCase):
                 run("k1", output)
             self.assertFalse(output.exists())
 
+    def test_protected_report_rejected_before_reports_directory_creation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / "reports" / "playlist.m3u8"
+            with self.assertRaises(PermissionError):
+                run("k1", output)
+            self.assertFalse((root / "reports").exists(),
+                             "protected output must be rejected before mkdir side effects")
+
     def test_category_report_rejects_symlink(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

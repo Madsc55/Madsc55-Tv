@@ -2327,3 +2327,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - `tests/test_guard.py` içine geçersiz UTF-8 manifestinin CLI exit code 2 ile reddedildiğini doğrulayan test eklendi: `1c328a953449ae287460dcf86f0f62b63b53a2bf`.
 - Başlangıç HEAD `6b5eb355bda7dedcf9b549c9fccd565ac3fbcfd3` olarak okundu. Test değişikliği yazımdan önce dosya SHA'sı yeniden alınarak yalnız test dosyasına uygulandı.
 - Bu test çalıştırılmadı; yeni SHA üzerinde test sonucu iddia edilmiyor. Actions dispatch ve üretim yazımı yok. Kabul sayaçları 0/26, 0/92, 0/22 olarak kaldı.
+
+
+## 22 Ekim 2026 — Offline gate log incelemesi ve K2 test düzeltmesi
+- GitHub Actions geçmişi salt okunur incelendi: run `39861302612`, commit `6b5eb355bda7dedcf9b549c9fccd565ac3fbcfd3`, sonuç failure. `madsc.offline_gate` logunda 950 test, 5 failure ve 22 error görüldü; bu koşu bizim sonraki `[skip ci]` commitlerimizden önceki SHA'da çalışmış, yeni HEAD için doğrulama sayılmaz.
+- K2 regresyon testinde hata bulundu: `test_corroboration_rejects_combined_source_text_before_parsing` girdileri M3U header içermediği için kaynak boyutu kapısına ulaşmadan parser hata veriyordu. Test girdilerine geçerli `#EXTM3U` header eklendi: `fe4936a854dfcbc047be38c84579b014de79e4ab`. Bu değişiklik henüz çalıştırılmadı.
+- Eski workflow logunda ayrıca 2 K5 aday metadata mesajı uyuşmazlığı, 1 K3 continuity testi, 1 parity-consumer test uyuşmazlığı, 2 playlist-preview testi ve başka 22 hata grubunun bir kısmı görünüyor. Bunlar test/checkout bazında ayrıştırılmadan K1/K2 hatası sayılmamalı; güncel main üzerinde yeniden toplu gate gerekli. Actions yeniden çalıştırılmadı.

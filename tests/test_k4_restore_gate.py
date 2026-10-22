@@ -70,6 +70,20 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertTrue(result["sandbox_restore_accepted"])
             self.assertFalse(result["external_storage_proven"])
 
+    def test_symlinked_ancestor_rejected_before_restore_audit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            actual = base / "actual"
+            actual.mkdir()
+            alias = base / "alias"
+            alias.symlink_to(actual, target_is_directory=True)
+            roots = [actual / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            with self.assertRaisesRegex(ValueError, "symlink ancestors"):
+                audit_k4_restore(alias / "source", roots[1], roots[2], ["file.txt"])
+
     def test_nested_tree_rejected(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

@@ -41,6 +41,10 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("manifest", type=Path)
     args = parser.parse_args()
+    if args.manifest.is_symlink() or not args.manifest.is_file():
+        parser.error("Manifest must be an existing regular file, not a symlink")
+    if args.manifest.stat().st_size > 1024 * 1024:
+        parser.error("Manifest exceeds 1 MiB limit")
     validate_manifest(json.loads(args.manifest.read_text(encoding="utf-8")))
     print("K1 read-only output gate: PASS")
 

@@ -190,7 +190,8 @@ def execute(category: str) -> dict:
     elif category == "k5":
         source_catalog = json.loads((Path(__file__).resolve().parents[1] /
                                     "docs/LEGACY_SOURCE_SCOPE.json").read_text(encoding="utf-8"))
-        pair_preparation = compare_provenance_bound_batch(source_catalog, {})
+        pair_preparation = compare_provenance_bound_batch(source_catalog, {},
+            replacement_workflow_root=Path(__file__).resolve().parents[1])
         history_rows = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
                          "status": "in_progress", "conclusion": None} for i in range(104, 4, -1)]
         old_failures = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
@@ -251,6 +252,8 @@ def execute(category: str) -> dict:
         evidence = {"k1_guards_k5_report_write": guarded_handoff_ok,
                     "all_92_pair_requirements_bound_without_acceptance": (
                         pair_preparation["pair_preparation_rows"] == 92
+                        and pair_preparation["replacement_contract_catalog_checked"]
+                        and pair_preparation["replacement_contract_catalog"]["workflow_count"] == 5
                         and pair_preparation["missing_pairs"] == 92
                         and pair_preparation["behavioral_parity_accepted"] == 0
                         and all(row["pair_preparation"]["catalog_identity_bound"]

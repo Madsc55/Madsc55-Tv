@@ -263,6 +263,10 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
     if not isinstance(pairs, dict) or set(pairs) - legacy_paths:
         raise ValueError("Unknown or excluded workflow pair")
     by_path = {row["path"]: row for row in validate_inventory(inventory)}
+    contract_catalog = None
+    if replacement_workflow_root is not None:
+        from madsc.parity_workflow_readiness import audit_parity_workflow_readiness
+        contract_catalog = audit_parity_workflow_readiness(replacement_workflow_root)
     comparisons = {
         path: compare_provenance_bound_pair(
             path, by_path[path].get("git_blob_sha"), pair,
@@ -281,6 +285,7 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
             "replacement_repository": "Madsc55/Madsc55-Tv", "replacement_branch": "main",
             "replacement_workflow_choices": sorted(CENTRAL_REPLACEMENT_WORKFLOWS),
             "replacement_mapping_review_required": True,
+            "replacement_contract_catalog_checked": contract_catalog is not None,
             "same_input_sha256": comparisons.get(path, {}).get("same_input_sha256"),
             "execution_pair_metadata_supplied": path in comparisons,
             "independent_evidence_missing": ["legacy_api_origin", "replacement_api_origin",
@@ -304,6 +309,8 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
         "schema": "madsc-legacy-provenance-pairs-v1",
         "source_catalog_identity_sha256": catalog_digest,
         "pair_preparation_rows": len(rows),
+        "replacement_contract_catalog_checked": contract_catalog is not None,
+        "replacement_contract_catalog": contract_catalog,
         "total": 92,
         "pairs_supplied": len(pairs),
         "origin_bindings_complete": sum(

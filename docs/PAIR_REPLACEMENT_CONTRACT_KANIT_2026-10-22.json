@@ -1,0 +1,225 @@
+{
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "base_commit": "52117ac42f268ade64e48490edac8c6a0e624657",
+  "validation": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 683,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "pair_preparation_rows": 92,
+  "missing_pairs": 92,
+  "replacement_contract_catalog_checked": true,
+  "replacement_contract_catalog": {
+    "schema": "madsc-parity-workflow-readiness-v1",
+    "workflow_count": 5,
+    "marker_contract_complete": 3,
+    "static_file_bindings_complete": 3,
+    "external_or_live_input_blockers": 2,
+    "input_digest_binding_contracts_complete": 3,
+    "real_behavior_ready": 0,
+    "behavioral_parity_accepted": 0,
+    "production_ready": false,
+    "rows": [
+      {
+        "workflow_path": ".github/workflows/madsc-01-guvenlik.yml",
+        "workflow_sha256": "5e120db8d1d52136c74b69bc584bac8d2207efeed13810733b8dd7a370cd8e4e",
+        "workflow_blob_sha": "07506ec506d1c329bfab23e3488d1ffd0fc7991a",
+        "declared_file_binding": {
+          "consumer_command": "python -m src.madsc_guard config/shadow_manifest.json | tee reports/k1-guard.txt",
+          "input_path": "config/shadow_manifest.json",
+          "output_label": "guard",
+          "output_path": "reports/k1-guard.txt"
+        },
+        "controlled_process_contract_complete": true,
+        "input_digest_binding_complete": true,
+        "markers": {
+          "explicit_opt_in": true,
+          "opt_in_condition": true,
+          "snapshot_command": true,
+          "manifest_command": true,
+          "manifest_artifact": true,
+          "artifact_upload": true,
+          "producer_order": true
+        },
+        "marker_contract_complete": true,
+        "missing_markers": [],
+        "input_classification": "isolated_file_bound",
+        "static_file_binding_complete": true,
+        "dataflow_blocker": null,
+        "runtime_origin_verified": false,
+        "real_behavior_ready": false,
+        "behavioral_parity_accepted": false
+      },
+      {
+        "workflow_path": ".github/workflows/madsc-02-kesif.yml",
+        "workflow_sha256": "02632ea0a67558fefc92b720b0f5c2f7c02733fb7cbc131699e56cd88884a65d",
+        "workflow_blob_sha": "057d441c2c354500b85301fa4d647fdf41e52855",
+        "declared_file_binding": null,
+        "controlled_process_contract_complete": false,
+        "input_digest_binding_complete": false,
+        "markers": {
+          "explicit_opt_in": false,
+          "opt_in_condition": false,
+          "snapshot_command": false,
+          "manifest_command": false,
+          "manifest_artifact": false,
+          "artifact_upload": true,
+          "producer_order": false
+        },
+        "marker_contract_complete": false,
+        "missing_markers": [
+          "explicit_opt_in",
+          "opt_in_condition",
+          "snapshot_command",
+          "manifest_command",
+          "manifest_artifact",
+          "producer_order"
+        ],
+        "input_classification": "external_or_live_input_blocked",
+        "static_file_binding_complete": false,
+        "dataflow_blocker": "Standalone K2 comparable behavior depends on live network or externally supplied history files.",
+        "runtime_origin_verified": false,
+        "real_behavior_ready": false,
+        "behavioral_parity_accepted": false
+      },
+      {
+        "workflow_path": ".github/workflows/madsc-03-kanal-test.yml",
+        "workflow_sha256": "a9db69a5f4498cd1dfa7384d308214bfd579912a3c3ff89e514bfbbee9dbf8fe",
+        "workflow_blob_sha": "c21dc40961c82d3c4c7102bc35e687c07380cd1c",
+        "declared_file_binding": null,
+        "controlled_process_contract_complete": false,
+        "input_digest_binding_complete": false,
+        "markers": {
+          "explicit_opt_in": false,
+          "opt_in_condition": false,
+          "snapshot_command": false,
+          "manifest_command": false,
+          "manifest_artifact": false,
+          "artifact_upload": true,
+          "producer_order": false
+        },
+        "marker_contract_complete": false,
+        "missing_markers": [
+          "explicit_opt_in",
+          "opt_in_condition",
+          "snapshot_command",
+          "manifest_command",
+          "manifest_artifact",
+          "producer_order"
+        ],
+        "input_classification": "external_or_live_input_blocked",
+        "static_file_binding_complete": false,
+        "dataflow_blocker": "Standalone K3 comparable behavior depends on live stream probes or external candidate sources.",
+        "runtime_origin_verified": false,
+        "real_behavior_ready": false,
+        "behavioral_parity_accepted": false
+      },
+      {
+        "workflow_path": ".github/workflows/madsc-04-yedek.yml",
+        "workflow_sha256": "9edaa0633eed9353eaa5589dd995748cb0fb54cdf58adce7ca437fe379e17a25",
+        "workflow_blob_sha": "28910baa5840da87c97834a9fe4d2708db99a949",
+        "declared_file_binding": {
+          "consumer_command": "python -m madsc.restore_drill --source reports/k4-source --file nested/sample.txt --output reports/k4-restore-drill.json",
+          "input_path": "reports/k4-source/nested/sample.txt",
+          "output_label": "restore",
+          "output_path": "reports/k4-restore-drill.json"
+        },
+        "controlled_process_contract_complete": true,
+        "input_digest_binding_complete": true,
+        "markers": {
+          "explicit_opt_in": true,
+          "opt_in_condition": true,
+          "snapshot_command": true,
+          "manifest_command": true,
+          "manifest_artifact": true,
+          "artifact_upload": true,
+          "producer_order": true
+        },
+        "marker_contract_complete": true,
+        "missing_markers": [],
+        "input_classification": "isolated_file_bound",
+        "static_file_binding_complete": true,
+        "dataflow_blocker": null,
+        "runtime_origin_verified": false,
+        "real_behavior_ready": false,
+        "behavioral_parity_accepted": false
+      },
+      {
+        "workflow_path": ".github/workflows/madsc-05-bakim.yml",
+        "workflow_sha256": "e4cc294bd82a355c7077f09bd52a492af91bf16d55de31a76eb433fbe3082373",
+        "workflow_blob_sha": "a3950310b14684dfa264b8b97e04bf590c5cf783",
+        "declared_file_binding": {
+          "consumer_command": "python -m madsc.artifact_transport produce --path reports/k2-candidates.json --source reports/k2-input.m3u",
+          "input_path": "reports/k2-input.m3u",
+          "output_label": "candidates",
+          "output_path": "reports/k2-candidates.json"
+        },
+        "controlled_process_contract_complete": true,
+        "input_digest_binding_complete": true,
+        "markers": {
+          "explicit_opt_in": true,
+          "opt_in_condition": true,
+          "snapshot_command": true,
+          "manifest_command": true,
+          "manifest_artifact": true,
+          "artifact_upload": true,
+          "producer_order": true
+        },
+        "marker_contract_complete": true,
+        "missing_markers": [],
+        "input_classification": "isolated_file_bound",
+        "static_file_binding_complete": true,
+        "dataflow_blocker": null,
+        "runtime_origin_verified": false,
+        "real_behavior_ready": false,
+        "behavioral_parity_accepted": false
+      }
+    ],
+    "note": "Static hook markers are readiness inventory, never runtime or parity proof."
+  },
+  "all_92_references_checked": true,
+  "report_sha256": "8c1e3ad180bdebe4cda204db7712254d4df7afb6fce83b95230caa6d0e320ae0",
+  "source_sha256": {
+    "madsc/core.py": "f19d96871ad8c544bf5e8e31137cf3ccf442dabfc7161a1ddb2ed52f77adfb90",
+    "madsc/legacy_parity_evidence.py": "63554c239af23ca12985a93cd76b72315d26711d375e20f38caa1b9352d64db4",
+    "tests/test_pair_replacement_contracts.py": "766c02d33e809ccbdfc503994409641cc20108e145a7c07e01c3d85b6ae2b1dc"
+  },
+  "behavioral_acceptance": 0,
+  "github_actions_triggered": false,
+  "production_writes": false
+}

@@ -1937,3 +1937,11 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Diğer üç merkezi workflow'da karşılaştırılabilir ortak gerçek input bulunmadığından marker eklenmedi. Readiness statik marker sonucu 2/5; runtime origin ve artifact doğrulaması 0, behavioral acceptance 0.
 - Tam offline_gate 593 test ve K1–K5 fixture gates success; 92+7 kapsam ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET12.json. Actions/live probe/production write yok; 0/92, 0/26, 0/22.
 - Açık: iki yeni opt-in yolun gerçek run/artifact kanıtı için ayrıca Actions izni gerekir; eski read-only 92 tarafında v1 manifest yok. Sonraki yerel iş K1/standalone K2/K3 komut veri akışını sınıflandırıp gerçek input bağı olanları ayırmak, olmayanları dürüst blocker bırakmak.
+
+
+## 22 Ekim 2026 — K1 guard input/output parity bağı
+- Kod 32db584bdeff7d2bc42bb54c68d7bf3c2aa3af17: standalone K1 workflow'da guard'ın gerçekten tükettiği config/shadow_manifest.json input, pipefail+tee ile alınan reports/k1-guard.txt gerçek output olarak default-false parity zincirine bağlandı. Pipefail, tee kullanırken guard hatasının gizlenmesini engeller.
+- Açık opt-in olmadıkça snapshot/manifest/upload çalışmaz. Repo read-only, üretim veya korunan veri yazısı yok. Statik readiness 3/5 marker kontratı; runtime origin, artifact ve behavioral acceptance 0.
+- Standalone K2/K3 ortak dosya input'u yerine canlı, harici veya örtük kaynak kullandığı için entegrasyon yapılmadı. Fixture input uydurulmadı.
+- İlk odak komutunda yanlış/olmayan tests.test_madsc_guard adı ImportError verdi; gerçek tests.test_guard ile 18 odak testi geçti. Tam offline_gate 593 test ve K1–K5 fixture gates success; kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET13.json. Actions/live probe yok; 0/92, 0/26, 0/22.
+- Sıradaki: K2/K3 input sınıfı ve eksik parity bağlarını makine-okunur dataflow blocker raporuna ekle. Gerçek runtime için ayrı Actions izni, legacy v1 artifact için eski read-only sistemden mevcut kanıt gerekir.

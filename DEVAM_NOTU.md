@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: 03fbcdb42cad69ae69641f2d4033b8537ee0f7b6
+Son geliştirme commit SHA: 32db584bdeff7d2bc42bb54c68d7bf3c2aa3af17
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -144,3 +144,12 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Nihai python -m madsc.offline_gate: 593 test, beş izole K kapısı, 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri başarılı. Başarısız test yok; değişen dosyalarda git diff --check temiz. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET12.json.
 - Actions/live probe/production write/eski repo yazısı yok. Kabul 0/92, 0/26, 0/22.
 - Açık blocker: iki opt-in zincirin gerçek run/artifact kökeni henüz yok; Actions için ayrı izin gerekir. Eski read-only 92 artifactlerinde v1 manifest yok. Sıradaki güvenli yerel iş, K1/standalone K2/K3 için gerçek ve karşılaştırılabilir input bağının bulunup bulunmadığını statik komut/veri akışıyla sınıflandırmak; yoksa blocker bırakmak.
+
+## On üçüncü önemli geliştirme — K1 guard gerçek input/output bağı
+- Son kod commit SHA: 32db584bdeff7d2bc42bb54c68d7bf3c2aa3af17; taban e984ab5ddb8d043b974da93a74f7a625f0263af2.
+- madsc-01-guvenlik.yml içindeki gerçek K1 guard'ın tükettiği config/shadow_manifest.json parity input oldu. Guard stdout'u bash pipefail + tee ile reports/k1-guard.txt dosyasına alınır; böylece hata kodu gizlenmeden gerçek çıktı snapshot içinde hashlenir.
+- Default false allow_parity_evidence yalnız açık opt-in ile snapshot -> manifest -> reports/madsc-parity-evidence.json artifact zincirini çalıştırır. Permissions read-only, protected/production write yok. Readiness marker kontratı 3/5 oldu; runtime ve acceptance hâlâ 0.
+- Standalone K2 ve K3 dosya tabanlı ortak karşılaştırılabilir girdi sunmuyor; mevcut yollar canlı/harici/örtük girdili olduğundan sahte marker eklenmedi.
+- Odak test komutunda olmayan tests.test_madsc_guard modülü çağrıldığı için bir ImportError kaydedildi; gerçek tests.test_guard ile odak 18/18 ve ardından tam offline_gate geçti.
+- Nihai python -m madsc.offline_gate: 593 test ve beş izole K kapısı success; 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri başarılı. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET13.json. Actions çalıştırılmadı; kabul 0/92, 0/26, 0/22.
+- Sıradaki güvenli yerel adım: K2/K3 blocker sınıflamasını makine-okunur dataflow raporuna bağlamak ve readiness denetçisinin marker eksikliğini gerçek input sınıfıyla açıklamasını sağlamak. Canlı/harici input için Actions veya probing yapma.

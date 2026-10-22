@@ -301,6 +301,19 @@ class DiscoveryBatchTests(unittest.TestCase):
             parse_m3u("#EXTM3U\n", "bad\ud800")
 
 
+
+    def test_control_characters_in_source_labels_fail_closed(self):
+        feed = "#EXTM3U\n#EXTINF:-1,Safe\nhttps://example.org/safe\n"
+        for source in ("bad\nlabel", "bad\tlabel", "bad\x00label", "bad\x7flabel"):
+            with self.subTest(source=repr(source)):
+                with self.assertRaisesRegex(ValueError, "control characters"):
+                    parse_m3u(feed, source)
+                with self.assertRaisesRegex(ValueError, "control characters"):
+                    corroborate_sources({source: feed})
+                with self.assertRaisesRegex(ValueError, "control characters"):
+                    build_m3u8_preview({source: feed})
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

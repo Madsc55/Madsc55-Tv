@@ -551,3 +551,11 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Negatif regresyon testi: c53875f29dc0d605d24295e642dcc75f9ab358ee — gerçek köke symlink üst dizinden erişildiğinde manifest snapshot reddedilmeli.
 - Test çalıştırılmadı; Actions yeniden tetiklenmedi ([skip ci]). Dolayısıyla kod/test sonucu doğrulanmayı bekliyor.
 - Canlı playlist, EPG, favoriler, cihaz verileri, üretim yedekleri ve arşivler değiştirilmedi. Harici backup/restore ve K3 IBO cihaz kabulü açık. Kabul sayaçları değişmedi: 0/92, 0/26, 0/22.
+
+## 23 Ekim 2026 — K4 sandbox rollback yarış koşulu
+- İncelemede backup_to_new_sandbox() ve restore_to_new_sandbox() hata sırasında yalnızca destination yoluna bakarak shutil.rmtree(destination) çağırıyordu. Hata anında aynı yol başka bir işlem tarafından başka bir dizinle değiştirilirse, cleanup bu işleme ait olmayan dizini silebilirdi.
+- Kod commit d3ce6cb5eeb962473dfd0cc95ec05d84e679d0b6: her iki işlem de oluşturduğu dizinin (st_dev, st_ino) kimliğini kaydediyor; rollback yalnızca hedef hâlâ aynı gerçek dizin inode'uysa kaldırıyor.
+- Negatif test commit 34028a822c9d38738a7edcf35a84913e3c0b17c4: hem backup hem restore sırasında hedef dizin eşzamanlı değiştirilirse, yeni dizindeki sentinel dosyasının korunması doğrulanacak.
+- Testler çalıştırılmadı; bu commit'lerde [skip ci] kullanıldığı için otomatik CI sonucu beklenmiyor. Bu yüzden doğrulanmış başarı iddiası yok.
+- Önceki root-symlink koruması ve testi: d23c4e54e6882b01bba1440ac38e61d8abb180b4 / c53875f29dc0d605d24295e642dcc75f9ab358ee.
+- Canlı IPTV/EPG/favoriler/cihazlar/üretim yedekleri/arşivler değiştirilmedi. Harici yedek ve üretim geri yükleme kabulü açık. Sayaçlar değişmedi: 0/92 workflow, 0/26 güvenlik kuralı, 0/22 ana görev.

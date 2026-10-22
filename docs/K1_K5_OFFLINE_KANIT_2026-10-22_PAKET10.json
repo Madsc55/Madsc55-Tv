@@ -1,0 +1,39 @@
+{
+  "schema": "madsc-k1-k5-offline-evidence-v1",
+  "date": "2026-10-22",
+  "package": 10,
+  "base_main_sha": "bedca31aef1998c51b23f468bf4bdd2950b9ea7c",
+  "scope": "real execution snapshot producer and offline artifact chain",
+  "tests": {
+    "command": "python -m madsc.offline_gate",
+    "discovered": 587,
+    "passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "legacy_source_workflows": 99,
+    "legacy_behavior_workflows": 92,
+    "legacy_behavioral_parity_accepted": 0,
+    "runtime_security_accepted": 0,
+    "task_acceptance": 0
+  },
+  "changes": [
+    "A bounded snapshot producer hashes actual execution output and side-effect files into the strict exit_code/timed_out/outputs/side_effects schema.",
+    "Observed files are opened read-only with O_NOFOLLOW when available and checked with fstat before hashing.",
+    "Duplicate or invalid labels, symlinks, oversized/nonregular files, empty output sets and existing snapshot evidence fail closed.",
+    "An offline chain test binds real input bytes, real output bytes, snapshot JSON, v1 manifest and artifact ZIP digest without granting acceptance."
+  ],
+  "source_sha256": {
+    "madsc/parity_snapshot_writer.py": "fa128cd4d1b5f35c92e57300e04139e11a892d50c80e904983bd42d923175a5d",
+    "madsc/parity_snapshot_cli.py": "903366795c00d26e00625101fee8cce55217a5cddfeb476cd01acc916c789329",
+    "tests/test_parity_snapshot_writer.py": "45235cb32bf3182366f29a9968fe4dea3f15468cbad3c7d1d7881f92ef0ee2f3",
+    "tests/test_parity_producer_chain.py": "bdfc5bc9d91e3a3b7a9b55193c87d82b08bd91a86a16a04ee49d2b9526c4a807"
+  },
+  "constraints": {
+    "github_actions_started": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_written": false,
+    "fixture_is_acceptance": false
+  },
+  "blocker": "The five current workflows do not yet expose a common real behavior input and side-effect snapshot contract; fixture reports must not be relabeled as 92-workflow parity evidence."
+}

@@ -2548,3 +2548,7 @@ CI sonucu henüz doğrulanmadı; eski 990-test run bu değişiklikleri kapsamaz.
 
 ## 23 Ekim 2026 — K2 birebir aynı feed içeriklerinde oy şişirmeyi engelleme
 `corroborate_sources` artık kaynak gövdesinin SHA-256 fingerprint'ini kullanıyor: birebir aynı M3U metni farklı kullanıcı etiketiyle verilirse kaynak listesi raporlanır ama `source_count` yalnız bir artar. Kod `3ea2415ba29b08994c892dca2cdcfd23b42bd9e5`; test `70433a0079dff063187ce5c094cd5c70d4f828be`. Bu, yalnız birebir aynı gövdeyi yakalar; farklı biçimlenmiş kopyaların bağımsızlığını veya kaynak lisansını kanıtlamaz. CI yeni SHA için doğrulanmadı; `workflow_dispatch` bu oturumda başlatılmadı. K2 kabul durumu değiştirilmedi. Sonraki: gerçek kaynak kökeni/URL kanıtı, günlük keşif parity ve artifact SHA doğrulaması.
+
+
+## 23 Ekim 2026 — K1 AST open()/os.open() sınıflandırma düzeltmesi
+Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısını Path.open gibi yorumlayabiliyor ve `os.open(path, flags)` flags kontrolünü yutabiliyordu. Kod bunu düzeltti: `os.open/posix.open` önce flags ile ele alınıyor; builtins/io/unqualified open mode index 1, Path.open index 0. Keyword `flags=` da inceleniyor. Kod commitleri `ccf5bfea56c9ebbd741d28afa9ed97482c57f513`, `5138e550e9ac2cba2cd7f8eec016a7c018aad999`; regresyon commit `4eacdf0f70d7fb1bf0391a015216bde64e8516c3`. CI sonucu henüz doğrulanmadı; K1 0/26.

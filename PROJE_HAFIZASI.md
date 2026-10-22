@@ -2660,3 +2660,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Temiz kaynak `2c0a3ebc2d7d36572e98e68792e2bdff2f82db7d`: ilk offline_gate 180 saniye timeout oldu ve kabul edilmedi; ardından doğrudan suite 1058/1058, tekrar offline_gate 1058/1058 ve beş izole K kapısı başarılı. Kurulum, 92+7 pinned kapsam, 10 yardımcı komut, 22 görev, statik contract ve beş rapor/K5 round-trip kapıları geçti.
 - K1 callsite audit 99 dosya/141 statik aday raporluyor; tümü manuel disposition bekler ve 26/26 runtime kanıtı değildir. Kabul 0/92, 0/26, 0/22. Korunan üretim verileri/eski depo/PR71/merge/canlı probe/cihaz/harici restore değiştirilmedi; Actions dispatch yapılmadı.
 - Sonraki iş: 141 adayda gerçek mutasyon, string `.replace`, salt-okunur descriptor ve subprocess etkilerini kaynak-bağlı sınıflandır; gerçek writer'larda merkezi K1 dominasyon/call-chain eksiklerini kapat. Dış aynı-input bağımsız run/artifact kanıtı olmadan parity kabulü verme.
+
+
+## 23 Ekim 2026 — K2 bilinen URL girdisi sınırı
+- `corroborate_sources` bilinen URL kümesindeki 8192 karakterden uzun veya UTF-8 surrogate içeren adresleri normalizasyondan önce reddeder. Kod `ea305e1650a19fd592064f71d4b3cbdfd94aa670`, regresyon `a11999c7bc6888e6ba46c86803cb3154f4182300`. Normal bilinen URL dışlama davranışı da test edilir.
+- Önceki aynalanmış feed fingerprint testi `3cebc66d`, sonraki `a22684d4a259ccc986c2b4baa8fcb92ecbf02b10` commit'inde başarılı Actions `39871279885` ile kapsandı (compare ahead=2, behind=0). Yeni URL sınırı testinin CI sonucu ilk kontrolde bekliyordu (`39871566283`), doğrulanmadan başarılı denemez.
+- K2-05/06/07/08 açık. IBO Player Pro cihaz doğrulaması en sonda kullanıcı tarafından yapılacak; üretim playlist/EPG/favori/yedekler değiştirilmedi.

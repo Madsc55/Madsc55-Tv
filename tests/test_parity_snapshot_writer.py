@@ -50,6 +50,35 @@ class ParitySnapshotWriterTests(unittest.TestCase):
                     exit_code=0, timed_out=False, outputs=[], side_effects=[])
             self.assertFalse((root / "reports").exists())
 
+    def test_failure_and_timeout_snapshots_preserve_real_execution_status(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            output = root / "consumer.log"
+            output.write_bytes(b"consumer failed\\n")
+            failed = build_execution_snapshot(
+                exit_code=23, timed_out=False,
+                outputs=[("log", output)], side_effects=[])
+            self.assertEqual(failed["exit_code"], 23)
+            self.assertFalse(failed["timed_out"])
+            self.assertEqual(failed["outputs"]["log"],
+                             hashlib.sha256(output.read_bytes()).hexdigest())
+
+            timed_out = build_execution_snapshot(
+                exit_code=124, timed_out=True,
+                outputs=[("log", output)], side_effects=[])
+            self.assertEqual(timed_out["exit_code"], 124)
+            self.assertTrue(timed_out["timed_out"])
+            self.assertNotEqual(timed_out["exit_code"], 0)
+
+    def test_missing_failure_output_does_not_forge_snapshot(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            with self.assertRaises(FileNotFoundError):
+                write_execution_snapshot(
+                    root, exit_code=124, timed_out=True,
+                    outputs=[("log", root / "missing.log")], side_effects=[])
+            self.assertFalse((root / OUTPUT_PATH).exists())
+
     def test_cli_observation_contract_and_existing_snapshot_fail_closed(self):
         self.assertEqual(_observations(["report=reports/result.json"]),
                          [("report", Path("reports/result.json"))])

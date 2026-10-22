@@ -51,7 +51,7 @@ class K5ChannelGateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluate_k3_evidence({**r, "evidence": {**e, "preliminary_passes": 1}})
         run, sha = "123", "a" * 40
-        envelope = pack({"candidates": [{"url_sha256": "b" * 64}]}, run, sha)
+        envelope = pack({"candidates": [{"url_sha256": "b" * 64, "name": "Fixture channel"}]}, run, sha)
         linked = {**e, "run_id": run, "commit_sha": sha,
                   "source_digest": envelope["digest"]}
         valid = {**r, "evidence": linked}

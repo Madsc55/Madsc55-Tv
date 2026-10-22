@@ -44,3 +44,14 @@ class ArtifactHandoffTests(unittest.TestCase):
         envelope["digest"] = []
         with self.assertRaises(ValueError):
             unpack(envelope, "123", "a" * 40)
+
+    def test_oversized_candidate_and_alternative_lists_rejected(self):
+        candidate = self.discovery["candidates"][0]
+        for key, value in (("candidates", candidate), ("alternatives", {
+                "url_sha256": "b" * 64, "alternative_to_sha256": candidate["url_sha256"]})):
+            with self.subTest(key=key):
+                discovery = dict(self.discovery)
+                discovery[key] = [value] * 20001
+                with self.assertRaisesRegex(ValueError, "Too many"):
+                    pack(discovery, "123", "a" * 40)
+

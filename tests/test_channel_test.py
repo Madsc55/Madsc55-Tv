@@ -345,7 +345,8 @@ class ChannelTests(unittest.TestCase):
         from madsc.channel_test import evaluate_three_stage_continuity
         base = {"url_sha256": "a" * 64, "http_status": 200,
                 "video": True, "audio": True, "duration_seconds": 40}
-        for bad_time in ("2099-01-01T00:00:00Z", "2001-01-01T00:00:00Z"):
+        for bad_time in ("2099-01-01T00:00:00Z", "2099-01-01T02:00:00+02:00",
+                         "2001-01-01T00:00:00Z", "2001-01-01T02:00:00+02:00"):
             with self.subTest(bad_time=bad_time), self.assertRaises(ValueError):
                 evaluate_three_stage_continuity([
                     {**base, "observed_at": bad_time},

@@ -38,9 +38,9 @@ class K3SourceSnapshotTests(unittest.TestCase):
             self.assertFalse(report["production_playlist_modified"])
 
     def test_duplicate_urls_only_probed_once(self):
-        data = (b"#EXTM3U\\n" +
-                b"#EXTINF:-1,One\\nhttps://example.org/one\\n" * 15 +
-                b"#EXTINF:-1,Two\\nhttps://example.org/two\\n")
+        data = (b"#EXTM3U\n" +
+                b"#EXTINF:-1,One\nhttps://example.org/one\n" * 15 +
+                b"#EXTINF:-1,Two\nhttps://example.org/two\n")
         class Response:
             def __enter__(self): return self
             def __exit__(self, *args): return False

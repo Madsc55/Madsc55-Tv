@@ -9,10 +9,15 @@ OBSERVATIONS = {"runs", "successful_runs", "last_test", "last_success", "last_re
 def stamp(value):
     if value is None:
         return datetime.min.replace(tzinfo=timezone.utc)
-    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if not isinstance(value, str):
+        raise ValueError("Invalid observation timestamp")
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (ValueError, OverflowError) as exc:
+        raise ValueError("Invalid observation timestamp") from exc
     if parsed.tzinfo is None:
         raise ValueError("Observation timestamp has no timezone")
-    return parsed
+    return parsed.astimezone(timezone.utc)
 
 
 def merge_pair(base, incoming):
@@ -33,13 +38,17 @@ def merge_pair(base, incoming):
         added = updated = 0
         for identity, observation in incoming[filename][key].items():
             if identity not in records:
+                if observation.get("last_test") is not None:
+                    stamp(observation["last_test"])
                 records[identity] = observation.copy()
                 added += 1
                 continue
             old = records[identity]
             old_time, new_time = stamp(old.get("last_test")), stamp(observation.get("last_test"))
             if new_time > old_time:
-                if observation.get("runs", old.get("runs", 0)) < old.get("runs", 0):
+                if (type(observation.get("runs", old.get("runs", 0))) is not int
+                        or type(old.get("runs", 0)) is not int
+                        or observation.get("runs", old.get("runs", 0)) < old.get("runs", 0)):
                     raise ValueError("Newer observation has a regressed run count")
                 for field in OBSERVATIONS:
                     if field in observation:

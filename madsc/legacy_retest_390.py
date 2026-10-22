@@ -10,11 +10,15 @@ def parse_entries(content):
         raise ValueError("Invalid candidate playlist")
     entries = []
     meta = None
+    if not content.lstrip("\ufeff").startswith("#EXTM3U"):
+        raise ValueError("Missing playlist header")
     for line in content.lstrip("\ufeff").splitlines():
         line = line.strip()
         if line.startswith("#EXTINF:"):
             meta = line
         elif meta and line.startswith(("https://", "http://")):
+            if len(entries) >= 20000:
+                raise ValueError("Too many playlist entries")
             entries.append((meta, line))
             meta = None
     return entries

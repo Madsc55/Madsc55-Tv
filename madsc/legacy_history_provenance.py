@@ -11,6 +11,8 @@ def select_ancestor_run(runs, *, repo, branch, current_run, ancestor_check, work
             or any(not isinstance(run, dict) for run in runs)):
         raise ValueError("Invalid source run inventory")
     eligible = []
+    if not callable(ancestor_check) or not isinstance(repo, str) or not isinstance(branch, str):
+        raise ValueError("Invalid ancestry check")
     allowed = {".github/workflows/" + name for name in workflows}
     for run in runs:
         if (str(run.get("id")) == str(current_run)
@@ -25,7 +27,7 @@ def select_ancestor_run(runs, *, repo, branch, current_run, ancestor_check, work
         if not isinstance(sha, str) or not SHA.fullmatch(sha):
             raise ValueError("Invalid source commit")
         verdict = ancestor_check(sha)
-        if verdict is None:
+        if type(verdict) is not bool:
             raise ValueError("Cannot verify source commit ancestry")
         if verdict:
             eligible.append(run)
@@ -40,6 +42,9 @@ def verify_artifact_provenance(source, artifacts, artifact_name):
     matches = [item for item in artifacts if item.get("name") == artifact_name]
     if len(matches) != 1 or matches[0].get("expired"):
         raise ValueError("Artifact missing, duplicate or expired")
+    if (not isinstance(source.get("id"), int) or not isinstance(source.get("head_sha"), str)
+            or not SHA.fullmatch(source["head_sha"])):
+        raise ValueError("Invalid source run identity")
     run = matches[0].get("workflow_run") or {}
     if run.get("id") != source["id"] or run.get("head_sha") != source["head_sha"]:
         raise ValueError("Artifact run/commit mismatch")

@@ -86,6 +86,20 @@ def mutate(path):
                           "os.system [process command requires review]"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_builtin_and_io_open_use_the_correct_mode_argument(self):
+        source = '''\nimport builtins\nimport io\ndef mutate():\n    builtins.open("output.txt", "w")\n    io.open("output2.txt", mode="a")\n    builtins.open("input.txt", "r")\n'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["builtins.open", "io.open"])
+
+    def test_os_open_flags_are_not_swallowed_by_generic_open_detection(self):
+        source = '''\nimport os\ndef mutate(flags):\n    os.open("output.txt", os.O_WRONLY | os.O_CREAT)\n    os.open("output2.txt", flags=flags)\n'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["os.open [flags require review]",
+                          "os.open [flags require review]"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

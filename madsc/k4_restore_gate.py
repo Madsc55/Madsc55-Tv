@@ -12,6 +12,11 @@ from madsc.backup import verify_independent_restore
 def audit_k4_restore(source: Path, backup: Path, restored: Path,
                      names: list[str]) -> dict:
     """Require matching backup/restore bytes before reporting sandbox success."""
+    # An aliased ancestor can redirect a seemingly independent sandbox tree.
+    # Fail before reading any content through that path.
+    for root in (Path(source), Path(backup), Path(restored)):
+        if any(ancestor.is_symlink() for ancestor in (root, *root.parents)):
+            raise ValueError("Restore audit paths must not contain symlink ancestors")
     result = verify_independent_restore(source, backup, restored, names)
     # The restore acceptance gate requires an exact file inventory, not just
     # matching hashes for a caller-selected subset. Reject unexpected files,

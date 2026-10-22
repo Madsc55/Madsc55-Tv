@@ -374,3 +374,8 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - `madsc/legacy_replacement_mapping_review.py` replacement `declared_file_binding` içindeki `input_path`, `output_label`, `output_path` değerlerini dolu string olarak doğrular; liste/boş değer kontrollü ValueError ile reddedilir.
 - `tests/test_legacy_replacement_mapping_review.py` iki negatif regresyon senaryosu eklendi.
 - Yeni `Madsc55/Madsc55-Tv/main` commitleri: `91e625b1fe1e0dd5c8a8c9e5aa14f326deb9ccc8`, `483c75c9374e258402f3ae28485d3ad01c5465e8` (`[skip ci]`). Testler bu turda çalıştırılmadı; Actions #482/#483 logları henüz doğrulanmadı. Üretim dosyaları, workflow'lar, eski repo değişmedi. Kabul 0/92, 0/26, 0/22.
+
+## 22 Ekim 2026 — kontrollü süreç sözleşmesi mapping kapısı
+- `madsc/legacy_replacement_mapping_review.py` statik adaylık için `controlled_process_contract_complete` alanını zorunlu kıldı; eksik alan fail-closed, false alan `mapping_contract_blocked`. Kaynak: `madsc/parity_workflow_readiness.py` güncel sözleşme satırları.
+- `tests/test_legacy_replacement_mapping_review.py` beşli fixture'lara bu alanı ekledi, iki negatif regresyon testi oluşturuldu.
+- Commitler `11e1f12a50ce91c412a2fb8d13db417f7753608c` ve `768150c2ed7d3af99f419001caa1d7d575d0c9c3` (`[skip ci]`). Bu turda CI ve offline test çalıştırılmadı. Üretim, Actions, eski depo değiştirilmedi. Kabul 0/92, 0/26, 0/22.

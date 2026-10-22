@@ -75,3 +75,10 @@ K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen
 - `tests/test_backup_manifest_hardening.py` commit `1bb7aead06b252544bb3e2d41e89bd89840e4c5a`: her alan için `True`, `1`, `"true"` ve `None` sahte beyanlarını sınayan regresyon eklendi. Orijinal yerel manifestin geçerli kalması da doğrulanıyor.
 - Bu değişiklik yerel checksum kanıtının gerçek harici yedek veya üretim restore kanıtıymış gibi sunulmasını engeller; gerçek dış servis makbuzu veya restore üretmez. Son gözlemde Actions `39870589190` paralel commit yüzünden `cancelled`; yeni regresyonun güncel tam CI başarısı ayrıca doğrulanmalı.
 - IBO Player Pro cihaz kabulü kullanıcı talimatıyla en sona bırakıldı; gerçek cihaz testini kullanıcı yapıp bildirecek.
+
+
+## 23 Ekim 2026 — Yerel manifest kayıt sayısı üst sınırı
+- `madsc/backup.py` commit `49122e9a55a86b042db6c008b8d4d9e15a72b1f7`: `verify_manifest` doğrulaması 10.000'i aşan manifest girdilerini herhangi bir kaynak dosya taraması başlamadan reddediyor; boş manifest yine kabul edilmiyor.
+- `tests/test_backup_manifest_hardening.py` commit `1394bcfc75eb716a947b56349ce8e7d5d2e44b39`: 10.001 girdili manifestin `snapshot_manifest` çağırmadan reddedildiğini ve normal tek dosyalı manifestin doğrulandığını test ediyor.
+- Bu sınır yalnız yerel doğrulama kaynak tüketimini azaltır; gerçek harici yedek/restore kanıtı değildir. İlgili Actions `39870802547` paralel commit yüzünden `cancelled`; sonraki başarılı main CI'de yeni testin dahil olduğu ayrıca teyit edilmeli.
+- IBO Player Pro gerçek cihaz doğrulaması kullanıcı tarafından en son yapılacak; cihaz kabulü henüz yapılmadı.

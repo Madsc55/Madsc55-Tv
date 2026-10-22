@@ -74,6 +74,8 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Known URLs must be a set")
     if known_urls is not None and any(not isinstance(url, str) for url in known_urls):
         raise ValueError("Known URLs must contain strings")
+    if any(not isinstance(body, str) for body in sources.values()):
+        raise ValueError("M3U source bodies must be text")
     known = {normalize_url(url) for url in (known_urls or set())}
     grouped = defaultdict(lambda: {"sources": set(), "urls": set(), "names": set()})
     reports = {}

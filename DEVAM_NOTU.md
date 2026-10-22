@@ -1,3 +1,12 @@
+# EN YENİ K3 GÜNCELLEMESİ — M3U tvg-id sertleştirmesi (2026-10-23)
+- Aynı M3U `#EXTINF` satırında duplicate `tvg-id` artık reddediliyor; tek değer çevresindeki boşluklar normalize ediliyor.
+- Kod: `6dcaaace0f8cb4faad0185584f6aafa319090159`; test: `73fdc790449f6c571b644729aa988d8f954d7304`; K3-13 görev defteri: `15e3ca6a4a3787f8b0c16e648179ec833843524a`; rapor: `7badc4f3a7d4ebc9a9ca298ffbd956bc1458184e`.
+- Odaklı yerel davranış denemeleri: 5/5 geçti. Tam depo test paketi ve GitHub Actions çalıştırılmadı; CI sonucu iddia etme.
+- K3 canlı yayın/ffprobe, bağımsız 6+ saat süreklilik, IBO cihaz kabulü, Pages EPG zinciri ve logo eşlemesi hâlâ açık. Korunan üretim dosyalarına dokunulmadı, PR #71 merge edilmedi; sayaçlar 0/92, 0/26, 0/22.
+- Sonraki adım: değişen dosyaları ve HEAD'i tekrar kontrol et; güvenli offline regresyon paketini çalıştırma imkânı varsa kullan; dış kanıt olmadan K3 kabulünü kapatma.
+
+---
+
 # EN YENİ K3 GÜNCELLEMESİ — 23 Ekim 2026
 - Bu turdaki K3 EPG/XMLTV değişiklikleri: `madsc/epg.py` artık eksik/boş XMLTV `programme channel` alanını reddeder; XMLTV'de tanımlanmayan programme channel eşleşmeyi başarısız yapar. Üç regresyon testi eklendi.
 - Kod commit: `62211f43813ef87ec8a75329cf89506dcebac261`; test commit: `4a3eee527902eea22a99afc9f82901ae3e837ed4`; görev defteri commit: `b700d68370b261567a1c6518db5ebc70e98f2753`; K3 raporu: `docs/K3_EPG_FAIL_CLOSED_PROGRESS_2026-10-23.md` commit `0b544c35b1bd469eec9bc75190848324ef789ee8`.

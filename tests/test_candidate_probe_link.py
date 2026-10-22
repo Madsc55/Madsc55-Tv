@@ -227,7 +227,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
         from pathlib import Path
         from madsc.candidate_probe_link import load_evidence
         with tempfile.TemporaryDirectory() as directory:
-            with self.assertRaises((OSError, ValueError)):
+            with self.assertRaisesRegex(ValueError, "Evidence path cannot be opened securely"):
                 load_evidence(Path(directory))
 
     def test_evidence_loader_rejects_fifo_without_waiting_for_writer(self):

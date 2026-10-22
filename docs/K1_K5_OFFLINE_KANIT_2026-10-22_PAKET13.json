@@ -1,0 +1,48 @@
+{
+  "schema": "madsc-k1-k5-offline-evidence-v1",
+  "date": "2026-10-22",
+  "package": 13,
+  "base_main_sha": "e984ab5ddb8d043b974da93a74f7a625f0263af2",
+  "scope": "K1 real guard input/output opt-in parity hook",
+  "tests": {
+    "command": "python -m madsc.offline_gate",
+    "discovered": 593,
+    "passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "parity_marker_contract_complete": 3,
+    "real_behavior_ready": 0,
+    "legacy_behavioral_parity_accepted": 0,
+    "runtime_security_accepted": 0,
+    "task_acceptance": 0
+  },
+  "changes": [
+    "The K1 shadow guard now preserves its real stdout in reports/k1-guard.txt using bash pipefail and tee.",
+    "A default-false opt-in chain hashes config/shadow_manifest.json actually consumed by the guard and snapshots the captured real guard output.",
+    "The chain uploads only reports/madsc-parity-evidence.json and keeps read-only repository permissions.",
+    "Standalone K2 and K3 remain blocked because their comparable inputs are external, live, implicit or unavailable as a common real file contract."
+  ],
+  "resolved_test_invocation_error": {
+    "command_target": "tests.test_madsc_guard",
+    "cause": "The requested test module name did not exist; the real module is tests.test_guard.",
+    "resolution": "The focused suite was rerun with tests.test_guard and all 18 tests passed before the full 593-test gate passed."
+  },
+  "source_sha256": {
+    ".github/workflows/madsc-01-guvenlik.yml": "30a2015a858bb8304dca33b0d5da06ade5c471775423be97e6a8ae12a077e4a9",
+    "tests/test_parity_workflow_integration.py": "f2599f1fbfd395701a10d899571fb507148c60d65baea0878c375edf5d5a698a",
+    "tests/test_parity_workflow_readiness.py": "ac741045019daa59761c7848e91b5248e6cc143b361706d8e46be623b05bdae6"
+  },
+  "constraints": {
+    "github_actions_started": false,
+    "workflow_default_opt_in": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_written": false,
+    "fixture_is_acceptance": false
+  },
+  "blockers": [
+    "The three static hook contracts have not been run and therefore have no runtime origin or artifact evidence.",
+    "Standalone K2 and K3 lack a comparable common real file input contract without live or external activity.",
+    "The read-only legacy 92 workflow artifacts do not contain the v1 manifest."
+  ]
+}

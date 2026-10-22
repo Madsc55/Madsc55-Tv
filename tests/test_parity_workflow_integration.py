@@ -10,20 +10,26 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 
 
 class ParityWorkflowIntegrationTests(unittest.TestCase):
-    def test_only_two_real_file_slices_have_complete_opt_in_hooks(self):
+    def test_only_three_real_file_slices_have_complete_opt_in_hooks(self):
         report = audit_parity_workflow_readiness(ROOT)
         complete = {row["workflow_path"] for row in report["rows"]
                     if row["marker_contract_complete"]}
         self.assertEqual(complete, {
+            ".github/workflows/madsc-01-guvenlik.yml",
             ".github/workflows/madsc-04-yedek.yml",
             ".github/workflows/madsc-05-bakim.yml",
         })
-        self.assertEqual(report["marker_contract_complete"], 2)
+        self.assertEqual(report["marker_contract_complete"], 3)
         self.assertEqual(report["real_behavior_ready"], 0)
         self.assertEqual(report["behavioral_parity_accepted"], 0)
 
-    def test_k4_and_k5_inputs_are_consumed_before_snapshot_and_manifest(self):
+    def test_k1_k4_and_k5_inputs_are_consumed_before_snapshot_and_manifest(self):
         cases = {
+            "madsc-01-guvenlik.yml": (
+                "python -m src.madsc_guard config/shadow_manifest.json | tee reports/k1-guard.txt",
+                "--input config/shadow_manifest.json",
+                "--output guard=reports/k1-guard.txt",
+            ),
             "madsc-04-yedek.yml": (
                 "python -m madsc.restore_drill --source reports/k4-source",
                 "--input reports/k4-source/nested/sample.txt",
@@ -44,7 +50,8 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
                                 data.index("path: reports/madsc-parity-evidence.json"))
 
     def test_every_parity_hook_is_default_off_and_conditioned(self):
-        for filename in ("madsc-04-yedek.yml", "madsc-05-bakim.yml"):
+        for filename in ("madsc-01-guvenlik.yml", "madsc-04-yedek.yml",
+                         "madsc-05-bakim.yml"):
             data = (WORKFLOWS / filename).read_text(encoding="utf-8")
             self.assertRegex(
                 data,

@@ -1,6 +1,12 @@
 name: MADSC K1 — Guvenlik
 on:
   workflow_dispatch:
+    inputs:
+      allow_parity_evidence:
+        description: 'Opt-in isolated parity manifest for the K1 guard (no acceptance)'
+        type: boolean
+        required: true
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -20,7 +26,25 @@ jobs:
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: K1 legacy shadow security guard (read-only)
-        run: python -m src.madsc_guard config/shadow_manifest.json
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p reports
+          python -m src.madsc_guard config/shadow_manifest.json | tee reports/k1-guard.txt
+      - name: Snapshot K1 guard output (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        run: python -m madsc.parity_snapshot_cli --exit-code 0 --output guard=reports/k1-guard.txt --output-root .
+      - name: Bind K1 guard input and snapshot (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        run: python -m madsc.parity_manifest_cli --input config/shadow_manifest.json --snapshot reports/madsc-parity-snapshot.json --workflow-path .github/workflows/madsc-01-guvenlik.yml --output-root .
+      - name: Upload K1 guard parity manifest (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k1-guard-parity-evidence
+          path: reports/madsc-parity-evidence.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Isolated report
         run: python -m madsc.core --category k1 --output reports/k1.json
       - name: Upload isolated evidence

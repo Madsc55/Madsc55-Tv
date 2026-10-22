@@ -1,3 +1,13 @@
+# K3 SON GÜNCELLEME — 2026-10-23
+- Kod commitleri: dea1d9c15f03b1f5f1833f7e3bf789d7a2a86cb8 (EXTINF ayıracı yoksa reddet), 57dad5f4c70505e59d8888c504e98d0643ccf9c8 (tırnak içindeki virgülü ayıraç sayma).
+- Test commitleri: a0da67add7764bf9c2f51ecadb45820898ac7af7 (eksik virgül regresyonu), 1d9ff2d5091e4bcf30c367a4ff046758ec7f9390 (tırnak içi virgül ve bozuk tırnak testleri). İlk test ekleme commitindeki satır sonu kaçışları sonraki committe düzeltildi.
+- Bu turda tam offline suite veya Actions çalıştırılmadı; yeni commitler için CI başarı kanıtı yok. [skip ci] kullanıldı.
+- K3 canlı HTTPS/HLS video-ses, 6+ saat süreklilik, Pages/XMLTV canlı zinciri, logo/kanal kimliği ve en sonda kullanıcının IBO Player Pro cihaz kabulü halen açık. K3-13 kapanmadı.
+- Üretim playlist/XMLTV/favori/logo/yedek/arşiv/cihaz verileri değiştirilmedi; PR #71 birleştirilmedi. K1/K2/K4/K5 işlerine dokunulmadı.
+- Sonraki adım: yeni regresyonları ve offline gate'i yetkili ortamda çalıştır, sonra ayrı izin gerektiren canlı kanıtları topla; test edilmemiş kodu başarılı sayma.
+
+---
+
 # EN YENİ K3 GÜNCELLEMESİ — cihaz testi en sona (2026-10-23)
 - Kullanıcı talimatı: IBO Player Pro cihaz kabulünü **en sona bırak**; kullanıcı cihazda kendisi deneyip sonucu bildirecek. Cihaz testi yapılmış gibi gösterme, kullanıcıdan şu aşamada isteme.
 - `madsc/epg.py`: playlist içinde tekrar eden aynı `tvg-id` değerlerini `duplicate_playlist_ids` alanında raporlar ve `matching_verified=false` yapar. Kod commit `c2419d1f700b04752c0fb0c7d0e51b142707990a`.

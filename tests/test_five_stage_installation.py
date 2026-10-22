@@ -32,6 +32,12 @@ class InstallationInventoryTests(unittest.TestCase):
                              and row["classification"] == "write"
                              and row["file"] == "madsc/k4_evidence.py"]
         self.assertTrue(descriptor_writes, "os.open(O_CREAT) writer missing from K1 inventory")
+        descriptor_stream_writes = [row for row in report["writer_callsite_candidates"]
+                                    if row["operation"] == "fdopen"
+                                    and row["classification"] == "write"
+                                    and row["file"] == "madsc/k4_evidence.py"]
+        self.assertTrue(descriptor_stream_writes,
+                        "os.fdopen(..., 'w') writer missing from K1 inventory")
         self.assertFalse(report["all_writer_callsites_manually_verified"])
         self.assertFalse(report["production_ready"])
 

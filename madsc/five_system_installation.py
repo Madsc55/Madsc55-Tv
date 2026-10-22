@@ -54,6 +54,49 @@ def inspect_installation(root: Path) -> dict:
         source_bytes = module.read_bytes()
         source_fingerprints[module.relative_to(root).as_posix()] = hashlib.sha256(source_bytes).hexdigest()
         tree = ast.parse(source_bytes, filename=str(module))
+        parents = {child: parent for parent in ast.walk(tree)
+                   for child in ast.iter_child_nodes(parent)}
+
+        def enclosing_scope(node):
+            current = node
+            while current in parents:
+                current = parents[current]
+                if isinstance(current, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Module)):
+                    return current
+            return tree
+
+        def assigned_value(name, call):
+            scope = enclosing_scope(call)
+            assignments = []
+            for candidate in ast.walk(scope):
+                if (candidate is scope
+                        or enclosing_scope(candidate) is not scope
+                        or getattr(candidate, "lineno", call.lineno) >= call.lineno):
+                    continue
+                if isinstance(candidate, ast.Assign):
+                    if any(isinstance(target, ast.Name) and target.id == name
+                           for target in candidate.targets):
+                        assignments.append(candidate)
+                elif (isinstance(candidate, ast.AnnAssign)
+                      and isinstance(candidate.target, ast.Name)
+                      and candidate.target.id == name):
+                    assignments.append(candidate)
+            if not assignments:
+                return None
+            latest = max(assignments, key=lambda item: item.lineno)
+            return latest.value
+
+        def flag_names(node, call, resolving=frozenset()):
+            if node is None:
+                return set()
+            names = {part.attr for part in ast.walk(node)
+                     if isinstance(part, ast.Attribute)}
+            if isinstance(node, ast.Name) and node.id not in resolving:
+                value = assigned_value(node.id, call)
+                if value is not None:
+                    names |= flag_names(value, call, resolving | {node.id})
+            return names
+
         for node in ast.walk(tree):
             if isinstance(node, ast.Call):
                 target = node.func
@@ -69,15 +112,19 @@ def inspect_installation(root: Path) -> dict:
                     # O_WRONLY/O_RDWR/O_CREAT/O_TRUNC/O_APPEND. Dynamic flags need review.
                     flag_node = node.args[1] if len(node.args) >= 2 else next(
                         (kw.value for kw in node.keywords if kw.arg == "flags"), None)
-                    flag_names = {part.attr for part in ast.walk(flag_node)
-                                  if isinstance(part, ast.Attribute)} if flag_node is not None else set()
-                    classification = ("write" if flag_names & {
+                    resolved_flag_names = flag_names(flag_node, node)
+                    classification = ("write" if resolved_flag_names & {
                         "O_WRONLY", "O_RDWR", "O_CREAT", "O_TRUNC", "O_APPEND"}
                         else "dynamic_mode_review")
                 elif name in ("open", "fdopen"):
                     mode_node = next((kw.value for kw in node.keywords if kw.arg == "mode"), None)
-                    if mode_node is None and len(node.args) >= (2 if isinstance(target, ast.Name) else 1):
-                        mode_node = node.args[1] if isinstance(target, ast.Name) else node.args[0]
+                    if mode_node is None:
+                        if name == "fdopen" and len(node.args) >= 2:
+                            mode_node = node.args[1]
+                        elif isinstance(target, ast.Name) and len(node.args) >= 2:
+                            mode_node = node.args[1]
+                        elif isinstance(target, ast.Attribute) and node.args:
+                            mode_node = node.args[0]
                     if mode_node is None:
                         if name == "fdopen":
                             classification = "dynamic_mode_review"

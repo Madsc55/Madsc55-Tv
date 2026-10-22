@@ -92,6 +92,7 @@ class LegacyParityCliTests(unittest.TestCase):
             for path in (symlink, hardlink, huge):
                 with self.subTest(path=path), self.assertRaises(ValueError):
                     load_json(path)
+            hardlink.unlink()
             self.assertEqual(load_json(real), {})
 
     def test_duplicate_json_keys_are_rejected(self):

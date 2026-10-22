@@ -1,0 +1,57 @@
+{
+  "schema": "madsc-k1-k4-k5-pending-validation-v1",
+  "date": "2026-10-22",
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "base_commit": "5af20718f14be617e0c20b5fee797572d7924a6e",
+  "scope": "offline_local_only",
+  "initial_focused_result": {
+    "tests": 44,
+    "failures": 2,
+    "errors": 1
+  },
+  "fixed_failures": [
+    "The hardlink rejection test removed neither link before asserting that the original was single-link and readable.",
+    "K5 preview validation rejected control newlines but not literal backslash escape sequences; concurrent main commit 5af2071 supplied the final fix and was preserved.",
+    "K1 writer inventory did not resolve os.open flag variables and used the descriptor argument as the os.fdopen mode."
+  ],
+  "focused_result_after_fixes": {
+    "tests": 44,
+    "passed": 44,
+    "failed": 0
+  },
+  "aggregate_result": {
+    "tests_discovered": 800,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "five_stage_installation_inventory_passed": true,
+    "five_report_roundtrip_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "operational_contract_static_gaps": 0,
+    "all_offline_gates_passed": true
+  },
+  "writer_inventory": {
+    "candidates": 130,
+    "dynamic_review": 20,
+    "all_writer_callsites_manually_verified": false,
+    "note": "Read-only fdopen calls are no longer false-positive candidates; subprocess and genuinely dynamic calls remain review items."
+  },
+  "source_sha256": {
+    "madsc/five_system_installation.py": "93fd47740e9d4454b7124303202745f9e76e19eaa599886dd40a5983656b2baf",
+    "madsc/playlist_previews.py": "d50013df690b0d6144100c8023006c6bb2a493de373cb4faa409f15bf3028497",
+    "tests/test_five_stage_installation.py": "0255dedb525d9fb2f4f47ffe61358ffa692a43be9fb48b692bce0c3dd5a70dbf",
+    "tests/test_legacy_parity_cli.py": "7b22c4c495ffb6c659c6b105522c1f8cbb77d75c0cc65a665b106cd77ec53cef"
+  },
+  "acceptance": {
+    "legacy_behavioral": "0/92",
+    "runtime_security": "0/26",
+    "task_completion": "0/22",
+    "production_ready": false
+  },
+  "external_actions": {
+    "github_actions_triggered": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_modified": false
+  }
+}

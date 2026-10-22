@@ -2282,3 +2282,11 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 ## 22 Ekim 2026 — K4 sahte üretim iddiası reddi
 - K4 verify(): production_ready=True/1 ve category='k3' gibi sahte alanları reddetme, opsiyonel category yoksa eski run_drill raporuyla uyum; kod c189cde33a47690373eddc6c502b4e14cfb82fd6, test afe19df9646868a0153a19c4c9895c4bf90c29d1 [skip ci].
 - Yerel git ls-remote denemesi github.com DNS çözümleme hatasıyla başarısız. Bu SHA için test ve offline_gate doğrulaması yapılmadı, Actions tetiklenmedi. Gerçek kabul 0/92, 0/26, 0/22; korunan veriye dokunulmadı.
+
+## 22 Ekim 2026 — K1/K4/K5 bekleyen değişiklikler 800 testle doğrulandı
+- Güncel doğrulanan kod/test/kanıt: `61bbf78214a63400083cf7d615c64a1b13547896`; taban ve korunan eşzamanlı değişiklik: `5af20718f14be617e0c20b5fee797572d7924a6e`.
+- Bekleyen K4 kanıt okuyucu/yazıcı sertleştirmeleri, K5 parity çıktısı ve playlist/source-import hattı ilk kez aynı güncel kaynakta topluca çalıştırıldı. Başlangıçta 44 odaklı testte 2 failure/1 error bulundu ve birlikte giderildi.
+- Düzeltmeler: hardlink fixture'ında geçerli kaynak yeniden tek-link hale getirildi; eşzamanlı main playlist backslash reddi korundu; AST writer envanteri lexical-scope flag atamalarını ve doğru `fdopen` mode argümanını çözüyor. Salt-okunur fdopen çağrıları artık sahte dinamik writer adayı değil.
+- Doğrulama: 44/44 odaklı; 800/800 tam offline; beş K kapısı, kurulum, gerçek yerel beş rapor/K5 byte round-trip, statik operasyon sözleşmesi 0 gap. Kanıt `docs/K1_K4_K5_PENDING_VALIDATION_2026-10-22.json`.
+- K1 writer envanteri 130 aday/20 dinamik inceleme satırı gösteriyor; manuel/runtime doğrulama tamamlanmadı. Dış kanıt gerektiren gerçek 92 pair, 26 runtime kuralı, 22 görev, canlı K2/K3, IBO ve harici K4 restore açık. Kabul 0/92, 0/26, 0/22.
+- Korunan IPTV/EPG/playlist/favori/logo/yedek/arşiv, eski repo ve PR71 değişmedi; Actions/canlı probe/merge/üretim yazısı yapılmadı. Sonraki iş 20 dinamik adayın komut etkisini güvenli statik sınıflandırma ile daraltmak.

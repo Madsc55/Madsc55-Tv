@@ -1,6 +1,6 @@
 # Madsc55-Tv — DEVAM NOTU
 
-> Son doğrulama: 22 Ekim 2026, ortak GitHub token/yönlendirme koruması; 783 offline test + beş kapı başarılı. Ayrıntı en sondaki kayıt ve GITHUB_TRANSPORT_KANIT_2026-10-22.json. Gerçek kabul 0/92, 0/26, 0/22.
+> Son doğrulama: 22 Ekim 2026, kod/test SHA `61bbf78214a63400083cf7d615c64a1b13547896`; 800/800 offline test + beş kapı, kurulum, rapor round-trip ve statik sözleşme kapısı başarılı. Ayrıntı en sondaki kayıt ve `K1_K4_K5_PENDING_VALIDATION_2026-10-22.json`. Gerçek kabul 0/92, 0/26, 0/22.
 
 **Son paket:** 776 test ve bütün offline kapılar geçti. Mevcut toplu CLI'ye açık opt-in API+ZIP bayt doğrulaması bağlandı; gerçek GitHub sorgusunda güncel aynı-input çift bulunmadı. 0/92, 0/26, 0/22 korunur. Ayrıntı son kayıtta.
 
@@ -524,3 +524,12 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 ## 22 Ekim 2026 — Playlist K2/K3→K5 güvenli taslak hattı
 - madsc/playlist_previews.py: katalogdaki yinelenen source_index ve URL SHA256 reddi (db091a3f88e7ce515858310d70c6d754925eec5d); üretim yazısı/hazırlığı iddiası taşıyan kataloglar reddediliyor (88ceeb937285d5adc5433f659de67f2d62a2945a). Regresyon testleri tests/test_playlist_previews.py (c9a88cc750bf8c98272ef4ef23cca13f84583fd1 ve c8f5592d1399fc21b8a7b1c312451fbf49b18f59).
 - Kod ve testler commit edildi, bu SHA için test yürütülmedi. Mevcut playlist/YEDEKLER/YENILER/FAVORILER/EPG değiştirilmedi; Actions tetiklenmedi. İzole taslak üretimi canlı otomatik playlist güncellemesinin kanıtı değildir. 92 davranışsal kabul, 26 runtime güvenlik kabulü ve 22 görev kabulü değişmedi.
+
+## 22 Ekim 2026 — bekleyen K1/K4/K5 paketinin toplu doğrulaması
+- Başlangıç main `adbaf72d6eb21b88d81c557ad0076a70ca617164`; eşzamanlı playlist kaçış düzeltmesi `5af20718f14be617e0c20b5fee797572d7924a6e` okundu ve korundu. Kod/test/kanıt commit'i `61bbf78214a63400083cf7d615c64a1b13547896` (`[skip ci]`).
+- İlk odaklı 44 testte iki failure ve bir error bulundu: hardlink testi geçerli kaynağı hâlâ iki linkli bırakıyordu; literal backslash kaçışlı playlist adı reddedilmiyordu; K1 AST envanteri yerel `flags` değişkenindeki `O_CREAT` bitlerini ve `os.fdopen` modunun ikinci argümanını çözemiyordu. Üçü düzeltildi; eşzamanlı `5af2071` playlist düzeltmesi tekrar yazılmadı.
+- K1 envanteri artık aynı lexical scope içindeki en yakın flag atamasını çözerek `os.open(..., flags)` yazıcılarını bulur; `os.fdopen(fd, mode)` gerçek ikinci argümana göre okuma/yazma ayrılır. Aday sayısı 130, dinamik inceleme 20; subprocess ve gerçekten dinamik çağrılar açık kalır. `all_writer_callsites_manually_verified=false`; bu 26/26 runtime kabulü değildir.
+- K4 erken hedef reddi, O_NOFOLLOW, regular/single-link/bounded read, duplicate JSON, sahte production/category ve exclusive çıktı testleri; K5 parity/playlist ve source-import sınırları birlikte geçti. Odaklı sonuç 44/44. Nihai `python -m madsc.offline_gate`: **800/800**, beş izole K kapısı, kurulum envanteri, beş rapor/K5 round-trip, 92+7/10 komut/22 görev ve `static_gaps_total=0` başarılı. `git diff --check` temiz.
+- Kanıt: `docs/K1_K4_K5_PENDING_VALIDATION_2026-10-22.json`. Actions dispatch/rerun, canlı stream probing, cihaz testi, üretim/korunan veri yazısı, eski depo, merge veya PR #71 işlemi yapılmadı.
+- Açık kabul/engeller: 0/92, 0/26, 0/22. Gerçek aynı-input bağımsız legacy/replacement execution+artifact çifti, K2/K3 canlı/harici ölçümler, IBO cihaz sonucu, K4 bağımsız harici restore ve 20 dinamik writer/subprocess adayının gerçek runtime değerlendirmesi açık.
+- Sıradaki somut yerel iş: 20 dinamik aday içinden K1 writer etkisi olabilen subprocess çağrılarını komut/argüman düzeyinde sınıflandır; yalnız salt-okunur probe/test çağrılarını ayrı işaretle, belirsiz veya üretim yazabilen çağrıları fail-closed inceleme olarak bırak. Harici kanıt olmadan kabul sayaçlarını artırma.

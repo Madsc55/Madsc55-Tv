@@ -140,3 +140,10 @@
 - K1–K5 izole fixture kapısı, beş sistem kurulum envanteri ve beş raporun K5 roundtrip'i başarılı; rapor baytları korunmuş.
 - Güncel main bu test SHA'sından 2 commit ileride; compare sonucu yalnızca `PROJE_HAFIZASI.md` ve bu devir dokümanında değişiklik olduğunu gösteriyor. Bu nedenle kod/test ağacı test edilen SHA ile aynı.
 - CI raporu yine `production_acceptance=false`, `legacy_92_behavioral_acceptance=0`, `runtime_security_26_acceptance=0`, `production_ready=false` diyor. Bu offline test başarısı canlı üretim veya eski workflow eşdeğerliği kabulü değildir.
+
+## Son offline CI kontrolü — 2026-10-23
+- Run `39863567977`, commit `de82210cdea1281b8ad2d1f622925fa1d8d8c397`: GitHub Actions `offline-tests` job `120120030978` tamamlandı ve `success` oldu.
+- Bu sonuç K1/K4 rollback güvenlik düzeltmeleri ve fixture test kapısı içindir; eski 92 workflow'un davranışsal eşdeğerliği, 26 runtime güvenlik kuralı veya gerçek üretim kabulü anlamına gelmez.
+- Ayrı K5 kaynak deposu `Madsc55/madsc-tv`: cache-save workflow run `39863242921` başarılıydı. Tarih geçmişi normalizasyonu ve ek test kapısını içeren run `39863524500` son kontrol anında `in_progress`; run bitmeden K5 tarih düzeltmesi için CI kabulü verilmez.
+- K5 yeni testleri: gelecekteki timestamp, naive timestamp, bozuk/eski kayıt, UTC offset ve tam 7 günlük sınır; bunlar ayrı unit-test kapısı olarak workflow'da ffmpeg kurulumu ve canlı keşiften önce çalıştırılıyor.
+- Kabul sayaçları aynı kalır: legacy behavior 0/92, runtime security 0/26, independent main tasks 0/22. Production acceptance false.

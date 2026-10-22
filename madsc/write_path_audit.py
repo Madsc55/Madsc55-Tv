@@ -45,7 +45,7 @@ def audit_write_paths(paths: list[str]) -> dict:
             or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw)
             # Format controls (bidi overrides, zero-width joins) can disguise
             # protected filenames in reviews and logs; reject them outright.
-            or any(unicodedata.category(ch) == "Cf" for ch in raw)
+            or any(unicodedata.category(ch) in ("Cf", "Cs") for ch in raw)
             or any(part.endswith((" ", ".")) for part in parts)
             # Never allow the guarded writer to alter Git internals or
             # repository automation configuration via a proposed data path.

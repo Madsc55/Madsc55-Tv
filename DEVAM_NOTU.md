@@ -721,3 +721,10 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Kümülatif statik kaynak incelemesi 27/92; 65 kalmış. Davranışsal kabul 0/92, runtime güvenlik kabulü 0/26, ana görev kabulü 0/22. K5-19 görev defteri güncellendi; commit `3d810e27c8ceb3d1e2141475377ae0e91035836b`.
 - Sonraki iş: yeni depodaki karşılık gelen script ve workflow'ları kontrol et; korunan playlist'in byte/hash değişmezliğini ve çıktıların ayrı dizine yazılmasını doğrulayan izole test ekle. Eski `Madsc55/madsc-tv` deposunu değiştirme veya canlı workflow çalıştırma. Kullanıcı/cihaz onayı olmadan ana playlist'i yayımlama.
 - Bu belgeler `[skip ci]` niteliğindedir; bu değişiklikler için yeni test başarısı iddia edilmez. Güncel Actions sonucunu HEAD SHA ile ayrıca eşleştir.
+
+
+## 23 Ekim 2026 — K1 AST tarayıcısında open() argüman indeksleme hatası
+- Yeni kök neden bulgusu: generic `*.open` sınıflandırması `open(path, "w")` çağrısını Path.open gibi yorumlayıp ilk argümanı mode sayabiliyordu; ayrıca `os.open` generic open dalına girerek flags incelemesini atlayabiliyordu. `builtins.open` ve `io.open` da Attribute çağrısı oldukları için yanlış positional mode indeksine düşebiliyordu.
+- Düzeltmeler: `ccf5bfea56c9ebbd741d28afa9ed97482c57f513` os.open flags dalını generic open öncesine aldı; `5138e550e9ac2cba2cd7f8eec016a7c018aad999` plain built-in `open()` ile `Path.open()` ayrımını düzeltti. Keyword `flags=` ve dinamik/bitwise flag ifadeleri de review adayı oluyor.
+- Testler: `4eacdf0f70d7fb1bf0391a015216bde64e8516c3` builtins/io/os.open regresyonları ekledi. Mevcut plain `open(path, "w")` ve read-only testleri de bu indeksleme ayrımını kontrol ediyor.
+- CI/check sonucu henüz doğrulanmadı; yeni testleri geçmiş gibi sayma. K1 0/26, production_ready=false; 75 adayın tamamı kapanmış değil.

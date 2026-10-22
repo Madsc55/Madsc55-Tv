@@ -105,3 +105,12 @@
 - Test henüz çalıştırılmadı; bu değişiklikler için başarılı CI kanıtı yok. GitHub Actions dispatch yapılmadı.
 - Son bilinen başarılı Actions run `39862697684` SHA `483bce535b585e5c750b7cfa54b87fb9f578d72c` üzerinde; yeni K1 trust-boundary değişikliği bu run'da yer almıyor.
 - Kabul sayaçları değişmedi: 92 eski workflow 0/92, 26 güvenlik kuralı 0/26, 22 ana görev 0/22. Üretim verilerine müdahale edilmedi; PR #71 birleştirilmedi.
+
+
+## 23 Ekim 2026 — K4/K1 offline CI kök neden düzeltmeleri
+- Başarısız Actions run `39863302393` (SHA `38c2a467021235169ba616ae0d0f3e1286021ae9`) 970 test çalıştırdı ve 4 hata verdi.
+- Üç backup testindeki kök neden: `backup_to_new_sandbox` hata rollback'inde `created_identity` kullanıyor ama destination dizini yaratıldıktan sonra bu kimlik hiç kaydedilmiyordu; asıl integrity ValueError hatasını NameError maskeliyordu. `madsc/backup.py` artık `destination.mkdir()` sonrası lstat ile (st_dev, st_ino) kimliğini kaydediyor ve yalnızca o dizini geri alıyor. Commit `42b72c462681b40543c2e91db816d1657730fcf1`.
+- Dördüncü hata: fixture raporu rollback'i eşzamanlı değiştirilmiş dosyayı sadece device/inode ile tanıyordu; unlink/recreate sonrası inode reuse halinde başka işlem tarafından oluşturulan kanıtı silebilirdi. Temizleme artık device, inode, size, mtime_ns ve ctime_ns alanlarını birlikte karşılaştırıyor. Commit `a20a3159c1b6ab6d36d1656ddbbcaf1080401dbd`.
+- K1/K4 kod değişiklikleriyle offline CI otomatik tetiklendi: run `39863482320`, commit `0d25b09bdc2d3e029c368376e700d7c14ced9ab3`; yazım anında queued. Sonucu gelmeden başarılı sayma.
+- Bu iki düzeltme canlı dosyalara değil, rollback ve izole test verilerine ilişkindir. Üretim IPTV/EPG/favori/cihaz/yedek/arşiv verileri değişmedi; PR #71 birleştirilmedi.
+- Kabul sayaçları değişmez: 92 workflow 0/92, 26 güvenlik kuralı 0/26, 22 ana görev 0/22.

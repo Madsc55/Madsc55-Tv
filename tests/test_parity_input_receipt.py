@@ -76,7 +76,10 @@ class ParityInputReceiptTests(unittest.TestCase):
         for path, contract in FILE_DATAFLOW_CONTRACTS.items():
             steps = steps_for(path)
             consumer = next(step for step in steps if contract['consumer'] in step)
-            snapshot = next(step for step in steps if 'python -m madsc.parity_snapshot_cli' in step)
+            snapshot_steps = [step for step in steps
+                              if 'run: python -m madsc.parity_snapshot_cli --exit-code 0 ' in step]
+            self.assertEqual(len(snapshot_steps), 1)
+            snapshot = snapshot_steps[0]
             manifest = next(step for step in steps if 'python -m madsc.parity_manifest_cli' in step)
             checks = [step for step in steps if 'run: sha256sum --check --status ' + RECEIPT in step]
             self.assertEqual(len(checks), 2)

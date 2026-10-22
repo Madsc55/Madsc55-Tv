@@ -1,0 +1,63 @@
+{
+  "base_commit": "c6e74cc53f21aae486cda7f191e3a11836ef87f8",
+  "command": "python -m madsc.offline_gate",
+  "result": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 621,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "initial_failures": {
+    "count": 7,
+    "causes": [
+      "six subcases selected consumer again instead of standalone success snapshot after concurrent workflow changes",
+      "descendant termination state test raced OS signal delivery"
+    ],
+    "resolved": true
+  },
+  "source_sha256": {
+    "madsc/parity_process.py": "c9794c03d9b1a971bea0ec032b554d3d838283c70f07cf8f089df96eedfec3cc",
+    "tests/test_parity_process.py": "d1a4972c4c7e578011dd1bf9a8d9e613fed0f61c505cada35e699d04f23506ab",
+    "tests/test_parity_input_receipt.py": "a24065428a1a1f48f43bd8ace619b3b0841961e4c656aa065111d4a43c334a86",
+    ".github/workflows/madsc-01-guvenlik.yml": "2c761051b644cc1781898f392d9f21c3ec1b67b4115a4d5053391b0bbcfcf27d"
+  },
+  "limits": [
+    "process observer API not yet wired into K1/K4/K5 workflows",
+    "failure artifact upload and diagnostic output-role preflight still open",
+    "no Actions or live probing; no legacy execution acceptance"
+  ],
+  "protected_data_changed": false
+}

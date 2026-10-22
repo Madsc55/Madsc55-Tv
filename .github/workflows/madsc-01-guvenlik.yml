@@ -31,7 +31,16 @@ jobs:
           set -o pipefail
           mkdir -p reports
           if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then sha256sum config/shadow_manifest.json > reports/parity-input-before.sha256; fi
+          set +e
           python -m src.madsc_guard config/shadow_manifest.json | tee reports/k1-guard.txt
+          consumer_status=${PIPESTATUS[0]}
+          set -e
+          if [[ "$consumer_status" -ne 0 ]]; then
+            if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then
+              python -m madsc.parity_snapshot_cli --exit-code "$consumer_status" --output guard=reports/k1-guard.txt --output-root .
+            fi
+            exit "$consumer_status"
+          fi
       - name: Snapshot K1 guard output (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         run: python -m madsc.parity_snapshot_cli --exit-code 0 --output guard=reports/k1-guard.txt --output-root .

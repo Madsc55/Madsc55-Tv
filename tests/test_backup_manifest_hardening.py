@@ -228,6 +228,19 @@ class BackupManifestHardeningTests(unittest.TestCase):
                     verify_manifest(root, forged)
             self.assertTrue(verify_manifest(root, original))
 
+    def test_snapshot_rejects_oversized_source_inventory_and_path(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_bytes(b"fixture")
+            with patch("madsc.backup._open_relative_file_nofollow",
+                       side_effect=AssertionError("unexpected source file read")):
+                with self.assertRaisesRegex(ValueError, "bounded entry limit"):
+                    snapshot_manifest(root, ["good.txt"] * 10001)
+                with self.assertRaisesRegex(ValueError, "bounded length"):
+                    snapshot_manifest(root, ["x" * 4097])
+            self.assertEqual(len(snapshot_manifest(root, ["good.txt"])["entries"]), 1)
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

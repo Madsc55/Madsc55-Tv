@@ -178,13 +178,41 @@ class _Scanner(ast.NodeVisitor):
             self.visit(child)
         self.scope.pop()
 
+    def _visit_definition_expressions(self, node):
+        # Decorators, base classes and default arguments execute in the
+        # enclosing scope when the definition is evaluated, not in its body.
+        for decorator in node.decorator_list:
+            self.visit(decorator)
+        if isinstance(node, ast.ClassDef):
+            for base in node.bases:
+                self.visit(base)
+            for keyword in node.keywords:
+                self.visit(keyword.value)
+        else:
+            for default in (*node.args.defaults, *node.args.kw_defaults):
+                if default is not None:
+                    self.visit(default)
+            for annotation in (*node.args.posonlyargs, *node.args.args,
+                               *node.args.kwonlyargs):
+                if annotation.annotation is not None:
+                    self.visit(annotation.annotation)
+            if node.args.vararg and node.args.vararg.annotation is not None:
+                self.visit(node.args.vararg.annotation)
+            if node.args.kwarg and node.args.kwarg.annotation is not None:
+                self.visit(node.args.kwarg.annotation)
+            if node.returns is not None:
+                self.visit(node.returns)
+
     def visit_FunctionDef(self, node):
+        self._visit_definition_expressions(node)
         self._visit_scope(node, node.name)
 
     def visit_AsyncFunctionDef(self, node):
+        self._visit_definition_expressions(node)
         self._visit_scope(node, node.name)
 
     def visit_ClassDef(self, node):
+        self._visit_definition_expressions(node)
         self._visit_scope(node, node.name)
 
     def visit_Lambda(self, node):

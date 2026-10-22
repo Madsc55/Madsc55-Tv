@@ -93,6 +93,31 @@ class K3SourceSnapshotTests(unittest.TestCase):
             self.assertEqual(probe_mock.call_count, 2)
             self.assertEqual({item["url_sha256"] for item in report["results"]}, hashes)
 
+    def test_http_entries_do_not_consume_https_probe_budget(self):
+        data = (b"#EXTM3U\n" +
+                b"".join(f"#EXTINF:-1,HTTP {i}\nhttp://example.org/{i}\n".encode()
+                         for i in range(15)) +
+                b"#EXTINF:-1,HTTPS\nhttps://example.org/valid\n")
+        class Response:
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def read(self, size): return data[:size]
+        with TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            def fake_write(_root, path, content):
+                (root / path).write_text(content)
+            with (patch.object(pilot, "urlopen", return_value=Response()),
+                  patch.object(pilot, "probe", side_effect=lambda url: {
+                      "url_sha256": hashlib.sha256(url.encode()).hexdigest(),
+                      "hls_manifest_seen": False}) as probe_mock,
+                  patch.object(pilot, "write_fixture_report", side_effect=fake_write),
+                  patch.object(pilot.Path, "cwd", return_value=root)):
+                pilot.run()
+            report = json.loads((root / "reports/k3-real-manifest-pilot.json").read_text())
+            self.assertEqual(report["probed"], 1)
+            probe_mock.assert_called_once_with("https://example.org/valid")
+
     def test_k3_rejects_oversize_source(self):
         class Response:
             def __enter__(self): return self

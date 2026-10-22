@@ -192,3 +192,12 @@ class EpgTests(unittest.TestCase):
             e.write_text('<!DOCTYPE tv [<!ENTITY channel "trt1.tr">]><tv><channel id="&channel;"/></tv>', encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "DTD and entity"):
                 check_epg_mapping(p, e)
+
+    def test_extinf_without_comma_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr"\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "missing channel-name separator"):
+                check_epg_mapping(p, e)

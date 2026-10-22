@@ -101,3 +101,7 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 ## K3 özel dosya ve üst dizin testleri
 - b5b9cb1: FIFO kanıt girdisinin beklemeden reddedilmesi ve symlink üst dizin girdisinin reddedilmesi için yürütülebilir regresyon testleri eklendi.
 - Bu testler henüz çalıştırılmadı. Gerçek zamanlı üst dizin değiştirme yarışına karşı atomik koruma ayrıca gerekli.
+
+## K3 modül yükleme testi
+- 16f0d0a: Python AST sözdizimi ve load_evidence import regresyon testi eklendi.
+- Güncel testler henüz çalıştırılmadı; önceki not yazımı paralel commit nedeniyle 409 ile başarısız olmuştu.

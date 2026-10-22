@@ -19,7 +19,15 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
     if not isinstance(mapping_rows, list) or len(mapping_rows) > len(eligible):
         raise ValueError("Invalid mapping rows")
     readiness = audit_parity_workflow_readiness(replacement_workflow_root)
-    current = {row["workflow_path"]: row for row in readiness["rows"]}
+    workflow_rows = readiness["rows"]
+    if (not isinstance(workflow_rows, list)
+            or any(not isinstance(row, dict) or "workflow_path" not in row
+                   for row in workflow_rows)
+            or len({row["workflow_path"] for row in workflow_rows}) != len(workflow_rows)
+            or set(row["workflow_path"] for row in workflow_rows)
+            != CENTRAL_REPLACEMENT_WORKFLOWS):
+        raise ValueError("Replacement workflow catalog is incomplete or ambiguous")
+    current = {row["workflow_path"]: row for row in workflow_rows}
     seen = set()
     results = []
     required = {"legacy_path", "legacy_blob_sha", "replacement_workflow_path",

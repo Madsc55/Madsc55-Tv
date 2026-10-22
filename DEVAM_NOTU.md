@@ -702,3 +702,13 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - `corroborate_sources` artık feed gövdesi SHA-256 fingerprint'ine göre birebir aynı metni tek bağımsız oy sayar; kaynak etiketleri listelenir ama `source_count` şişmez.
 - Kod `3ea2415ba29b08994c892dca2cdcfd23b42bd9e5`, regresyon testi `70433a0079dff063187ce5c094cd5c70d4f828be`; rapor `53abbed82744c7e966d8feaa453ad33627fc8bf5`, hafıza `c852c120ed74e28393495c38f840f74b879a0a39`.
 - CI doğrulanmadı; testleri yeşil sayma. Birebir olmayan yeniden biçimlendirilmiş kopyalar hâlâ gerçek kaynak URL/köken kanıtı gerektirir. K2-05/06/07/08 açık; üretim verisine dokunulmadı.
+
+
+## 23 Ekim 2026 — K5 legacy review batch 09
+- Yeni kaynak inceleme belgesi: `docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_09_2026-10-23.md`, belge commit `4e8cb0bc5fcfb36987fc4f1563a6b922817a279f`.
+- Üç workflow ve doğrudan çağırdığı betikler sabit blob SHA'larıyla incelendi: `ibo-yedek-kalite.yml`, `iptv-test.yml`, `k1-protected-write-tests.yml`.
+- Kritik bulgu: `iptv_test.py` “salt okunur” workflow altında `CALISANLAR.m3u`, `CALISMAYANLAR.txt` ve `TEST_RAPORU.csv` dosyalarını yazar; workflow bunların hepsini artifact olarak yayımlar. `yedekler/ibo_yedek_kalite_tespit.py` de `CALISANLAR.m3u` içindeki yedek kanal görünen adlarını değiştirerek aynı korunan dosyayı runner çalışma alanında yeniden yazar. Bu workflow'larda git push tanımı görülmedi; fakat kaynak/çıktı ayrımı yok ve “read-only” iddiası davranışla örtüşmüyor.
+- `scripts/acceptance_26_92.py` regresyon paketleri geçerse normal çıkış kodu 0 olabilir, `acceptance_complete=false` iken bile; tam kabulü zorunlu kılmak için `--require-full-acceptance` gerekir. Unit test geçişi üretim/cihaz/legacy eşdeğerliği değildir.
+- Kümülatif statik kaynak incelemesi 27/92; 65 kalmış. Davranışsal kabul 0/92, runtime güvenlik kabulü 0/26, ana görev kabulü 0/22. K5-19 görev defteri güncellendi; commit `3d810e27c8ceb3d1e2141475377ae0e91035836b`.
+- Sonraki iş: yeni depodaki karşılık gelen script ve workflow'ları kontrol et; korunan playlist'in byte/hash değişmezliğini ve çıktıların ayrı dizine yazılmasını doğrulayan izole test ekle. Eski `Madsc55/madsc-tv` deposunu değiştirme veya canlı workflow çalıştırma. Kullanıcı/cihaz onayı olmadan ana playlist'i yayımlama.
+- Bu belgeler `[skip ci]` niteliğindedir; bu değişiklikler için yeni test başarısı iddia edilmez. Güncel Actions sonucunu HEAD SHA ile ayrıca eşleştir.

@@ -6,6 +6,29 @@ import stat
 from pathlib import Path
 from madsc.write_path_audit import enforce_local_output_path
 
+
+def _open_relative_file_nofollow(root: Path, parts: tuple[str, ...]) -> int:
+    """Open a relative file beneath root without following symlinks in any component."""
+    if not parts:
+        raise ValueError("Backup source path must name a file")
+    directory_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    file_flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    opened_dirs: list[int] = []
+    try:
+        current = os.open(root, directory_flags)
+        opened_dirs.append(current)
+        for component in parts[:-1]:
+            current = os.open(component, directory_flags, dir_fd=current)
+            opened_dirs.append(current)
+        return os.open(parts[-1], file_flags, dir_fd=current)
+    finally:
+        for descriptor in reversed(opened_dirs):
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+
+
 def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     root = Path(root)
     if root.is_symlink() or not root.is_dir():
@@ -32,19 +55,20 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
         for parent in (base, *(base / Path(*requested.parts[:i]) for i in range(1, len(requested.parts) + 1))):
             if parent.is_symlink():
                 raise ValueError("Symlink in backup source path is not permitted")
-        candidate = candidate.resolve(strict=True)
-        if not candidate.is_relative_to(base) or not candidate.is_file():
-            raise ValueError("Backup source must be a regular file within root")
         digest = hashlib.sha256()
         size = 0
-        with candidate.open("rb") as source:
+        try:
+            descriptor = _open_relative_file_nofollow(base, requested.parts)
+        except OSError as exc:
+            raise ValueError("Backup source path changed or contains a symlink") from exc
+        with os.fdopen(descriptor, "rb") as source:
             metadata = os.fstat(source.fileno())
             if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
                 raise ValueError("Backup source must be a singly linked regular file")
             for chunk in iter(lambda: source.read(1024 * 1024), b""):
                 digest.update(chunk)
                 size += len(chunk)
-        entries.append({"path": candidate.relative_to(base).as_posix(),
+        entries.append({"path": requested.as_posix(),
                         "bytes": size, "sha256": digest.hexdigest()})
     return {"entries": entries, "mode": "manifest_only", "external_backup_verified": False,
             "restore_verified": False, "production_writes": False}

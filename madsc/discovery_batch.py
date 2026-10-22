@@ -111,7 +111,14 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         # Labels are caller-supplied and do not prove independence. Exact
         # duplicate feed bodies share one fingerprint and can contribute only
         # one corroboration vote, even when given different source names.
-        source_fingerprint = sha256(text.encode("utf-8")).hexdigest()
+        # Normalize transport-only formatting (BOM, CRLF/LF, blank lines,
+        # and outer line whitespace) before fingerprinting. These differences
+        # must not manufacture independent corroboration votes.
+        canonical_feed = "\\n".join(
+            line.strip() for line in text.removeprefix("\\ufeff").splitlines()
+            if line.strip()
+        )
+        source_fingerprint = sha256(canonical_feed.encode("utf-8")).hexdigest()
         for entry, original in zip(report["candidates"], report["candidate_rows"]):
             if normalize_url(original["url"]) in known:
                 continue

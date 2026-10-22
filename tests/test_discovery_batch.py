@@ -288,6 +288,19 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(build_m3u8_preview({"fixture": feed})["channel_count"], 1)
 
 
+
+    def test_surrogate_codepoints_fail_closed_before_downstream_hashing(self):
+        malformed = "#EXTM3U\n#EXTINF:-1,Bad\nhttps://example.org/\ud800\n"
+        with self.assertRaisesRegex(ValueError, "valid UTF-8"):
+            parse_m3u(malformed, "fixture")
+        with self.assertRaisesRegex(ValueError, "valid UTF-8"):
+            corroborate_sources({"fixture": malformed})
+        with self.assertRaisesRegex(ValueError, "valid UTF-8"):
+            build_m3u8_preview({"fixture": malformed})
+        with self.assertRaisesRegex(ValueError, "valid UTF-8"):
+            parse_m3u("#EXTM3U\n", "bad\ud800")
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

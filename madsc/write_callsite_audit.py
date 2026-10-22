@@ -116,6 +116,11 @@ class _ScopeCalls(ast.NodeVisitor):
     def visit_FunctionDef(self, node):
         return
 
+    def visit_Lambda(self, node):
+        # Deferred lambda calls must not contribute guards to the enclosing
+        # function's lexical guard inventory.
+        return
+
     def visit_AsyncFunctionDef(self, node):
         return
 

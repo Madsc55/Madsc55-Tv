@@ -2448,3 +2448,10 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - GitHub Actions run 39864090233, SHA bcd8245a143abb5a24fc05b244127f28876c2ce2: 979 offline test, five_stage_fixture_gate ve all_offline_gates başarıyla tamamlandı. Yeni K4 commitleri bu SHA'ya dahildir. Üretim kabulü false.
 - DEVAM_NOTU.md'de ayrıntılı devir kaydı ve sonuç commit fd95ffe72f1c698311a143736e975a59472b7fd9 var. K1/K2/K5 paralel sohbetlerinin commitleri korunmuştur.
 - 92 legacy workflow davranışsal kanıt 0/92; 26 bağımsız runtime güvenlik kabulü 0/26; 22 görev 0/22. K3 gerçek yayın/IBO Player Pro/EPG cihaz kanıtları, K4 harici backup ve bağımsız restore kabulü hâlâ açık; canlı yayınlara ve üretim verilerine yazılmadı.
+
+
+## 23 Ekim 2026 — K1-03 callsite taraması ve core guard düzeltmesi
+- CI run `39864090233` SHA `bcd8245` başarıyla tamamlandı: 979 test, beşli offline fixture kapısı ve offline gate'ler başarılı; AST raporu 97 Python dosyasında 78 mutation adayı buldu. Hepsi insan incelemesi gerektiriyor; bu sayı gerçek/korumasız yazma sayısı değildir ve lexical guard analizi proof değildir.
+- AST envanterinden somut bir sıra hatası bulundu: `madsc/core.py::run`, `reports/playlist.m3u8` gibi korunan hedeflerde `reports/` klasörünü K1 kontrolünden önce yaratabiliyordu. `enforce_write_paths` artık mkdir öncesi tam hedefte çağrılır ve üst dizin symlink'leri kontrol edilir. Commit `808f388`; test `fe82f2f` korunan hedefin hiçbir klasör yaratmadığını doğrular.
+- Güncel run `39864306236` bu fix/test için queued; sonucu beklemeden başarılı sayma.
+- Kabul sayaçları: K1 0/26, legacy 0/92, görev 0/22. Üretim verileri korunur; PR #71 merge edilmez.

@@ -288,3 +288,10 @@
 - Kod commit: `28a8d963798a85db7639890cb04bec544a3314b5`; test commit: `5c6e087387b731948d98ad699bca33d8521e3cdd`. Yeni test iki kanallı, yorum/sıra/BOM/CRLF farkı olan eşdeğer feed'lerin her aday için tek kaynak sayıldığını kontrol eder.
 - Doğrulama sınırı: commit `e8eb0b34e60b612dc0d09b096dafa1e0123eaead` için offline Actions başarılı oldu. Daha yeni çalıştırmalar K5'te `test_manifest_serialization_failure_cleans_partial_bundle_and_preserves_source` hatasıyla başarısız oldu (`Invalid playlist header`) ve eşzamanlı push'lar bazı test çalıştırmalarını iptal etti. En son K2 test commit'i için başarılı CI sonucu henüz yok; testler yerelde çalıştırılmış sayılmaz.
 - Bu semantik fingerprint yine de kısmi kopyaları, yeniden yazılmış metadata'yı veya aynı kaynağın farklı alt kümelerini kesin olarak tanımaz. Gerçek kaynak URL/köken/lisans, günlük keşif parity ve bağımsız artifact SHA kanıtı açık. K2 kabul sayaçları değişmedi; üretim playlist/EPG/favoriler/yedekler ve eski depo değişmedi.
+
+
+## 23 Ekim 2026 — K2 kaynak bağımsızlığı açıkça doğrulanmamış olarak işaretlendi
+- `corroborate_sources` çıktısına `source_independence_verified: false` ve `source_count_semantics: distinct_semantic_feed_inventories_not_verified_origins` eklendi. Farklı semantik envanter sayıları, gerçek ayrı işletmeci/kaynak kökeni kanıtı olarak yorumlanamaz.
+- Kod commit `e8e686bfa0f2bf31376bcf58230bc8b5aa212a6d`; regresyon testi commit `9c1c8a594849d730f75d9c050265df74b382b8ec`. K2-08 görev defterine CI ve sınırlar işlendi (`42841d5e`).
+- Son bilinen tam offline CI başarısı `39868459061` (commit `a0469c34`); 1016 testlik paket sonraki K3 devir notunda raporlandı. Yeni açık `source_independence_verified` regresyonu için workflow `39868653542` çalışıyor; bu SHA için sonuç henüz doğrulanmadı.
+- K2-05 gerçek kaynak URL/işletmeci/lisans mutabakatı, K2-06 günlük keşif/tetik eşdeğerliği ve K2-07 bağımsız gerçek artifact SHA kanıtı açık. Gerçek kaynak verisi olmadan kabul kapatılmadı; üretim verisi değiştirilmedi.

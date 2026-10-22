@@ -214,7 +214,7 @@ def create():
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             outside = root / "real.py"
-            outside.write_text("def write(path):\\n    path.write_text('x')\\n", encoding="utf-8")
+            outside.write_text("def write(path):\n    path.write_text('x')\n", encoding="utf-8")
             (root / "linked.py").symlink_to(outside)
             with self.assertRaisesRegex(ValueError, "Symlinked source entry"):
                 scan_python_tree(root)

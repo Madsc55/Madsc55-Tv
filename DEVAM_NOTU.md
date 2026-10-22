@@ -1,6 +1,6 @@
 # Madsc55-Tv — DEVAM NOTU
 
-**En yeni kayıt:** Girdi digest kaydı manifest baytlarına bağlandı; kod 788a4b76ed96677d0ec05cb90e2f4fe835b611f1; 610 yerel test ve beş izole K kapısı başarılı. Eski “test edilmedi” satırları geçmiş kayıtlardır; güncel kanıt dosyanın sonundadır.
+**En yeni kayıt:** Süreç gözlem API ve K1 pipe hata düzeltmesi; kod 09e3b31ddc86c0a01ba9ea1bff153416705319c5; 621 yerel test ve beş izole K kapısı başarılı. Workflow timeout/artifact entegrasyonu açık; güncel ayrıntılar dosyanın sonundadır.
 
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
 
@@ -238,3 +238,12 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 ## 22 Ekim 2026 — Hata snapshot'ı başarısızken orijinal exit code korunumu
 - K1 209c368b3c70827e60939aa77b96ff6465ccd171, K4 07341e60fbc22d271103b5f6f5ecb5aa3a7171a9, K5 3621d20ab53999697c1079437a15e6d0ba5f57f1: opt-in failure snapshot CLI kendisi başarısız olsa bile uyarı verip tüketicinin orijinal nonzero exit code'una ulaşılır. Test kontratı c89f62480844f9eb167c9e0cca44aae34e5235b5.
 - Test henüz çalıştırılmadı: yerel git ls-remote de GitHub DNS hatası verdi. 610 eski test kanıtı bu commitleri kapsamaz. Workflow job timeout-minutes nedeniyle sert kesilme halinde timed_out=true snapshot garantisi yok; ayrı kontrollü yerel timeout tatbikatı ve test gerekiyor. Actions tetiklenmedi. Tam kabuller 0/92, 0/26, 0/22.
+
+## 22 Ekim 2026 — Gerçek süreç gözlemi ve K1 pipe hata düzeltmesi
+- Son kod commit SHA: 09e3b31ddc86c0a01ba9ea1bff153416705319c5. Başlangıç main c6e74cc53f21aae486cda7f191e3a11836ef87f8. Eşzamanlı failure snapshot kodu korundu ve ilk kez bu pakette toplu yerel regresyondan geçirildi.
+- madsc.parity_process.observe_process gerçek returncode/stdout/stderr ölçüyor; monotonic timeout, shell kullanmayan argv, iki pipe eşzamanlı okuma, akış başına 1 MiB sınırı ve process-group temizliği var. Normal exit 124 timeout sayılmıyor. Gerçek timeout stderr çıktısı mevcut snapshot yazıcısına bağlanarak test edildi. Çıktı taşmasında eksik kanıt üretilmez. Bu API komut yetkilendirmesi veya üretim koruma sandbox'ı değildir; çağıran güvenli komutu seçmeli.
+- K1 consumer PIPESTATUS artık hem tüketici hem tee sonucunu koruyor: tüketici başarılı olsa bile tee failure yeşile dönmez; tüketici failure önceliği korunur.
+- İlk offline_gate 621 testte 7 failure verdi: altı girdi-mutasyon alt senaryosu yeni consumer içindeki failure snapshot komutunu yanlışlıkla başarı adımı seçiyordu; standalone başarı snapshot seçimi düzeltildi. Bir descendant kapanış testi OS sinyal yarışı nedeniyle erken okuyordu; 1 saniyelik sınırlı kapanış kontrolü eklendi. Başarısızlıklar gizlenmedi.
+- Nihai python -m madsc.offline_gate: 621 test ve beş izole K1–K5 kapısı success; 92+7 kaynak, 10 yardımcı komut, 22 görev envanteri geçti. git diff --check temiz. Kanıt docs/PARITY_PROCESS_KANIT_2026-10-22.json; test edilen kaynak hashleri kayıtlı. Actions/ağ/cihaz testi yapılmadı.
+- ÖNEMLİ AÇIK: süreç gözlem API'si henüz workflow tüketicilerine bağlanmadı. K1/K4/K5 mevcut failure snapshot akışı yalnız mevcut normal çıktı için çalışıyor; gerçek timeout workflow snapshot ve her koşulda failure artifact yükleme garantisi yok. Sonraki somut iş: dar consumer CLI adaptörü + stdout/stderr tanı rollerini snapshot/preflight'a bağla; opt-in workflow adımlarında ölçülen sonuçla manifest/artifact üret, artifact sonrasında orijinal nonzero sonucu geri ver. Sabit exit-code 0'dan timeout kabulü türetme.
+- K2/K3 ortak harici input, legacy v1 artifact/provenance, 75 aday ölçümü, cihaz ve bağımsız restore kanıtları açık. Tam kabuller 0/92, 0/26, 0/22. Korunan kanal/EPG/YEDEKLER/YENİLER/FAVORİLER, eski repo ve PR #71 değişmedi; merge/Actions yok.

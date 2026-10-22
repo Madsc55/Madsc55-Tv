@@ -46,7 +46,7 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
     leaf = name.rsplit(".", 1)[-1]
     if leaf in _MUTATING_METHODS:
         return True, name
-    if name in {"open", "builtins.open", "io.open", "Path.open"}:
+    if name in {"open", "builtins.open", "io.open"} or leaf == "open":
         mode = None
         if len(node.args) >= 2 and isinstance(node.args[1], ast.Constant):
             mode = node.args[1].value

@@ -101,13 +101,17 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
     if sum(len(body) for body in sources.values()) > 8_000_000:
         raise ValueError("Combined source text exceeds bounded input limit")
     known = {normalize_url(url) for url in (known_urls or set())}
-    grouped = defaultdict(lambda: {"sources": set(), "urls": set(), "names": set()})
+    grouped = defaultdict(lambda: {"sources": set(), "source_fingerprints": set(),
+                                    "urls": set(), "names": set()})
     reports = {}
     for source, text in sorted(sources.items()):
         report = parse_m3u(text, source)
         reports[source] = {"entries": report["entries"], "rejected": len(report["rejected"]),
                            "parse_errors": len(report["parse_errors"])}
-        # Keep one vote per independent source, regardless of repeated entries.
+        # Labels are caller-supplied and do not prove independence. Exact
+        # duplicate feed bodies share one fingerprint and can contribute only
+        # one corroboration vote, even when given different source names.
+        source_fingerprint = sha256(text.encode("utf-8")).hexdigest()
         for entry, original in zip(report["candidates"], report["candidate_rows"]):
             if normalize_url(original["url"]) in known:
                 continue
@@ -115,12 +119,13 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
                 "name", entry["name"].casefold(), entry["group_title"].casefold())
             row = grouped[identity]
             row["sources"].add(source)
+            row["source_fingerprints"].add(source_fingerprint)
             row["names"].add(entry["name"])
             row["urls"].add(entry["url_sha256"])
     output = []
     for identity, row in grouped.items():
         output.append({"identity_sha256": sha256(repr(identity).encode()).hexdigest(),
-                       "source_count": len(row["sources"]),
+                       "source_count": len(row["source_fingerprints"]),
                        "sources": sorted(row["sources"]),
                        "url_variants": len(row["urls"]),
                        "status": "REVIEW_REQUIRED_NOT_LIVE_VERIFIED"})

@@ -21,7 +21,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     ids = []
     for line in text.splitlines():
         if line.startswith("#EXTINF:"):
-            matches = TVG_ID.findall(line)
+            attribute_text = line.split(",", 1)[0]
+            matches = TVG_ID.findall(attribute_text)
             if len(matches) > 1:
                 raise ValueError("Duplicate M3U tvg-id attribute")
             ids.append(matches[0].strip() if matches else "")

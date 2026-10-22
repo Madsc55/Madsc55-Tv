@@ -21,6 +21,10 @@ def verify(report):
         raise ValueError("K4 restore evidence incomplete or failed")
     if any(report.get(key) is not False for key in REQUIRED_FALSE):
         raise ValueError("K4 restore production safety claims invalid")
+    if report.get("production_ready", False) is not False:
+        raise ValueError("K4 evidence cannot claim production readiness")
+    if report.get("category", "k4") != "k4":
+        raise ValueError("K4 evidence category mismatch")
     if type(report.get("files_checked")) is not int or report["files_checked"] < 1:
         raise ValueError("K4 restore evidence requires nonempty verified files")
     return {"k4_isolated_restore_verified": True, "files_checked": report["files_checked"],

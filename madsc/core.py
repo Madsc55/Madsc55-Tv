@@ -18,7 +18,7 @@ from madsc.epg_inventory import inspect_xmltv
 from madsc.legacy_epg_logo import join_pilot
 from madsc.legacy_retest_390 import evaluate_entries, parse_entries
 from madsc.candidate_coordination import coordinate
-from madsc.write_path_audit import audit_write_paths, enforce_local_output_path
+from madsc.write_path_audit import audit_write_paths, enforce_local_output_path, enforce_write_paths
 from madsc.fixture_report_writer import write_fixture_report, write_stage_report
 from madsc.history_pair_bridge import bridge_legacy_pair, merge_into_envelope
 from madsc.history_pair_store import decode_pair
@@ -312,10 +312,15 @@ def run(category: str, output: Path) -> dict:
         "checks": {"isolation": True, "runtime_rule_evidence": False,
                    "legacy_behavioral_equivalence": False},
     }
-    # Fail closed: never overwrite evidence or follow a symlinked output path.
+    # Reject protected/ambiguous output names BEFORE any parent directory is created.
+    # The local-path guard below additionally checks existing parents and symlinks.
     output = Path(output).absolute()
+    enforce_write_paths([output.relative_to(output.anchor).as_posix()])
     if output.parent.name == "reports" and not output.parent.exists():
-        if output.parent.parent.is_symlink() or not output.parent.parent.is_dir():
+        parent_root = output.parent.parent
+        if not parent_root.is_dir():
+            raise PermissionError("Unsafe reports root")
+        if any(ancestor.is_symlink() for ancestor in (parent_root, *parent_root.parents)):
             raise PermissionError("Unsafe reports root")
         output.parent.mkdir()
     enforce_local_output_path(output)

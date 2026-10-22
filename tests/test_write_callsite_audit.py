@@ -216,7 +216,7 @@ def create():
             outside = root / "real.py"
             outside.write_text("def write(path):\\n    path.write_text('x')\\n", encoding="utf-8")
             (root / "linked.py").symlink_to(outside)
-            with self.assertRaisesRegex(ValueError, "Symlinked Python source"):
+            with self.assertRaisesRegex(ValueError, "Symlinked source entry"):
                 scan_python_tree(root)
 
     def test_tree_scan_rejects_symlinked_source_directory(self):
@@ -226,7 +226,14 @@ def create():
             actual.mkdir()
             (actual / "writer.py").write_text("print('ok')", encoding="utf-8")
             (root / "linked_dir").symlink_to(actual, target_is_directory=True)
-            with self.assertRaisesRegex(ValueError, "Symlinked source directory"):
+            with self.assertRaisesRegex(ValueError, "Symlinked source entry"):
+                scan_python_tree(root)
+
+    def test_tree_scan_rejects_dangling_symlink(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "missing_source").symlink_to(root / "does_not_exist")
+            with self.assertRaisesRegex(ValueError, "Symlinked source entry"):
                 scan_python_tree(root)
 
     def test_invalid_python_fails_instead_of_silently_skipping(self):

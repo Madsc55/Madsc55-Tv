@@ -151,7 +151,7 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     # Bound untrusted manifests before iterating or opening filesystem paths.
     if len(manifest["entries"]) > 10000:
         raise ValueError("Backup manifest exceeds bounded entry limit")
-    if any(not isinstance(entry, dict) or not isinstance(entry.get("path"), str)
+    if any(type(entry) is not dict or type(entry.get("path")) is not str
            or type(entry.get("bytes")) is not int or entry["bytes"] < 0
            or not isinstance(entry.get("sha256"), str) or len(entry["sha256"]) != 64
            or any(c not in "0123456789abcdef" for c in entry["sha256"])

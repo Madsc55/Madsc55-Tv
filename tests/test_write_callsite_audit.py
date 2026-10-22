@@ -70,6 +70,14 @@ def mutate(path):
                           "open [dynamic mode]"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_process_launchers_are_reviewed_for_external_writes(self):
+        source = '''\nimport subprocess\ndef run_command():\n    subprocess.run(["cp", "source", "destination"])\n    os.system("echo data > output.txt")\n'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["subprocess.run [process command requires review]",
+                          "os.system [process command requires review]"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

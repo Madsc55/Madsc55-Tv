@@ -90,19 +90,16 @@ class CandidateProbeLinkTests(unittest.TestCase):
         self.assertIn('evidence_group.add_argument("--continuity", type=Path)', source)
         self.assertIn("link_candidate_continuity(candidates, load_evidence(args.continuity)", source)
 
-    def test_cli_rejects_symlink_ancestors_and_bounds_file_reads(self):
+    def test_cli_uses_descriptor_relative_no_follow_path_walk(self):
         from pathlib import Path
         source = Path("madsc/candidate_probe_link.py").read_text(encoding="utf-8")
-        self.assertIn("any(parent.is_symlink() for parent in path.parents)", source)
-        self.assertIn('if not isinstance(getattr(os, "O_NOFOLLOW", None), int):', source)
-        self.assertIn('raise ValueError("Secure evidence opening is unavailable")', source)
-        self.assertIn('flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK', source)
-        self.assertIn('os.open(path, flags)', source)
-        self.assertIn("os.fstat(handle.fileno())", source)
-        self.assertIn("stat.S_ISREG(opened.st_mode)", source)
-        self.assertIn("opened.st_size > 16 * 1024 * 1024", source)
+        self.assertIn('os.open not in os.supports_dir_fd', source)
+        self.assertIn('os.O_DIRECTORY | os.O_NOFOLLOW', source)
+        self.assertIn('dir_fd=descriptor', source)
+        self.assertIn('os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK', source)
+        self.assertIn('os.fstat(handle.fileno())', source)
+        self.assertIn('stat.S_ISREG(opened.st_mode)', source)
         self.assertIn('handle.read(16 * 1024 * 1024 + 1)', source)
-        self.assertIn('if len(raw) > 16 * 1024 * 1024:', source)
 
     def test_continuity_link_rejects_duplicate_candidates(self):
         run, sha = "123", "b" * 40

@@ -1,5 +1,6 @@
 """Five-stage inventory is derived from real repository contracts, not guesses."""
 import unittest
+from tempfile import TemporaryDirectory
 from pathlib import Path
 from unittest.mock import patch
 
@@ -47,3 +48,23 @@ class InstallationInventoryTests(unittest.TestCase):
                    return_value={"main_workflows": {}, "auxiliary_count": 10}):
             with self.assertRaises((ValueError, KeyError)):
                 assess_installation(ROOT)
+
+    def test_symlinked_workflow_entry_fails_closed(self):
+        from madsc.five_system_installation import inspect_installation
+        with TemporaryDirectory(prefix="madsc-workflow-symlink-") as tmp:
+            root = Path(tmp)
+            workflows = root / ".github" / "workflows"
+            workflows.mkdir(parents=True)
+            docs = root / "docs"
+            docs.mkdir()
+            (root / "madsc").mkdir()
+            (docs / "K1_K5_KANITLI_GOREV_DEFTERI.json").write_bytes(
+                (ROOT / "docs" / "K1_K5_KANITLI_GOREV_DEFTERI.json").read_bytes())
+            target = root / "outside.yml"
+            target.write_text("name: external\\n", encoding="utf-8")
+            try:
+                (workflows / "madsc-01-guvenlik.yml").symlink_to(target)
+            except (OSError, NotImplementedError):
+                self.skipTest("Filesystem does not permit symlinks")
+            with self.assertRaisesRegex(ValueError, "Symlinked workflow entry"):
+                inspect_installation(root)

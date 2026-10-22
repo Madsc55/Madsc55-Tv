@@ -104,6 +104,9 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
         if mode_supplied and isinstance(node.args[mode_index], ast.Constant):
             mode = node.args[mode_index].value
         for kw in node.keywords:
+            if kw.arg is None:
+                # **options can override a literal read-only mode with "w".
+                dynamic_mode = True
             if kw.arg == "mode":
                 mode_supplied = True
                 if isinstance(kw.value, ast.Constant):

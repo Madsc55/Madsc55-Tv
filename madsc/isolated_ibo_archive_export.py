@@ -46,7 +46,7 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
         if json.loads(saved) != manifest:
             raise OSError("Archive manifest readback mismatch")
         if hashlib.sha256(saved).digest() != hashlib.sha256(
-            (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\\n").encode("utf-8")
+            (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8")
         ).digest():
             raise OSError("Archive manifest byte integrity mismatch")
         return manifest

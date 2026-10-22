@@ -296,3 +296,13 @@ class HandoffTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Unsafe candidate display metadata"):
                     assess_candidates(altered, {})
 
+
+    def test_direct_handoff_rejects_oversized_discovery(self):
+        candidate = classify_candidates([
+            {"name": "News", "url": "https://example.org/a"}
+        ])["candidates"][0]
+        with self.assertRaisesRegex(ValueError, "Too many candidates"):
+            assess_candidates({"candidates": [candidate] * 20001}, {})
+        with self.assertRaisesRegex(ValueError, "Too many alternatives"):
+            assess_candidates({"candidates": [], "alternatives": [{}] * 20001}, {})
+

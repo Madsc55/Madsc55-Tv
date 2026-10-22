@@ -15,8 +15,8 @@ class K3SourceSnapshotTests(unittest.TestCase):
         self.assertEqual(pilot.SOURCE_MAX_BYTES, MAX_BYTES)
 
     def test_k3_hashes_full_source_and_probes_at_most_twelve(self):
-        data = b"#EXTM3U\\n" + b"".join(
-            f"#EXTINF:-1,Example {i}\\nhttps://example.org/live/{i}\\n".encode()
+        data = b"#EXTM3U\n" + b"".join(
+            f"#EXTINF:-1,Example {i}\nhttps://example.org/live/{i}\n".encode()
             for i in range(25))
         class Response:
             def __enter__(self): return self

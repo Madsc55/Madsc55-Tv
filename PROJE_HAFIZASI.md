@@ -1891,3 +1891,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Yerel sonuç 573 test + beş izole K kapısı success; kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET6.json. Unscoped git diff --check bir kere signal 11 verdi; path-scoped kontrol ve offline_gate geçti, kaynak/test dosyalarında whitespace hatası yok.
 - Gerçek salt-okunur artifact metadata kontrolü: yeni #39686179902 ve eski #39590927353 artifact kayıtlarında SHA256 digest ve run/head bağı mevcut. Eski run pinned 92 dışında k1-protected-write-tests.yml olduğundan gerçek legacy pair sayılmadı; aynı input manifesti metadata'dan doğrulanamadı. Kabul 0/92, 0/26, 0/22.
 - Sıradaki: artifact ZIP içindeki sınırlı manifesti güvenli okuyup input SHA256 ve snapshot hashini doğrulanan artifact digest/run originine bağla. Eski depoya yazma ve Actions çalıştırma yok.
+
+
+## 22 Ekim 2026 — K5 same-input artifact byte binding
+- Kod b1be6c247b769bc911773ed35d30b5991875b913: legacy_pair_artifact, artifact ZIP SHA256'yı declared/API digest'e bağlar; yalnız tek madsc-parity-evidence.json entry kabul eder ve repo/run/head/workflow/input SHA256/snapshot alanlarını execution origin ile eşleştirir.
+- ZIP boyutu 2 MiB, manifest 1 MiB ile sınırlı; extra entry, symlink, compression bomb oranı, bozuk ZIP/UTF-8/JSON ve duplicate key reddedilir. İki artifact aynı input hash taşımadan pair doğrulanmaz.
+- Nihai yerel sonuç 576 test + K1–K5 fixture gates success; docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET7.json. Fixture yine acceptance değildir: 0/92, 0/26, 0/22.
+- Geçmiş artifactler bu v1 manifestini taşımadığı için geriye dönük kabul yok. Sıradaki güvenli kod işi: yeni beşli opt-in parity artifact üretimini bu şemaya bağlamak; gerçek Actions yalnız ayrı izinle.

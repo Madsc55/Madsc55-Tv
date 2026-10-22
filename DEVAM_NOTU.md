@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: 7b4855293564c1baafdca8246f932ca1a1e5986e
+Son geliştirme commit SHA: b1be6c247b769bc911773ed35d30b5991875b913
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -91,3 +91,12 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Salt-okunur gerçek kontrol: yeni run 39686179902 artifactleri ve eski run 39590927353 artifactleri SHA256 digest taşıyor. Ancak eski run k1-protected-write-tests.yml, pinned 92 davranış kapsamının dışındaki yedi dosyadan biridir; bu iki run aynı-girdi 92 çifti değildir ve kabul verilmedi.
 - Sıradaki somut iş: artifact içindeki manifestten input SHA256 ve snapshot bağını güvenli biçimde çıkarıp GitHub artifact digest/run origin doğrulamasına bağla. Sadece metadata içindeki beyanı aynı-girdi kanıtı sayma.
 - Kabul sayaçları 0/92, 0/26 ve 0/22. Korunan veriler, eski depo ve PR #71 değişmedi; Actions başlatılmadı.
+
+## Yedinci önemli geliştirme — artifact baytına bağlı aynı-girdi manifesti
+- Son kod commit SHA: b1be6c247b769bc911773ed35d30b5991875b913; taban ca2b33fb45d188cbe2ce6a9ea164d677dc084e0e.
+- legacy_pair_artifact, SHA256'sı API origin kaydına bağlı artifact ZIP'i sınırlı ve fail-closed okur. Yalnız tek madsc-parity-evidence.json kabul edilir; ekstra entry, symlink, büyük ZIP/manifest, aşırı sıkıştırma, bozuk/duplicate-key JSON reddedilir.
+- Manifest repository/run/head/workflow_path, input_sha256 ve snapshot alanlarını execution origin beyanına bağlar. İki artifact manifesti aynı input SHA256 taşımadan pair karşılaştırması geçmez.
+- Yerel sonuç: 576 test ve beş izole K kapısı success. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET7.json. Ağ/Actions/canlı probing yok.
+- Bu, gelecek artifactlerin üretim kontratıdır; geçmiş run artifactleri bu manifest şemasıyla üretilmediği için geriye dönük 92 kabulü yaratmaz. behavioral_parity_accepted=false ve production_ready=false.
+- Sıradaki somut iş: beşli workflow'ların opt-in parity artifact üretim yolunu bu manifest şemasına bağla; eski taraf için salt-okunur gerçek 92 run artifacti yoksa açık blocker olarak bırak. Actions izni olmadan çalıştırma.
+- Kabul 0/92, 0/26, 0/22; korunan dosyalar/eski depo/PR #71 değişmedi.

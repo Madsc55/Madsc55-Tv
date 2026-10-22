@@ -1,6 +1,6 @@
 """Fail-closed K2 candidate to K3 offline probe linkage; no network or playlist writes."""
 from madsc.artifact_handoff import unpack
-from madsc.channel_test import summarize_offline_probe_evidence
+from madsc.channel_test import summarize_offline_probe_evidence, summarize_candidate_continuity
 
 
 def link_candidate_probes(envelope: dict, records: list[dict], run_id: str, commit_sha: str) -> dict:
@@ -28,6 +28,31 @@ def link_candidate_probes(envelope: dict, records: list[dict], run_id: str, comm
         "network_probed": False, "ibo_device_verified": False,
         "production_writes": False, "production_ready": False,
         "results": summary["results"],
+    }
+
+
+
+def link_candidate_continuity(envelope: dict, measurements: dict,
+                              run_id: str, commit_sha: str) -> dict:
+    """Join K2 candidates to K3 time-window evidence, without live approval.
+
+    Supplied timestamps and measurements are untrusted offline claims.
+    """
+    discovery = unpack(envelope, run_id, commit_sha)
+    candidates = discovery["candidates"]
+    fingerprints = [item["url_sha256"] for item in candidates]
+    summary = summarize_candidate_continuity(fingerprints, measurements)
+    return {
+        "schema": "madsc-k2-k3-continuity-link-v1",
+        "run_id": run_id,
+        "commit_sha": commit_sha,
+        "source_digest": envelope["digest"],
+        **summary,
+        "observation_provenance_verified": False,
+        "actual_network_measurements_verified": False,
+        "ibo_device_verified": False,
+        "production_ready": False,
+        "production_writes": False,
     }
 
 

@@ -135,6 +135,9 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
 def verify_manifest(root: Path, manifest: dict) -> bool:
     if not isinstance(manifest, dict) or not isinstance(manifest.get("entries"), list):
         raise ValueError("Invalid backup manifest")
+    # Local manifests cannot be relabeled as an externally verified backup.
+    if "mode" in manifest and manifest["mode"] != "manifest_only":
+        raise ValueError("Unsupported backup manifest mode")
     # A local checksum manifest is never evidence of external backup or
     # production restoration. Do not accept forged positive attestations.
     for claim in ("external_backup_verified", "restore_verified", "production_writes"):

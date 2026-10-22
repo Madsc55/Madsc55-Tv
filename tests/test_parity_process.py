@@ -41,7 +41,14 @@ class ParityProcessTests(unittest.TestCase):
         for pid in result['stdout'].decode().splitlines():
             status = Path('/proc') / pid / 'stat'
             deadline = time.monotonic() + 1
-            while status.exists() and status.read_text().split()[2] not in ('Z', 'X'):
+            while True:
+                try:
+                    state = status.read_text().split()[2]
+                except FileNotFoundError:
+                    # The process can disappear between existence and read.
+                    break
+                if state in ('Z', 'X'):
+                    break
                 self.assertLess(time.monotonic(), deadline, 'Descendant survived group timeout')
                 time.sleep(.005)
 

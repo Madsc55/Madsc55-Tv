@@ -63,3 +63,12 @@
 - Bu iki commit için test henüz çalıştırılmadı; başarılı CI iddiası yok. Actions dispatch yapılmadı.
 - Üretim playlist/EPG/favori/cihaz/yedek/arşiv verilerine dokunulmadı; PR #71 birleştirilmedi.
 - Kabul sayaçları değişmedi: 92 workflow 0/92, güvenlik 0/26, ana görevler 0/22. Önceki başarılı offline CI yalnızca kendi test ettiği SHA ve izole kapsam için geçerlidir.
+
+
+## 23 Ekim 2026 — K1 symlink koruması için CI doğrulaması
+- GitHub Actions run `39862697684` (`MADSC55 — Offline Unit Tests`) başarılı; test edilen SHA `483bce535b585e5c750b7cfa54b87fb9f578d72c`, yani K1 workflow inventory symlink koruması ve regresyon testinin eklendiği commit.
+- Job `offline-tests` sonucu success; logda `tests_passed=true`, `five_stage_fixture_gate_passed=true`, `all_offline_gates_passed=true`.
+- Mevcut main HEAD `930ba504fad8777622c7d00ad0ba90a208eb4ba7`; başarılı test SHA'sından sonraki değişiklikler yalnızca dokümantasyon/devir kaydı. Dolayısıyla kod ve test ağacı bu başarılı koşuyla aynıdır. Bu, offline suite için CI kanıtıdır; runtime/production kabulü değildir.
+- Aynı CI raporu `runtime_rules_verified=false`, `legacy_92_behavioral_equivalence_verified=false`, `production_ready=false` olarak kalır.
+- Kabul sayaçları değişmedi: eski 92 workflow 0/92, güvenlik kuralları 0/26 bağımsız kabul, 22 ana görev 0/22 bağımsız kabul.
+- Canlı IPTV/EPG/favoriler/cihazlar/yedekler/arşivler değiştirilmedi; Actions yeniden tetiklenmedi; PR #71 birleştirilmedi.

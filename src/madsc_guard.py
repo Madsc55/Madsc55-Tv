@@ -2,6 +2,7 @@
 from __future__ import annotations
 import argparse
 import json
+import unicodedata
 from pathlib import Path
 from madsc.write_path_audit import audit_write_paths
 
@@ -31,7 +32,7 @@ def validate_manifest(manifest: dict) -> None:
         raise ValueError("explicit nonempty output_paths required")
     if not all(isinstance(p, str) for p in paths):
         raise ValueError("Output paths must be strings")
-    normalized = [p.replace("\\", "/").casefold() for p in paths]
+    normalized = [unicodedata.normalize("NFKC", p).casefold() for p in paths]
     if len(normalized) != len(set(normalized)):
         raise ValueError("Duplicate output paths")
     if any(not isinstance(p, str) or not safe_relative_path(p) or not p.replace("\\", "/").startswith("artifacts/") for p in paths):

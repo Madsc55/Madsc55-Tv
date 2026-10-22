@@ -5,6 +5,7 @@ independently reads each run, its artifact listing, and the workflow blob at
 the recorded head SHA.  It never dispatches Actions or downloads artifacts.
 """
 from urllib.parse import quote
+import re
 
 from madsc.github_history_client import github_json
 from madsc.legacy_pair_artifact import verify_failure_diagnostic_artifact
@@ -82,9 +83,12 @@ def fetch_verified_execution_origin(origin, *, token=None, fetch=github_json):
     workflow_path = origin.get("workflow_path") if isinstance(origin, dict) else None
     if (repository not in {"Madsc55/madsc-tv", "Madsc55/Madsc55-Tv"}
             or type(run_id) is not int or run_id <= 0
-            or not isinstance(head_sha, str) or len(head_sha) != 40
+            or not isinstance(head_sha, str)
+            or re.fullmatch(r"[0-9a-f]{40}", head_sha) is None
             or not isinstance(workflow_path, str)
-            or not workflow_path.startswith(".github/workflows/")):
+            or not workflow_path.startswith(".github/workflows/")
+            or any(segment in {"", ".", ".."} for segment in workflow_path.split("/"))
+            or not workflow_path.endswith((".yml", ".yaml"))):
         raise ValueError("Invalid declared execution origin")
     base = "https://api.github.com/repos/" + repository
     run = fetch(f"{base}/actions/runs/{run_id}", token=token)

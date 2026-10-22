@@ -1,7 +1,8 @@
 """Independent fail-closed API-origin checks for diagnostic artifacts."""
 import unittest
 
-from madsc.github_legacy_pair_client import verify_failure_diagnostic_evidence
+from madsc.github_legacy_pair_client import (fetch_verified_execution_origin,
+    verify_failure_diagnostic_evidence)
 from tests.test_failure_diagnostic_artifact import evidence, fetcher
 
 
@@ -122,6 +123,31 @@ class DiagnosticApiFailClosedTests(unittest.TestCase):
             with self.subTest(mismatch=mismatch), self.assertRaises(ValueError):
                 verify_failure_diagnostic_evidence(
                     origin, artifact, archive, fetch=fetch)
+
+
+    def test_invalid_sha_and_workflow_paths_rejected_before_network(self):
+        origin, artifact, _archive = evidence()
+        origin["artifact"] = artifact
+        cases = (
+            ("head_sha", "g" * 40),
+            ("head_sha", "A" * 40),
+            ("workflow_path", ".github/workflows/../secret.yml"),
+            ("workflow_path", ".github/workflows/./safe.yml"),
+            ("workflow_path", ".github/workflows//safe.yml"),
+            ("workflow_path", ".github/workflows/safe.txt"),
+        )
+        for key, value in cases:
+            declared = dict(origin)
+            declared[key] = value
+            calls = []
+
+            def fetch(url, token=None):
+                calls.append(url)
+                raise AssertionError("Network fetch must not be attempted")
+
+            with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+                fetch_verified_execution_origin(declared, fetch=fetch)
+            self.assertEqual(calls, [])
 
 
 

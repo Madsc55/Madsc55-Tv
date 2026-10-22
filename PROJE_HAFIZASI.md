@@ -2257,3 +2257,8 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - madsc/k4_evidence.py commit 37f74521295d84705a702da4d4b13d696f50fcb8 [skip ci]: çıktı yolu okumadan önce denetlenir; kanıt os.open/O_NOFOLLOW (varsa), fstat ile regular/single-link, 1 MiB bounded read kullanır. Symlink parent kontrolü korunur. Test commit 80972e5badcc47173df7f4d613891b268daeade5: mevcut çıktı, symlink ve büyük kanıt negatif senaryoları.
 - Kod/test GitHub'a kaydedildi; bu turda yerel test ve offline_gate çalıştırılmadı, Actions tetiklenmedi. O_NOFOLLOW olmayan platformlarda yarış koruması sınırlıdır; parent değişimi yarışına karşı tam fd-tabanlı dizin zinciri henüz yoktur.
 - Öncelik: test_restore_drill ve test_k4_evidence + tüm offline_gate çalıştırıp gerçek sonuçları kaydet; K1-03 gerçek writer denetimine devam et. Gerçek kabul 0/92, 0/26, 0/22; korunan veriye dokunulmadı.
+
+
+## 22 Ekim 2026 — K4 son değişikliklerin devir özeti
+- K4 kanıt doğrulayıcısı: d8e5e1925c7ea9994f3e0649b4640cf5569b038a; K4 pozitif ve tekrar-yazma testi: bc21ebd0954250b65b0ae4665d40775242ecee91. Sonraki DEVAM_NOTU.md kaydı: a3f8217081562177e25a3347ac899fff6fe25353.
+- Kodun yeni sürümü için regresyon henüz çalıştırılmadı. github.com DNS erişimi bu çalışma ortamında yok; Actions tetiklenmedi. Gerçek kabul 0/92, 0/26, 0/22. Öncelik K4 odaklı testler ve offline_gate doğrulaması.

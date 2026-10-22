@@ -110,7 +110,7 @@ class ParityInputReceiptTests(unittest.TestCase):
                         body = body.replace('${{ inputs.allow_parity_evidence }}',
                                             'false' if scenario == 'opt_out' else 'true')
                         result = subprocess.run(['bash', '-e', '-o', 'pipefail', '-c', body], cwd=root,
-                                                env=env, capture_output=True, text=True, timeout=10)
+                                                env=env, capture_output=True, text=True, timeout=30)
                         statuses.append(result.returncode)
                         if result.returncode:
                             break

@@ -39,7 +39,7 @@ except PermissionError:
 sys.exit(2)
 '''
                 result = subprocess.run([sys.executable, '-c', code, str(root), mode],
-                                        capture_output=True, timeout=2, text=True)
+                                        capture_output=True, timeout=5, text=True)
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertFalse((root / 'reports').exists())
 

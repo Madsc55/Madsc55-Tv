@@ -1,0 +1,67 @@
+{
+  "schema": "madsc-five-stage-installation-gate-evidence-v1",
+  "date": "2026-10-22",
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "base_commit": "554ec5f07a10dcf81041c1cc18a2081a04dc9e4c",
+  "scope": "offline_local_only",
+  "changes": [
+    "Verified the direct fail-closed regression for five-stage installation inventory exceptions added on main.",
+    "Verified the installation inventory is mandatory in the aggregate offline gate.",
+    "Bound descendant-process assertions to Linux process starttime so PID reuse cannot produce a false survivor failure.",
+    "Expanded only test-harness scheduling deadlines for FIFO and workflow simulations; production timeout and fail-closed behavior are unchanged."
+  ],
+  "focused_test_command": "python -m unittest -v tests.test_five_stage_installation tests.test_five_stage_offline_gate_integration tests.test_offline_gate tests.test_five_report_roundtrip",
+  "focused_tests": {
+    "discovered": 14,
+    "passed": 14,
+    "failed": 0
+  },
+  "timing_regression_tests": {
+    "executions": 5,
+    "passed": 5,
+    "failed": 0,
+    "process_group_test_repetitions": 3
+  },
+  "aggregate_test_command": "python -m madsc.offline_gate",
+  "aggregate_result": {
+    "tests_discovered": 760,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "five_stage_installation_inventory_passed": true,
+    "five_report_roundtrip_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "all_offline_gates_passed": true
+  },
+  "source_sha256": {
+    "madsc/five_stage_installation.py": "465a87617a0212728f8e42302d7727a06d2092d31c88aad85462ddc4cda3be33",
+    "madsc/offline_gate.py": "b330c92dde95481c41ec6c19ed7e0e93503b4dd64d3a1833605b2a3888d1c9b1",
+    "tests/test_five_stage_installation.py": "76475529e0c11642f83fa61d6d88559303a680dbee2581184c46e9a98e625184",
+    "tests/test_five_stage_offline_gate_integration.py": "b1652218168125823b8fabd6913b7e6c1493a9d20d265971ec72014bf3d40489",
+    "tests/test_offline_gate.py": "593d6631817fe5932d570cb049bdb3f78aa66f56c0403a01f453788f4f783105",
+    "tests/test_parity_process.py": "f1ca6f4d199d4480f6a3f7c426d46a0e391e43bca66fdc286aaf1089fe64127c",
+    "tests/test_parity_file_boundaries.py": "fa0c095467d129afe45011be12eb036da0d70bdf7ca6faf5a9735c758a59b439",
+    "tests/test_parity_input_receipt.py": "fc7e96b013af42597e2c9fb8bf0379dd472e766c1f992be8ab07adaa720d11bd"
+  },
+  "failed_attempts": [
+    "The first exact-head aggregate run hit two host-load timeouts: FIFO snapshot (2 seconds) and K1 workflow simulation (10 seconds); both passed immediately in isolation.",
+    "A second aggregate run exposed a PID-reuse-sensitive descendant assertion just beyond its one-second polling deadline.",
+    "A first deadline-only adjustment still failed because it did not disambiguate PID reuse; the final starttime-bound assertion passed three consecutive executions and the aggregate suite."
+  ],
+  "acceptance": {
+    "legacy_behavioral": "0/92",
+    "runtime_security": "0/26",
+    "task_completion": "0/22",
+    "production_ready": false
+  },
+  "external_actions": {
+    "github_actions_triggered": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_modified": false
+  },
+  "remaining_blockers": [
+    "Real same-input evidence for 92 legacy/replacement workflow pairs with independent executions and artifact origins is absent.",
+    "Live/device and independent external restore evidence remains outside this offline verification."
+  ]
+}

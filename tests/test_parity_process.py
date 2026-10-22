@@ -36,17 +36,28 @@ class ParityProcessTests(unittest.TestCase):
             self.assertFalse(written['behavioral_parity_accepted'])
 
     def test_timeout_reaps_parent_and_kills_descendant(self):
-        result = self.run_python("import os,time; p=os.fork(); os.write(1,(str(os.getpid())+'\\n').encode()); time.sleep(10)", timeout=.25)
+        result = self.run_python(
+            "import os,time; p=os.fork(); s=open('/proc/self/stat').read().split()[21]; "
+            "os.write(1,(str(os.getpid())+':'+s+'\\n').encode()); time.sleep(10)",
+            timeout=.25)
         self.assertTrue(result['timed_out'])
-        for pid in result['stdout'].decode().splitlines():
+        for identity in result['stdout'].decode().splitlines():
+            pid, starttime = identity.split(':', 1)
             status = Path('/proc') / pid / 'stat'
-            deadline = time.monotonic() + 1
+            # The process group is killed synchronously, but a loaded host can
+            # expose the reaped/Z state in /proc slightly later.
+            deadline = time.monotonic() + 5
             while True:
                 try:
-                    state = status.read_text().split()[2]
+                    current = status.read_text().split()
                 except FileNotFoundError:
                     # The process can disappear between existence and read.
                     break
+                # A reused PID belongs to a different process. Linux starttime
+                # is stable for the lifetime of the process and disambiguates it.
+                if current[21] != starttime:
+                    break
+                state = current[2]
                 if state in ('Z', 'X'):
                     break
                 self.assertLess(time.monotonic(), deadline, 'Descendant survived group timeout')

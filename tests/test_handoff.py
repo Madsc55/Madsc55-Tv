@@ -282,3 +282,17 @@ class HandoffTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Unsafe candidate tvg-id"):
                     assess_candidates(altered, {})
 
+
+    def test_unsafe_display_metadata_rejected_at_handoff(self):
+        discovery = classify_candidates([
+            {"name": "News", "url": "https://example.org/a", "tvg_id": "news"}
+        ])
+        for field, value in (("name", " "), ("name", "News\\nExtra"),
+                             ("tvg_logo", "logo\\\\path"),
+                             ("group_title", "group\\x7f")):
+            with self.subTest(field=field, value=repr(value)):
+                altered = dict(discovery)
+                altered["candidates"] = [dict(discovery["candidates"][0], **{field: value})]
+                with self.assertRaisesRegex(ValueError, "Unsafe candidate display metadata"):
+                    assess_candidates(altered, {})
+

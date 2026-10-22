@@ -1,6 +1,9 @@
 name: MADSC55 — Offline Unit Tests
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/madsc-unit-tests.yml'
 permissions:
   contents: read
 concurrency:

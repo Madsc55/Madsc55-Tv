@@ -38,6 +38,16 @@ class GuardTests(unittest.TestCase):
                     main()
                 self.assertEqual(caught.exception.code, 2)
 
+    def test_cli_rejects_malformed_json_without_traceback(self):
+        from src.madsc_guard import main
+        with tempfile.TemporaryDirectory() as folder:
+            manifest = Path(folder) / "malformed.json"
+            manifest.write_text("{not-json")
+            with patch("sys.argv", ["madsc_guard", str(manifest)]):
+                with self.assertRaises(SystemExit) as caught:
+                    main()
+                self.assertEqual(caught.exception.code, 2)
+
     def test_allowed(self):
         validate_manifest({"production_write": False, "output_paths": ["artifacts/report.json"]})
     def test_denied(self):

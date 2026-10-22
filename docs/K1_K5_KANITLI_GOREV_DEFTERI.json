@@ -163,9 +163,10 @@
     "evidence": [
       "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_07_2026-10-23.md: three additional frozen-source workflow contracts; static review only, no parity acceptance",
       "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_08_2026-10-23.md: three additional frozen-source workflow contracts; static review only, no parity acceptance",
-      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_09_2026-10-23.md: three additional frozen-source workflow contracts; identifies protected-playlist workspace mutation in two legacy scripts"
+      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_09_2026-10-23.md: three additional frozen-source workflow contracts; identifies protected-playlist workspace mutation in two legacy scripts",
+      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_10_2026-10-23.md: three additional frozen-source workflow contracts and deterministic logo publisher/protected-write-gate scope conflict; static review only, no parity acceptance"
     ],
-    "note": "99 YAML source inventory; batches 01-09 document 27/92 static workflow reviews, 65 remain. Batch 09 identified ibo-yedek-kalite and iptv-test scripts rewriting CALISANLAR.m3u in runner workspace despite quality/read-only labels, and acceptance_26_92.py exits successfully on test suites even when acceptance_complete=false unless --require-full-acceptance is set. Behavioral parity remains 0/92; source review is not acceptance."
+    "note": "99 YAML source inventory; batches 01-10 document 30/92 static workflow reviews, 62 remain subject to canonical exclusions. Batch 09 found two legacy jobs rewriting CALISANLAR.m3u in runner workspaces and a full-acceptance CLI flag requirement. Batch 10 found VOD publishing can write partial 15-day data after per-day fetch failures, restore-drill integrity/report diagnostics can be skipped on early failure, and logo publishing conflicts with the protected-write gate because all logos/ paths are denied. Static review is not acceptance; behavioral parity remains 0/92."
   },
   {
     "id": "K5-20",

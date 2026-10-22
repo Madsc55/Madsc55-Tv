@@ -138,3 +138,10 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - Güncel load_evidence uygulamasının izole edilmiş kopyası üzerinde Python unittest ile 9 senaryo çalıştırıldı: normal JSON, duplicate key, symlink dosya, symlink üst dizin, dizin, FIFO, geçersiz UTF-8, 16 MiB üzeri dosya, eksik dosya. Sonuç: 9/9 başarılı.
 - Bu test depo HEAD veya tam K3/K2 entegrasyon testi DEĞİLDİR; izole kopya ve yerel duplicate-key yardımcı işlevi kullanıldı. CI yeşil sonucu iddia edilmemelidir.
 - Sonraki öncelik: tam depo unittest/Actions doğrulaması, kalan test sözleşmeleri ve K2/K3 entegrasyonu.
+
+## SOHBET BİRLEŞTİRME — K3 DEVİR NOKTASI (2026-10-22)
+- Kullanıcı K1–K5 için paralel sohbetleri birleştiriyor. Bu sohbetin sahipliği K3 kanal testi, candidate_probe_link ve kanıt yükleyicisi. K1/K2/K4/K5 sahiplik alanlarında değişiklik yapılmadı.
+- Son K3 uygulama düzeltmesi: 90c9202 — güvenli dirfd dosya açma OSError hatalarını ValueError'a dönüştürür. Test: e18cb02. Önceki güvenli yol bileşeni açma: 92e0f45; test uyarlaması f74e2db. Dizin girdi testi: ecd85c1. UTF-8 test düzeltmesi: b2bc426. O_NOFOLLOW desteği doğrulaması: 60ef3ec, test: 9140300.
+- En son izole doğrulama kaydı: 3d63037 — load_evidence kopyasında 9/9 test geçti; tam depo testleri ve GitHub Actions güncel HEAD için ÇALIŞTIRILMADI. Bu sonuç CI veya üretim onayı değildir.
+- Açık işler: (1) depo HEAD üzerinde gerçek unittest/Actions çalıştırması, (2) K2–K3 continuity ve artifact handoff uçtan uca testi, (3) kalan güvenli dosya açma ve kaynak/test uyumu hatalarını düzeltme, (4) sonuçları devir notunda güncelleme. Canlı ağ probu, üretim playlist/EPG ve PR #71 birleştirmesi yapılmamalı.
+- Diğer sohbetlerle commit çakışmalarına karşı her yazımdan önce güncel blob SHA çekilmeli. Yeni sohbet bu notu ve ilgili K3 dosyalarını okuyarak kaldığı yerden başlamalı.

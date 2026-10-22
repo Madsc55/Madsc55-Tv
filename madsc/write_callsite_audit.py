@@ -86,6 +86,9 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
         for kw in node.keywords:
             if kw.arg == "mode":
                 mode = kw.value
+        if any(kw.arg is None for kw in node.keywords):
+            # Unpacked keywords may provide/override the descriptor mode.
+            return True, name + " [dynamic mode]"
         if mode is None:
             return False, ""
         if not isinstance(mode, ast.Constant) or not isinstance(mode.value, str):

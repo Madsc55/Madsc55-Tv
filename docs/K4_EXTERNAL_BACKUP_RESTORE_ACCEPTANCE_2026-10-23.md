@@ -106,3 +106,9 @@ K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen
 - `madsc/backup.py` commit `57d508001bc904c3bbf35f0d9c308e17a6c68679`: varsa `mode` alanının türü tam `str` ve değeri `manifest_only` olmalı; özel `str` alt sınıfları da kabul edilmiyor.
 - `tests/test_backup_manifest_hardening.py` commit `791d87c24a49b1b4e7937d56b623c6ba2bf29c2e`: aynı metni taşıyan `str` alt sınıfını reddetme ve orijinal manifesti doğrulama regresyonu.
 - Son gözlemde ilgili Actions `39871776901` paralel commit nedeniyle iptal; yeni test için entegre CI başarı kanıtı bekleniyor. Daha önceki `39871569940` başarılı. Harici yedek ve bağımsız restore kabulü açık; IBO Player Pro cihaz testi kullanıcı tarafından en son yapılacak.
+
+
+## 23 Ekim 2026 — Manifest yolu kontrol karakterleri ve Unicode
+- `madsc/backup.py` commit `192ccc0c4ac3f75a168dd5fe68ea198e63b86e23`: `verify_manifest`, NUL, ASCII kontrol karakterleri ve geçersiz UTF-16 surrogate kod noktalarını kaynak dosya okunmadan reddediyor.
+- `tests/test_backup_manifest_hardening.py` commit `a93c60e54b369b9c5caa7326f24de617daaa338f`: gerçek Python kaçış dizileriyle NUL, newline, DEL ve iki surrogate örneği için regresyon; geçerli yerel manifest olumlu kontrolü.
+- Yeni CI sonucunun doğrulanması bekleniyor. Gerçek harici yedek ve bağımsız geri yükleme kabulü açık; IBO Player Pro gerçek cihaz testi en son kullanıcı tarafından yapılacak.

@@ -44,10 +44,14 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("manifest", type=Path)
     args = parser.parse_args()
+    # Fail closed if the platform cannot enforce no-follow semantics.
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    if not isinstance(nofollow, int):
+        parser.error("Secure manifest opening is unavailable on this platform")
     # Open once without following a final-component symlink. Inspect and read
     # the same descriptor to avoid a path-swap between validation and reading.
     try:
-        fd = os.open(args.manifest, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0))
+        fd = os.open(args.manifest, os.O_RDONLY | nofollow | getattr(os, "O_NONBLOCK", 0))
         with os.fdopen(fd, "rb") as stream:
             metadata = os.fstat(stream.fileno())
             if not stat.S_ISREG(metadata.st_mode) or metadata.st_size > 1024 * 1024:

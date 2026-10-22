@@ -11,8 +11,14 @@ def _open_relative_file_nofollow(root: Path, parts: tuple[str, ...]) -> int:
     """Open a relative file beneath root without following symlinks in any component."""
     if not parts:
         raise ValueError("Backup source path must name a file")
-    directory_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
-    file_flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    # Never silently drop no-follow/dir-fd protection on unsupported platforms.
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    directory = getattr(os, "O_DIRECTORY", None)
+    if (type(nofollow) is not int or type(directory) is not int
+            or os.open not in os.supports_dir_fd):
+        raise ValueError("Secure no-follow backup opening is unavailable")
+    directory_flags = os.O_RDONLY | directory | nofollow
+    file_flags = os.O_RDONLY | nofollow | getattr(os, "O_NONBLOCK", 0)
     opened_dirs: list[int] = []
     try:
         current = os.open(root, directory_flags)

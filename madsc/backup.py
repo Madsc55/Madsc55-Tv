@@ -183,6 +183,10 @@ def backup_to_new_sandbox(source: Path, destination: Path, names: list[str]) -> 
         raise ValueError("Sandbox backup requires a nonempty file list")
     if destination.is_symlink() or destination.exists():
         raise ValueError("Backup destination must not exist")
+    if not source.is_dir() or source.is_symlink():
+        raise ValueError("Backup source must be a real directory")
+    if any(ancestor.is_symlink() for ancestor in (source, *source.parents)):
+        raise ValueError("Backup source ancestors must not be symlinks")
     parent = destination.parent
     if not parent.is_dir() or any(item.is_symlink() for item in (parent, *parent.parents)):
         raise ValueError("Backup destination parent must be a real unaliased directory")

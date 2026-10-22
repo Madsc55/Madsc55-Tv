@@ -23,13 +23,9 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         raise ValueError("Missing M3U header")
     candidates, errors = [], []
     pending = None
-    discard_rejected_entry_url = False
     for number, raw in enumerate(lines[1:], 2):
         line = raw.strip()
         if line.startswith("#EXTINF:"):
-            # A rejected duplicate-attribute row still owns its following URL;
-            # consume that URL instead of reporting a second, misleading orphan.
-            discard_rejected_entry_url = False
             if pending is not None:
                 errors.append({"line": number, "reason": "missing_url"})
             # EXTINF attributes may contain commas inside quoted values.
@@ -61,7 +57,6 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
             # row instead of silently keeping the last value via dict().
             if len(attr_names) != len(set(attr_names)):
                 pending = None
-                discard_rejected_entry_url = True
                 errors.append({"line": number, "reason": "duplicate_metadata_attribute"})
                 continue
             attrs = {name.casefold(): value for name, value in attr_pairs}
@@ -75,8 +70,6 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 raise ValueError("Source exceeds bounded candidate limit")
             candidates.append({**pending, "url": line, "source": source})
             pending = None
-        elif discard_rejected_entry_url:
-            discard_rejected_entry_url = False
         else:
             errors.append({"line": number, "reason": "orphan_url"})
     if pending is not None:

@@ -31,3 +31,10 @@
 - Geniş taramada kalan başarısızlıklar: batch 1'de 2 failure/9 error (aday görüntü metaverisi ve fingerprint test beklentileri), batch 4'te 1 failure (üç aşamalı süreklilik alanı bekleneni karşılamıyor), batch 6'da 6 error (güvensiz aday metaverisi), batch 9'da 1 legacy retest çıktı farkı, batch 11'de 1 legacy replay zamanlama farkı. Bu gruplar henüz kök nedenlerine göre giderilmedi.
 - Batch 7'nin tek SyntaxError'ı giderildi. Batch 2,3,5,10,12'nin çalıştırılabilen grupları exit 0 verdi. Tüm 150 modül için tek bir kesin toplam test sayısı çıkarılamadı; bir sonraki tarama komutunun toplam süresi aşıldı.
 - Bunlar yerel ZIP ve hedefli senkronizasyonla elde edilen sonuçlardır; güncel main'in eksiksiz checkout testi değildir. Kabul sayaçları değişmez: 0/92, 0/26, 0/22.
+
+## Sonraki düzeltme — deterministik legacy retest karşılaştırması
+- `tests.test_legacy_retest_differential_batch` hatasının nedeni üretim mantığı değil, testin geçici alt süreçte `sitecustomize.py` ile saati dondurmayı varsaymasıydı. Bu Python runtime'ında `sitecustomize` yüklenmediği için legacy fixture gerçek saate göre `EVET/HAYIR` üretiyordu.
+- Testi, yalnızca geçici kopyalanmış fixture script'inde `datetime.now(timezone.utc)` satırını sabit test saatine değiştirecek şekilde düzelttim. Depodaki legacy kaynak/üretim davranışı değiştirilmedi.
+- Yerel ZIP çalışma kopyasında `python -m unittest tests.test_legacy_retest_differential_batch -v`: 1/1 geçti.
+- GitHub commit: `b72e23bad5495658bf1f1bfb42ff63782df9743a`.
+- Aynı hata sınıfı için artık test, ortam başlangıç kancasına bağlı değil. Tam 150 modül suite henüz doğrulanmış değil.

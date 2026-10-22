@@ -231,3 +231,10 @@
 - K1/K5 için kritik bulgu: `scripts/automatic_png_logos.py` korunan `CALISANLAR.m3u` dosyasını doğrudan `playlist.write_text(updated,...)` ile yazıyor. Workflow sonrasında diff görürse `git restore -- CALISANLAR.m3u` çalıştırıyor; write-then-restore, protected path'e hiç yazmama garantisi değildir. Replacement parity, izole fixture kopyası ve sıfır protected-path write ile kanıtlanmalı. Bu eski workflow çalıştırılmadı; playlist değişmedi.
 - Birleşik durum workflow'u snapshot JSON'ları üretir ve sadece generated health report yazar; tarihsel snapshot'ı canlı durum gibi sunmamalı. Geniş kanal taraması 9 public M3U kaynağı ve ffprobe kullandığı için gerçek ağ/probe işidir; fixture/parity amaçlı tetiklenmedi.
 - Statik inceleme toplamı 21/92; statik inceleme bekleyen 71. Bu kabul değildir: davranışsal parity 0/92, runtime güvenlik 0/26, ana görev kabulü 0/22, production_ready=false.
+
+
+## K1 — dinamik dosya modu ve harici komut kapsamı (23 Ekim 2026)
+- AST yazma envanterindeki iki kapsam boşluğu için düzeltme eklendi: değişken positional/keyword `open` modu artık `[dynamic mode]` olarak işaretleniyor; `subprocess.run/call/Popen/check_call/check_output`, `os.system` ve `os.popen` çağrıları harici yan etki inceleme adayı olarak sayılıyor.
+- Kod commitleri: `c6affc2824a1c8e5288da16eff853f7bb690e1ca`, `d6f1ce5c98c85658336198b542d0a7ccb65a6394`. Regresyon testleri: `2a0796ebe98b03db88905534c6546153dd92020a`, `cb0a046252e1a75d119ae12e0af6c76028b3379c`.
+- Bu sınıflar inceleme adaylarıdır; subprocess çağrısının mutlaka yazdığı iddia edilmez. CI combined-status sorgusu henüz status/check döndürmedi; 990 testlik eski run yeni SHA'lar için kanıt sayılmaz.
+- K1 0/26, legacy parity 0/92, ana görev 0/22 ve production_ready=false korunur. 75 adayın tümünün sınıflandırılması henüz tamamlanmadı.

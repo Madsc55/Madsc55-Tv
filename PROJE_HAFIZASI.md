@@ -2629,3 +2629,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Önceki K2 `orphan_url` regresyon düzeltmesi, daha sonraki commit `21410cc6101ca5fad8b4500a74e9c955f23e9ecd` için başarılı Actions `39870201168` ile doğrulandı.
 - K2 `parse_m3u`, metin veya kaynak etiketindeki Unicode surrogate karakterleri UTF-8 olarak kodlanamayacağı için girişte `ValueError` ile reddediyor (`6ac6eef780e14559854740539d96cdd8dfd39912`). `parse_m3u`, `corroborate_sources` ve `build_m3u8_preview` yolları için regresyon testi eklendi (`a794aeca142581eb5a70db90ec4ae51d5a1b63de`). Bu yeni testin CI sonucu ilk kontrolde bekliyordu (`39870351806`), başarı iddia edilmez.
 - Gerçek kaynak/lisans, günlük keşif eşdeğerliği, gerçek artifact köken/SHA ve K2-08 gerçek kaynak davranış kabulü açık. Korunan üretim verisi değiştirilmedi.
+
+
+## 23 Ekim 2026 — K2 kaynak etiketleri denetimi; cihaz doğrulaması ertelendi
+- Önceki Unicode surrogate regresyonu (`a794aeca`) daha sonraki `0524a7d0bca2a79da83d5abd47bb136169c9a7df` commit'inde başarılı GitHub Actions `39870389256` ile kapsandı; GitHub compare `ahead=5`, `behind=0`.
+- `parse_m3u` kaynak köken etiketlerindeki ASCII kontrol karakterlerini (satır sonu, tab, NUL, DEL) reddediyor (`a9e193bd2ea8de8d8f0ce0be937042dbcce894b4`). Bu, rapor ve köken kayıtlarının kontrol karakterleriyle kirletilmesini engeller. Parser, kaynak mutabakatı ve önizleme için regresyon `e03b92d13a41a3e1d48e06c73981c1e7299473e1`; yeni CI sonucu henüz doğrulanmadı.
+- K2-08 görev defterine kanıt işlendi, kabul kapatılmadı. Gerçek kaynak/lisans, günlük keşif eşdeğerliği ve gerçek artifact SHA kökeni hâlâ açık. IBO Player Pro cihaz testini en sonda kullanıcı yapacak; cihaz doğrulandı iddiası yok. Korunan üretim verisine dokunulmadı.

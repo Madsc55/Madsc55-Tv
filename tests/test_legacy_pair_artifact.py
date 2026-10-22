@@ -85,7 +85,7 @@ class LegacyPairArtifactTests(unittest.TestCase):
         origin = self.pair["legacy"]
         archive = bytearray(archive_for(origin))
         # Set the ZIP encryption bit in both local and central directory headers.
-        for signature, offset in ((b"PK\\x03\\x04", 6), (b"PK\\x01\\x02", 8)):
+        for signature, offset in ((b"PK\x03\x04", 6), (b"PK\x01\x02", 8)):
             start = archive.find(signature)
             self.assertGreaterEqual(start, 0)
             flags = int.from_bytes(archive[start + offset:start + offset + 2], "little")

@@ -92,3 +92,30 @@ class EpgTests(unittest.TestCase):
             result = check_epg_mapping(p, e)
             self.assertTrue(result["matching_verified"])
             self.assertEqual(result["unmatched_playlist_ids"], [])
+
+    def test_invalid_playlist_header_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Invalid M3U8 playlist"):
+                check_epg_mapping(p, e)
+
+    def test_invalid_xmltv_root_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<playlist><channel id="trt1.tr"/></playlist>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Expected XMLTV tv root"):
+                check_epg_mapping(p, e)
+
+    def test_malformed_xmltv_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"></tv>', encoding="utf-8")
+            with self.assertRaises(ET.ParseError):
+                check_epg_mapping(p, e)

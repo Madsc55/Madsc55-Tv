@@ -7,6 +7,8 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
                       continuity_samples: dict[str, list[dict]] | None = None) -> dict:
     if not isinstance(probes, dict):
         raise ValueError("Probe evidence must be a dictionary")
+    if len(probes) > 20000:
+        raise ValueError("Too many probe evidence records")
     if not isinstance(discovery, dict) or not isinstance(discovery.get("candidates"), list):
         raise ValueError("Invalid discovery evidence")
     if len(discovery["candidates"]) > 20000:
@@ -31,10 +33,14 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
     if continuity_samples is not None and not isinstance(continuity_samples, dict):
         raise ValueError("Invalid continuity evidence")
     continuity_samples = continuity_samples or {}
+    if len(continuity_samples) > 20000:
+        raise ValueError("Too many continuity evidence records")
     identity_primary = {}
     if ibo_results is not None and not isinstance(ibo_results, dict):
         raise ValueError("Invalid IBO evidence")
     ibo_results = ibo_results or {}
+    if len(ibo_results) > 20000:
+        raise ValueError("Too many IBO evidence records")
     for candidate in discovery["candidates"]:
         if not isinstance(candidate, dict) or not isinstance(candidate.get("url_sha256"), str):
             raise ValueError("Invalid candidate fingerprint")

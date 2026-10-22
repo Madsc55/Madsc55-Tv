@@ -50,6 +50,19 @@ class K4EvidenceTests(unittest.TestCase):
                 main()
             self.assertEqual(output.read_text(), "unchanged")
 
+    def test_cli_fails_closed_without_nofollow(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            report = root / "valid.json"
+            report.write_text(json.dumps(GOOD))
+            output = root / "result.json"
+            args = ["k4_evidence", "--report", str(report), "--output", str(output)]
+            with patch("sys.argv", args), patch("madsc.k4_evidence.os") as mocked_os:
+                del mocked_os.O_NOFOLLOW
+                with self.assertRaises(ValueError):
+                    main()
+            self.assertFalse(output.exists())
+
     def test_cli_rejects_hardlinked_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

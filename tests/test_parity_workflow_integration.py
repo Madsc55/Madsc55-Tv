@@ -109,17 +109,16 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
         import subprocess
 
         for original, snapshot in ((23, 0), (23, 31), (124, 31)):
-            script = (
-                "set -e\\n"
-                "set +e\\n"
-                f"bash -c 'exit {original}'\\n"
-                "consumer_status=$?\\n"
-                "set -e\\n"
-                "if [[ \\"$consumer_status\\" -ne 0 ]]; then\\n"
-                f"  bash -c 'exit {snapshot}' || echo 'snapshot unavailable' >&2\\n"
-                "  exit \\"$consumer_status\\"\\n"
-                "fi\\n"
-            )
+            script = f"""set -e
+set +e
+bash -c 'exit {original}'
+consumer_status=$?
+set -e
+if [[ "$consumer_status" -ne 0 ]]; then
+  bash -c 'exit {snapshot}' || echo 'snapshot unavailable' >&2
+  exit "$consumer_status"
+fi
+"""
             with self.subTest(consumer_exit=original, snapshot_exit=snapshot):
                 result = subprocess.run(
                     ["bash", "-c", script], capture_output=True, text=True,

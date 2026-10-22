@@ -31,6 +31,34 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertFalse(result["sandbox_restore_accepted"])
             self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
 
+    def test_extra_restored_file_blocks_sandbox_acceptance(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / n for n in ("source", "backup", "restored")]
+            for root in trees:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            self.assertTrue(audit_k4_restore(*trees, ["file.txt"])["sandbox_restore_accepted"])
+            (trees[2] / "unexpected.txt").write_bytes(b"extra")
+            result = audit_k4_restore(*trees, ["file.txt"])
+            self.assertFalse(result["sandbox_restore_accepted"])
+            self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
+
+    def test_extra_empty_directory_and_source_symlink_block_acceptance(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / n for n in ("source", "backup", "restored")]
+            for root in trees:
+                (root / "nested").mkdir(parents=True)
+                (root / "nested" / "file.txt").write_bytes(b"same")
+            names = ["nested/file.txt"]
+            self.assertTrue(audit_k4_restore(*trees, names)["sandbox_restore_accepted"])
+            (trees[1] / "unexpected_dir").mkdir()
+            self.assertFalse(audit_k4_restore(*trees, names)["sandbox_restore_accepted"])
+            (trees[1] / "unexpected_dir").rmdir()
+            (trees[0] / "alias").symlink_to(trees[0] / "nested", target_is_directory=True)
+            self.assertFalse(audit_k4_restore(*trees, names)["sandbox_restore_accepted"])
+
     def test_nested_tree_rejected(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

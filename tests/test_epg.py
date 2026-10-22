@@ -4,6 +4,16 @@ from pathlib import Path
 from madsc.epg import check_epg_mapping
 
 class EpgTests(unittest.TestCase):
+    def test_empty_playlist_is_not_reported_as_matching(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text("#EXTM3U\\n", encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            result = check_epg_mapping(p, e)
+            self.assertEqual(result["playlist_channels"], 0)
+            self.assertFalse(result["matching_verified"])
+
     def test_playlist_m3u8_and_xmltv_match(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "playlist.m3u8"

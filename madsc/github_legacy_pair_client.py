@@ -22,7 +22,9 @@ def verify_execution_origin_api(origin, run, artifact_page, workflow_file):
     if not all(isinstance(value, dict) for value in (origin, run, artifact_page, workflow_file)):
         raise ValueError("Invalid GitHub origin records")
     repository = origin.get("repository")
-    if (run.get("id") != origin.get("run_id")
+    if (type(run.get("id")) is not int
+            or type(run.get("run_attempt")) is not int
+            or run.get("id") != origin.get("run_id")
             or run.get("run_attempt") != origin.get("run_attempt")
             or run.get("head_sha") != origin.get("head_sha")
             or run.get("head_branch") != origin.get("branch")
@@ -46,8 +48,10 @@ def verify_execution_origin_api(origin, run, artifact_page, workflow_file):
             or len(artifacts) > 100):
         raise ValueError("Incomplete artifact listing")
     declared = origin.get("artifact")
-    if not isinstance(declared, dict):
-        raise ValueError("Missing declared artifact")
+    if (not isinstance(declared, dict)
+            or type(declared.get("id")) is not int
+            or declared["id"] <= 0):
+        raise ValueError("Missing or invalid declared artifact")
     if not all(isinstance(item, dict) for item in artifacts):
         raise ValueError("Invalid artifact listing entries")
     artifact_ids = [item.get("id") for item in artifacts]
@@ -63,7 +67,8 @@ def verify_execution_origin_api(origin, run, artifact_page, workflow_file):
     workflow_run = artifact.get("workflow_run")
     if not isinstance(workflow_run, dict):
         raise ValueError("Invalid artifact workflow origin")
-    if (artifact.get("expired") is not False
+    if (type(workflow_run.get("id")) is not int
+            or artifact.get("expired") is not False
             or workflow_run.get("id") != origin.get("run_id")
             or workflow_run.get("head_sha") != origin.get("head_sha")
             or _artifact_digest(artifact) != declared.get("sha256")):

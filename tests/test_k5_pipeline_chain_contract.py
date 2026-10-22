@@ -43,7 +43,22 @@ class K5PipelineChainContractTests(unittest.TestCase):
         for status in ("K1", "K2", "K3", "K4", "K5",
                        "KABUL", "K2_HANDOFF", "CROSS_HANDOFF",
                        "HISTORY_CHAIN", "K4_RESTORE"):
-            self.assertIn(status, aggregate)
+            self.assertIn(f'{status}) durum="
+        self.assertIn('if [ "$durum" != success ]; then hata=1; fi', aggregate)
+        self.assertIn('exit "$hata"', aggregate)
+
+    def test_k5_cross_stage_evidence_is_required(self):
+        k5 = self.source.split("\n  k5:\n", 1)[1].split("\n  toplu-kabul:\n", 1)[0]
+        for command in ("madsc.handoff_acceptance", "madsc.k5_channel_gate",
+                        "madsc.stage_report_cli"):
+            self.assertIn(command, k5)
+        self.assertIn("madsc-k3-guarded-evidence", k5)
+        self.assertIn("madsc-k2-candidate-handoff", k5)
+
+
+if __name__ == "__main__":
+    unittest.main()
+ + '{status}' + '";', aggregate)
         self.assertIn('if [ "$durum" != success ]; then hata=1; fi', aggregate)
         self.assertIn('exit "$hata"', aggregate)
 

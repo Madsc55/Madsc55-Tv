@@ -1,3 +1,12 @@
+# EN YENİ K3 GÜNCELLEMESİ — 1017 test başarılı (2026-10-23)
+- `madsc/epg.py` artık `tvg-id` değerini yalnız `#EXTINF` satırının virgülden önceki nitelik alanından okur; görünen kanal adındaki sahte `tvg-id` kabul edilmez.
+- EPG test sayısı 15. GitHub Actions Offline Unit Tests run `39868610849`, commit `8e78f26d855f8c4bb89b22f1b8f026d4a6234902`: **success**, 1017 test keşfedildi, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`, K3 fixture success.
+- Rapor: `docs/K3_HARDENING_2026-10-23.md`. Test edilen commit'te EPG kod/test blob'ları `03755ace638bf3f788b8d3cfdf95d7d77ef077ed` / `aea48db70cee57802dda5e993d365c1e53ab6480`.
+- Canlı HLS video/ses, 6+ saat süreklilik, Pages/XMLTV canlı zinciri, IBO cihaz EPG'si ve logo doğrulaması açık. Üretim verilerine dokunulmadı; PR #71 merge edilmedi; genel sayaçlar 0/92, 0/26, 0/22.
+- K3-13 tamamlanmış sayılmasın; offline CI üretim kabulü değildir.
+
+---
+
 # EN YENİ K3 GÜNCELLEMESİ — EXTINF başlığı sahte tvg-id düzeltmesi (2026-10-23)
 - Yeni hata düzeltildi: virgülden sonraki kanal görünen adındaki `tvg-id="..."` metni artık gerçek M3U niteliği olarak kabul edilmiyor. `madsc/epg.py` yalnız `#EXTINF` satırının virgülden önceki nitelik bölümünü tarıyor.
 - Kod commit: `2e1ee36d2f54b9d8a6b72eb43751ab4e60224c9f`; regresyon testi commit: `7ced6524a166c76c1994a7f0d79574c519c7dc17`; EPG test sayısı 15.

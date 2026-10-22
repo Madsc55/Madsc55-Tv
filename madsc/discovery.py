@@ -6,7 +6,7 @@ from urllib.parse import urlsplit, urlunsplit
 def normalize_url(value: str) -> str:
     if not isinstance(value, str):
         raise ValueError("Candidate URL must be text")
-    if any(ord(ch) < 32 or ord(ch) == 127 for ch in value) or "\\" in value:
+    if any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF for ch in value) or "\\" in value:
         raise ValueError("Control characters or backslash escapes are forbidden in candidate URLs")
     value = value.strip()
     parts = urlsplit(value)
@@ -36,7 +36,7 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
         try:
             url = normalize_url(item["url"])
             name = item["name"]
-            if not isinstance(name, str) or any(ord(ch) < 32 or ord(ch) == 127 for ch in name):
+            if not isinstance(name, str) or any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF for ch in name):
                 raise ValueError("Candidate name must be safe text")
             if "\\" in name:
                 raise ValueError("Backslash escapes in channel names are forbidden")
@@ -51,7 +51,7 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
             group = item.get("group_title", "")
             if not isinstance(logo, str) or not isinstance(group, str):
                 raise ValueError("Invalid logo or group metadata")
-            if any(ord(ch) < 32 or ord(ch) == 127 or ch == "\\" for value in (tvg_id, logo, group)
+            if any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF or ch == "\\" for value in (tvg_id, logo, group)
                    for ch in value):
                 raise ValueError("Control characters in channel metadata")
             entry = {"name": name, "tvg_id": tvg_id.strip(), "tvg_logo": logo.strip(),

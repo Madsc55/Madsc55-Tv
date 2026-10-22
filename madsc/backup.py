@@ -135,6 +135,11 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     for claim in ("external_backup_verified", "restore_verified", "production_writes"):
         if claim in manifest and manifest[claim] is not False:
             raise ValueError("Unverified backup manifest attestation")
+    if not manifest["entries"]:
+        return False
+    # Bound untrusted manifests before iterating or opening filesystem paths.
+    if len(manifest["entries"]) > 10000:
+        raise ValueError("Backup manifest exceeds bounded entry limit")
     if any(not isinstance(entry, dict) or not isinstance(entry.get("path"), str)
            or type(entry.get("bytes")) is not int or entry["bytes"] < 0
            or not isinstance(entry.get("sha256"), str) or len(entry["sha256"]) != 64

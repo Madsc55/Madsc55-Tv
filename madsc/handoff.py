@@ -43,7 +43,7 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         tvg_id = candidate.get("tvg_id", "")
         if not isinstance(tvg_id, str):
             raise ValueError("Invalid candidate tvg-id")
-        if any(ord(ch) < 32 or ord(ch) == 127 or ch == "\\\\" for ch in tvg_id):
+        if any(ord(ch) < 32 or ord(ch) == 127 or ch == "\\" for ch in tvg_id):
             raise ValueError("Unsafe candidate tvg-id")
         name = candidate.get("name", "")
         logo = candidate.get("tvg_logo", "")

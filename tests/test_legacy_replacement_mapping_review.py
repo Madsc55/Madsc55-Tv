@@ -105,6 +105,16 @@ class MappingReviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.review([self.row])
 
+    def test_nonstring_binding_label_rejected(self):
+        self.readiness["rows"][0]["declared_file_binding"]["output_label"] = []
+        with self.assertRaises(ValueError):
+            self.review([self.row])
+
+    def test_empty_binding_path_rejected(self):
+        self.readiness["rows"][0]["declared_file_binding"]["input_path"] = ""
+        with self.assertRaises(ValueError):
+            self.review([self.row])
+
     def test_missing_rationale_rejected(self):
         with self.assertRaises(ValueError):
             self.review([{**self.row, "review_rationale": ""}])

@@ -88,6 +88,11 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     if (not isinstance(paths, list) or any(not isinstance(name, str) or not name for name in paths)
             or len(set(paths)) != len(paths)):
         raise ValueError("Backup paths must be unique nonempty strings")
+    # Enforce the same resource bounds on creation as on verification.
+    if len(paths) > 10000:
+        raise ValueError("Backup source exceeds bounded entry limit")
+    if any(len(name) > 4096 for name in paths):
+        raise ValueError("Backup source path exceeds bounded length")
     entries = []
     for name in sorted(paths):
         if any(ord(c) < 32 or ord(c) == 127 for c in name) or ":" in name or name.startswith("~"):

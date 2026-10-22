@@ -37,6 +37,26 @@ class CandidateProbeLinkTests(unittest.TestCase):
         self.assertEqual(empty["untested_candidates"], 1)
         self.assertEqual(empty["preliminary_passes"], 0)
 
+    def test_duplicate_candidate_fingerprint_rejected(self):
+        digest = "a" * 64
+        envelope = pack({"candidates": [{"url_sha256": digest}, {"url_sha256": digest}]}, "1", "b" * 40)
+        with self.assertRaisesRegex(ValueError, "Duplicate K2 candidate"):
+            link_candidate_probes(envelope, [], "1", "b" * 40)
+
+    def test_duplicate_probe_records_rejected(self):
+        digest = "a" * 64
+        envelope = pack({"candidates": [{"url_sha256": digest}]}, "1", "b" * 40)
+        record = {"url_sha256": digest, "ffprobe": {"streams": [{"codec_type": "video"}], "format": {"duration": "40"}}}
+        with self.assertRaisesRegex(ValueError, "Duplicate channel evidence"):
+            link_candidate_probes(envelope, [record, record], "1", "b" * 40)
+
+    def test_malformed_probe_fingerprint_rejected(self):
+        digest = "a" * 64
+        envelope = pack({"candidates": [{"url_sha256": digest}]}, "1", "b" * 40)
+        record = {"url_sha256": "A" * 64, "ffprobe": {"streams": [], "format": {"duration": "40"}}}
+        with self.assertRaises(ValueError):
+            link_candidate_probes(envelope, [record], "1", "b" * 40)
+
 
 if __name__ == "__main__":
     unittest.main()

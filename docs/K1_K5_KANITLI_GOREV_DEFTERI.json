@@ -59,9 +59,13 @@
       "ae5a546: alternative streams by tvg-id/name-group",
       "ec921f7: K2-to-K3 alternative mapping",
       "3e1718e: known-source versus same-batch duplicate reasons",
-      "39666693465: prior 6/6 CI; latest duplicate-reason test awaiting CI"
+      "39666693465: prior 6/6 CI; latest duplicate-reason test awaiting CI",
+      "28a8d963: semantic inventory fingerprint; transport formatting and row ordering do not create extra votes",
+      "5c6e0873: regression test for reordered/commented/BOM/CRLF semantic-equivalent feeds",
+      "9c1c8a59: assertion that feed counts and source independence remain explicitly unverified",
+      "39868459061: successful offline regression workflow on commit a0469c34; 1016-test suite documented by subsequent K3 handoff"
     ],
-    "note": "Statik/fixture kod entegrasyonu mevcut; gercek kaynak veri setinde davranissal kabul ve yeni test CI sonucu bekleniyor. Tamamlandi sayilmaz."
+    "note": "Fixture and offline regression coverage exists. Feed inventory counts are explicitly not verified source origins; real source URL/ownership/licensing evidence and real-source behavioral acceptance remain open."
   },
   {
     "id": "K3-09",

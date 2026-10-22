@@ -514,3 +514,8 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 ## 22 Ekim 2026 — K4 sahte üretim iddiası reddi
 - K4 verify(): production_ready=True/1 ve category='k3' gibi sahte alanları reddetme, opsiyonel category yoksa eski run_drill raporuyla uyum; kod c189cde33a47690373eddc6c502b4e14cfb82fd6, test afe19df9646868a0153a19c4c9895c4bf90c29d1 [skip ci].
 - Yerel git ls-remote denemesi github.com DNS çözümleme hatasıyla başarısız. Bu SHA için test ve offline_gate doğrulaması yapılmadı, Actions tetiklenmedi. Gerçek kabul 0/92, 0/26, 0/22; korunan veriye dokunulmadı.
+
+
+## 22 Ekim 2026 — K5 davranış karşılaştırma çıktısı, test bekliyor
+- madsc/legacy_parity_cli.py commit 108de8e7c049bf8abab52fa69ae587133ba420f4: K5 karşılaştırma raporu exclusive os.open(O_CREAT|O_EXCL, varsa O_NOFOLLOW) ile açılıyor; ikinci yol kontrolü korunuyor. tests/test_legacy_parity_cli.py commit 1f4d31a03f3ca7b61bd06b28c4693bd3e3142867: ikinci kontrol sonrasında sembolik bağlantı değişiminde hedefin korunmasını denetleyen regresyon eklendi.
+- Bu SHA için test sonucu yok; GitHub Actions tetiklenmedi. K5 gerçek davranış eşdeğerliği 0/92, 26 runtime güvenlik 0/26, görev kabulü 0/22. Öncelik test_legacy_parity_cli, tam offline_gate, sonra eksik gerçek eski/yeni çalışma çiftlerini toplu kanıtlama. Korunan veriye dokunulmadı.

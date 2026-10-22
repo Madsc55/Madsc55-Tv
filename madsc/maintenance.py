@@ -76,6 +76,9 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
         if run["id"] == current_run_id or run.get("head_branch") != branch:
             continue
         order = orders[run["id"]]
+        if order > current_order:
+            # A newer same-branch run means this is not the current retry decision.
+            raise ValueError("Newer branch run supersedes current history target")
         if order < current_order:
             if run.get("status") != "completed":
                 # An older still-running job makes the failure sequence uncertain.

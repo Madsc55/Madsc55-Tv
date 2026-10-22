@@ -96,7 +96,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
         self.assertIn("any(parent.is_symlink() for parent in path.parents)", source)
         self.assertIn('if not hasattr(os, "O_NOFOLLOW"):', source)
         self.assertIn('raise ValueError("Secure evidence opening is unavailable")', source)
-        self.assertIn('flags = os.O_RDONLY | os.O_NOFOLLOW', source)
+        self.assertIn('flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK', source)
         self.assertIn('os.open(path, flags)', source)
         self.assertIn("os.fstat(handle.fileno())", source)
         self.assertIn("stat.S_ISREG(opened.st_mode)", source)

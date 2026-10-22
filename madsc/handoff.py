@@ -15,6 +15,18 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         raise ValueError("Too many candidates in discovery")
     assessed = []
     seen = set()
+    # Validate candidate identity before display metadata so duplicate or malformed
+    # fingerprints fail for the primary integrity reason, independent of labels.
+    for item in discovery["candidates"]:
+        if not isinstance(item, dict) or not isinstance(item.get("url_sha256"), str):
+            raise ValueError("Invalid candidate fingerprint")
+        fingerprint = item["url_sha256"]
+        if len(fingerprint) != 64 or any(ch not in "0123456789abcdef" for ch in fingerprint):
+            raise ValueError("Invalid candidate fingerprint")
+        if fingerprint in seen:
+            raise ValueError("Duplicate candidate fingerprint")
+        seen.add(fingerprint)
+    seen.clear()
     alternative_map = {}
     alternatives = discovery.get("alternatives", [])
     if not isinstance(alternatives, list):

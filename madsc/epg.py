@@ -44,6 +44,7 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
             raise ValueError("XMLTV programme is missing a nonempty channel")
         program_ids.add(channel_id)
 
+    duplicate_playlist_ids = sorted(channel_id for channel_id in set(ids) - {""} if ids.count(channel_id) > 1)
     missing = sorted(set(ids) - channel_ids - {""})
     unmatched_programmes = sorted(program_id for program_id in program_ids if program_id not in channel_ids)
     return {
@@ -51,9 +52,10 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
         "missing_tvg_id": sum(not channel_id for channel_id in ids),
         "xmltv_channels": len(channel_ids),
         "unmatched_playlist_ids": missing,
+        "duplicate_playlist_ids": duplicate_playlist_ids,
         "unmatched_programme_ids": unmatched_programmes,
         "matching_verified": bool(ids) and not any(not channel_id for channel_id in ids)
-            and not missing and not unmatched_programmes,
+            and not missing and not duplicate_playlist_ids and not unmatched_programmes,
         "device_verified": False,
         "read_only": True,
     }

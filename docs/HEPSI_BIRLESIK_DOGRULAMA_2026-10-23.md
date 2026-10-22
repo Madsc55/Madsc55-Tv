@@ -189,3 +189,12 @@
 - Aynı AST incelemesi K5 `madsc/isolated_playlist_bundle.py::export_isolated_previews` içinde hedef dizin yaratılmadan önce K1 path policy çağrısının olmadığını gösterdi. Artık hedefin tam mutlak yoluna `enforce_write_paths` çağrısı `destination.mkdir` öncesine eklendi. Regresyon testi `FAVORILER` hedefinin hiç yaratılmadığını kontrol eder. Kod commit `1d48c0f64ab95f78855a79a20deb3f3d027f08d1`; test commit `90ba1b993ab81830252f69b78a380167529fb1c3`.
 - Yeni CI run `39864450322` queued; sonuç bekleniyor. Başarı gelmeden bu yeni değişiklik kabul edilmez.
 - Açık sayaçlar değişmez: K1 0/26, legacy 92 0/92, 22 görev 0/22. Canlı playlist/EPG/favori/cihaz/yedek/arşiv verileri değiştirilmedi; PR #71 birleştirilmedi.
+
+
+## K1-03 son doğrulama ve ilk somut legacy workflow sözleşmesi
+- Run `39864450322` başarılı; test edilen SHA `90ba1b993ab81830252f69b78a380167529fb1c3`. 981 test keşfedildi, tests_passed true, all_offline_gates_passed true. K1 AST taraması 97 Python dosyası/78 mutation adayı buldu; bu adayların tamamı review_required olarak kalır.
+- CI raporu üretim kabulünü false tutar; `legacy_92_behavioral_equivalence_verified=false` ve `production_ready=false`. Beşli offline gate yeşil olması gerçek üretim kabulü değildir.
+- Legacy workflow kaynak çözümlemesi: `.github/workflows/madsc-documentation-check.yml` için `docs/legacy-workflow-contracts/madsc-documentation-check.json` oluşturuldu. Sabit kaynak blob SHA `0678a8a201eb194503f9097265fe37e68b1e4d3d`; manuel `workflow_dispatch`, `contents: read`, üç dosya nonempty kontrolü, iki literal marker grep'i ve `CALISANLAR.m3u` ilk satırında `#EXTM3U` kontrolünü sırasıyla tanımlıyor. Komutlar playlist'i değiştirmez; yalnızca header satırını okur.
+- Eşdeğer replacement workflow kanıtlanmadı, legacy/yeni run yok, davranışsal kabul false. Bu sözleşme kaynak anlamını kaydeder; 92 sayacını artırmaz. İzole replacement daha sonra fixture checkout üzerinde tasarlanmalı, korunan gerçek playlist'i kullanmamalı.
+- Güncel main test edilen SHA'dan sonra yalnızca proje hafızası ve doküman değişiklikleriyle ilerledi; çalışma kodu/test ağacı CI ile aynı.
+- Açık kabul sayaçları: K1 0/26, eski 92 workflow 0/92, ana görevler 0/22. Üretim verileri korunuyor; PR #71 birleştirilmedi.

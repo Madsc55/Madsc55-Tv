@@ -1,5 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
+**En yeni kayıt:** 22 Ekim opt-in hash kontrolü; üç workflow kod commit'i 79ba785 ile bitti, YENİ KOD TEST EDİLMEDİ. Ayrıntılar dosyanın sonunda.
+
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
 
 - Kullanıcı bu sohbetten yeni sohbete geçiyor. Geliştirmeyi baştan kurma; bu dosyanın güncel main sürümü, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son kayıtları başlangıç kaynağıdır. Yeni sohbette önce GitHub main HEAD'ini doğrula; otomatik görev arada ilerlemişse yeni kayıt üstün gelir. Önceki tüm sohbetlerin otomatik eksiksiz görüldüğünü varsayma.
@@ -197,3 +199,10 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Nihai yerel python -m madsc.offline_gate: 605 test, beş izole K kapısı, 92+7 kaynak kapsamı, 10 yardımcı komut ve 22 görev envanteri success. Bu pakette başarısız test yok; git diff --check temiz. Kanıt docs/PARITY_WORKFLOW_PREFLIGHT_KANIT_2026-10-22.json kaynak hashleri ve statik binding kayıtları dahil.
 - Korunan listeler/EPG/yedek/yeni/favori, eski repo ve PR #71 değişmedi. Actions veya gerçek ağ/cihaz testi çalıştırılmadı. Kabul 0/92, 0/26, 0/22; statik preflight bunu artırmaz.
 - Sıradaki güvenli yerel iş: yalnız opt-in K1/K4/K5 tüketicileri için işlem öncesi/sonrası input hash bağını kur; tüketici çalışırken değişen dosyadan manifest üretilmesin. Gerçek runtime/artifact kökeni için ayrı Actions izni, eski 92 v1 manifestleri için mevcut salt-okunur kanıt gerekir; K2/K3 harici/canlı girdi engelleri açık.
+
+## 22 Ekim 2026 — Opt-in parity girdi hash kontrolü (yeni sohbet)
+- Kod commitleri: ffa4262c1ffa27e3c5c463810d840055aaf4640f (K1), b26d613e18afc93522b88676eac41893962927f0 (K4), 79ba7859632a4b88b698c5d8c80091f079dc1ad4 (K5/K2). Başlangıç main d2d2ea8acb661ea23653c5b8365d3904e7302491.
+- Yalnız allow_parity_evidence=true iken gerçek tüketici komutundan hemen önce sha256sum kaydı alınıyor; manifest öncesinde ve manifest sonrasında sha256sum --check --status ile değişen input reddediliyor. Varsayılan opt-in false korunuyor; ayrı workflow/Actions başlatılmadı.
+- ÖNEMLİ: Bu turda offline test çalıştırılmadı; 605 test önceki commitin kanıtıdır, yeni kodun test başarısı değildir. YAML/kontrat ve toplu offline_gate testleri henüz doğrulanmalı. Kodun hash kontrolü input dosyasının atomik dondurulması veya gerçek legacy runtime parity kanıtı değildir.
+- Sonraki adım: kaynak YAML'larını ve statik readiness testlerini doğrula, gerekli kontrat testlerini güncelle, tek toplu offline regresyon çalıştır, başarısızlık varsa düzelt. GitHub Actions için ayrı izin gerekir. Kabul 0/92, 0/26, 0/22.
+- Korunan playlist/EPG/YEDEKLER/YENİLER/FAVORİLER/logo/arşiv, eski repo ve PR #71 değişmedi; merge yapılmadı.

@@ -81,3 +81,12 @@
 - Bu commit dokümantasyondur ve `[skip ci]` kullanılmıştır; yeni test koşusu oluşmadı. Önceki başarılı Actions run `39862697684` SHA `483bce535b585e5c750b7cfa54b87fb9f578d72c` için geçerlidir, yeni dokümantasyon commit'ini test etmiş sayılmaz.
 - Güncel workflow consolidation symlink kodu/testi commit'leri `3d22c4c` ve `a25af57` için ayrıca başarılı CI kanıtı henüz yoktur.
 - Kabul sayaçları değişmedi: 92 legacy 0/92, güvenlik 0/26 bağımsız kabul, ana görevler 0/22.
+
+## K5 devam — Legacy davranış incelemesi Batch 05 (2026-10-23)
+- İncelenen üç kaynak workflow: altinci-aday-tekrar-test.yml, birlesik-aday-raporu.yml, genel-aday-medya-test.yml.
+- Ayrıntılı sözleşmeler docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_05_2026-10-23.md dosyasına kaydedildi.
+- Kümülatif statik kaynak incelemesi: 15/92; davranışsal kabul 0/92 (sayaç değiştirilmedi).
+- Birleşik rapor workflow'unda cache restore key var; ancak bu tek başına yeni geçmişin sonraki çalıştırmaya kaydedildiğini kanıtlamaz. İki çalıştırmalı cache persistence testi açık.
+- Altıncı aday tekrar testinde due schedule, en fazla 5 aday, HLS doğrulaması ve hata sonrası artifact davranışı; genel medya testinde ilk 30 aday, 6 worker, 16s ffprobe timeout ve zorunlu artifact kabul kanıtı gerektiriyor.
+- Önceki EPG fix commit 483bce535b585e5c750b7cfa54b87fb9f578d72 için run 39862697684 başarılı. Ayrı test commit c865c1a5 başarısız olmuştu; bu yüzden kod commit'i başarılı olan run ile doğrulandı, test commit'i için regresyonun tekrar ayrıca onaylanması gerekir.
+- Production acceptance false; 92 eski workflow, 26 runtime güvenlik kuralı ve 22 ana görev kabulü açık.

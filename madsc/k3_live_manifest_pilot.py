@@ -67,6 +67,9 @@ def run():
             normalized_url = normalize_url(url)
         except ValueError:
             continue
+        # This pilot only probes HTTPS; HTTP candidates remain K2-only evidence.
+        if urlsplit(normalized_url).scheme != "https":
+            continue
         digest = hashlib.sha256(normalized_url.encode()).hexdigest()
         if digest in seen_hashes:
             continue

@@ -30,7 +30,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
             ids.append(matches[0].strip() if matches else "")
 
     xmltv_raw = xmltv.read_bytes()
-    if b"<!DOCTYPE" in xmltv_raw.upper() or b"<!ENTITY" in xmltv_raw.upper():
+    xmltv_upper = xmltv_raw.upper()
+    if b"<!DOCTYPE" in xmltv_upper or b"<!ENTITY" in xmltv_upper:
         raise ValueError("XMLTV DTD and entity declarations are not allowed")
     root = ET.fromstring(xmltv_raw)
     if root.tag != "tv":

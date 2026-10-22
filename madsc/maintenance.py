@@ -65,10 +65,12 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
     for run in runs.values():
         if run["id"] == current_run_id or run.get("head_branch") != branch:
             continue
-        if run.get("status") == "completed":
-            order = orders[run["id"]]
-            if order < current_order:
-                prior.append((order, run))
+        order = orders[run["id"]]
+        if order < current_order:
+            if run.get("status") != "completed":
+                # An older still-running job makes the failure sequence uncertain.
+                raise ValueError("Incomplete prior run in failure history")
+            prior.append((order, run))
     prior.sort(key=lambda item: item[0], reverse=True)
     streak = 0
     boundary = False

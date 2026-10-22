@@ -128,6 +128,28 @@ class MappingReviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.review([self.row])
 
+    def test_k2_k3_external_sources_cannot_be_static_candidates(self):
+        for workflow in (
+            ".github/workflows/madsc-02-kesif.yml",
+            ".github/workflows/madsc-03-kanal-test.yml",
+        ):
+            with self.subTest(workflow=workflow):
+                entry = next(row for row in self.readiness["rows"]
+                             if row["workflow_path"] == workflow)
+                entry["declared_file_binding"] = {
+                    "input_path": "input.txt", "output_label": "guard",
+                    "output_path": "guard.txt"}
+                for field in ("marker_contract_complete",
+                              "static_file_binding_complete",
+                              "input_digest_binding_complete",
+                              "controlled_process_contract_complete"):
+                    entry[field] = True
+                candidate = {**self.row, "replacement_workflow_path": workflow,
+                             "replacement_blob_sha": entry["workflow_blob_sha"]}
+                result = self.review([candidate])
+                self.assertEqual(result["static_contract_candidates"], 0)
+                self.assertEqual(result["rows"][0]["status"], "mapping_contract_blocked")
+
     def test_missing_rationale_rejected(self):
         with self.assertRaises(ValueError):
             self.review([{**self.row, "review_rationale": ""}])

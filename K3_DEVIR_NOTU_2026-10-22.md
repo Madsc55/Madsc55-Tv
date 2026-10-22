@@ -83,3 +83,8 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - c43318f: Kanıt dosyası açılışında O_NONBLOCK bayrağı eklendi.
 - 48fe6f9: Açılış bayraklarına ilişkin test beklentisi güncellendi.
 - Son commitler için test çalıştırması henüz doğrulanmadı.
+
+## K3 yürütülebilir dosya okuma testleri
+- 03b82dc: CLI içindeki kanıt yükleyicisi load_evidence(path) olarak ayrıldı; CLI aynı işlevi kullanıyor.
+- 5026751: Normal JSON, tekrarlanan JSON anahtarı, symlink ve 16 MiB üstü dosya için doğrudan yükleyici testleri eklendi.
+- Yeni testler henüz CI/yerel ortamda çalıştırılmadı; başarılı oldukları iddia edilmemeli. Üst dizinlerin atomik açılması ve gerçek kanal/IBO ölçümleri hâlâ açık.

@@ -168,6 +168,20 @@ class DiscoveryBatchTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Combined source text"):
             corroborate_sources(feeds)
 
+    def test_duplicate_metadata_attributes_are_rejected(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="first" TVG-ID="second",Ambiguous\n'
+                'https://example.org/live.m3u8\n'
+                '#EXTINF:-1 tvg-id="valid",Valid\n'
+                'https://example.org/valid.m3u8\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(report["candidate_rows"][0]["tvg_id"], "valid")
+        self.assertEqual(
+            [error["reason"] for error in report["parse_errors"]],
+            ["duplicate_metadata_attribute"],
+        )
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

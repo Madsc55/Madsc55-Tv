@@ -6,7 +6,7 @@ import re
 from madsc.handoff import assess_candidates
 
 def pack(discovery, run_id, commit_sha):
-    if not isinstance(run_id, str) or not re.fullmatch(r"[0-9]+", run_id):
+    if not isinstance(run_id, str) or not re.fullmatch(r"[0-9]{1,20}", run_id):
         raise ValueError("Invalid run id")
     if not isinstance(commit_sha, str) or len(commit_sha) != 40 or any(c not in "0123456789abcdef" for c in commit_sha):
         raise ValueError("Invalid commit SHA")

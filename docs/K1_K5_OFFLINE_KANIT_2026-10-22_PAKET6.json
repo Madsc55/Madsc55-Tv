@@ -1,0 +1,35 @@
+{
+  "mode": "offline_local",
+  "scope": "independent_github_run_artifact_origin_verifier",
+  "tested_base_commit": "80bcb8dc4328351660d586730f9f4676307d4e6f",
+  "production_acceptance": false,
+  "legacy_92_behavioral_acceptance": 0,
+  "runtime_security_26_acceptance": 0,
+  "task_acceptance_22": 0,
+  "tests_discovered": 573,
+  "tests_passed": true,
+  "five_stage_fixture_gate_passed": true,
+  "github_api_contract": {
+    "reads_per_pair": 6,
+    "actions_dispatch_or_rerun": false,
+    "run_identity_checked": true,
+    "repository_branch_workflow_head_checked": true,
+    "workflow_blob_checked_at_run_head": true,
+    "artifact_listing_completeness_checked": true,
+    "artifact_run_and_head_binding_checked": true,
+    "artifact_sha256_digest_required": true,
+    "fixture_can_grant_behavioral_acceptance": false
+  },
+  "tested_files_sha256": {
+    "madsc/github_legacy_pair_client.py": "80e83f58a62e3757f42f5dd53219e5a9cfa59007dc8fe918ce0b9507f4b26653",
+    "tests/test_github_legacy_pair_client.py": "9e5f388537c2b977ecea2de63bed9de716cd0f1222786c668f04ea7f11801b79"
+  },
+  "resolved_failures": [],
+  "diagnostic_notes": [
+    "An unscoped git diff --check process exited with signal 11 after tests; a path-scoped diff --check over both changed files passed.",
+    "The complete offline_gate independently passed all 573 tests and five isolated category gates."
+  ],
+  "network_probes_performed": false,
+  "github_actions_started": false,
+  "note": "Real pairs still require existing old/new runs that expose matching input hashes and SHA256 artifact digests; no workflow is accepted by this fixture."
+}

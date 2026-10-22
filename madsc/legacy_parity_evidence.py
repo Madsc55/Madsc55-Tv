@@ -169,6 +169,9 @@ def _validate_execution_origin(origin, *, role, legacy_path, legacy_blob_sha):
     expected_branch = "madsc/bes-sistem-toplu-birlestirme" if role == "legacy" else "main"
     if origin["repository"] != expected_repository or origin["branch"] != expected_branch:
         raise ValueError("Execution repository or branch mismatch")
+    if any(type(origin[key]) is not str for key in
+           ("repository", "branch", "workflow_path", "event", "conclusion")):
+        raise ValueError("Invalid execution identity types")
     if role == "legacy":
         if (not _lower_hex(legacy_blob_sha, 40)
                 or origin["workflow_path"] != legacy_path
@@ -177,9 +180,6 @@ def _validate_execution_origin(origin, *, role, legacy_path, legacy_blob_sha):
     elif (origin["workflow_path"] not in CENTRAL_REPLACEMENT_WORKFLOWS
           or not _lower_hex(origin["workflow_blob_sha"], 40)):
         raise ValueError("Replacement workflow is not one of the five central systems")
-    if (type(origin["event"]) is not str or type(origin["conclusion"]) is not str
-            or type(origin["workflow_path"]) is not str):
-        raise ValueError("Invalid execution identity types")
     if (type(origin["run_id"]) is not int or origin["run_id"] <= 0
             or type(origin["run_attempt"]) is not int or origin["run_attempt"] <= 0
             or not _lower_hex(origin["head_sha"], 40)

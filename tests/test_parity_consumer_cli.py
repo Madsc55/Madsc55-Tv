@@ -135,7 +135,7 @@ class ParityConsumerTests(unittest.TestCase):
             root = Path(directory)
             prepare(root, 'k1').write_bytes(b'\xff')
             with patch.dict(os.environ, environment()), patch('madsc.parity_consumer_cli._exclusive_bytes', side_effect=OSError('disk fixture')):
-                self.assertEqual(run_consumer('k1', root=root), 1)
+                self.assertEqual(run_consumer('k1', root=root), 2)
             self.assertFalse((root / 'reports/madsc-parity-snapshot.json').exists())
 
     def test_failure_evidence_input_mutation_blocks_publication_chain(self):

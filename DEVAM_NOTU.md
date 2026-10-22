@@ -559,3 +559,11 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Testler çalıştırılmadı; bu commit'lerde [skip ci] kullanıldığı için otomatik CI sonucu beklenmiyor. Bu yüzden doğrulanmış başarı iddiası yok.
 - Önceki root-symlink koruması ve testi: d23c4e54e6882b01bba1440ac38e61d8abb180b4 / c53875f29dc0d605d24295e642dcc75f9ab358ee.
 - Canlı IPTV/EPG/favoriler/cihazlar/üretim yedekleri/arşivler değiştirilmedi. Harici yedek ve üretim geri yükleme kabulü açık. Sayaçlar değişmedi: 0/92 workflow, 0/26 güvenlik kuralı, 0/22 ana görev.
+
+## 23 Ekim 2026 — K4 manifest symlink TOCTOU sertleştirmesi
+- snapshot_manifest() önceden symlink kontrolleri sonrası Path.open() ile açıyordu; kontrol ile açılış arasında bir bileşen symlink ile değiştirilirse TOCTOU riski kalıyordu.
+- Kod commit: cca807332bf900d9d70206c4a8261acfb1c21cdf. Yeni _open_relative_file_nofollow() root ve her alt dizini O_DIRECTORY|O_NOFOLLOW ile dir_fd üzerinden açıyor, son dosyayı da O_NOFOLLOW ile açıyor; fstat ile normal dosya ve nlink==1 kontrolü korunuyor. Manifest yolu çözülmüş hedeften değil, doğrulanmış istenen göreli yoldan yazılıyor.
+- Test commit: 0ad1566d25799edb610745a60a76ce24e27a466c. Final symlink reddi, ara dizin symlink reddi ve nested göreli yol korunması için üç test eklendi.
+- Testler çalıştırılmadı; commit mesajlarında [skip ci] olduğu için CI otomatik tetiklenmedi. Kod ve test sonucu doğrulanmayı bekliyor.
+- Önceki sandbox rollback inode-koruması d3ce6cb5eeb962473dfd0cc95ec05d84e679d0b6; testler 34028a822c9d38738a7edcf35a84913e3c0b17c4.
+- Üretim playlist/EPG/favoriler/cihaz verileri ve yedekler değiştirilmedi. Gerçek harici backup/restore ve K3 cihaz kabulü açık. Kabul sayaçları: 0/92 workflow, 0/26 runtime güvenlik kuralı, 0/22 ana görev.

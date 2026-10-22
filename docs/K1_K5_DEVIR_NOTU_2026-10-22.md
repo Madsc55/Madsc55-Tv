@@ -55,3 +55,10 @@ Bu dosya yalnız K1/K5'e ait ayrı devir kaydıdır.
 - K1 yerel çıktı denetiminde eklenen erken politika kontrolü `224a950`, mevcut geç aşama kontrolünü yinelediği ve hata türünü değiştirdiği için `3ae9989` ile geri alındı. **Son geçerli K1 kaynak durumunda tekrar yoktur.**
 - Paralel sohbetler K2/K3 dosyalarını değiştirmeye devam ediyor; bu sohbet yalnız K1/K5 ve ayrı devir dosyasına yazdı.
 - Son durum: Kod ve test dosyaları commit edildi, fakat güncel HEAD üzerinde CI/offline test koşusu kanıtlanmadı. Gerçek kabul 0/92, 0/26, 0/22 olarak tutulur. Bir sonraki iş test altyapısını doğrulamak ve 20 K1 dinamik yazıcı adayının salt-okunur sınıflandırmasını tamamlamaktır.
+
+
+## 22 Ekim — K1 kaynak envanteriyle kritik tutarlılık kontrolü
+- GitHub main recursive tree incelendi. `tools/protected_write_gate.py` **main ağacında bulunamadı**; doğrudan fetch 404 verdi. Buna karşılık `docs/K1_KORUNAN_YAZMA_KAPISI_CELISKI_2026-10-22.md` bu kapıyı **başka bir kaynak revizyonunda** (`Madsc55/madsc-tv@ca374df3...`) anlatıyor. Bu raporu mevcut `Madsc55/Madsc55-Tv` main üzerinde fiilen çalışan kapı kanıtı sayma.
+- Main üzerinde `madsc/write_path_audit.py` mevcuttur, ancak `enforce_write_paths` çağrısı yapan yazıcıların tam listesi ve 26 güvenlik kuralının çalışma zamanı icrası henüz doğrulanmadı. `runtime_gate_enforced` dönüş değeri yalnız fonksiyonun çağrıldığını gösterir; bağımsız yazıcıları kapsadığını göstermez.
+- `madsc/k1_k5_acceptance_requirements.py` 22 görev için eksik kanıt anahtarlarını hesaplar, fakat modülün kendi açıklamasına göre doğrulama/gerçek üretim kabulü değildir. `verified` girdisini bağımsız kanıt yerine kullanıp görev kapatma.
+- **Kritik sonraki adım:** doğru depo/dal ve eski kapının kaynak revizyonu arasında iz sür; main üzerindeki gerçek yazıcı çağrılarını envanterle, dinamik/subprocess adaylarını ayrı sınıflandır. Korunan üretim M3U kapısını kullanıcı onayı olmadan gevşetme.

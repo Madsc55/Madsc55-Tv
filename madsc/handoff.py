@@ -41,6 +41,11 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
     ibo_results = ibo_results or {}
     if len(ibo_results) > 20000:
         raise ValueError("Too many IBO evidence records")
+    for evidence in (probes, continuity_samples, ibo_results):
+        if any(not isinstance(key, str) or len(key) != 64
+               or any(ch not in "0123456789abcdef" for ch in key)
+               for key in evidence):
+            raise ValueError("Invalid evidence fingerprint key")
     for candidate in discovery["candidates"]:
         if not isinstance(candidate, dict) or not isinstance(candidate.get("url_sha256"), str):
             raise ValueError("Invalid candidate fingerprint")

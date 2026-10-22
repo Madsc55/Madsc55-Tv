@@ -90,6 +90,13 @@ class CandidateProbeLinkTests(unittest.TestCase):
         self.assertIn('evidence_group.add_argument("--continuity", type=Path)', source)
         self.assertIn("link_candidate_continuity(candidates, load(args.continuity)", source)
 
+    def test_cli_rejects_symlink_ancestors_and_bounds_file_reads(self):
+        from pathlib import Path
+        source = Path("madsc/candidate_probe_link.py").read_text(encoding="utf-8")
+        self.assertIn("any(parent.is_symlink() for parent in path.parents)", source)
+        self.assertIn('handle.read(16 * 1024 * 1024 + 1)', source)
+        self.assertIn('if len(raw) > 16 * 1024 * 1024:', source)
+
     def test_continuity_link_rejects_duplicate_candidates(self):
         run, sha = "123", "b" * 40
         with self.assertRaisesRegex(ValueError, "Duplicate candidate fingerprint"):

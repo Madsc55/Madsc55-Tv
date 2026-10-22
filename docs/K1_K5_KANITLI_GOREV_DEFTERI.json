@@ -64,9 +64,12 @@
       "5c6e0873: regression test for reordered/commented/BOM/CRLF semantic-equivalent feeds",
       "9c1c8a59: assertion that feed counts and source independence remain explicitly unverified",
       "39868459061: successful offline regression workflow on commit a0469c34; 1016-test suite documented by subsequent K3 handoff",
-      "39868653542: successful offline regression workflow on exact test commit 9c1c8a594849d730f75d9c050265df74b382b8ec; source independence remains explicitly unverified"
+      "39868653542: successful offline regression workflow on exact test commit 9c1c8a594849d730f75d9c050265df74b382b8ec; source independence remains explicitly unverified",
+      "8d116818: bounded known-url corroboration input to 20,000 elements",
+      "f82e0cb9: malformed identity metadata fail-closed matcher corrected",
+      "38d8209a: regression tests for malformed metadata and known URL upper bound; exact run cancelled due concurrent pushes, new combined CI result pending"
     ],
-    "note": "Fixture and offline regression coverage passed on commit 9c1c8a59 (Actions run 39868653542). Feed inventory counts are explicitly not verified source origins; real source URL/ownership/licensing evidence and real-source behavioral acceptance remain open."
+    "note": "Semantic feed deduplication has successful prior CI evidence; new malformed metadata and known URL bound regressions committed but their exact CI run was cancelled amid concurrent pushes. Real-source licensing and behavioral acceptance remain open."
   },
   {
     "id": "K3-09",

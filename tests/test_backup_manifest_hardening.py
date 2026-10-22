@@ -116,6 +116,62 @@ class BackupManifestHardeningTests(unittest.TestCase):
                     module.verify_independent_restore(*roots, ["file.bin"])
             self.assertEqual(outside.read_bytes(), b"secret")
 
+    def test_failed_target_creation_closes_backup_source_descriptor(self):
+        import os
+        from unittest.mock import patch
+        from madsc import backup as module
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "source"
+            source.mkdir()
+            (source / "file.bin").write_bytes(b"fixture")
+            destination = base / "new-backup"
+            opened = []
+            real_open = module._open_relative_file_nofollow
+
+            def capture_open(root, parts):
+                descriptor = real_open(root, parts)
+                opened.append(descriptor)
+                return descriptor
+
+            with patch("madsc.backup._open_relative_file_nofollow", side_effect=capture_open), \\
+                 patch("madsc.backup._create_relative_file_nofollow",
+                       side_effect=OSError("simulated target failure")):
+                with self.assertRaisesRegex(OSError, "simulated target failure"):
+                    module.backup_to_new_sandbox(source, destination, ["file.bin"])
+            self.assertFalse(destination.exists())
+            self.assertEqual(len(opened), 2)
+            with self.assertRaises(OSError):
+                os.fstat(opened[-1])
+
+    def test_failed_target_creation_closes_restore_source_descriptor(self):
+        import os
+        from unittest.mock import patch
+        from madsc import backup as module
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "source"
+            source.mkdir()
+            (source / "file.bin").write_bytes(b"fixture")
+            destination = base / "new-restore"
+            opened = []
+            real_open = module._open_relative_file_nofollow
+
+            def capture_open(root, parts):
+                descriptor = real_open(root, parts)
+                opened.append(descriptor)
+                return descriptor
+
+            with patch("madsc.backup._open_relative_file_nofollow", side_effect=capture_open), \\
+                 patch("madsc.backup._create_relative_file_nofollow",
+                       side_effect=OSError("simulated target failure")):
+                with self.assertRaisesRegex(OSError, "simulated target failure"):
+                    module.restore_to_new_sandbox(source, destination, ["file.bin"])
+            self.assertFalse(destination.exists())
+            self.assertEqual(len(opened), 2)
+            with self.assertRaises(OSError):
+                os.fstat(opened[-1])
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

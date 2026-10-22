@@ -2493,3 +2493,12 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Run `39863892845` halen doğrulanamadı: GitHub API 404. Son erişilebilir run `39865933101`.
 - Gerçek K3 HLS/ffprobe ve IBO Player Pro workflow'ları manuel dispatch gerektiriyor; bu bağlantıda dispatch aracı yok, bu yüzden çalıştırılmış gibi gösterme. Harici backup/restore da henüz kanıtlanmadı. Üretim IPTV/EPG/favori/yedeklere yazma yok.
 - Kabul sayaçları aynı: 0/92 legacy, 0/26 runtime security, 0/22 ana görev. PR #71 ve eski depo değişmedi.
+
+
+## 23 Ekim 2026 — HEPSI yeni sohbet devri: 990 test ve gerçek kabul eksikleri
+- Kanonik kapsamlı devir: `docs/HEPSI_YENI_SOHBET_DEVIR_2026-10-23.md` (oluşturma commit `b463c13fd75fefa470cc889cc229f04633044033`). Yeni sohbette önce bu dosyanın tamamını oku.
+- Son CI `39865933101`, SHA `a4c70f7277be8aad73cdd95d027115b7bcab469d`: 990 test başarılı; K1–K5 fixture ve offline gate yeşil; production_ready=false. Test SHA'sından sonra yalnız devir/dokümanlar değişti.
+- 22 ana görev: 7 in_progress, 15 pending, 0 completed. Eski 92 workflow: altı batch'te 18 statik kaynak incelemesi (%19,6), 74 statik kaynak incelemesi bekliyor; davranışsal eşdeğerlik 0/92. 26 runtime güvenlik kuralı kabulü 0/26; 22 görev bağımsız kabulü 0/22. İnformal toplam proje yüzdesi gerçek kabul oranıymış gibi söylenmemeli.
+- K3: duplicate/eksik XMLTV ID fail-closed kod ve testleri güncel CI'ya dahil; gerçek HLS/IBO Player Pro/EPG cihaz kanıtı eksik. K4: descriptor-relative kaynak/hedef sandbox kopyalama testleri CI'da başarılı; harici backup ve bağımsız restore kanıtı eksik.
+- K1: 97 Python dosyasında 75 AST mutasyon adayı manuel tasnif bekliyor. K5 92 workflow için birebir runtime parity, yan etki, artifact, retry/timeout ve reviewer kanıtı eksik.
+- Eski depoya yazma, PR #71 merge, canlı IPTV/EPG/favori/cihaz/yedek/arşiv değişikliği ve izinsiz workflow_dispatch yapılmadı. Yeni sohbette HEAD ve Actions'ı tekrar doğrula; diğer paralel sohbetleri ezme.

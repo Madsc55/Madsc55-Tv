@@ -12,6 +12,11 @@ def validate_inventory(inventory):
         raise ValueError("Expected exactly 99 source workflow rows")
     if any(not isinstance(row, dict) for row in rows):
         raise ValueError("Workflow rows must be objects")
+    if any(type(row.get("candidate_k_stages", [])) is not list
+           or any(stage not in {"K1", "K2", "K3", "K4", "K5"}
+                  for stage in row.get("candidate_k_stages", []))
+           for row in rows):
+        raise ValueError("Invalid candidate K stage mapping")
     paths = [row.get("path") for row in rows]
     if (not all(isinstance(x, str) for x in paths) or len(set(paths)) != 99
             or not all(x.startswith(".github/workflows/") and x.endswith((".yml", ".yaml"))

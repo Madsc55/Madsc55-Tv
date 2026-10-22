@@ -27,3 +27,10 @@
 ## Güvenlik ve sonraki işler
 - Üretim IPTV/EPG/favoriler/cihaz verileri/yedekler/arşivler değiştirilmedi; PR #71 birleştirilmedi; Actions tetiklenmedi.
 - Sıradaki adım: güncel main'in kaynak/test snapshot'ını tutarlı biçimde dışa aktarıp hedefli grupları tekrar çalıştırmak; son başarılı CI SHA'sı ile main HEAD arasındaki farkı belirlemek; kalan CI failure loglarını ve 99 workflow/92 davranış sözleşmesini kanıtla incelemek.
+
+## CI hata günlüklerinden kök neden doğrulaması
+- En yeni incelenen başarısız Actions koşusu: `39861985074`, SHA `c40c765751aacde42c11cea32af9c12a85cc5c07`. Job logu: 958 test, `test_nfkc_normalization_precedes_protected_path_check` içinde tek failure; fullwidth `ａｒｔｉｆａｃｔｓ/report.json` yolunun reddedilmemesi.
+- Bu CI SHA'sındaki `src/madsc_guard.py` NFKC normalize edip ardından kontrol ediyor, fakat orijinal yol ile normalize edilmiş yolun farklılığını reddetmiyordu. Böylece tam genişlikli `artifacts` bileşeni normalize sonrası izinli prefix'e dönüşebiliyordu.
+- Güncel main bu açığı zaten kapatıyor: `7c2aae9d028bdebd5159a2f157141420b8cfc855` (`fix(k1): reject noncanonical Unicode output paths`) orijinal ve NFKC normalize edilmiş yol farklıysa `ValueError` fırlatıyor. Testi güncel main'de yeniden düzeltmeye çalışıp değişikliği tekrarlamadım.
+- Karşılaştırma `c40c765... → main`: main 3 commit ileride; `src/madsc_guard.py` değişmiş. Güncel main için sonradan çalıştırılmış Actions sonucu henüz kanıtlanmadı. CI tekrar çalıştırılmadı.
+- Eski failure'ın kök nedeni belirlendi ve mevcut main'de kodla giderilmiş; doğrulama için yeni CI sonucu bekliyor.

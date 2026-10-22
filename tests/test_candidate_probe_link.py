@@ -26,7 +26,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
     def test_foreign_probe_and_wrong_run_rejected(self):
         digest = "a" * 64
         run, sha = "12345", "b" * 40
-        envelope = pack({"candidates": [{"url_sha256": digest}]}, run, sha)
+        envelope = pack({"candidates": [{"url_sha256": digest, "name": "Fixture channel"}]}, run, sha)
         records = [{"url_sha256": "c" * 64, "ffprobe": {
             "streams": [{"codec_type": "video"}], "format": {"duration": "40"}}}]
         with self.assertRaises(ValueError):
@@ -40,20 +40,20 @@ class CandidateProbeLinkTests(unittest.TestCase):
     def test_duplicate_candidate_fingerprint_rejected(self):
         digest = "a" * 64
         with self.assertRaisesRegex(ValueError, "Duplicate candidate fingerprint"):
-            pack({"candidates": [{"url_sha256": digest}, {"url_sha256": digest}]},
+            pack({"candidates": [{"url_sha256": digest, "name": "Fixture channel"}, {"url_sha256": digest, "name": "Fixture channel"}]},
                  "1", "b" * 40)
 
     def test_duplicate_probe_records_rejected(self):
         digest = "a" * 64
-        envelope = pack({"candidates": [{"url_sha256": digest}]}, "1", "b" * 40)
-        record = {"url_sha256": digest, "ffprobe": {"streams": [{"codec_type": "video"}], "format": {"duration": "40"}}}
+        envelope = pack({"candidates": [{"url_sha256": digest, "name": "Fixture channel"}]}, "1", "b" * 40)
+        record = {"url_sha256": digest, "ffprobe": {"streams": [{"codec_type": "video", "name": "Fixture channel"}], "format": {"duration": "40"}}}
         with self.assertRaisesRegex(ValueError, "Duplicate channel evidence"):
             link_candidate_probes(envelope, [record, record], "1", "b" * 40)
 
     def test_malformed_probe_fingerprint_rejected(self):
         digest = "a" * 64
-        envelope = pack({"candidates": [{"url_sha256": digest}]}, "1", "b" * 40)
-        record = {"url_sha256": "A" * 64, "ffprobe": {"streams": [], "format": {"duration": "40"}}}
+        envelope = pack({"candidates": [{"url_sha256": digest, "name": "Fixture channel"}]}, "1", "b" * 40)
+        record = {"url_sha256": "A" * 64, "ffprobe": {"streams": [], "format": {"duration": "40", "name": "Fixture channel"}}}
         with self.assertRaises(ValueError):
             link_candidate_probes(envelope, [record], "1", "b" * 40)
 
@@ -61,7 +61,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
     def test_continuity_link_pass_and_missing(self):
         run, sha = "123", "b" * 40
         a, b = "a" * 64, "c" * 64
-        envelope = pack({"candidates": [{"url_sha256": a}, {"url_sha256": b}]}, run, sha)
+        envelope = pack({"candidates": [{"url_sha256": a, "name": "Fixture channel"}, {"url_sha256": b, "name": "Fixture channel"}]}, run, sha)
         base = {"url_sha256": a, "http_status": 200, "video": True,
                 "audio": True, "duration_seconds": 40}
         samples = [{**base, "observed_at": t} for t in (
@@ -75,7 +75,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
 
     def test_continuity_link_rejects_foreign_and_wrong_run(self):
         run, sha = "123", "b" * 40
-        envelope = pack({"candidates": [{"url_sha256": "a" * 64}]}, run, sha)
+        envelope = pack({"candidates": [{"url_sha256": "a" * 64, "name": "Fixture channel"}]}, run, sha)
         with self.assertRaises(ValueError):
             link_candidate_continuity(envelope, {"c" * 64: []}, run, sha)
         with self.assertRaises(ValueError):
@@ -104,13 +104,13 @@ class CandidateProbeLinkTests(unittest.TestCase):
     def test_continuity_link_rejects_duplicate_candidates(self):
         run, sha = "123", "b" * 40
         with self.assertRaisesRegex(ValueError, "Duplicate candidate fingerprint"):
-            pack({"candidates": [{"url_sha256": "a" * 64},
-                                 {"url_sha256": "a" * 64}]}, run, sha)
+            pack({"candidates": [{"url_sha256": "a" * 64, "name": "Fixture channel"},
+                                 {"url_sha256": "a" * 64, "name": "Fixture channel"}]}, run, sha)
 
 
     def test_continuity_rejects_clustered_samples_despite_long_total_window(self):
         run, sha, digest = "123", "b" * 40, "a" * 64
-        envelope = pack({"candidates": [{"url_sha256": digest}]}, run, sha)
+        envelope = pack({"candidates": [{"url_sha256": digest, "name": "Fixture channel"}]}, run, sha)
         base = {"url_sha256": digest, "http_status": 200, "video": True,
                 "audio": True, "duration_seconds": 40}
         samples = [{**base, "observed_at": timestamp} for timestamp in (
@@ -124,7 +124,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
 
     def test_continuity_rejects_tampered_envelope(self):
         run, sha, digest = "123", "b" * 40, "a" * 64
-        envelope = pack({"candidates": [{"url_sha256": digest}]}, run, sha)
+        envelope = pack({"candidates": [{"url_sha256": digest, "name": "Fixture channel"}]}, run, sha)
         forged = {**envelope, "digest": "0" * 64}
         with self.assertRaisesRegex(ValueError, "Evidence digest mismatch"):
             link_candidate_continuity(forged, {}, run, sha)
@@ -133,7 +133,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
 
     def test_continuity_rejects_mismatched_sample_fingerprint(self):
         run, sha, digest = "123", "b" * 40, "a" * 64
-        envelope = pack({"candidates": [{"url_sha256": digest}]}, run, sha)
+        envelope = pack({"candidates": [{"url_sha256": digest, "name": "Fixture channel"}]}, run, sha)
         base = {"url_sha256": "c" * 64, "http_status": 200,
                 "video": True, "audio": True, "duration_seconds": 40}
         samples = [{**base, "observed_at": stamp} for stamp in (
@@ -144,8 +144,8 @@ class CandidateProbeLinkTests(unittest.TestCase):
 
     def test_invalid_k2_candidate_fingerprints_fail_closed(self):
         run, sha = "123", "b" * 40
-        for candidate in ({"url_sha256": "A" * 64}, {"url_sha256": "a" * 63},
-                          {"url_sha256": None}, {"url_sha256": ["a" * 64]}, {}):
+        for candidate in ({"url_sha256": "A" * 64, "name": "Fixture channel"}, {"url_sha256": "a" * 63, "name": "Fixture channel"},
+                          {"url_sha256": None, "name": "Fixture channel"}, {"url_sha256": ["a" * 64], "name": "Fixture channel"}, {}):
             with self.subTest(candidate=candidate):
                 with self.assertRaises(ValueError):
                     pack({"candidates": [candidate]}, run, sha)

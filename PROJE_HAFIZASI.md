@@ -1913,3 +1913,11 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Runtime repo/dal/run/head değişkenleri ile açık workflow path, paket 8'deki gerçek beşli allowlist ve ortak K1 writer üzerinden madsc-parity-evidence.json üretir. Bu yalnız opt-in çağrı yüzeyidir; artifact upload veya Actions dispatch yapmaz, production_ready=false ve behavioral acceptance=false kalır.
 - İlk odak testindeki tek hata yanlış beklenen SHA256 test literal'iydi; gerçek hashlib sonucu ile düzeltildi. Nihai offline_gate 583 test ve beş fixture K kapısını, 92+7 kapsamı ve 22 görev envanterini geçirdi. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET9.json; 0/92, 0/26, 0/22.
 - Sıradaki: beş workflow içinde gerçek davranış input/snapshot dosyası üreten noktaları statik olarak belirle. Fixture raporunu parity kanıtı sayma; gerçek veri sözleşmesi olmayan job'a CLI ekleme. Eski tarafın v1 artifact eksikliği blocker olarak sürer.
+
+
+## 22 Ekim 2026 — K5 gerçek execution snapshot zinciri
+- Kod 27c8b62165e511d09d42b319766a39d77994deb9: parity_snapshot_writer/CLI gerçek output ve side-effect dosyalarının baytlarını O_NOFOLLOW/fstat/boyut sınırı altında SHA256 ile ölçer. exit_code ve timed_out ile birlikte mevcut sıkı snapshot şemasını üretir; en az bir gerçek output zorunludur.
+- Duplicate veya kontrol karakterli label, symlink, nonregular/oversize gözlem, boş output ve mevcut reports/madsc-parity-snapshot.json fail-closed reddedilir. Yazı ortak K1 izole report writer ve exclusive create üzerinden yapılır; üretim/kabul izni vermez.
+- Uçtan uca offline zincir testi gerçek input/output dosyalarından snapshot ve manifest üretip tek-entry artifact ZIP'i declared digest/origin manifest doğrulayıcısına bağladı. Bu, GitHub API origin doğrulaması veya legacy pair kabulü değildir.
+- Tam offline_gate 587 test ve K1–K5 fixture gates success; 92+7 pinned kapsam ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET10.json. Actions/live probe/production write yok; 0/92, 0/26, 0/22.
+- Açık: beş workflow ortak gerçek input/side-effect snapshot kontratını henüz üretmiyor. Sonraki iş statik readiness auditor ile her workflow'da gerçek ölçüm bağlarının var/yok durumunu kanıtlamak; fixture çıktılarını parity kabulü olarak yeniden etiketlememek. Eski 92 tarafındaki v1 artifact eksikliği de blocker kalır.

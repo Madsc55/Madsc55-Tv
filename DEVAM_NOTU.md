@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: 6b07cb1a7fa27e643e89cad6f1a7ffdb5a5d2c1a
+Son geliştirme commit SHA: 27c8b62165e511d09d42b319766a39d77994deb9
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -117,3 +117,12 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - İlk odak testinde test_real_file_bytes_are_hashed_and_written başarısız oldu: sabit test girdisinin beklenen SHA256 literal'i yanlıştı. Doğru hashlib sonucu yazıldı; odak testleri ve tam offline_gate geçti.
 - Nihai yerel sonuç: 583 test ve beş K kapısı success; 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET9.json. Kabul 0/92, 0/26, 0/22.
 - Açık: beş workflow'da gerçek davranış input/snapshot dosyalarını üreten ortak job sözleşmesi yok; mevcut fixture raporlarını davranış eşdeğerliği diye paketlemek yasak. Sıradaki adım, yalnız gerçek input/snapshot üretebilen workflow noktalarını statik eşleştirip güvenli opt-in entegrasyon planı/kontrat testi eklemek; Actions çalıştırmamak.
+
+## Onuncu önemli geliştirme — ölçülmüş çıktı/yan-etki snapshot üreticisi
+- Son kod commit SHA: 27c8b62165e511d09d42b319766a39d77994deb9; taban bedca31aef1998c51b23f468bf4bdd2950b9ea7c.
+- parity_snapshot_writer ve CLI gerçek execution çıktı/yan-etki dosyalarını read-only açar, O_NOFOLLOW/fstat/2 MiB sınırı uygular ve SHA256'larını katı exit_code/timed_out/outputs/side_effects snapshot şemasına yazar. En az bir gerçek çıktı zorunlu; duplicate/control-character label, symlink, nonregular/büyük dosya ve mevcut snapshot reddedilir.
+- Snapshot yalnız sabit reports/madsc-parity-snapshot.json yoluna ortak K1 izole writer ile exclusive create edilir; production_ready ve behavioral_parity_accepted false kalır.
+- Uçtan uca offline test gerçek input baytı + gerçek çıktı baytı -> snapshot -> v1 manifest -> artifact ZIP digest/origin manifest doğrulamasını bağladı. Bu fixture origin/API veya 92 kabulü değildir.
+- Nihai python -m madsc.offline_gate: 587 test, beş izole K kapısı, 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri başarılı. Başarısız test yok; değişen dosyalarda git diff --check temiz. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET10.json.
+- Actions/live probe/production write/eski repo yazısı yok. Kabul sayaçları 0/92, 0/26, 0/22.
+- Açık blocker: mevcut beş workflow ortak gerçek davranış input ve side-effect dosyası üretmiyor; fixture raporunu parity kanıtı diye yeniden adlandırmak yasak. Sonraki güvenli iş workflow job'larını read-only statik denetleyip hangi gerçek çıktının hangi input/side-effect kaydıyla bağlanabileceğini makine-okunur readiness raporunda fail-closed göstermek; eksik olanı acceptance saymamak.

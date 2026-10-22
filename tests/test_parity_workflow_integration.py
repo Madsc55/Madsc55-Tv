@@ -115,8 +115,9 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
             )
             parity_steps = [
                 step for step in re.split(r"(?=^      - name: )", data, flags=re.MULTILINE)
-                if ("madsc.parity_" in step
-                    or "path: reports/madsc-parity-evidence.json" in step)
+                if (("madsc.parity_" in step
+                     or "path: reports/madsc-parity-evidence.json" in step)
+                    and "if: ${{ inputs.allow_parity_evidence == true }}" in step)
             ]
             self.assertEqual(len(parity_steps), 3, filename)
             self.assertTrue(all(

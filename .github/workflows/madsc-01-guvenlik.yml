@@ -35,14 +35,14 @@ jobs:
       - name: Snapshot K1 guard output (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         run: python -m madsc.parity_snapshot_cli --exit-code 0 --output guard=reports/k1-guard.txt --output-root .
-      - name: Verify unchanged parity input before manifest (explicit opt-in only)
+      - name: Manifest öncesi girdi değişmezliğini doğrula (açık opt-in)
         if: ${{ inputs.allow_parity_evidence == true }}
         shell: bash
         run: sha256sum --check --status reports/parity-input-before.sha256
-      - name: Bind K1 guard input and snapshot (explicit opt-in only)
+      - name: K1 girdi ve çıktı kanıtını bağla (açık opt-in)
         if: ${{ inputs.allow_parity_evidence == true }}
-        run: python -m madsc.parity_manifest_cli --input config/shadow_manifest.json --snapshot reports/madsc-parity-snapshot.json --workflow-path .github/workflows/madsc-01-guvenlik.yml --output-root .
-      - name: Verify unchanged parity input after manifest (explicit opt-in only)
+        run: python -m madsc.parity_manifest_cli --input config/shadow_manifest.json --snapshot reports/madsc-parity-snapshot.json --input-digest-receipt reports/parity-input-before.sha256 --workflow-path .github/workflows/madsc-01-guvenlik.yml --output-root .
+      - name: Manifest sonrası girdi değişmezliğini doğrula (açık opt-in)
         if: ${{ inputs.allow_parity_evidence == true }}
         shell: bash
         run: sha256sum --check --status reports/parity-input-before.sha256

@@ -1,5 +1,6 @@
 """Opt-in CLI for producing a replacement parity manifest from real files."""
 import argparse
+import hashlib
 import json
 import os
 import stat
@@ -11,6 +12,7 @@ from madsc.parity_manifest_writer import (MAX_INPUT_BYTES,
 
 
 MAX_SNAPSHOT_BYTES = 1024 * 1024
+MAX_RECEIPT_BYTES = 8192
 
 
 def _read_regular_file(path, limit):
@@ -56,10 +58,32 @@ def _read_regular_file(path, limit):
         os.close(descriptor)
 
 
+def _input_digest_from_receipt(receipt_path, input_path):
+    """Read one exact sha256sum record, never shell-evaluate its filename."""
+    raw = _read_regular_file(receipt_path, MAX_RECEIPT_BYTES)
+    try:
+        record = raw.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise ValueError("Invalid input digest receipt encoding") from exc
+    if (len(record) < 68 or not record.endswith("\n")
+            or record.count("\n") != 1 or record[64:66] != "  "
+            or any(char not in "0123456789abcdef" for char in record[:64])
+            or any(ord(char) < 32 or ord(char) == 127 for char in record[66:-1])
+            or record[66:-1] != str(input_path)):
+        raise ValueError("Input digest receipt must bind exactly the selected input path")
+    return record[:64]
+
+
 def produce_from_files(*, input_path, snapshot_path, output_root, repository,
-                       branch, workflow_path, run_id, head_sha):
+                       branch, workflow_path, run_id, head_sha,
+                       input_digest_receipt=None):
     """Read real input/snapshot files and write one isolated v1 manifest."""
+    expected_digest = (_input_digest_from_receipt(input_digest_receipt, input_path)
+                       if input_digest_receipt is not None else None)
     input_payload = _read_regular_file(input_path, MAX_INPUT_BYTES)
+    if (expected_digest is not None
+            and hashlib.sha256(input_payload).hexdigest() != expected_digest):
+        raise ValueError("Parity input no longer matches its pre-execution digest")
     raw_snapshot = _read_regular_file(snapshot_path, MAX_SNAPSHOT_BYTES)
     try:
         snapshot = json.loads(raw_snapshot.decode("utf-8"), object_pairs_hook=unique_pairs)
@@ -73,13 +97,15 @@ def produce_from_files(*, input_path, snapshot_path, output_root, repository,
         "head_sha": head_sha,
         "snapshot": snapshot,
     }
-    return write_replacement_parity_manifest(Path(output_root), execution, input_payload)
+    result = write_replacement_parity_manifest(Path(output_root), execution, input_payload)
+    return {**result, "input_digest_receipt_matched": expected_digest is not None}
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True)
     parser.add_argument("--snapshot", required=True)
+    parser.add_argument("--input-digest-receipt")
     parser.add_argument("--output-root", default=".")
     parser.add_argument("--repository", default=os.environ.get("GITHUB_REPOSITORY"))
     parser.add_argument("--branch", default=os.environ.get("GITHUB_REF_NAME"))
@@ -95,7 +121,8 @@ def main(argv=None):
         input_path=args.input, snapshot_path=args.snapshot,
         output_root=Path(args.output_root).absolute(), repository=args.repository,
         branch=args.branch, workflow_path=args.workflow_path,
-        run_id=run_id, head_sha=args.head_sha)
+        run_id=run_id, head_sha=args.head_sha,
+        input_digest_receipt=args.input_digest_receipt)
     print(json.dumps(result, sort_keys=True))
     return 0
 

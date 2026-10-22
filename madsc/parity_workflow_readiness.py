@@ -1,6 +1,7 @@
 """Fail-closed static readiness audit for the five parity producer hooks."""
 import hashlib
 import json
+import re
 from pathlib import Path
 
 from madsc.fixture_report_writer import write_fixture_report
@@ -95,6 +96,18 @@ def audit_parity_workflow_readiness(root):
             file_binding_complete = False
             input_classification = "external_or_live_input_blocked"
             dataflow_blocker = EXTERNAL_INPUT_BLOCKERS[relative_path]
+        digest_binding_complete = False
+        if contract:
+            input_path = contract["manifest_input"].removeprefix("--input ")
+            receipt = "reports/parity-input-before.sha256"
+            capture_at = active.find(f"sha256sum {input_path} > {receipt}")
+            checks = [match.start() for match in re.finditer(
+                re.escape(f"sha256sum --check --status {receipt}"), active)]
+            receipt_at = active.find(f"--input-digest-receipt {receipt}")
+            digest_binding_complete = (
+                file_binding_complete and capture_at >= 0 and capture_at < consumer_at
+                and len(checks) == 2 and snapshot_output_at < checks[0] < manifest_at
+                and manifest_at < receipt_at < checks[1] < artifact_at)
         binding = None
         if contract:
             label, output_path = contract["snapshot_output"].removeprefix("--output ").split("=", 1)
@@ -107,6 +120,7 @@ def audit_parity_workflow_readiness(root):
             "workflow_blob_sha": hashlib.sha1(
                 b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest(),
             "declared_file_binding": binding,
+            "input_digest_binding_complete": digest_binding_complete,
             "markers": markers,
             "marker_contract_complete": not missing,
             "missing_markers": missing,
@@ -127,6 +141,8 @@ def audit_parity_workflow_readiness(root):
         "external_or_live_input_blockers": sum(
             row["input_classification"] == "external_or_live_input_blocked"
             for row in rows),
+        "input_digest_binding_contracts_complete": sum(
+            row["input_digest_binding_complete"] for row in rows),
         "real_behavior_ready": 0,
         "behavioral_parity_accepted": 0,
         "production_ready": False,
@@ -142,6 +158,7 @@ def write_parity_workflow_readiness(root):
     return {**result, "relative_path": OUTPUT_PATH,
             "marker_contract_complete": report["marker_contract_complete"],
             "static_file_bindings_complete": report["static_file_bindings_complete"],
+            "input_digest_binding_contracts_complete": report["input_digest_binding_contracts_complete"],
             "external_or_live_input_blockers": report["external_or_live_input_blockers"],
             "real_behavior_ready": 0, "behavioral_parity_accepted": 0,
             "production_ready": False}
@@ -165,7 +182,8 @@ def preflight_replacement_execution(root, origin):
         raise ValueError("Unknown replacement workflow")
     row = rows[0]
     if (row["marker_contract_complete"] is not True
-            or row["static_file_binding_complete"] is not True):
+            or row["static_file_binding_complete"] is not True
+            or row["input_digest_binding_complete"] is not True):
         raise ValueError("Replacement has no complete isolated file contract: " +
                          str(row["dataflow_blocker"]))
     if origin.get("workflow_blob_sha") != row["workflow_blob_sha"]:
@@ -187,6 +205,7 @@ def preflight_replacement_execution(root, origin):
             "input_sha256": digest,
             "contracted_output_sha256": snapshot["outputs"][binding["output_label"]],
             "static_workflow_contract_checked": True,
+            "input_digest_receipt_required_by_source": True,
             "input_bytes_independently_verified": False,
             "runtime_origin_verified": False,
             "behavioral_parity_accepted": False, "production_ready": False}

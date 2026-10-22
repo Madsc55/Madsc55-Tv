@@ -155,14 +155,14 @@ jobs:
       - name: Snapshot K2 handoff output (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         run: python -m madsc.parity_snapshot_cli --exit-code 0 --output candidates=reports/k2-candidates.json --output-root .
-      - name: Verify unchanged parity input before manifest (explicit opt-in only)
+      - name: Manifest öncesi girdi değişmezliğini doğrula (açık opt-in)
         if: ${{ inputs.allow_parity_evidence == true }}
         shell: bash
         run: sha256sum --check --status reports/parity-input-before.sha256
-      - name: Bind K2 handoff input and snapshot (explicit opt-in only)
+      - name: K2 aktarım girdisi ve çıktı kanıtını bağla (açık opt-in)
         if: ${{ inputs.allow_parity_evidence == true }}
-        run: python -m madsc.parity_manifest_cli --input reports/k2-input.m3u --snapshot reports/madsc-parity-snapshot.json --workflow-path .github/workflows/madsc-05-bakim.yml --output-root .
-      - name: Verify unchanged parity input after manifest (explicit opt-in only)
+        run: python -m madsc.parity_manifest_cli --input reports/k2-input.m3u --snapshot reports/madsc-parity-snapshot.json --input-digest-receipt reports/parity-input-before.sha256 --workflow-path .github/workflows/madsc-05-bakim.yml --output-root .
+      - name: Manifest sonrası girdi değişmezliğini doğrula (açık opt-in)
         if: ${{ inputs.allow_parity_evidence == true }}
         shell: bash
         run: sha256sum --check --status reports/parity-input-before.sha256

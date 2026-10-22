@@ -2470,3 +2470,10 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - K1: `madsc/core.py::run` ve `madsc/isolated_playlist_bundle.py::export_isolated_previews` artık K1 path policy'yi hedef klasörünü oluşturmadan önce uygular. Regresyonlar sırasıyla protected `reports/playlist.m3u8` ve `FAVORILER` dizininin yaratılmadığını test eder.
 - K5: `docs/legacy-workflow-contracts/madsc-documentation-check.json` eski workflow'un sabit SHA ve altı komutunu belgeler. Replacement mapping ve execution parity kanıtı yok; kabul sayacı 0/92 kalır.
 - Başarılı offline test üretim kabulü değildir. Açık sayaçlar K1 0/26, legacy 0/92, görev 0/22; canlı üretim verilerine müdahale yok; PR #71 merge edilmedi.
+
+
+## 23 Ekim 2026 — Fixture writer guard sırası
+- `madsc/fixture_report_writer.py::_prepare_fixture_root` artık sidecar JSON path'ini `reports/` dizinini oluşturmadan önce K1 policy ile denetler. Kod `f5a7c08`; `FAVORILER` kökünde klasör oluşmamasını doğrulayan test `6e1916a`.
+- Run `39864659684` bu test için queued; CI sonucu gelmeden kabul etme.
+- Daha önce başarılı run `39864450322`: 981 test, 97 Python dosyası/78 mutasyon adayı; runtime/production kabulü değil.
+- K5 kaynak sözleşmesi `docs/legacy-workflow-contracts/madsc-documentation-check.json`; eşdeğerlik hâlâ doğrulanmadı.

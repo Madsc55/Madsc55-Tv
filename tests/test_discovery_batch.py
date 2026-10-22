@@ -314,6 +314,21 @@ class DiscoveryBatchTests(unittest.TestCase):
                     build_m3u8_preview({source: feed})
 
 
+
+    def test_invalid_provenance_label_rejected_before_known_url_normalization(self):
+        feed = "#EXTM3U\n#EXTINF:-1,Safe\nhttps://example.org/safe\n"
+        with self.assertRaisesRegex(ValueError, "Invalid source name"):
+            corroborate_sources(
+                {"bad\nlabel": feed},
+                known_urls={"https://example.org:bad-port/live"},
+            )
+        with self.assertRaisesRegex(ValueError, "Invalid source name"):
+            corroborate_sources(
+                {"bad\ud800label": feed},
+                known_urls={"https://example.org:bad-port/live"},
+            )
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

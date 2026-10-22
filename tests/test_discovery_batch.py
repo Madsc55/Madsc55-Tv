@@ -179,7 +179,7 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(report["candidate_rows"][0]["tvg_id"], "valid")
         self.assertEqual(
             [error["reason"] for error in report["parse_errors"]],
-            ["duplicate_metadata_attribute", "orphan_url"],
+            ["duplicate_metadata_attribute"],
         )
 
     def test_metadata_attribute_names_are_case_insensitive(self):

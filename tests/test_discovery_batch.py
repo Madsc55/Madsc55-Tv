@@ -267,6 +267,27 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertFalse(preview["production_writes"])
 
 
+
+    def test_rejected_extinf_consumes_its_url_without_orphan_noise(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="bad"\n'
+                'https://example.org/missing-name\n'
+                '#EXTINF:-1 tvg-id="bad",   \n'
+                'https://example.org/empty-name\n'
+                '#EXTINF:-1 tvg-id="bad" group-title="oops,Malformed\n'
+                'https://example.org/unbalanced\n'
+                '#EXTINF:-1 tvg-id="good",Good\n'
+                'https://example.org/good\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(report["candidate_rows"][0]["tvg_id"], "good")
+        self.assertEqual(
+            [error["reason"] for error in report["parse_errors"]],
+            ["missing_channel_name", "empty_channel_name", "missing_channel_name"],
+        )
+        self.assertEqual(build_m3u8_preview({"fixture": feed})["channel_count"], 1)
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

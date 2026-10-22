@@ -110,17 +110,14 @@ def run():
     source_rows = 0
     seen_tv_urls = set()
     for name, url in candidates():
+        if source_rows >= MAX_SOURCE_ROWS or tv_tested >= LIMIT:
+            break
         source_rows += 1
-        if source_rows > MAX_SOURCE_ROWS:
-            break
-        if tv_tested >= LIMIT:
-            break
         cat = category(name)
         digest = hashlib.sha256(url.encode()).hexdigest()
         if not cat:
             results.append({"sha256": digest, "status": "radio_excluded"})
             continue
-        digest = hashlib.sha256(url.encode()).hexdigest()
         if digest in seen_tv_urls:
             results.append({"sha256": digest, "status": "duplicate_excluded"})
             continue

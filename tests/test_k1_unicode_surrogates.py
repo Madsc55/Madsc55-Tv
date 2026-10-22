@@ -5,8 +5,9 @@ from madsc.write_path_audit import audit_write_paths, enforce_write_paths, Prote
 
 class SurrogateTests(unittest.TestCase):
     def test_unpaired_surrogates_are_rejected(self):
-        for path in ("reports/a\\ud800.json", "reports/a\\udfff.json",
-                     "reports/\\udc00/file.json"):
+        for path in ("reports/a" + chr(0xD800) + ".json",
+                     "reports/a" + chr(0xDFFF) + ".json",
+                     "reports/" + chr(0xDC00) + "/file.json"):
             with self.subTest(path=ascii(path)):
                 self.assertTrue(audit_write_paths([path])["blocked"])
                 with self.assertRaises(ProtectedWriteRejected):

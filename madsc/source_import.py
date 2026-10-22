@@ -56,6 +56,7 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
     if pending is not None:
         raise ValueError("Missing channel URL")
     result = classify_candidates(rows, known_urls)
+    result["source_rows"] = rows
     result["source_format"] = source.suffix.lower()
     result["source_channel_count"] = len(rows)
     result["accepted_channel_count"] = len(result["candidates"])

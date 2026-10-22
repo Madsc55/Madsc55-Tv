@@ -74,6 +74,23 @@ class PlaylistPreviewTests(unittest.TestCase):
         self.assertIn(",TRT 1, HD\nhttps://example.org/live",
                       report["drafts"]["TEST_BEKLIYOR"])
 
+    def test_import_to_five_playlists_end_to_end_offline(self):
+        import tempfile
+        from pathlib import Path
+        from madsc.playlist_previews import preview_imported_m3u
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "source.m3u"
+            source.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="trt" group-title="Haber",TRT 1, HD\\nhttps://example.org/a\\n#EXTINF:-1,Yabancı\\nhttps://example.org/b\\n#EXTINF:-1,Tekrar\\nhttps://example.org/a\\n', encoding="utf-8")
+            original = source.read_bytes()
+            result = preview_imported_m3u(source)
+            self.assertEqual(result["source_channel_count"], 3)
+            self.assertEqual(result["duplicate_count"], 1)
+            self.assertEqual(result["counts"]["TEST_BEKLIYOR"], 2)
+            self.assertIn("TRT 1, HD", result["drafts"]["TEST_BEKLIYOR"])
+            self.assertIn('tvg-id="trt"', result["drafts"]["TEST_BEKLIYOR"])
+            self.assertEqual(original, source.read_bytes())
+            self.assertFalse(result["production_writes"])
+
     def test_unverified_logo_rejected(self):
         rows = [{"name": "A", "url": "https://example.org/a"}]
         catalog = prepare_channel_catalog(rows)

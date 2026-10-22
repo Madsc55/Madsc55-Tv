@@ -63,3 +63,24 @@ def render_playlist_previews(catalog: dict, source_rows: list[dict]) -> dict:
             "counts": {bucket: (len(lines) - 1) // 2 for bucket, lines in output.items()},
             "preview_only": True, "device_verified_by_this_function": False,
             "production_writes": False, "production_change_allowed": False}
+
+
+def preview_imported_m3u(source, *, measurements=None, logos=None,
+                         ibo_results=None, probes=None, three_stage=None) -> dict:
+    """Read a local M3U and produce K2/K3/K5 drafts without any file writes or probes.
+
+    Evidence is caller-supplied, never inferred from an unverified stream.
+    """
+    from madsc.source_import import extract_candidates
+    from madsc.channel_catalog import prepare_channel_catalog
+
+    inventory = extract_candidates(source)
+    rows = inventory["source_rows"]
+    catalog = prepare_channel_catalog(rows, measurements=measurements, logos=logos,
+                                      ibo_results=ibo_results, probes=probes,
+                                      three_stage=three_stage)
+    previews = render_playlist_previews(catalog, rows)
+    return {"source_channel_count": inventory["source_channel_count"],
+            "duplicate_count": inventory["duplicate_channel_count"],
+            "rejected_count": inventory["rejected_channel_count"],
+            "catalog_summary": catalog["summary"], **previews}

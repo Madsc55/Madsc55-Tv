@@ -172,3 +172,12 @@
 - İlk envanter raporu 97 Python dosyası tarandığını ve 58 dosya sistemi mutasyon adayı bulduğunu gösterdi. O koşu bir regresyon testi beklentisi (pathlib.open positional mode) nedeniyle başarısızdı; scanner gate'in kendisi geçiyordu. `bcd8245` bu mode parsing hatasını düzeltti ve yeni Actions run `39864090233` başlatıldı; sonuç henüz alınmadı.
 - Dosya: `madsc/write_callsite_audit.py`; test: `tests/test_write_callsite_audit.py`; gate: `madsc/offline_gate.py`. Davranış sözleşmesi/CI sonucuna göre yeni devir notu eklenecek.
 - Kabul sayaçları değişmez: runtime K1 0/26; legacy 92 workflow 0/92; 22 görev 0/22. Canlı IPTV/EPG/favori/cihaz/yedek/arşiv verilerine müdahale edilmedi; PR #71 birleştirilmedi.
+
+
+## K1-03 — AST envanteri CI'da doğrulandı; envanterden somut yazma sınırı düzeltmesi
+- Run `39864090233`, SHA `bcd8245a143abb5a24fc05b244127f28876c2ce2`, conclusion success. `tests_discovered=979`, `tests_passed=true`, beşli fixture gate ve tüm offline gate'ler başarılı.
+- Aynı gate `madsc/` altındaki 97 Python dosyasını taradı ve 78 dosya sistemi mutasyon adayı raporladı. Her satır `review_required=true`; bu 78 satırın tamamı gerçek disk yazması demek değildir: genel `.replace()` gibi dinamik alıcı metotlar belirsiz adaydır. Rapor guard sırasını aynı fonksiyon kapsamıyla sınırlı bir heuristik olarak belirtir; 47 satırda önceki guard görülmemesi 47 kanıtlanmış açık anlamına gelmez. Shell/subprocess ve alias yolları ayrıca incelenmeli.
+- İncelemede somut K1-03 sıralama sorunu bulundu: `madsc/core.py::run`, korunan bir rapor yolu için `reports/` dizinini K1 yol politikasını kontrol etmeden önce oluşturabiliyordu. Artık `enforce_write_paths` önce tam hedef yol üzerinde çağrılıyor; rapor dizini oluşturulmadan önce mevcut üst dizinlerin symlink olmadığı da doğrulanıyor. Kod commit `808f3881d1094748ade65d1b3da92b6ba53f5d16`.
+- Regresyon testi `test_protected_report_rejected_before_reports_directory_creation`, `reports/playlist.m3u8` isteğinin reddedildiğini ve `reports/` dizininin hiç yaratılmadığını kontrol ediyor. Test commit `fe82f2f000c54b1a5a2547f9cac6d06ba4faa1f8`.
+- Yeni K1 core düzeltmesi/testi için run `39864306236` queued; sonuç bekleniyor. Son başarılı run `39864090233` yalnızca SHA `bcd8245...` ve ondan önceki kod için geçerlidir.
+- Kabul sayaçları değişmedi: K1 0/26, legacy 92 0/92, 22 ana görev 0/22. Üretim playlist/EPG/favori/cihaz/yedek/arşiv verileri değişmedi; PR #71 birleştirilmedi.

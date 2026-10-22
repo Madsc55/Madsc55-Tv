@@ -39,7 +39,7 @@ def _create_relative_file_nofollow(root: Path, parts: tuple[str, ...],
                                    expected_root_identity: tuple[int, int] | None = None) -> int:
     """Exclusively create a file beneath root using directory descriptors only."""
     if (not parts or any(not isinstance(part, str) or part in ("", ".", "..")
-                         or "/" in part or "\\\\" in part for part in parts)):
+                         or "/" in part or "\\" in part for part in parts)):
         raise ValueError("Unsafe sandbox destination path")
     nofollow = getattr(os, "O_NOFOLLOW", None)
     directory = getattr(os, "O_DIRECTORY", None)

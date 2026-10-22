@@ -1,3 +1,12 @@
+# EN YENİ K3 GÜNCELLEMESİ — EXTINF başlığı sahte tvg-id düzeltmesi (2026-10-23)
+- Yeni hata düzeltildi: virgülden sonraki kanal görünen adındaki `tvg-id="..."` metni artık gerçek M3U niteliği olarak kabul edilmiyor. `madsc/epg.py` yalnız `#EXTINF` satırının virgülden önceki nitelik bölümünü tarıyor.
+- Kod commit: `2e1ee36d2f54b9d8a6b72eb43751ab4e60224c9f`; regresyon testi commit: `7ced6524a166c76c1994a7f0d79574c519c7dc17`; EPG test sayısı 15.
+- Ortak offline suite run #99 / `39868459061` daha önce 1016 testi geçti (o commit'te 14 EPG testi vardı). En yeni kod/test commit'lerinin Actions koşuları iptal edildi; 15. test için henüz başarılı CI kanıtı yok. K1–K5 eşzamanlı commit'leri tek pending concurrency yuvasını sürekli değiştiriyor.
+- K3 canlı video/ses, 6+ saat süreklilik, Pages/XMLTV zinciri, IBO cihaz EPG kabulü ve logo doğrulaması açık. Üretim verilerine dokunulmadı; PR #71 merge edilmedi; genel sayaçlar 0/92, 0/26, 0/22.
+- Yeni commit'ler durulduğunda tam offline suite'i güncel HEAD üzerinde doğrula; CI geçmeden 15 testin tamamı geçti deme.
+
+---
+
 # EN YENİ K3 GÜNCELLEMESİ — EPG sertleştirmesi tam offline suite'te geçti (2026-10-23)
 - M3U header token doğrulaması sıkılaştırıldı; `#EXTM3U-invalid` reddediliyor. `tvg-id` yalnız gerçek whitespace-delimited nitelik olarak algılanıyor; `not-tvg-id` eşleşmesi reddediliyor.
 - `tests/test_epg.py`: 14 EPG testi. Bu testler main commit `a0469c34ec9a8642acffdddfbda55dadf9d39aba` içinde mevcut.

@@ -352,3 +352,16 @@ class HandoffTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Invalid alternative mapping"):
                     assess_candidates(altered, {})
 
+
+    def test_handoff_rejects_noncanonical_padded_metadata(self):
+        discovery = classify_candidates([
+            {"name": "News", "url": "https://example.org/a", "tvg_id": "news",
+             "tvg_logo": "https://example.org/logo.png", "group_title": "World"}
+        ])
+        for field in ("name", "tvg_id", "tvg_logo", "group_title"):
+            with self.subTest(field=field):
+                altered = dict(discovery)
+                altered["candidates"] = [{**discovery["candidates"][0],
+                                          field: " " + discovery["candidates"][0][field]}]
+                with self.assertRaisesRegex(ValueError, "Unsafe candidate"):
+                    assess_candidates(altered, {})

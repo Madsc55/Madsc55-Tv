@@ -103,8 +103,11 @@
     "stage": "K3",
     "title": "EPG XMLTV tvg-id ve Pages yayın zinciri",
     "status": "in_progress",
-    "evidence": [],
-    "note": "XMLTV/EPG kontrol modülleri mevcut; IBO/Pages canlı zincir kabulü bekleniyor."
+    "evidence": [
+      "62211f4: XMLTV programme channel references now fail closed when missing/blank; unmatched programme IDs block mapping_verified",
+      "4a3eee5: regression tests cover missing, blank, and unmatched programme channel IDs; [skip ci], not yet run in CI"
+    ],
+    "note": "XMLTV/EPG control modules and additional fail-closed regression tests exist. Static/commit evidence only: CI was intentionally not triggered; IBO/Pages live-chain acceptance and device confirmation remain open."
   },
   {
     "id": "K3-14",

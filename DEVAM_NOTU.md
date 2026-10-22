@@ -1,6 +1,6 @@
 # Madsc55-Tv — DEVAM NOTU
 
-**En yeni kayıt:** Kontrollü timeout/failure workflow bağlantısı; kod e10fcdc4c878305ca44e110b29ad88128cf16cb2; 632 yerel test ve beş izole K kapısı başarılı. Tanı artifact baytlarının bağımsız doğrulaması sonraki iştir. Güncel ayrıntılar dosyanın sonundadır.
+**En yeni kayıt:** Birikmiş diagnostic provenance ve 92-kapsam sertleştirmeleri gerçek checkout üzerinde doğrulandı; kod/test bd641a057d9ff47a2daeeddbef7eab742779db93; 658 yerel test ve beş izole K kapısı başarılı. Gerçek aynı-input bağımsız run/artifact kanıtı dış engel olarak açıktır. Güncel ayrıntılar dosyanın sonundadır.
 
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
 
@@ -16,7 +16,7 @@
 - Yeni sohbet başlangıç talimatı: “Madsc55/Madsc55-Tv main dalındaki DEVAM_NOTU.md dosyasının en üstündeki yeni sohbet özetini ve en son kayıtlarını oku. Güncel HEAD'i doğrula; yapılmış işleri tekrarlamadan ilk açık somut işten devam et. Tüm korumaları uygula, değişiklik ve kanıtları GitHub'a kaydet.”
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: e10fcdc4c878305ca44e110b29ad88128cf16cb2
+Son geliştirme commit SHA: bd641a057d9ff47a2daeeddbef7eab742779db93
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -294,3 +294,11 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 ## 22 Ekim 2026 — Paralel çalışma: diagnostic API run-state regresyonu
 - Kendi tests/test_failure_diagnostic_api_fail_closed.py dosyasına dört yeni fail-closed API negatif senaryo eklendi: e34b9481c888173f7b943c4ff05f959040bfdef5. total_count uyuşmazlığı, run.status in_progress, run.conclusion success ve run.repository.full_name uyuşmazlığı. Önceki sekizle toplam 12 negatif alt senaryo tanımlı.
 - Testler henüz çalıştırılmadı; `git ls-remote` GitHub DNS çözümleme hatası verdi. 632 test önceki kaynak sürümüne aittir. Başka sohbetin güncel kodu yeniden yazılmadı; sonraki turda HEAD ve dosya SHA yeniden doğrulanmalı. GitHub Actions tetiklenmedi. Kabul 0/92, 0/26, 0/22.
+
+## 22 Ekim 2026 — Birikmiş diagnostic ve 92-kapsam kodunun gerçek toplu doğrulaması
+- Son kod/test commit SHA: bd641a057d9ff47a2daeeddbef7eab742779db93; taban da6700fc31b8378a19363cba7477b6a49f2a248f. Önceki turlarda checkout/DNS engeli nedeniyle çalıştırılmamış diagnostic ZIP, API origin ve pinned 92-scope sertleştirmeleri güncel `main` checkout'unda birlikte sınandı.
+- İlk odak çalıştırmada 48 testten event alt senaryosu başarısız oldu: fixture `workflow_dispatch` değerini zaten aynı olan beyan edilmiş event üzerine yazıyordu. Gerçek uyuşmazlık üretmesi için `schedule` kullanıldı; doğrulayıcı değiştirilmedi. Aynı odak kümesi finalde 48/48 geçti.
+- Nihai `python -m madsc.offline_gate`: 658/658 test ve beş izole K1–K5 kapısı success; 92+7 kaynak, 10 yardımcı komut ve 22 görev envanteri geçti. `git diff --check` temiz. Kanıt `docs/OFFLINE_REGRESSION_KANIT_658_2026-10-22.json`.
+- Bu testler gerçek Actions koşusu değildir. Yeni/current-code diagnostic artifact yok; legacy 92 tarafında aynı-input v1 artifact ve bağımsız replacement execution çifti yok. Kabul 0/92, 0/26, 0/22 kaldı. Actions/live probe/production write/eski repo yazısı yapılmadı.
+- Statik incelemede yedi eski workflow'un `CALISANLAR.m3u` yazıp tüm M3U/M3U8'i reddeden protected-write gate'i çağırdığı çelişki doğrulandı. K1 gevşetilmedi; korunan listeye yazılmadı. Bu yollar üretim eşdeğeri sayılamaz ve kullanıcı onayı + ayrı yayın tasarımı olmadan düzeltilemez.
+- Sıradaki güvenli yerel iş: gerçek dış kanıt gerektirmeyen 92 kaynak davranış eşleme kayıtlarını, pinned source commit/blob kimliklerinden başlayarak aynı-input pair hazırlık raporunda fail-closed eksik kanıt durumlarına bağla. Gerçek run/artifact oluşmadan kabul üretme; korunan playlist yayın tasarımını yetkisiz uygulama.

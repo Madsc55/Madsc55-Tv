@@ -151,7 +151,11 @@ def inspect_installation(root: Path) -> dict:
     for row in writer_calls:
         writer_by_module.setdefault(row["file"], {"write": 0, "dynamic_mode_review": 0})
         writer_by_module[row["file"]][row["classification"]] += 1
-    files = sorted(p.name for p in workflows.iterdir()
+    # Never follow workflow symlinks when constructing the trusted inventory.
+    workflow_entries = list(workflows.iterdir())
+    if any(p.is_symlink() for p in workflow_entries):
+        raise ValueError("Symlinked workflow entry")
+    files = sorted(p.name for p in workflow_entries
                    if p.is_file() and p.suffix in (".yml", ".yaml"))
     missing = [name for name in MAIN.values() if name not in files]
     additional = [name for name in files if name not in MAIN.values()]

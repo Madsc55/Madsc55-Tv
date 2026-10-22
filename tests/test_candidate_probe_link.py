@@ -117,17 +117,15 @@ class CandidateProbeLinkTests(unittest.TestCase):
         for candidate in ({"url_sha256": "A" * 64}, {"url_sha256": "a" * 63},
                           {"url_sha256": None}, {"url_sha256": ["a" * 64]}, {}):
             with self.subTest(candidate=candidate):
-                envelope = pack({"candidates": [candidate]}, run, sha)
-                with self.assertRaisesRegex(ValueError, "Invalid K2 candidate fingerprint"):
-                    link_candidate_probes(envelope, [], run, sha)
+                with self.assertRaises(ValueError):
+                    pack({"candidates": [candidate]}, run, sha)
 
     def test_invalid_k2_candidate_container_rejected(self):
         run, sha = "123", "b" * 40
         for candidates in (None, {}, "invalid"):
             with self.subTest(candidates=candidates):
-                envelope = pack({"candidates": candidates}, run, sha)
                 with self.assertRaises(ValueError):
-                    link_candidate_probes(envelope, [], run, sha)
+                    pack({"candidates": candidates}, run, sha)
 
 
 if __name__ == "__main__":

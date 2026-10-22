@@ -25,8 +25,12 @@ def build_6115_archive_preview(urls: Sequence[str]) -> dict:
     for url in urls:
         if not isinstance(url, str):
             raise ValueError("Unsafe, missing or duplicate URL in ordered fixture")
-        parsed = urlsplit(url)
-        if (parsed.scheme != "https" or not parsed.hostname
+        try:
+            parsed = urlsplit(url)
+            port = parsed.port  # Reject malformed or out-of-range explicit ports.
+        except ValueError as exc:
+            raise ValueError("Unsafe, missing or duplicate URL in ordered fixture") from exc
+        if (parsed.scheme != "https" or not parsed.hostname or port == 0
                 or parsed.username is not None or parsed.password is not None
                 or parsed.fragment or url != url.strip()
                 or any(ch.isspace() or ord(ch) < 32 or ord(ch) == 127 for ch in url)

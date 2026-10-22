@@ -24,9 +24,16 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     if len(names) > 20000:
         raise ValueError("Restore audit inventory exceeds safe entry limit")
     declared_dirs = set()
+    seen_names = set()
     for name in names:
+        if len(name) > 4096:
+            raise ValueError("Restore audit path exceeds bounded length")
+        if name in seen_names:
+            raise ValueError("Duplicate restore audit path")
+        seen_names.add(name)
         if (not name or name.startswith("~") or ":" in name or chr(92) in name
-                or any(ord(character) < 32 or ord(character) == 127 for character in name)
+                or any(ord(character) < 32 or ord(character) == 127
+                       or 0xD800 <= ord(character) <= 0xDFFF for character in name)
                 or Path(name).is_absolute()
                 or any(part in ("", ".", "..") for part in name.split("/"))):
             raise ValueError("Unsafe restore audit path")

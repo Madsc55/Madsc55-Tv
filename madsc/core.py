@@ -195,7 +195,8 @@ def execute(category: str) -> dict:
         history_rows = [{"id": i, "head_branch": "fixture", "created_at": f"2026-10-22T{(i - 4) // 60:02d}:{(i - 4) % 60:02d}:00Z",
                          "status": "in_progress" if i == 104 else "completed",
                          "conclusion": None if i == 104 else "failure"} for i in range(104, 4, -1)]
-        old_failures = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
+        old_failures = [{"id": i, "head_branch": "fixture",
+                         "created_at": f"2026-10-21T{(i - 2):02d}:00:00Z",
                          "status": "completed", "conclusion": "failure"} for i in (4, 3, 2)]
         history_result = assess_failure_history([
             {"total_count": 103, "workflow_runs": history_rows},

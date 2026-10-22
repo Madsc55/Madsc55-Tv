@@ -261,3 +261,9 @@
 - Kod commit: `3ea2415ba29b08994c892dca2cdcfd23b42bd9e5`. Regresyon testi commit: `70433a0079dff063187ce5c094cd5c70d4f828be`.
 - CI durumu henüz doğrulanmadı; workflow dispatch aracı kullanılmadı ve yeni SHA için combined-status sonucu boş. Bu nedenle testler geçmiştir denmiyor. Sonraki iş: kaynak URL/kurum kökenini gerçek kanıtla modellemek ve yalnız farklı, doğrulanmış kökenleri bağımsız oy saymak.
 - K2 kabul sayaçları değiştirilmedi; gerçek kaynak/lisans, günlük keşif eşdeğerliği ve artifact SHA kökeni açık. Üretim playlist/EPG/favoriler/yedekler ile eski depo değişmedi.
+
+
+## K1 — AST open()/os.open() yanlış sınıflandırma düzeltmesi (23 Ekim 2026)
+- Generic `*.open` dalı unqualified `open(path, mode)` için mode index 0 kullanabiliyor, `os.open(path, flags)` ise generic dalda erken dönüp flags denetimini atlayabiliyordu. `os.open/posix.open` şimdi ayrı ve önce inceleniyor; builtins/io/unqualified open mode index 1, Path.open mode index 0. Keyword `flags=` da ele alınıyor.
+- Kod commitleri: `ccf5bfea56c9ebbd741d28afa9ed97482c57f513`, `5138e550e9ac2cba2cd7f8eec016a7c018aad999`. Test commit: `4eacdf0f70d7fb1bf0391a015216bde64e8516c3`.
+- CI henüz doğrulanmadı; K1 kabulü 0/26 ve 75 adayın tamamının kapatıldığı iddia edilmiyor.

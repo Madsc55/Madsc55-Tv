@@ -50,3 +50,15 @@ class DiscoveryTests(unittest.TestCase):
                 self.assertEqual(len(result["candidates"]), 1)
                 self.assertEqual(len(result["rejected"]), 1)
                 self.assertFalse(result["production_playlist_modified"])
+
+    def test_encoded_line_breaks_and_nul_are_rejected(self):
+        for url in ("https://example.org/live%0a#EXTINF",
+                    "https://example.org/live%0Dnext",
+                    "https://example.org/live%00",
+                    "https://example.org/live?x=%0a"):
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                normalize_url(url)
+        result = classify_candidates([{"name": "Unsafe", "url": "https://example.org/live%0a"}])
+        self.assertEqual(result["candidates"], [])
+        self.assertEqual(len(result["rejected"]), 1)
+        self.assertFalse(result["production_playlist_modified"])

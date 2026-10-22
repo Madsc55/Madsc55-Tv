@@ -53,6 +53,20 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     export_6115_archive_manifest(self.urls, destination)
             self.assertFalse(destination.exists())
 
+    def test_corrupted_disk_bytes_trigger_cleanup(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            original = Path.read_bytes
+            def corrupted_read(path):
+                payload = original(path)
+                if path.name == "ibo_6115_archive_preview.json":
+                    return payload.replace(b'"source_count": 6115', b'"source_count": 6114')
+                return payload
+            with patch("madsc.isolated_ibo_archive_export.Path.read_bytes", autospec=True, side_effect=corrupted_read):
+                with self.assertRaisesRegex(OSError, "readback mismatch"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(destination.exists())
+
     def test_partial_serialization_failure_rolls_back(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"

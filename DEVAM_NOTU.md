@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: 7635cbe28071df818ecdefb77cc43e40ea5ffb09
+Son geliştirme commit SHA: 7beab850d06fb40d491d233d8bc3108ea984782b
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -173,3 +173,14 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Önceki devirde K3 için yazılan external_delivery_or_notification_state_required ifadesi kaynak kod sınıfı değildir. Gerçek readiness kodundaki K3 engeli canlı stream probe/harici aday kaynağı; sınıf external_or_live_input_blocked'dır. K2 de canlı ağ/harici history girdisine bağlıdır. Bu ifadeleri delivery sistemi kurulmuş gibi yorumlama.
 - Actions/live probe/cihaz/production write/eski depo yazısı yok. Korunan yayın listeleri, EPG, YEDEKLER/YENİLER/FAVORİLER ve PR #71 değişmedi; kabul 0/92, 0/26, 0/22.
 - Sıradaki güvenli yerel iş: mevcut readiness'deki üç statik file binding kaydını parity manifest preflight doğrulamasına bağla; marker ya da yerel dosya hashini bağımsız runtime veya 92 kabulü sayma. Gerçek opt-in run/artifact kökeni ve legacy 92 v1 manifest eksikliği açık.
+
+## Manifest karşılaştırıcısında kaynak workflow ön kontrolü — güncel kayıt
+- Son kod commit SHA: 7beab850d06fb40d491d233d8bc3108ea984782b; taban 436266996ba86e28dcef9951954a1e460d21a801. Otomatik readiness geliştirmesi ve önceki FIFO/mutasyon düzeltmeleri korundu.
+- Readiness kayıtlarına gerçek workflow_blob_sha (Git blob), workflow_sha256 ve declared_file_binding {consumer_command,input_path,output_label,output_path} eklendi. preflight_replacement_execution, sunulmuş bir readiness JSON'una güvenmeden kaynak workflow'ları yeniden okur.
+- Kaynak markerları + statik input/output kontratı, origin.workflow_blob_sha ve snapshot'ın beklenen output label'ı birlikte doğrulanır. Yanlış/eski kaynak blob, kaynak drift'i, eksik çıktı rolü ve ortak izole input sözleşmesi olmayan K2/K3 fail-closed reddedilir. K1/K4/K5 kapsamı statik kontrattır; gerçek yürütme kabulü değildir.
+- compare_provenance_bound_pair/batch, API origin doğrulayıcısı ve artifact manifest doğrulayıcısı replacement_workflow_root açık argümanıyla aynı kapıyı kullanır. CLI: --replacement-workflow-root PATH yalnız madsc-legacy-provenance-pairs-v1 girdisinde geçerlidir. Kaynak kökü, iddia edilen koşunun workflow blob'u ile aynı baytları içermelidir; yeni main'den farklı tarihsel kaynakta ön kontrol reddedilir.
+- Argüman yoksa replacement_workflow_contract_checked=false ve replacement_static_preflight=null olur. Batch açıkça kaç çiftin statik kontratının kontrol edildiğini raporlar. v1 manifest formatı korunur. Statik ön kontrol input baytını veya bağımsız runtime kökenini doğrulamaz; ilgili alanlar false kalır.
+- Uçtan uca test gerçek src.madsc_guard komutunu geçici gerçek config baytlarıyla çalıştırdı; stdout -> dosya snapshot'ı -> manifest -> ZIP -> kaynak preflight zinciri geçti. Bu testte legacy taraf fixture, API testi fake fetcher kullandı; gerçek 92 legacy execution veya canlı API kabulü yok.
+- Nihai yerel python -m madsc.offline_gate: 605 test, beş izole K kapısı, 92+7 kaynak kapsamı, 10 yardımcı komut ve 22 görev envanteri success. Bu pakette başarısız test yok; git diff --check temiz. Kanıt docs/PARITY_WORKFLOW_PREFLIGHT_KANIT_2026-10-22.json kaynak hashleri ve statik binding kayıtları dahil.
+- Korunan listeler/EPG/yedek/yeni/favori, eski repo ve PR #71 değişmedi. Actions veya gerçek ağ/cihaz testi çalıştırılmadı. Kabul 0/92, 0/26, 0/22; statik preflight bunu artırmaz.
+- Sıradaki güvenli yerel iş: yalnız opt-in K1/K4/K5 tüketicileri için işlem öncesi/sonrası input hash bağını kur; tüketici çalışırken değişen dosyadan manifest üretilmesin. Gerçek runtime/artifact kökeni için ayrı Actions izni, eski 92 v1 manifestleri için mevcut salt-okunur kanıt gerekir; K2/K3 harici/canlı girdi engelleri açık.

@@ -329,6 +329,21 @@ class DiscoveryBatchTests(unittest.TestCase):
             )
 
 
+
+    def test_source_name_length_is_bounded_across_k2_entrypoints(self):
+        feed = "#EXTM3U\n#EXTINF:-1,Safe\nhttps://example.org/safe\n"
+        valid_name = "s" * 256
+        too_long = "s" * 257
+        self.assertEqual(parse_m3u(feed, valid_name)["source"], valid_name)
+        for source in (too_long,):
+            with self.assertRaisesRegex(ValueError, "bounded length"):
+                parse_m3u(feed, source)
+            with self.assertRaisesRegex(ValueError, "bounded length"):
+                corroborate_sources({source: feed})
+            with self.assertRaisesRegex(ValueError, "bounded length"):
+                build_m3u8_preview({source: feed})
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

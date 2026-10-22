@@ -67,6 +67,7 @@ class FixtureReportWriterTests(unittest.TestCase):
                        side_effect=replace_before_second_write):
                 with self.assertRaisesRegex(OSError, "simulated"):
                     write_turkish_tv_test_bundle(root, b"#EXTM3U\n", "{}\n")
+            self.assertTrue(playlist.exists(), "rollback must preserve the concurrent replacement")
             self.assertEqual(playlist.read_bytes(), b"concurrent replacement")
 
     def test_exclusive_writer_fails_closed_without_nofollow(self):

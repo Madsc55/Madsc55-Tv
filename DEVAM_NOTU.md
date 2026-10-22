@@ -931,3 +931,9 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - `corroborate_sources` bilinen URL kümesindeki 8192 karakterden uzun veya UTF-8 surrogate içeren adresleri normalizasyondan önce reddeder. Kod `ea305e1650a19fd592064f71d4b3cbdfd94aa670`, regresyon `a11999c7bc6888e6ba46c86803cb3154f4182300`. Normal bilinen URL dışlama davranışı da test edilir.
 - Önceki aynalanmış feed fingerprint testi `3cebc66d`, sonraki `a22684d4a259ccc986c2b4baa8fcb92ecbf02b10` commit'inde başarılı Actions `39871279885` ile kapsandı (compare ahead=2, behind=0). Yeni URL sınırı testinin CI sonucu ilk kontrolde bekliyordu (`39871566283`), doğrulanmadan başarılı denemez.
 - K2-05/06/07/08 açık. IBO Player Pro cihaz doğrulaması en sonda kullanıcı tarafından yapılacak; üretim playlist/EPG/favori/yedekler değiştirilmedi.
+
+
+## 23 Ekim 2026 — K2 bilinen URL kontrol karakterleri
+- `corroborate_sources` bilinen URL kümesinde satır sonu, tab, NUL ve DEL gibi ASCII kontrol karakterlerini normalizasyondan önce reddeder. Kod `d64a03a07fb03e6af091f2929b7655dae4f9dfed`, regresyon `096eb6038d8cd6fa3fa3f0a75260c2bfab8c631a`.
+- Önceki bilinen URL uzunluk/Unicode regresyonu `a11999c7`, sonraki `c59bd4bf6f86ed0acdf3dc39aeebfbbfebc1de7f` commit'inde başarılı Actions `39871569940` ile kapsandı (compare ahead=1, behind=0). Yeni kontrol karakteri testinin Actions `39871799412` sonucu ilk kontrolde bekliyordu; doğrulanmadan kabul kapatılmaz.
+- K2-05/06/07/08 açık; gerçek kaynak/lisans, günlük keşif ve artifact köken kanıtı bekliyor. IBO Player Pro cihaz testini en son kullanıcı yapacak; üretim playlist, EPG, favori, yedekler değiştirilmedi.

@@ -35,12 +35,7 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     # matching hashes for a caller-selected subset. Reject unexpected files,
     # symlinks and extra directories in any of the three sandbox trees.
     expected_files = set(names)
-    expected_dirs = {
-        parent.as_posix()
-        for name in names
-        for parent in Path(name).parents
-        if str(parent) != "."
-    }
+    expected_dirs = declared_dirs
     inventory_matches = True
     for root in (Path(source), Path(backup), Path(restored)):
         actual_files = set()

@@ -80,6 +80,12 @@ def verify_execution_origin_api(origin, run, artifact_page, workflow_file):
             and (type(workflow_run["run_attempt"]) is not int
                  or workflow_run["run_attempt"] != origin.get("run_attempt"))):
         raise ValueError("Artifact run attempt mismatch")
+    if ("status" in workflow_run
+            and workflow_run["status"] != "completed"):
+        raise ValueError("Artifact workflow status mismatch")
+    if ("conclusion" in workflow_run
+            and workflow_run["conclusion"] != origin.get("conclusion")):
+        raise ValueError("Artifact workflow conclusion mismatch")
     if ("event" in workflow_run
             and workflow_run["event"] != origin.get("event")):
         raise ValueError("Artifact event origin mismatch")

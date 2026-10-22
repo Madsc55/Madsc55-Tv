@@ -1,3 +1,12 @@
+## CI yeniden doğrulaması — 2026-10-23
+- Güncel ortak offline suite, run #99 / ID `39868459061`, commit `a0469c34ec9a8642acffdddfbda55dadf9d39aba`: **completed / success**.
+- Log: `tests_discovered=1016`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`; K3 fixture category success.
+- Bu commit'te `madsc/epg.py` blob'u `762a5b4a09cb2f8d9ea6b87c52b48ef9722b393b`, `tests/test_epg.py` blob'u `b1deb2b544250526b90a98eeb1249d22cfec9aaa`; test dosyası 14 EPG test fonksiyonu içeriyor. Yani header/tvg-id sertleştirmesi ve ilgili iki yeni regresyon bu başarılı koşunun içindedir.
+- Bu sonuç önceki K5 hatasının da ortak suite'te giderilmiş haliyle sonraki commit'te yeniden geçtiğini gösterir; K3'e özel canlı yayın kabulü değildir.
+- Mevcut main HEAD run commit'i `a0469c34ec9a8642acffdddfbda55dadf9d39aba` ile eşleşiyor.
+
+---
+
 # K3 EPG hardening follow-up — 2026-10-23
 
 Repository: Madsc55/Madsc55-Tv

@@ -78,9 +78,13 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
             streak += 1
             if streak >= limit:
                 break
-        elif conclusion in ("success", "cancelled", "skipped", "neutral", "action_required", "stale"):
+        elif conclusion == "success":
             boundary = True
             break
+        elif conclusion in ("cancelled", "skipped", "neutral", "action_required", "stale"):
+            # Non-successful runs cannot reset a consecutive-failure guard.
+            # Fail closed instead of interpreting them as a successful boundary.
+            raise ValueError("Indeterminate non-success run in failure history")
         else:
             raise ValueError("Unknown failure history conclusion")
     complete = received == total

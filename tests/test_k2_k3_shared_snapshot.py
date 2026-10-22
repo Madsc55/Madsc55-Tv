@@ -52,7 +52,8 @@ class SharedSnapshotTests(unittest.TestCase):
             ]
             k3_report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
                          "source": k3.SOURCE, **k3_evidence,
-                         "production_playlist_modified": False, "results": results}
+                         "production_playlist_modified": False, "probed": len(results),
+                         "manifest_seen": len(results), "results": results}
             joined = reconcile(k2_report, k3_report)
             self.assertEqual(joined["matched_by_digest"], 2)
             self.assertEqual(joined["matched_manifest_seen"], 2)
@@ -69,7 +70,7 @@ class SharedSnapshotTests(unittest.TestCase):
                      "production_playlist_modified": False}
         k3_report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
                      "source": k3.SOURCE, "source_sha256": digest,
-                     "source_bytes": 9, "results": [],
+                     "source_bytes": 9, "probed": 0, "manifest_seen": 0, "results": [],
                      "production_playlist_modified": False}
         with self.assertRaisesRegex(ValueError, "byte counts"):
             reconcile(k2_report, k3_report)

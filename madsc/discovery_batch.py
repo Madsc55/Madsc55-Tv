@@ -59,7 +59,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 pending = None
                 errors.append({"line": number, "reason": "duplicate_metadata_attribute"})
                 continue
-            attrs = dict(attr_pairs)
+            attrs = {name.casefold(): value for name, value in attr_pairs}
             pending = {"name": title.strip(), "tvg_id": attrs.get("tvg-id", ""),
                        "tvg_logo": attrs.get("tvg-logo", ""),
                        "group_title": attrs.get("group-title", "")}

@@ -121,15 +121,18 @@
     "stage": "K4",
     "title": "Bağımsız harici yedek oluşturma kanıtı",
     "status": "pending",
-    "evidence": []
+    "evidence": [],
+    "note": "No independent external-storage write receipt or provider object identity yet; local sandbox backup is not external-backup acceptance. Requirements recorded in docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md."
   },
   {
     "id": "K4-16",
     "stage": "K4",
     "title": "Harici yedekten gerçek izole geri yükleme",
     "status": "in_progress",
-    "evidence": [],
-    "note": "İzole restore fixture'ı mevcut; haricî kaynaktan gerçek restore yok."
+    "evidence": [
+      "docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md: explicit external-source and isolated-restore acceptance requirements; planning evidence only"
+    ],
+    "note": "Sandbox restore fixture exists; real restore from external storage remains unproven. The K4 evidence-gate document defines required provider receipt, run IDs, per-file SHA-256, independent restore tree, negative controls, and reviewer evidence; this documentation does not change acceptance."
   },
   {
     "id": "K4-17",

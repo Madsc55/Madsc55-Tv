@@ -7,6 +7,7 @@ the recorded head SHA.  It never dispatches Actions or downloads artifacts.
 from urllib.parse import quote
 
 from madsc.github_history_client import github_json
+from madsc.legacy_pair_artifact import verify_failure_diagnostic_artifact
 from madsc.legacy_parity_evidence import compare_provenance_bound_pair
 
 
@@ -85,6 +86,23 @@ def fetch_verified_execution_origin(origin, *, token=None, fetch=github_json):
     encoded_path = quote(workflow_path, safe="/")
     workflow = fetch(f"{base}/contents/{encoded_path}?ref={quote(head_sha)}", token=token)
     return verify_execution_origin_api(origin, run, artifacts, workflow)
+
+
+def verify_failure_diagnostic_evidence(origin, diagnostic_artifact, archive, *,
+                                       token=None, fetch=github_json):
+    """Verify diagnostic bytes and their separate GitHub artifact origin."""
+    byte_proof = verify_failure_diagnostic_artifact(
+        origin, diagnostic_artifact, archive)
+    diagnostic_origin = {**origin, "artifact": dict(diagnostic_artifact)}
+    api_proof = fetch_verified_execution_origin(
+        diagnostic_origin, token=token, fetch=fetch)
+    return {
+        **byte_proof,
+        "diagnostic_artifact_api_origin_verified": True,
+        "diagnostic_api_origin": api_proof,
+        "behavioral_parity_accepted": False,
+        "production_ready": False,
+    }
 
 
 def verify_provenance_pair_api(legacy_path, legacy_blob_sha, pair, *, token=None,

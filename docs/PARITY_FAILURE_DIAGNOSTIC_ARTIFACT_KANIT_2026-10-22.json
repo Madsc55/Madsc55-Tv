@@ -1,0 +1,48 @@
+{
+  "schema": "madsc-parity-failure-diagnostic-artifact-evidence-v1",
+  "date": "2026-10-22",
+  "base_main_sha": "aba04b0bb1487191ce286fb1b472349232ab0625",
+  "scope": "bounded failure diagnostic ZIP bytes, outcome semantics and separate GitHub artifact origin verification",
+  "tests": {
+    "focused_command": "python -m unittest -v tests.test_failure_diagnostic_artifact tests.test_legacy_pair_artifact tests.test_github_legacy_pair_client tests.test_parity_workflow_preflight",
+    "focused_discovered": 19,
+    "focused_passed": true,
+    "full_command": "python -m madsc.offline_gate",
+    "full_discovered": 638,
+    "full_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "legacy_behavioral_parity_accepted": 0,
+    "runtime_security_accepted": 0,
+    "task_acceptance": 0
+  },
+  "changes": [
+    "The failure diagnostic ZIP must contain exactly stdout, stderr, process outcome and execution snapshot members.",
+    "Every diagnostic member is bounded, non-symlink, non-encrypted and protected against duplicate, unexpected and high-ratio archive entries.",
+    "The three measured member SHA256 values must match the failure snapshot outputs and the snapshot must match the declared replacement execution.",
+    "The process outcome consumer, exit_code and timed_out fields must match the snapshot and cannot claim acceptance or production readiness.",
+    "The diagnostic artifact has a separate id and exact workflow-specific name and is checked through the existing GitHub run, artifact and workflow-blob origin verifier."
+  ],
+  "resolved_test_failure": {
+    "failed": 4,
+    "cause": "The first focused rerun called compare_execution_snapshots without importing it in legacy_pair_artifact.py, causing four NameError results.",
+    "resolution": "The missing import was added; the same 19 focused tests and the full 638-test offline gate then passed."
+  },
+  "source_sha256": {
+    "madsc/legacy_pair_artifact.py": "b7121061e95d1e8772f38e4b6838622bac961b1aad9e5889ead10084fc05cf94",
+    "madsc/github_legacy_pair_client.py": "5f196aa0ba956d18d342a16700f94d07061a3c8d39cf5e8cb116e1d1e48b79be",
+    "tests/test_failure_diagnostic_artifact.py": "9e76a840506bf8d9a85dba0189787bd2ac9cdba70e2f3f21a0180f5b9f9a87dd"
+  },
+  "constraints": {
+    "github_actions_started": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_written": false,
+    "fixture_is_acceptance": false
+  },
+  "blockers": [
+    "No real opt-in K1, K4 or K5 diagnostic artifact has been produced by an authorized GitHub Actions run.",
+    "The read-only legacy 92 workflow side still lacks the v1 same-input manifest and independent artifact pair required for behavioral comparison.",
+    "Hard job cancellation, runner loss and platform timeout cannot guarantee artifact upload."
+  ]
+}

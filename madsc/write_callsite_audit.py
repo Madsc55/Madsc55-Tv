@@ -235,8 +235,10 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
     # Reject linked directories before enumerating sources, rather than
     # silently declaring an incomplete inventory.
     for entry in root.rglob("*"):
-        if entry.is_symlink() and entry.is_dir():
-            raise ValueError(f"Symlinked source directory requires review: {entry.relative_to(root)}")
+        if entry.is_symlink():
+            # is_dir() is False for dangling links; they must not disappear
+            # from a supposedly complete source inventory either.
+            raise ValueError(f"Symlinked source entry requires review: {entry.relative_to(root)}")
     files = sorted(root.rglob("*.py"))
     rows = []
     scanned = []

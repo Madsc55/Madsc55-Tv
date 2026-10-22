@@ -38,6 +38,13 @@ def reconcile(k2: dict, k3: dict) -> dict:
         raise ValueError("Invalid K2 candidate digest")
     if len(hashes) != len(set(hashes)):
         raise ValueError("Duplicate K2 candidate digest")
+    if len(hashes) > 100 or len(results) > 12:
+        raise ValueError("K2/K3 evidence exceeds pilot limits")
+    if type(k3.get("probed")) is not int or k3["probed"] != len(results):
+        raise ValueError("K3 reported probe count does not match results")
+    if type(k3.get("manifest_seen")) is not int or k3["manifest_seen"] != sum(
+            item.get("hls_manifest_seen") is True for item in results if isinstance(item, dict)):
+        raise ValueError("K3 reported manifest count does not match results")
     observed = []
     for item in results:
         if not isinstance(item, dict):

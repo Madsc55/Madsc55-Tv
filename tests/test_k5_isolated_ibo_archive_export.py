@@ -56,10 +56,9 @@ class K5IboArchiveExportTests(unittest.TestCase):
     def test_partial_serialization_failure_rolls_back(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"
-            def partial_failure(obj, handle, **kwargs):
-                handle.write('{"partial":')
+            def serialization_failure(obj, **kwargs):
                 raise OSError("fixture serialization failure")
-            with patch("madsc.isolated_ibo_archive_export.json.dump", side_effect=partial_failure):
+            with patch("madsc.isolated_ibo_archive_export.json.dumps", side_effect=serialization_failure):
                 with self.assertRaisesRegex(OSError, "fixture serialization failure"):
                     export_6115_archive_manifest(self.urls, destination)
             self.assertFalse(destination.exists())

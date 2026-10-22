@@ -95,6 +95,17 @@ class ChannelTests(unittest.TestCase):
         self.assertEqual(report["preliminary_window_passes"], 0)
         self.assertFalse(report["production_change_allowed"])
 
+
+    def test_continuity_rejects_oversized_samples(self):
+        from madsc.channel_test import evaluate_three_stage_continuity
+        with self.assertRaises(ValueError):
+            evaluate_three_stage_continuity([{}] * 20001)
+
+    def test_batch_rejects_invalid_measurement_digest(self):
+        from madsc.channel_test import summarize_candidate_continuity
+        with self.assertRaises(ValueError):
+            summarize_candidate_continuity(["a" * 64], {"invalid": []})
+
     def test_batch_continuity_rejects_orphan_fingerprint(self):
         from madsc.channel_test import summarize_candidate_continuity
         with self.assertRaises(ValueError):

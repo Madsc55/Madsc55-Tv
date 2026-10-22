@@ -88,6 +88,14 @@ class GuardTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     validate_manifest({"production_write": False, "output_paths": paths})
 
+    def test_nfkc_normalization_precedes_protected_path_check(self):
+        for path in ("artifacts/ｐｌａｙｌｉｓｔ.m3u8",
+                     "artifacts/ｘｍｌｔｖ.xml",
+                     "ａｒｔｉｆａｃｔｓ/report.json"):
+            with self.subTest(path=path):
+                with self.assertRaises(ValueError):
+                    validate_manifest({"production_write": False, "output_paths": [path]})
+
     def test_manifest_input_and_path_hardening(self):
         for manifest in (None, [], {"production_write": False, "output_paths": ["artifacts/a", "artifacts/a"]}):
             with self.subTest(manifest=manifest):

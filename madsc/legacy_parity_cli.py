@@ -8,8 +8,26 @@ from madsc.write_path_audit import enforce_local_output_path
 
 
 def load_json(path):
-    with Path(path).open("r", encoding="utf-8") as stream:
-        return json.load(stream, object_pairs_hook=unique_pairs)
+    """Read bounded, regular, single-link evidence without following symlinks."""
+    import os
+    import stat
+    path = Path(path)
+    if path.is_symlink() or any(parent.is_symlink() for parent in path.absolute().parents):
+        raise ValueError("Symlink input evidence is forbidden")
+    if not hasattr(os, "O_NOFOLLOW"):
+        raise ValueError("Safe evidence reading requires O_NOFOLLOW")
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0))
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > 16 * 1024 * 1024:
+            raise ValueError("Invalid evidence input file")
+        with os.fdopen(fd, "rb", closefd=False) as stream:
+            raw = stream.read(16 * 1024 * 1024 + 1)
+        if len(raw) > 16 * 1024 * 1024:
+            raise ValueError("Evidence input exceeds 16 MiB")
+    finally:
+        os.close(fd)
+    return json.loads(raw.decode("utf-8"), object_pairs_hook=unique_pairs)
 
 
 def unique_pairs(pairs):

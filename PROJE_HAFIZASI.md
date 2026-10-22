@@ -2622,3 +2622,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `madsc/discovery_batch.py` içindeki `parse_m3u`, kanal adı bulunmayan, boş başlıklı veya metadata tırnakları dengesiz olan EXTINF satırından sonra ilişkili URL'yi tüketerek gereksiz `orphan_url` tanısını önlüyor; sonraki geçerli kanal korunuyor. Kod `aa6cba2913d5a1c5ad368a4a7c6c76d10197149a`.
 - Regresyon testi `1d222cde478962ccef73ec361834660dfc1af87f`. Tam bu commit'in Actions çalıştırması `39869955026` eşzamanlı push nedeniyle `cancelled`; başarılı test sonucu olarak sayma. Daha yeni soy commitlerin CI sonucu ayrıca kontrol edilmeli.
 - K2-08 görev defterinde `in_progress` kaldı. Gerçek kaynak/lisans, günlük keşif eşdeğerliği ve bağımsız artifact SHA kabulü açık; üretim playlist/EPG/favoriler/yedekler ve eski depo değiştirilmedi.
+
+
+## 23 Ekim 2026 — K2 UTF-8 giriş doğrulaması; IBO cihaz testi en son
+- Kullanıcı kararı: IBO Player Pro cihaz doğrulaması **en sona bırakılacak**. Gerçek cihaz denemesini kullanıcı yapıp sonucu bildirecek; o zamana kadar `ibo_device_verified=false` ve cihaz kabulü açık kalır.
+- Önceki K2 `orphan_url` regresyon düzeltmesi, daha sonraki commit `21410cc6101ca5fad8b4500a74e9c955f23e9ecd` için başarılı Actions `39870201168` ile doğrulandı.
+- K2 `parse_m3u`, metin veya kaynak etiketindeki Unicode surrogate karakterleri UTF-8 olarak kodlanamayacağı için girişte `ValueError` ile reddediyor (`6ac6eef780e14559854740539d96cdd8dfd39912`). `parse_m3u`, `corroborate_sources` ve `build_m3u8_preview` yolları için regresyon testi eklendi (`a794aeca142581eb5a70db90ec4ae51d5a1b63de`). Bu yeni testin CI sonucu ilk kontrolde bekliyordu (`39870351806`), başarı iddia edilmez.
+- Gerçek kaynak/lisans, günlük keşif eşdeğerliği, gerçek artifact köken/SHA ve K2-08 gerçek kaynak davranış kabulü açık. Korunan üretim verisi değiştirilmedi.

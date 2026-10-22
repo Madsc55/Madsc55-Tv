@@ -831,3 +831,11 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Düzeltme: `_ScopeCalls.visit_Lambda` artık lambda gövdesini dış kapsam için ziyaret etmiyor. Yinelenen visitor tanımı da kaldırıldı.
 - Kod commitleri: `9bf7f9926ddab13c3bebc4ca108e8d2908ef8a6b`, temizlik `bbb975e650456ae29d89d5c66dbc4ce51e7c2f6a`. İlgili test `3c3610e35eef121b6e876eccd62c50754fd7ee6e`.
 - Dosyalar GitHub'da tekrar okundu; bu son düzeltme için Actions/check sonucu doğrulanmadı ve test çalıştırılmış sayılmıyor. K1 kabulü 0/26, üretim hazır değil. Üretim dosyaları değişmedi.
+
+## 23 Ekim 2026 — K5 devamı: Batch 13–15
+- Raporlar: `docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_13_2026-10-23.md`, `...BATCH_14...`, `...BATCH_15...`.
+- Batch 13: birleşik keşif workflow'u `contents: write` + `actions: write` ile raporları main'e gönderiyor ve ardından eski üç aşamalı workflow'u dispatch edebiliyor; cuma ana liste/EPG raporu sorunlarda uyarı verir ama sağlık kabul kapısı değildir; dokümantasyon kontrolü yalnız sabit string smoke testidir.
+- Batch 14: geniş kaynak taraması yine geniş yazma izinleriyle rapor commit/push ve sonrasında workflow dispatch yapabiliyor; hızlı ön kontrol static-only ve cutover'ı reddediyor; `madsc-ibo-3-5281.yml` gerçek kanal ayırma yapmayan placeholder.
+- Batch 15: üç IBO yedek sınıflandırma script'i `CALISANLAR.m3u` dosyasını runner çalışma alanında yeniden yazıyor. Protected-write gate tüm `.m3u` değişikliklerini reddettiği için bu staged main-list değişiklikleri kaynakta fail-closed bloklanmalı. Sınıflandırma kullanıcı bildirimi; doğrulanmış playback/kimlik değil. Üretim değişikliği veya workflow dispatch yapılmadı.
+- Kümülatif K5 statik kaynak incelemesi 45/92, 47 kaldı; behavioral parity 0/92, runtime security 0/26, ana görev 0/22. Statik incelemeler kabul sayacı artırmaz. K5 export regression Actions run `39868459061`, SHA `a0469c34ec9a8642acffdddfbda55dadf9d39aba`, `success` (yalnız offline suite).
+- Korunan playlist/EPG/favoriler/logolar/yedekler/cihazlar değiştirilmedi; eski `Madsc55/madsc-tv` deposu salt okunur; PR #71 merge edilmedi. Sonraki adım: Batch 16'dan üç sabit kaynak workflow incelemesi daha ve yeni depoda isolated archive regression fixture'ları; her yeni CI sonucunu tam SHA ile doğrula.

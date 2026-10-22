@@ -363,3 +363,10 @@ class ChannelTests(unittest.TestCase):
         samples = [{**base, "observed_at": stamp} for stamp in stamps]
         with self.assertRaisesRegex(ValueError, "Future-dated"):
             evaluate_three_stage_continuity(samples)
+
+    def test_probe_rejects_impossible_http_status_codes(self):
+        base = {"url_sha256": "a" * 64, "video": True,
+                "audio": True, "duration_seconds": 40}
+        for status in (0, 99, 600, 999, -1):
+            with self.subTest(status=status), self.assertRaises(ValueError):
+                evaluate_probe({**base, "http_status": status})

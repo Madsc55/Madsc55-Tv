@@ -45,3 +45,7 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 
 - b5018df: Aynı UTC anını farklı saat dilimiyle tekrarlayan ölçümler ve karışık kanal SHA256 aşamaları için regresyon testleri eklendi.
 - GitHub Actions geçmişinde son görülen offline test çalışması 39800980208 başarılı, fakat HEAD 3edbb863 sürümüne ait; yeni K3 commit'lerinin doğrulaması değildir. Yeni Actions çalışması tetiklenmedi.
+
+- 31b2fb2: K3 CLI kanıt dosyalarında üst dizin symlink reddi ve 16 MiB+1 baytla sınırlı okuma eklendi.
+- b014281: CLI dosya okuma korumaları için regresyon sözleşmesi testi eklendi.
+- Bu son değişikliklerin unittest sonucu henüz doğrulanmadı; gerçek canlı ölçüm veya üretim onayı yapılmadı.

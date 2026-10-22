@@ -93,3 +93,7 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - acb6cf1: CLI testinde eski load() beklentisi load_evidence() olarak düzeltildi.
 - c8d4e62: Ayrılan load_evidence işlevine eksik json ve _unique_json_pairs importları eklendi; olası NameError giderildi.
 - Bu düzeltmeler kaynak incelemesiyle belirlendi; güncel test çalıştırması henüz doğrulanmadı.
+
+## K3 sözdizimi onarımı
+- b2a0c20: load_evidence ayrıştırma işleminden kalan yanlış girintiler düzeltildi; modülün import edilmesini engelleyen kaynak hatası giderildi.
+- Bu değişiklik GitHub'a yazıldı ancak mevcut HEAD üzerinde Python unittest/CI sonucu henüz alınmadı.

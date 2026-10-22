@@ -114,6 +114,8 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
                     dynamic_mode = False
                 else:
                     dynamic_mode = True
+        if any(kw.arg is None for kw in node.keywords):
+            dynamic_mode = True
         if isinstance(mode, str) and any(flag in mode for flag in "wax+"):
             return True, name
         # A nonliteral positional or keyword mode can enable writing.

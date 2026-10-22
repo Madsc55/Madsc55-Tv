@@ -210,6 +210,25 @@ def create():
                          "tempfile.SpooledTemporaryFile [temporary filesystem creation requires review]")
         self.assertTrue(rows[0]["review_required"])
 
+    def test_definition_time_mutations_are_inventoried_in_enclosing_scope(self):
+        source = """
+@decorator(path.write_text("decorator"))
+def outer(value=path.write_bytes(b"default")):
+    return value
+
+class Example(factory(path.mkdir())):
+    pass
+
+async def async_outer(value=path.touch()):
+    return value
+"""
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["path.write_text", "path.write_bytes",
+                          "path.mkdir", "path.touch"])
+        self.assertTrue(all(row["scope"] == "<module>" for row in rows))
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_tree_scan_rejects_symlinked_python_source(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

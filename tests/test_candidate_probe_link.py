@@ -111,6 +111,26 @@ class CandidateProbeLinkTests(unittest.TestCase):
         self.assertFalse(result["production_change_allowed"])
 
 
+    def test_continuity_rejects_tampered_envelope(self):
+        run, sha, digest = "123", "b" * 40, "a" * 64
+        envelope = pack({"candidates": [{"url_sha256": digest}]}, run, sha)
+        forged = {**envelope, "digest": "0" * 64}
+        with self.assertRaisesRegex(ValueError, "Evidence digest mismatch"):
+            link_candidate_continuity(forged, {}, run, sha)
+        with self.assertRaises(ValueError):
+            link_candidate_continuity(envelope, {}, run, "c" * 40)
+
+    def test_continuity_rejects_mismatched_sample_fingerprint(self):
+        run, sha, digest = "123", "b" * 40, "a" * 64
+        envelope = pack({"candidates": [{"url_sha256": digest}]}, run, sha)
+        base = {"url_sha256": "c" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": stamp} for stamp in (
+            "2026-10-21T10:00:00Z", "2026-10-21T16:00:00Z",
+            "2026-10-21T22:00:00Z")]
+        with self.assertRaisesRegex(ValueError, "Continuity fingerprint mismatch"):
+            link_candidate_continuity(envelope, {digest: samples}, run, sha)
+
     def test_invalid_k2_candidate_fingerprints_fail_closed(self):
         run, sha = "123", "b" * 40
         for candidate in ({"url_sha256": "A" * 64}, {"url_sha256": "a" * 63},

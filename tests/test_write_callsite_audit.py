@@ -49,7 +49,7 @@ def mutate(path, folder):
     folder.unlink()
 '''
         rows = scan_python_source(source)
-        self.assertEqual([row["api"] for row in rows], ["open", "mkdir", "unlink"])
+        self.assertEqual([row["api"] for row in rows], ["open", "folder.mkdir", "folder.unlink"])
         self.assertEqual([row["line"] for row in rows], [3, 4, 5])
 
     def test_pathlib_open_with_write_mode_is_detected(self):

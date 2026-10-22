@@ -37,9 +37,10 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
                     or not isinstance(run.get("head_branch"), str)
                     or run.get("status") not in ("completed", "in_progress", "queued", "requested", "waiting", "pending")):
                 raise ValueError("Invalid or duplicate failure history run")
-            if (run["status"] == "completed" and run.get("conclusion") not in
-                    ("success", "failure", "timed_out", "cancelled", "skipped",
-                     "neutral", "action_required", "stale")):
+            if (run["status"] == "completed" and
+                    (type(run.get("conclusion")) is not str or run["conclusion"] not in
+                     ("success", "failure", "timed_out", "cancelled", "skipped",
+                      "neutral", "action_required", "stale"))):
                 raise ValueError("Completed run has invalid conclusion")
             if run["status"] != "completed" and run.get("conclusion") is not None:
                 raise ValueError("Active run has premature conclusion")

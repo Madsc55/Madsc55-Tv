@@ -39,9 +39,9 @@ class CandidateProbeLinkTests(unittest.TestCase):
 
     def test_duplicate_candidate_fingerprint_rejected(self):
         digest = "a" * 64
-        envelope = pack({"candidates": [{"url_sha256": digest}, {"url_sha256": digest}]}, "1", "b" * 40)
-        with self.assertRaisesRegex(ValueError, "Duplicate K2 candidate"):
-            link_candidate_probes(envelope, [], "1", "b" * 40)
+        with self.assertRaisesRegex(ValueError, "Duplicate candidate fingerprint"):
+            pack({"candidates": [{"url_sha256": digest}, {"url_sha256": digest}]},
+                 "1", "b" * 40)
 
     def test_duplicate_probe_records_rejected(self):
         digest = "a" * 64
@@ -92,10 +92,9 @@ class CandidateProbeLinkTests(unittest.TestCase):
 
     def test_continuity_link_rejects_duplicate_candidates(self):
         run, sha = "123", "b" * 40
-        envelope = pack({"candidates": [{"url_sha256": "a" * 64},
-                                         {"url_sha256": "a" * 64}]}, run, sha)
-        with self.assertRaises(ValueError):
-            link_candidate_continuity(envelope, {}, run, sha)
+        with self.assertRaisesRegex(ValueError, "Duplicate candidate fingerprint"):
+            pack({"candidates": [{"url_sha256": "a" * 64},
+                                 {"url_sha256": "a" * 64}]}, run, sha)
 
 
     def test_continuity_rejects_clustered_samples_despite_long_total_window(self):

@@ -5,6 +5,8 @@ Evidence never implies playback, device approval or production readiness.
 from __future__ import annotations
 import argparse
 import json
+import os
+import stat
 from pathlib import Path
 
 
@@ -74,10 +76,24 @@ def main(argv=None) -> int:
     parser.add_argument("k2", type=Path)
     parser.add_argument("k3", type=Path)
     args = parser.parse_args(argv)
-    for path in (args.k2, args.k3):
-        if path.is_symlink() or not path.is_file() or path.stat().st_size > 2_000_000:
+    def read_report(path: Path) -> dict:
+        flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+        if path.is_symlink():
             raise ValueError("Invalid evidence input")
-    result = reconcile(json.loads(args.k2.read_text()), json.loads(args.k3.read_text()))
+        descriptor = os.open(path, flags)
+        try:
+            metadata = os.fstat(descriptor)
+            if not stat.S_ISREG(metadata.st_mode) or metadata.st_size > 2_000_000:
+                raise ValueError("Invalid evidence input")
+            with os.fdopen(descriptor, "rb", closefd=False) as handle:
+                data = handle.read(2_000_001)
+            if len(data) > 2_000_000:
+                raise ValueError("Evidence input exceeds byte limit")
+            return json.loads(data)
+        finally:
+            os.close(descriptor)
+
+    result = reconcile(read_report(args.k2), read_report(args.k3))
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     return 0
 

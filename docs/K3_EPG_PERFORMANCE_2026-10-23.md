@@ -1,3 +1,13 @@
+## K3 XMLTV güvenlik kontrolü — 2026-10-23
+- IBO Player Pro cihaz doğrulaması en son kullanıcı tarafından yapılacak; bu aşamada cihaz testini isteme.
+- Run `39870824796`, tested commit `0e2d5e6844f93f4e04970f9992018d00ad593eaf`: **success**, `tests_discovered=1056`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`; 18 EPG testini içerir.
+- `2c5de38eb36ebaefe6160535392e900a3003a4a3`: XMLTV içeriğinde `<!DOCTYPE` veya `<!ENTITY` bildirimi tespit edilirse XML ayrıştırılmadan önce reddedilir.
+- `1cd621757362cd39b34b21d45b022e536ed112ed`: DTD/entity içeren XMLTV için regresyon testi; EPG test sayısı 19.
+- **19. test için henüz başarılı CI sonucu teyit edilmedi**. Gerçek HLS video/ses, 6+ saat süreklilik, Pages/XMLTV ve logolar açık; cihaz doğrulaması en son.
+- Üretim playlist, XMLTV, logo, favori, yedek, arşiv, cihaz verileri değiştirilmedi.
+
+---
+
 ## Yeni K3 kontrolü — 2026-10-23
 - Kullanıcı IBO Player Pro cihaz testini en sona bıraktı; cihaz kabulünü yalnız kullanıcı deneyecek ve sonucunu bildirecek.
 - `39870641608` GitHub Actions run'u **success**; tested commit `36155ba9f7b9e2684d86f79a666cdeeb82d87fee`, `tests_discovered=1049`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`. Bu commit 17 EPG testini ve lineer duplicate-ID kontrolünü içeriyor.

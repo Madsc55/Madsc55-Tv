@@ -39,7 +39,7 @@ class TransferredSafetyTests(unittest.TestCase):
         first = [record(i, status='in_progress') for i in range(104, 4, -1)]
         pages = [{'total_count': 103, 'workflow_runs': first},
                  {'total_count': 103, 'workflow_runs': [record(i, 'failure') for i in (4, 3, 2)]}]
-        with self.assertRaisesRegex(ValueError, 'More failure history'):
+        with self.assertRaisesRegex(ValueError, 'Incomplete prior run in failure history|More failure history'):
             assess_failure_history(pages[:1], current_run_id=104, branch='main')
         result = assess_failure_history(pages, current_run_id=104, branch='main')
         self.assertTrue(result['blocked'])

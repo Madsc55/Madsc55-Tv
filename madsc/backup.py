@@ -130,6 +130,11 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
 def verify_manifest(root: Path, manifest: dict) -> bool:
     if not isinstance(manifest, dict) or not isinstance(manifest.get("entries"), list):
         raise ValueError("Invalid backup manifest")
+    # A local checksum manifest is never evidence of external backup or
+    # production restoration. Do not accept forged positive attestations.
+    for claim in ("external_backup_verified", "restore_verified", "production_writes"):
+        if claim in manifest and manifest[claim] is not False:
+            raise ValueError("Unverified backup manifest attestation")
     if any(not isinstance(entry, dict) or not isinstance(entry.get("path"), str)
            or type(entry.get("bytes")) is not int or entry["bytes"] < 0
            or not isinstance(entry.get("sha256"), str) or len(entry["sha256"]) != 64

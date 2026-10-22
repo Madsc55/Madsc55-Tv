@@ -183,3 +183,12 @@ class EpgTests(unittest.TestCase):
             e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "NUL byte"):
                 check_epg_mapping(p, e)
+
+    def test_xmltv_doctype_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<!DOCTYPE tv [<!ENTITY channel "trt1.tr">]><tv><channel id="&channel;"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "DTD and entity"):
+                check_epg_mapping(p, e)

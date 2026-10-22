@@ -81,6 +81,20 @@ class LegacyPairArtifactTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify_parity_artifact_manifest(self.pair["legacy"], archive)
 
+    def test_encrypted_manifest_entry_rejected_before_read(self):
+        origin = self.pair["legacy"]
+        archive = bytearray(archive_for(origin))
+        # Set the ZIP encryption bit in both local and central directory headers.
+        for signature, offset in ((b"PK\\x03\\x04", 6), (b"PK\\x01\\x02", 8)):
+            start = archive.find(signature)
+            self.assertGreaterEqual(start, 0)
+            flags = int.from_bytes(archive[start + offset:start + offset + 2], "little")
+            archive[start + offset:start + offset + 2] = (flags | 1).to_bytes(2, "little")
+        archive = bytes(archive)
+        origin["artifact"]["sha256"] = hashlib.sha256(archive).hexdigest()
+        with self.assertRaisesRegex(ValueError, "Unsafe artifact manifest entry"):
+            verify_parity_artifact_manifest(origin, archive)
+
     def test_duplicate_json_keys_are_rejected(self):
         origin = self.pair["legacy"]
         raw = ('{"schema":"madsc-parity-artifact-v1","schema":"duplicate",'

@@ -254,6 +254,15 @@ def mutate(path, fd):
                           "os.utime", "Path.chmod", "Path.lchmod"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_tree_scan_rejects_symlinked_root(self):
+        with tempfile.TemporaryDirectory() as temp:
+            parent = Path(temp)
+            actual = parent / "actual"
+            actual.mkdir()
+            (parent / "linked_root").symlink_to(actual, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "Symlinked source root"):
+                scan_python_tree(parent / "linked_root")
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

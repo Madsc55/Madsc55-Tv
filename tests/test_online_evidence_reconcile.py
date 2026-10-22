@@ -64,6 +64,16 @@ class OnlineEvidenceReconcileTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 main([str(link), str(k3_path)])
 
+    def test_cli_rejects_missing_evidence(self):
+        from madsc.online_evidence_reconcile import main
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            missing = root / "missing.json"
+            k3_path = root / "k3.json"
+            k3_path.write_text(json.dumps(self.k3), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Invalid evidence input"):
+                main([str(missing), str(k3_path)])
+
     def test_cli_rejects_oversized_evidence(self):
         from madsc.online_evidence_reconcile import main
         with TemporaryDirectory() as directory:

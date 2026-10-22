@@ -14,6 +14,10 @@ def _prepare_fixture_root(root: Path) -> Path:
     if root.is_symlink() or not root.is_dir() or root.resolve(strict=True) != root:
         raise PermissionError("Fixture root and its ancestors must be real, nonsymlink directories")
     reports = root / "reports"
+    # Check the allowed JSON sidecar path before creating the reports directory.
+    # The fixed M3U8 companion uses its separate exact-name local exception.
+    report_path = reports / "turkish-tv-batch-validation.json"
+    enforce_write_paths([report_path.relative_to(report_path.anchor).as_posix()])
     if reports.is_symlink() or (reports.exists() and not reports.is_dir()):
         raise PermissionError("Invalid reports directory")
     if not reports.exists():

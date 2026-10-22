@@ -179,7 +179,7 @@ class BackupManifestHardeningTests(unittest.TestCase):
             (root / "safe.txt").write_bytes(b"safe")
             for parts in (("..", "outside.txt"), (".", "safe.txt"),
                           ("", "safe.txt"), ("nested/sibling",),
-                          ("nested\\\\sibling",), ("safe.txt", "..")):
+                          ("nested\\sibling",), ("safe.txt", "..")):
                 with self.subTest(parts=parts):
                     with self.assertRaisesRegex(ValueError, "Unsafe backup source path"):
                         module._open_relative_file_nofollow(root, parts)

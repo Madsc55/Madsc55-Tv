@@ -94,3 +94,9 @@ K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen
 - `madsc/backup.py` commit `1fdd72097cfcd84e135d34012362cf391d607106`: `snapshot_manifest` 10.000'i aşan farklı kaynak adı ve 4.096 karakteri aşan kaynak yolunu dosya içeriği okumadan reddediyor. Bu sınırlar mevcut `verify_manifest` sınırlarıyla tutarlı.
 - `tests/test_backup_manifest_hardening.py` commit `3979d18da782cfdd73c92174a8f0058f93051ea7`: 10.001 benzersiz isim ve 4.097 karakterli yol için kaynak açılmadan reddetme testi, normal manifest için olumlu kontrol eklendi.
 - İlgili Actions `39871237418` son kontrol sırasında `pending`; test henüz doğrulanmış yeşil değil. Harici yedek makbuzu, bağımsız dış geri yükleme ve üretim kabulü hâlâ açık. IBO Player Pro cihaz doğrulaması en son kullanıcı tarafından yapılacak.
+
+
+## 23 Ekim 2026 — Manifest modu sahteciliğini engelleme
+- `madsc/backup.py` commit `98080a00db69e66d2c0c9fe559ce3e46ffa96776`: `verify_manifest`, varsa `mode` alanını yalnız `manifest_only` kabul ediyor.
+- `tests/test_backup_manifest_hardening.py` commit `2669060015c9f3f7cf670783761df6dbd71d7006`: sahte `external`, `verified_restore` ve geçersiz türleri reddetme regresyonu.
+- Actions `39871548601` son kontrolde `queued`; yeni test için başarılı CI kanıtı henüz yok. Harici yedek ve bağımsız restore kabulü açık; IBO Player Pro gerçek cihaz testi en son kullanıcı tarafından yapılacak.

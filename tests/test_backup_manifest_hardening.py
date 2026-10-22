@@ -269,6 +269,23 @@ class BackupManifestHardeningTests(unittest.TestCase):
                 verify_manifest(root, forged)
             self.assertTrue(verify_manifest(root, original))
 
+    def test_manifest_rejects_controls_and_surrogates_before_file_reads(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_bytes(b"fixture")
+            original = snapshot_manifest(root, ["good.txt"])
+            for invalid in ("good\\x00.txt", "good\\n.txt", "good\\x7f.txt",
+                            "good\\ud800.txt", "good\\udfff.txt"):
+                with self.subTest(invalid=repr(invalid)):
+                    forged = dict(original)
+                    forged["entries"] = [{**original["entries"][0], "path": invalid}]
+                    with patch("madsc.backup.snapshot_manifest",
+                               side_effect=AssertionError("unexpected filesystem access")):
+                        with self.assertRaisesRegex(ValueError, "Unsafe backup manifest path"):
+                            verify_manifest(root, forged)
+            self.assertTrue(verify_manifest(root, original))
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

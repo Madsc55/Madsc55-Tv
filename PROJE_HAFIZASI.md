@@ -2485,3 +2485,11 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Üç guard-before-mkdir sınırı CI ile doğrulandı: `madsc/core.py::run`, `madsc/isolated_playlist_bundle.py::export_isolated_previews`, `madsc/fixture_report_writer.py::_prepare_fixture_root`.
 - K5: `docs/legacy-workflow-contracts/madsc-documentation-check.json` kaynak workflow'un tetikleyici/izin/komutlarını belgeliyor; yeni replacement ve karşılaştırmalı execution kanıtı yok.
 - Açık sayaçlar: K1 0/26, eski workflow eşdeğerliği 0/92, ana görevler 0/22. CI üretim onayı değildir; canlı veriler korunuyor ve PR #71 birleştirilmedi.
+
+
+## 23 Ekim 2026 — K3 XMLTV ve K4 güvenli sandbox kopyalama güncellemesi
+- K3: `madsc/trial_epg_matching.py` ve `madsc/epg.py` XMLTV root/empty ID/duplicate channel ID durumlarını fail-closed işler. Kod `939267f`, `9a1ebdc`; test `f48f04f`, `420d15d`. Run `39865719002` başarılı: 982 test ve beşli offline gate başarılı. Bu cihaz/IBO kabulü değildir.
+- K4: `madsc/backup.py` sandbox destination nested directories/files artık descriptor-relative, O_NOFOLLOW/O_DIRECTORY ve O_EXCL ile açılır/oluşturulur; oluşturulan root inode'u tekrar kontrol edilir. Kod `e32d522`; testler `a5590c3`, `949c239`, `a4c70f7`. Run `39865918685` SHA `949c239`: 989 test başarılı. Run `39865933101` SHA `a4c70f7`: 990 test başarılı; five-stage fixture ve all offline gates true; AST taraması 97 dosya/75 aday. `production_ready=false`.
+- Run `39863892845` halen doğrulanamadı: GitHub API 404. Son erişilebilir run `39865933101`.
+- Gerçek K3 HLS/ffprobe ve IBO Player Pro workflow'ları manuel dispatch gerektiriyor; bu bağlantıda dispatch aracı yok, bu yüzden çalıştırılmış gibi gösterme. Harici backup/restore da henüz kanıtlanmadı. Üretim IPTV/EPG/favori/yedeklere yazma yok.
+- Kabul sayaçları aynı: 0/92 legacy, 0/26 runtime security, 0/22 ana görev. PR #71 ve eski depo değişmedi.

@@ -125,8 +125,7 @@ def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
     if destination.exists():
         raise FileExistsError("Refusing to overwrite existing report evidence")
     enforce_local_output_path(destination, allowed_root=root)
-    with destination.open("x", encoding="utf-8") as handle:
-        handle.write(content)
+    _exclusive_bytes(destination, content.encode("utf-8"))
     return {"isolated_report_written": True, "production_write_allowed": False}
 
 

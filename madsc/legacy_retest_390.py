@@ -6,6 +6,8 @@ import subprocess
 
 
 def parse_entries(content):
+    if not isinstance(content, str) or len(content) > 8_000_000:
+        raise ValueError("Invalid candidate playlist")
     entries = []
     meta = None
     for line in content.lstrip("\ufeff").splitlines():
@@ -43,7 +45,10 @@ def check_stream(item, runner=subprocess.run):
 
 
 def evaluate_entries(entries, runner=subprocess.run, workers=10):
-    if type(workers) is not int or not 1 <= workers <= 12:
+    if (not isinstance(entries, list) or len(entries) > 20000
+            or any(not isinstance(item, (tuple, list)) or len(item) != 2
+                   or any(not isinstance(value, str) for value in item) for item in entries)
+            or type(workers) is not int or not 1 <= workers <= 12):
         raise ValueError("Invalid worker count")
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
         results = list(pool.map(lambda item: check_stream(item, runner), entries))

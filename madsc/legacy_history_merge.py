@@ -16,6 +16,16 @@ def stamp(value):
 
 
 def merge_pair(base, incoming):
+    if not isinstance(base, dict) or not isinstance(incoming, dict):
+        raise ValueError("Invalid history bundles")
+    for bundle in (base, incoming):
+        for filename, key in FILES.items():
+            if (not isinstance(bundle.get(filename), dict)
+                    or not isinstance(bundle[filename].get(key), dict)
+                    or len(bundle[filename][key]) > 20000
+                    or any(not isinstance(k, str) or not isinstance(v, dict)
+                           for k, v in bundle[filename][key].items())):
+                raise ValueError("Invalid history records")
     merged = json.loads(json.dumps(base))
     changes = {}
     for filename, key in FILES.items():

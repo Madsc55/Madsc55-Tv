@@ -45,7 +45,7 @@ def load_historical_categories(path: str | Path = SNAPSHOT) -> dict:
 
 def route_discovered_candidates(candidates: list[dict]) -> dict:
     """New channels stay in an isolated queue, not in protected YENILER or YEDEKLER lists."""
-    if not isinstance(candidates, list):
+    if not isinstance(candidates, list) or len(candidates) > 20000:
         raise ValueError("Candidates must be a list")
     queued = []
     for index, candidate in enumerate(candidates):

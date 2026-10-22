@@ -5,6 +5,11 @@ SHA = re.compile(r"[0-9a-f]{40}\Z")
 
 
 def select_ancestor_run(runs, *, repo, branch, current_run, ancestor_check, workflows):
+    if (not isinstance(runs, list) or len(runs) > 20000
+            or not isinstance(workflows, (list, tuple, set))
+            or len(workflows) > 200 or any(not isinstance(x, str) for x in workflows)
+            or any(not isinstance(run, dict) for run in runs)):
+        raise ValueError("Invalid source run inventory")
     eligible = []
     allowed = {".github/workflows/" + name for name in workflows}
     for run in runs:
@@ -28,6 +33,10 @@ def select_ancestor_run(runs, *, repo, branch, current_run, ancestor_check, work
 
 
 def verify_artifact_provenance(source, artifacts, artifact_name):
+    if (not isinstance(source, dict) or not isinstance(artifacts, list)
+            or len(artifacts) > 20000 or any(not isinstance(item, dict) for item in artifacts)
+            or not isinstance(artifact_name, str) or not artifact_name):
+        raise ValueError("Invalid artifact provenance")
     matches = [item for item in artifacts if item.get("name") == artifact_name]
     if len(matches) != 1 or matches[0].get("expired"):
         raise ValueError("Artifact missing, duplicate or expired")

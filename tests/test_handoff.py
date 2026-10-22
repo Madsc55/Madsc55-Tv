@@ -408,3 +408,11 @@ class HandoffTests(unittest.TestCase):
                     normalize_url(value)
         self.assertEqual(normalize_url("https://example.org/ok"),
                          "https://example.org/ok")
+
+    def test_discovery_rejects_nonprintable_url_hosts(self):
+        from madsc.discovery import normalize_url
+        for url in ("https://exa" + chr(0x7f) + "mple.org/a",
+                    "https://exa" + chr(0x1f) + "mple.org/a"):
+            with self.subTest(url=repr(url)):
+                with self.assertRaises(ValueError):
+                    normalize_url(url)

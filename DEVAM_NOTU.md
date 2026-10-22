@@ -590,3 +590,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - K1–K5 offline zinciri tanımlı, fakat gerçek üretim kabulü açık: eski 92 workflow 0/92 bağımsız davranışsal kabul, 26 runtime güvenlik kuralı 0/26, 22 ana görev 0/22. K3'te gerçek ffprobe/IBO Player Pro cihaz/EPG kanıtı, K4'te harici backup ve izole restore makbuzu eksik.
 - Korunan canlı IPTV listeleri, EPG/XMLTV, FAVORILER, YENILER, YEDEKLER, HEPSI, logolar ve üretim arşivleri değişmedi. Eski depoya ve PR #71'e dokunulmadı.
 - Sıradaki işlem: GitHub'daki mevcut yeni CI sonucunu salt okunur kontrol etmek; K4 3 yeni testi ve tam offline regresyonu koşup başarısızlıkları düzeltmek (Actions tetiklemek için ayrıca açık onay gerek). Sonra K3 cihaz ve K4 harici kaynak kabul kanıtlarını gerçek dış kaynaklardan toplamak.
+
+## 23 Ekim 2026 — K3/K4 sertleştirmesi CI ile doğrulandı
+- GitHub Actions run 39864090233, SHA bcd8245a143abb5a24fc05b244127f28876c2ce2, offline-tests job conclusion success. Log: 979 test keşfi; tests_passed=true; five_stage_fixture_gate_passed=true; all_offline_gates_passed=true; production_acceptance=false.
+- Bu SHA K4 kaynak dosyalarını nofollow/dirfd ile açan kod commitlerini 46d04cfe0f59c6a11951862190d4aba3ec0dc26a ve e293a0d62211a8cc96a6cccc82cbb350fd19371e, ayrıca üç negatif test commitini 02e70ee607855111ba10bdcbed61a1d4c37afa0d içerir. Bir önceki notta bekleyen bu K4 offline regresyon kanıtı artık başarılı koşuyla doğrulanmıştır.
+- Bu CI otomatik olarak diğer K1 çalışmasının commit'iyle oluştu; bu sohbet yeni Actions dispatch/rerun çağrısı yapmadı. Korunan IPTV/EPG/favoriler/yedekler/arşivler değiştirilmedi.
+- Sonraki kabul ayrı kalır: 92 davranışsal workflow 0/92, 26 runtime güvenlik kuralı 0/26, 22 ana görev 0/22. K3 IBO cihaz/EPG gerçek doğrulaması, K4 harici yedek ve restore makbuzu açık.

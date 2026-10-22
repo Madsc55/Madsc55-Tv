@@ -55,3 +55,12 @@ class ArtifactHandoffTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Too many"):
                     pack(discovery, "123", "a" * 40)
 
+
+    def test_invalid_alternative_container_rejected(self):
+        for alternatives in (None, 5, "not-a-list", {"url_sha256": "a" * 64}):
+            with self.subTest(alternatives=alternatives):
+                discovery = dict(self.discovery)
+                discovery["alternatives"] = alternatives
+                with self.assertRaisesRegex(ValueError, "Invalid alternative evidence"):
+                    pack(discovery, "123", "a" * 40)
+

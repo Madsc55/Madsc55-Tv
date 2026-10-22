@@ -45,7 +45,9 @@ class MappingReviewTests(unittest.TestCase):
 
     def review(self, rows):
         with (patch("madsc.legacy_replacement_mapping_review.reconcile_legacy_scope",
-                    return_value={"legacy_paths": [LEGACY]}),
+                    return_value={"legacy_paths": [LEGACY],
+                                  "legacy_behavior_workflows": 1,
+                                  "source_workflows": 1}),
               patch("madsc.legacy_replacement_mapping_review.validate_inventory",
                     return_value=self.inventory["workflows"]),
               patch("madsc.legacy_replacement_mapping_review.audit_parity_workflow_readiness",
@@ -165,6 +167,14 @@ class MappingReviewTests(unittest.TestCase):
             "isolated_file_contract_incomplete")
         result = self.review([self.row])
         self.assertEqual(result["static_contract_candidates"], 0)
+
+    def test_legacy_scope_count_mismatch_rejected(self):
+        with patch("madsc.legacy_replacement_mapping_review.reconcile_legacy_scope",
+                   return_value={"legacy_paths": [LEGACY],
+                                 "legacy_behavior_workflows": 92,
+                                 "source_workflows": 99}):
+            with self.assertRaises(ValueError):
+                review_replacement_mappings(self.inventory, [self.row], ".")
 
     def test_missing_rationale_rejected(self):
         with self.assertRaises(ValueError):

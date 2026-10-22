@@ -229,7 +229,10 @@ def scan_python_source(source: str, path: str = "<memory>") -> list[dict]:
 
 def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
     """Scan repository Python sources without executing or changing any file."""
-    root = Path(root).resolve(strict=True)
+    requested_root = Path(root)
+    if requested_root.is_symlink():
+        raise ValueError("Symlinked source root requires review")
+    root = requested_root.resolve(strict=True)
     if not root.is_dir():
         raise ValueError("Source root must be a directory")
     # pathlib.rglob("*.py") may not descend into symlinked directories.

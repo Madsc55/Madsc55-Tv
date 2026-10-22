@@ -196,6 +196,18 @@ def mutate(fd):
                           "os.pwritev", "os.ftruncate"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_spooled_tempfile_creation_is_reviewed(self):
+        source = '''
+import tempfile
+def create():
+    tempfile.SpooledTemporaryFile(max_size=1)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["api"],
+                         "tempfile.SpooledTemporaryFile [temporary filesystem creation requires review]")
+        self.assertTrue(rows[0]["review_required"])
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

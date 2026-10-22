@@ -35,7 +35,10 @@ class K4EvidenceTests(unittest.TestCase):
                        {"production_writes": True},
                        {"external_storage_proven": True},
                        {"files_checked": 0},
-                       {"files_checked": True}):
+                       {"files_checked": True},
+                       {"production_ready": True},
+                       {"production_ready": 1},
+                       {"category": "k3"}):
             with self.subTest(change=change):
                 with self.assertRaises(ValueError):
                     verify({**GOOD, **change})

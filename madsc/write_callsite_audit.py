@@ -161,6 +161,10 @@ class _Scanner(ast.NodeVisitor):
                 "api": api,
                 "recognized_guard_precedes_write_in_scope": earlier,
                 "guard_lines_in_scope": guards,
+                # Lexical order is not proof that a guard dominates a write:
+                # it may live in a conditional, loop, or exception branch.
+                "guard_control_flow_verified": False,
+                "guard_assessment": "lexical-only; manual control-flow review required",
                 "review_required": True,
             })
         self.generic_visit(node)

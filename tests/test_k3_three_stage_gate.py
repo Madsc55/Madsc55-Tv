@@ -62,5 +62,15 @@ class K3ThreeStageGateTests(unittest.TestCase):
                 sample("2026-10-20T12:00:00Z")])
 
 
+    def test_noncanonical_utc_timestamps_rejected(self):
+        for timestamp in ("2026-10-20 00:00:00Z", "2026-10-20T00:00:00+00:00",
+                          "2026-10-20T00:00Z", "2026-10-20T00:00:00.1234567Z"):
+            with self.subTest(timestamp=timestamp), self.assertRaisesRegex(ValueError, "RFC3339"):
+                assess_three_stage_probes([
+                    sample(timestamp),
+                    sample("2026-10-20T06:00:00Z"),
+                    sample("2026-10-20T12:00:00Z")])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -20,15 +20,9 @@ def candidates():
         raw = r.read(300_001)
     if len(raw) > 300_000 or not raw.startswith(b"#EXTM3U"):
         raise ValueError("Unexpected source size or format")
-    name = None
-    for line in raw.decode("utf-8-sig").splitlines()[1:]:
-        line = line.strip()
-        if line.startswith("#EXTINF:"):
-            name = line.split(",", 1)[-1].strip() if "," in line else None
-        elif line and not line.startswith("#"):
-            if name:
-                yield name, line
-            name = None
+    from madsc.remote_m3u_parser import parse_remote_m3u
+    for row in parse_remote_m3u(raw, max_bytes=300_000):
+        yield row["name"], row["url"]
 
 
 def probe(url):

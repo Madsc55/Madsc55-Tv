@@ -19,19 +19,8 @@ def run():
         data = response.read(MAX_BYTES + 1)
     if len(data) > MAX_BYTES:
         raise ValueError("Source exceeds pilot byte limit")
-    text = data.decode("utf-8-sig")
-    if not text.lstrip().startswith("#EXTM3U"):
-        raise ValueError("Invalid source M3U")
-    rows = []
-    name = None
-    for line in text.splitlines()[1:]:
-        line = line.strip()
-        if line.startswith("#EXTINF:"):
-            name = line.split(",", 1)[-1].strip() if "," in line else None
-        elif line and not line.startswith("#"):
-            if name:
-                rows.append({"name": name, "url": line})
-            name = None
+    from madsc.remote_m3u_parser import parse_remote_m3u
+    rows = parse_remote_m3u(data, max_bytes=MAX_BYTES)
     selected = rows[:MAX_ROWS]
     result = classify_candidates(selected)
     report = {

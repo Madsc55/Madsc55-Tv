@@ -105,3 +105,7 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 ## K3 modül yükleme testi
 - 16f0d0a: Python AST sözdizimi ve load_evidence import regresyon testi eklendi.
 - Güncel testler henüz çalıştırılmadı; önceki not yazımı paralel commit nedeniyle 409 ile başarısız olmuştu.
+
+## K3 bozuk kanıt girdisi testleri
+- fe48436: Eksik JSON ve geçersiz UTF-8 içeren kanıt dosyalarının reddedilmesini kontrol eden test eklendi.
+- Güncel testler henüz çalıştırılmadı; üretim kanalları ve canlı veri değiştirilmedi.

@@ -33,7 +33,7 @@ class PlaylistPreviewTests(unittest.TestCase):
 
     def test_playlist_preview_rejects_invalid_channel_name_delimiters(self):
         rows = [{"name": "A", "url": "https://example.org/a"}]
-        for name in ("", None, 42, "A\\nB"):
+        for name in ("", None, 42, "A\nB"):
             catalog = prepare_channel_catalog(rows)
             catalog["channels"][0]["display_name"] = name
             with self.subTest(name=name), self.assertRaises(ValueError):
@@ -80,7 +80,7 @@ class PlaylistPreviewTests(unittest.TestCase):
         from madsc.playlist_previews import preview_imported_m3u
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory) / "source.m3u"
-            source.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="trt" group-title="Haber",TRT 1, HD\\nhttps://example.org/a\\n#EXTINF:-1,Yabancı\\nhttps://example.org/b\\n#EXTINF:-1,Tekrar\\nhttps://example.org/a\\n', encoding="utf-8")
+            source.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt" group-title="Haber",TRT 1, HD\nhttps://example.org/a\n#EXTINF:-1,Yabancı\nhttps://example.org/b\n#EXTINF:-1,Tekrar\nhttps://example.org/a\n', encoding="utf-8")
             original = source.read_bytes()
             result = preview_imported_m3u(source)
             self.assertEqual(result["source_channel_count"], 3)
@@ -100,7 +100,7 @@ class PlaylistPreviewTests(unittest.TestCase):
         from madsc.playlist_previews import main
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory) / "input.m3u8"
-            source.write_text("#EXTM3U\\n#EXTINF:-1,One\\nhttps://example.org/a\\n", encoding="utf-8")
+            source.write_text("#EXTM3U\n#EXTINF:-1,One\nhttps://example.org/a\n", encoding="utf-8")
             before = source.read_bytes()
             out = io.StringIO()
             with contextlib.redirect_stdout(out):

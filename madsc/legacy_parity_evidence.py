@@ -303,6 +303,12 @@ SCOPE_EXCLUSIONS = frozenset({
 
 def reconcile_legacy_scope(inventory):
     rows = validate_inventory(inventory)
+    if inventory.get("source_commit") != "ca374df3b9585c0d76a078db9536150ebbc260f7":
+        raise ValueError("Legacy scope must use the pinned source commit")
+    if any(not _lower_hex(row.get("git_blob_sha"), 40)
+           or type(row.get("bytes")) is not int or row["bytes"] <= 0
+           for row in rows):
+        raise ValueError("Legacy scope requires source blob identities and sizes")
     by_name = {row["path"].rsplit("/", 1)[1]: row["path"] for row in rows}
     if not SCOPE_EXCLUSIONS <= by_name.keys():
         raise ValueError("Missing legacy scope exclusions")

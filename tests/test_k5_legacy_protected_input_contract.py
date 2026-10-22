@@ -54,5 +54,29 @@ class K5LegacyProtectedInputContractTests(unittest.TestCase):
             self.assertEqual(source.read_bytes(), original)
 
 
+    def test_manifest_serialization_failure_cleans_partial_bundle_and_preserves_source(self):
+        from unittest.mock import patch
+        import madsc.isolated_playlist_bundle as bundle
+
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "CALISANLAR.m3u"
+            original = b"#EXTM3U\\n#EXTINF:-1,Protected\\nhttps://example.org/live\\n"
+            source.write_bytes(original)
+            destination = root / "isolated-drafts"
+
+            def partial_then_fail(manifest, handle, **kwargs):
+                handle.write('{"partial":')
+                raise OSError("simulated manifest serialization failure")
+
+            with patch.object(bundle.json, "dump", side_effect=partial_then_fail):
+                with self.assertRaisesRegex(OSError, "simulated manifest serialization failure"):
+                    export_isolated_previews(source, destination)
+
+            self.assertEqual(source.read_bytes(), original)
+            self.assertFalse(destination.exists(),
+                             "failed export must not leave a partial evidence directory")
+
+
 if __name__ == "__main__":
     unittest.main()

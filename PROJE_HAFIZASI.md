@@ -2087,3 +2087,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - `GET /repos/Madsc55/Madsc55-Tv/actions/runs/39686179902/artifacts?per_page=100` API yanıtı incelendi: `total_count=26`, yanıt içinde 26 artifact; tamamının `expired=false`, `digest=sha256:<64 hex>`, `workflow_run.id=39686179902` ve `workflow_run.head_sha=d5d61317806dc7a00b762567695286e3779ceaf1` alanları mevcut. K1–K5 batch, `madsc-offline-five-stage-gate`, `madsc-five-system-acceptance`, `madsc-regression-diagnostics` gibi artifact adları görülüyor.
 - Bu, yalnız **GitHub API metadata envanteridir**; artifact ZIP baytları indirilmedi ve SHA256 içerik doğrulaması yapılmadı. `d5d6131` önceki kod sürümüdür, yeni commitlerin test kanıtı değildir. Tek başına eski/yeni gerçek davranış eşdeğerliği veya production kabulü vermez. 0/92, 0/26, 0/22 değişmedi.
 - İleri adım: 26 artifact metadata kaydını güvenilir arşiv baytları ve workflow blob SHA ile bağla; eski ve yeni depoda bağımsız aynı-girdi execution çiftlerini karşılaştır. Mevcut izinlerle Actions dispatch/rerun yapılmadı.
+
+
+## 22 Ekim 2026 — Gerçek GitHub artifact repository/branch metadata bağlama
+- Salt okunur GitHub API ile `39686179902` run incelendi: run `repository.id` ve `head_repository.id` `1424911544`, branch `main`; artifact `workflow_run` metadata alanlarında aynı `repository_id`, `head_repository_id`, `head_branch` var. Eski repo Actions geçmişi de salt okunur listelendi; hiçbir run tetiklenmedi.
+- `0b53efc06fb8eb82d09717627acfbd367a758b16`: `madsc/github_legacy_pair_client.py` artifact workflow_run içinde bu ek alanlar varsa run repository nesneleri ve declared branch ile çapraz doğrular. Alanlar eksikse önceki uyumluluk korunur; mevcut ve uyuşmaz alan reddedilir.
+- `7eaa4346a54c62a15c80ccdf81a17e66a342924a`: üç negatif repo/branch uyuşmazlık alt senaryosu ve bir pozitif metadata eşleşme testi eklendi. Bu testler henüz tam checkout ortamında çalıştırılmadı; CI izinsiz başlatılmadı.
+- Eski/yeni gerçek artifact ZIP baytları ve aynı-input snapshot çiftleri henüz doğrulanmadı. Kabul **0/92, 0/26, 0/22**. Korunan IPTV verilerine ve eski depoya yazılmadı.

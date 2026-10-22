@@ -75,6 +75,29 @@ class DiagnosticApiFailClosedTests(unittest.TestCase):
                     origin, artifact, archive, fetch=fetch)
 
 
+    def test_run_head_repository_branch_event_and_workflow_mismatch_rejected(self):
+        for mismatch in ("head_repository", "head_branch", "event", "path"):
+            origin, artifact, archive = evidence()
+            original_fetch, _ = fetcher(origin, artifact)
+
+            def fetch(url, token=None):
+                data = original_fetch(url, token=token)
+                if "/actions/runs/" in url and "/artifacts?" not in url:
+                    if mismatch == "head_repository":
+                        data["head_repository"]["full_name"] = "other/repo"
+                    elif mismatch == "head_branch":
+                        data["head_branch"] = "untrusted"
+                    elif mismatch == "event":
+                        data["event"] = "workflow_dispatch"
+                    elif mismatch == "path":
+                        data["path"] = ".github/workflows/other.yml"
+                return data
+
+            with self.subTest(mismatch=mismatch), self.assertRaises(ValueError):
+                verify_failure_diagnostic_evidence(
+                    origin, artifact, archive, fetch=fetch)
+
+
 
 if __name__ == "__main__":
     unittest.main()

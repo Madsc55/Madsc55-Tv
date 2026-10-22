@@ -60,8 +60,10 @@ def consolidation_plan(root: Path) -> dict:
         raise ValueError("Workflow directory missing or unsafe")
     files = {p.name for p in folder.iterdir() if p.is_file() and p.suffix in (".yml", ".yaml")}
     expected = set(AUXILIARY) | set(MAIN.values())
-    if files != expected:
-        raise ValueError("Workflow inventory drift: " + repr(sorted(files ^ expected)))
+    # Offline CI is an additional diagnostic workflow, not a production stage.
+    permitted_diagnostics = {"madsc-unit-tests.yml"}
+    if not expected <= files or files - expected - permitted_diagnostics:
+        raise ValueError("Workflow inventory drift: " + repr(sorted((expected - files) | (files - expected - permitted_diagnostics))))
     for stage, name in MAIN.items():
         path = folder / name
         if path.is_symlink():

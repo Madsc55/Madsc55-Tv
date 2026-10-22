@@ -55,8 +55,11 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
         raw = run.get("created_at")
         if not isinstance(raw, str):
             raise ValueError("Missing failure history timestamp")
-        value = datetime.fromisoformat(raw.replace("Z", "+00:00"))
-        if value.tzinfo is None:
+        try:
+            value = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        except ValueError as exc:
+            raise ValueError("Invalid failure history timestamp") from exc
+        if value.tzinfo is None or value.utcoffset() is None:
             raise ValueError("Ambiguous failure history timestamp")
         return value
 

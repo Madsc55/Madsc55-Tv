@@ -235,7 +235,8 @@ class LegacyScopeTests(unittest.TestCase):
                              "docs/LEGACY_SOURCE_SCOPE.json").read_text())
         path = reconcile_legacy_scope(source)["legacy_paths"][0]
         blob = next(row["git_blob_sha"] for row in source["workflows"] if row["path"] == path)
-        for field, value in (("event", []), ("conclusion", {}), ("workflow_path", [])):
+        for field, value in (("event", []), ("conclusion", {}), ("workflow_path", []),
+                             ("repository", []), ("branch", {})):
             pair = self.provenance_pair(path, blob)
             pair["replacement"][field] = value
             with self.subTest(field=field), self.assertRaises(ValueError):

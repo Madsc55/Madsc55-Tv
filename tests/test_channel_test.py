@@ -92,6 +92,32 @@ class ChannelTests(unittest.TestCase):
                     [{**base, "observed_at": stamp} for stamp in valid[1:]]
                 )
 
+    def test_continuity_normalizes_timezone_offsets(self):
+        from madsc.channel_test import evaluate_three_stage_continuity
+        base = {"url_sha256": "a" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": stamp} for stamp in (
+            "2026-10-21T12:00:00+02:00",
+            "2026-10-21T16:00:00Z",
+            "2026-10-22T00:00:00+02:00")]
+        result = evaluate_three_stage_continuity(samples)
+        self.assertTrue(result["three_stage_six_hour_preliminary"])
+        self.assertEqual(result["elapsed_hours"], 12)
+
+    def test_continuity_middle_stage_failure_requires_review(self):
+        from madsc.channel_test import evaluate_three_stage_continuity
+        base = {"url_sha256": "a" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        samples = [{**base, "observed_at": stamp} for stamp in (
+            "2026-10-21T10:00:00Z",
+            "2026-10-21T16:00:00Z",
+            "2026-10-21T22:00:00Z")]
+        samples[1]["http_status"] = 503
+        result = evaluate_three_stage_continuity(samples)
+        self.assertEqual(result["preliminary_passes"], 2)
+        self.assertFalse(result["three_stage_six_hour_preliminary"])
+        self.assertFalse(result["production_change_allowed"])
+
     def test_three_stage_rejects_short_or_out_of_order_evidence(self):
         from madsc.channel_test import evaluate_three_stage_continuity
         base = {"url_sha256": "a" * 64, "http_status": 200,

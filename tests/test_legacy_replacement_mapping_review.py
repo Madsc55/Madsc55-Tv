@@ -119,6 +119,25 @@ class MappingReviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.review([self.row])
 
+    def test_malformed_binding_values_fail_closed(self):
+        for field in ("input_path", "output_label", "output_path"):
+            for bad in (None, [], {}, 0, False, "   "):
+                with self.subTest(field=field, bad=bad):
+                    original = self.readiness["rows"][0]["declared_file_binding"][field]
+                    self.readiness["rows"][0]["declared_file_binding"][field] = bad
+                    try:
+                        with self.assertRaises(ValueError):
+                            self.review([self.row])
+                    finally:
+                        self.readiness["rows"][0]["declared_file_binding"][field] = original
+
+    def test_malformed_mapping_roles_fail_closed(self):
+        for field in ("input_role", "output_role", "review_rationale"):
+            for bad in (None, [], {}, False, "   ", "x" * 1025):
+                with self.subTest(field=field, bad=bad):
+                    with self.assertRaises(ValueError):
+                        self.review([{**self.row, field: bad}])
+
     def test_empty_binding_path_rejected(self):
         self.readiness["rows"][0]["declared_file_binding"]["input_path"] = ""
         with self.assertRaises(ValueError):

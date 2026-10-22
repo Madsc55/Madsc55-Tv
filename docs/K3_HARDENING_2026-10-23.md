@@ -1,3 +1,12 @@
+## Ek regresyon — EXTINF görünen adından sahte tvg-id alınması
+- Yeni hata: önceki regex tüm `#EXTINF` satırını taradığı için virgülden sonraki görünen kanal adı `News tvg-id="trt1.tr"` ise bu metin gerçek nitelikmiş gibi algılanabilirdi.
+- Düzeltme commit'i: `2e1ee36d2f54b9d8a6b72eb43751ab4e60224c9f`; artık regex yalnız virgülden önceki nitelik bölümünde çalışıyor.
+- Yeni regresyon commit'i: `7ced6524a166c76c1994a7f0d79574c519c7dc17`; `tests/test_epg.py` şu anda 15 EPG test fonksiyonu içeriyor.
+- Bu iki yeni commit'in Actions koşuları, diğer K1–K5 commit'leri aynı concurrency grubuna gönderildiği için iptal edildi. Son başarılı ortak offline koşu #99 / `39868459061` 1016 testi geçmişti ve önceki 14 EPG testini içeriyordu; yeni 15. test henüz başarılı CI ile doğrulanmış değil.
+- Doğru sonraki adım: yeni kod commit'leri durduğunda tek bir güncel main commit'i için offline suite'in tamamlanmasını beklemek/doğrulamak.
+
+---
+
 ## CI yeniden doğrulaması — 2026-10-23
 - Güncel ortak offline suite, run #99 / ID `39868459061`, commit `a0469c34ec9a8642acffdddfbda55dadf9d39aba`: **completed / success**.
 - Log: `tests_discovered=1016`, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`; K3 fixture category success.

@@ -60,6 +60,22 @@ class SharedSnapshotTests(unittest.TestCase):
             self.assertFalse(joined["audio_video_verified"])
             self.assertFalse(joined["device_verified"])
 
+    def test_reconciliation_rejects_mismatched_source_byte_counts(self):
+        from madsc.online_evidence_reconcile import reconcile
+        digest = hashlib.sha256(b"#EXTM3U\n").hexdigest()
+        k2_report = {"mode": "REAL_REMOTE_SOURCE_READ_ONLY",
+                     "source": k2.SOURCE, "source_sha256": digest,
+                     "source_bytes": 8, "candidate_hashes": [],
+                     "production_playlist_modified": False}
+        k3_report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
+                     "source": k3.SOURCE, "source_sha256": digest,
+                     "source_bytes": 9, "results": [],
+                     "production_playlist_modified": False}
+        with self.assertRaisesRegex(ValueError, "byte counts"):
+            reconcile(k2_report, k3_report)
+        k3_report["source_bytes"] = 8
+        self.assertEqual(reconcile(k2_report, k3_report)["matched_by_digest"], 0)
+
     def test_rejects_oversize_shared_snapshot(self):
         with TemporaryDirectory() as d:
             snapshot = Path(d) / "oversize.m3u"

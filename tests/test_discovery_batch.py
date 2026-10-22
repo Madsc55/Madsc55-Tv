@@ -391,6 +391,23 @@ class DiscoveryBatchTests(unittest.TestCase):
                     corroborate_sources({"source": feed}, known_urls={known})
 
 
+
+    def test_known_channels_cannot_manufacture_independent_feed_votes(self):
+        shared = '#EXTINF:-1 tvg-id="new.channel",New\nhttps://example.org/new\n'
+        known_a = '#EXTINF:-1 tvg-id="old.one",Old\nhttps://example.org/old-one\n'
+        known_b = '#EXTINF:-1 tvg-id="old.two",Old\nhttps://example.org/old-two\n'
+        result = corroborate_sources(
+            {"feed-a": "#EXTM3U\n" + shared + known_a,
+             "feed-b": "#EXTM3U\n" + shared + known_b},
+            known_urls={"https://example.org/old-one", "https://example.org/old-two"},
+        )
+        self.assertEqual(len(result["identity_candidates"]), 1)
+        row = result["identity_candidates"][0]
+        self.assertEqual(row["source_count"], 1)
+        self.assertEqual(row["sources"], ["feed-a", "feed-b"])
+        self.assertEqual(row["url_variants"], 1)
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

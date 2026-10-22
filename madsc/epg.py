@@ -23,6 +23,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     ids = []
     for line in text.splitlines():
         if line.startswith("#EXTINF:"):
+            if "," not in line:
+                raise ValueError("Malformed M3U EXTINF: missing channel-name separator")
             attribute_text = line.split(",", 1)[0]
             matches = TVG_ID.findall(attribute_text)
             if len(matches) > 1:

@@ -26,6 +26,8 @@ def normalize_url(value: str) -> str:
 def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) -> dict:
     if known_urls is not None and not isinstance(known_urls, (set, frozenset)):
         raise ValueError("Known URLs must be a set")
+    if known_urls is not None and len(known_urls) > 20000:
+        raise ValueError("Too many known URLs")
     known = {normalize_url(x) for x in (known_urls or set())}
     seen = set()
     accepted, duplicates, rejected, alternatives = [], [], [], []
@@ -34,8 +36,6 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
         raise ValueError("Candidate rows must be a list")
     if len(rows) > 20000:
         raise ValueError("Too many candidate rows")
-    if len(known) > 20000:
-        raise ValueError("Too many known URLs")
     for index, item in enumerate(rows):
         try:
             url = normalize_url(item["url"])

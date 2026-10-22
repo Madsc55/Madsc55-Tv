@@ -319,3 +319,18 @@ class HandoffTests(unittest.TestCase):
                 else:
                     assess_candidates(discovery, {}, ibo_results=huge)
 
+
+    def test_direct_evidence_rejects_malformed_fingerprint_keys(self):
+        discovery = {"candidates": []}
+        for key in (None, 123, "a" * 63, "A" * 64, "g" * 64):
+            for kind in ("probe", "continuity", "ibo"):
+                with self.subTest(key=repr(key), kind=kind):
+                    evidence = {key: {}}
+                    with self.assertRaisesRegex(ValueError, "Invalid evidence fingerprint key"):
+                        if kind == "probe":
+                            assess_candidates(discovery, evidence)
+                        elif kind == "continuity":
+                            assess_candidates(discovery, {}, continuity_samples=evidence)
+                        else:
+                            assess_candidates(discovery, {}, ibo_results=evidence)
+

@@ -1,3 +1,12 @@
+# EN YENİ K3 GÜNCELLEMESİ — EPG regresyon CI başarılı (2026-10-23)
+- EPG test fixture'larının ilk üçündeki çift kaçışlı satır sonları düzeltildi; test sayısı 9'dan 12'ye çıkarıldı. Eklenenler: geçersiz M3U başlığı, yanlış XMLTV kökü ve bozuk XML.
+- GitHub Actions Offline Unit Tests run #89, ID `39867960099`, tested commit `474dc5392538fa1bca9d920d9285aa4dc9af1696`: **completed / success**. Log açıkça `tests_passed=true`, `all_offline_gates_passed=true`, K1-K5 isolated fixture kategorilerinin tamamı success gösteriyor. Bu production certification değildir.
+- Kanıt raporu: `docs/K3_CI_PASS_2026-10-23.md`; görev defteri güncellemesi commit `09caa5c4375f7ab1b1768f889bab867bdbcd0b35`.
+- K3 gerçek yayın/ffprobe, 6+ saat bağımsız süreklilik, IBO cihaz EPG kabulü, Pages canlı EPG zinciri ve logo doğrulaması hâlâ açık. Üretim playlist/EPG/cihaz verilerine dokunulmadı; PR #71 merge edilmedi; sayaçlar 0/92, 0/26, 0/22.
+- Sonraki adım: CI başarısını yalnız offline kanıt olarak tut; K3-13 canlı zincir ve cihaz kabulünü doğrulanana kadar in_progress bırak.
+
+---
+
 # EN YENİ K3 GÜNCELLEMESİ — EPG test fixture hatası düzeltildi (2026-10-23)
 - `tests/test_epg.py` içindeki ilk üç M3U fixture'ında çift kaçışlı satır sonları düzeltildi; artık gerçek `\n` kaçışları kullanılıyor.
 - Test düzeltme commit'i: `ef728129a4bdebf8b1a84c14bb6cae806d2cf267`; rapor güncellemesi: `1d92ad7902bb589e8eb4776cb1caa86c9895e505`; görev defteri güncellemesi: `8222a57863020218e9e4017f5993a41d9d059539`.

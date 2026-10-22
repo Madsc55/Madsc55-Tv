@@ -133,6 +133,8 @@ def verify_failure_diagnostic_artifact(origin, diagnostic_artifact, archive):
     if (not isinstance(outcome, dict) or set(outcome) != required_outcome
             or outcome.get("schema") != "madsc-local-process-outcome-v1"
             or outcome.get("consumer") != FAILURE_CONSUMERS[workflow]
+            or type(outcome.get("exit_code")) is not int
+            or type(outcome.get("timed_out")) is not bool
             or outcome.get("exit_code") != snapshot.get("exit_code")
             or outcome.get("timed_out") != snapshot.get("timed_out")
             or outcome.get("behavioral_parity_accepted") is not False

@@ -953,3 +953,12 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Açık K2 görevleri: K2-05 gerçek kaynak ve lisans kanıtları; K2-06 günlük keşif / eski workflow davranışsal eşdeğerliği; K2-07 geçmiş artifact SHA-256 köken kanıtları; K2-08 gerçek kaynaklarla alternatif/duplicate kabulü. Gerçek yayıncı bağımsızlığı doğrulanmadı (`source_independence_verified=false`). Hiçbirini kanıtsız kapatma.
 - **IBO Player Pro cihaz doğrulaması kesinlikle en sona bırakıldı**. Kullanıcı cihazda test edip sonucu bildirecek; cihazın doğrulandığı iddia edilmeyecek.
 - Yeni sohbette önce `main` son commit ve Actions sonuçlarını kontrol et, başarısızlık varsa logları inceleyip düzelt, K2 açık işleri tekrarsız sürdür; paralel ajanların commit'lerini ezme.
+
+
+## 23 Ekim 2026 — Yeni sohbete devir: K4 güvenlik çalışmaları ve CI
+- Kullanıcı kararı: **IBO Player Pro cihaz doğrulaması EN SON**; kullanıcı gerçek cihazda deneyecek ve sonucu bildirecek.
+- Doğru yazılabilir depo `Madsc55/Madsc55-Tv`, dal `main`. K1–K5 paralel commit gönderiyor; her yazma öncesi güncel SHA al, 409'da yeniden oku.
+- Bu sohbette K4 kod/test çiftleri: manifest girdi sayısı `49122e9` / `1394bcf`; doğrulama yol uzunluğu `1b40b3d` / `0e80fb7`; snapshot kaynak sınırları `1fdd720` / `3979d18`; sahte mode `98080a0` / `2669060`; tam str mode türü `57d5080` / `791d87c`; kontrol karakteri/surrogate manifest yolu `192ccc0` / `a93c60e`; surrogate kaynak yolu `74ac750` / `2f2d021`; kanonik entry/path türü `a1df955` / `5407bda`. Ayrıntılı kabul dosyası `docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md`.
+- Son kontrol: Actions `39872866083` **success**; eski `39872580939` **failure** (K1 Path.chmod/Path.lchmod adlandırması), `39872833113` **failure** (K5 archive manifest bozuk bayt testi). Bazı bireysel Actions paralel push yüzünden **cancelled**. Yeni sohbette en güncel Actions ve job loglarını yeniden doğrula.
+- Açık kabul: gerçek harici yedekleme ve bağımsız restore kanıtı yok; üretim kabulü ve cihaz testi tamamlanmadı. Korunan IPTV/playlist, XMLTV/EPG, favori, logo, cihaz, yedek ve arşiv dosyalarına dokunma; canlı probe veya üretim yazısı yapma.
+- Devam sırası: güncel HEAD/CI kontrolü, başarısız logların incelenmesi, diğer sohbetlerin işini tekrarlamadan K4 somut hata+regresyon düzeltmesi, CI kanıtı; cihaz doğrulaması en son.

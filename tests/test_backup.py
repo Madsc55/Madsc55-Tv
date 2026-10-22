@@ -600,3 +600,14 @@ class BackupTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 backup_to_new_sandbox(source, destination, ["file.txt"])
             self.assertFalse(destination.exists())
+
+    def test_manifest_uses_open_file_descriptor_metadata(self):
+        import os
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "file.txt").write_bytes(b"descriptor")
+            with patch("madsc.backup.os.fstat", wraps=os.fstat) as checked:
+                result = snapshot_manifest(root, ["file.txt"])
+            self.assertEqual(result["entries"][0]["bytes"], len(b"descriptor"))
+            self.assertTrue(checked.called)

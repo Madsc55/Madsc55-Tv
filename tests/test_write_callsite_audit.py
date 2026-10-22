@@ -59,7 +59,15 @@ def mutate(path):
         handle.write("data")
 '''
         rows = scan_python_source(source)
-        self.assertEqual([row["api"] for row in rows], ["path.open"])
+        self.assertEqual([row["api"] for row in rows], ["path.open", "write"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
+    def test_file_object_write_and_writelines_are_inventory_candidates(self):
+        source = '''\ndef emit(handle):\n    handle.write("one")\n    handle.writelines(["two", "three"])\n'''
+        rows = scan_python_source(source, "file_writer.py")
+        self.assertEqual([row["api"] for row in rows], ["write", "writelines"])
+        self.assertEqual([row["line"] for row in rows], [3, 4])
+        self.assertTrue(all(row["review_required"] for row in rows))
 
     def test_dynamic_positional_and_keyword_open_modes_are_reviewed(self):
         source = '''\ndef mutate(path, requested_mode):\n    open(path, requested_mode)\n    path.open(requested_mode)\n    open(path, mode=requested_mode)\n'''

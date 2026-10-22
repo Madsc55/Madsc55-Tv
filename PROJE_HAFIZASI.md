@@ -2672,3 +2672,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `corroborate_sources` bilinen URL kümesinde satır sonu, tab, NUL ve DEL gibi ASCII kontrol karakterlerini normalizasyondan önce reddeder. Kod `d64a03a07fb03e6af091f2929b7655dae4f9dfed`, regresyon `096eb6038d8cd6fa3fa3f0a75260c2bfab8c631a`.
 - Önceki bilinen URL uzunluk/Unicode regresyonu `a11999c7`, sonraki `c59bd4bf6f86ed0acdf3dc39aeebfbbfebc1de7f` commit'inde başarılı Actions `39871569940` ile kapsandı (compare ahead=1, behind=0). Yeni kontrol karakteri testinin Actions `39871799412` sonucu ilk kontrolde bekliyordu; doğrulanmadan kabul kapatılmaz.
 - K2-05/06/07/08 açık; gerçek kaynak/lisans, günlük keşif ve artifact köken kanıtı bekliyor. IBO Player Pro cihaz testini en son kullanıcı yapacak; üretim playlist, EPG, favori, yedekler değiştirilmedi.
+
+
+## 23 Ekim 2026 — K2 bilinen kanalların kaynak oyu üretmesini önleme
+- `corroborate_sources` feed fingerprint'i artık yalnızca `known_urls` dışındaki yeni kanal envanterinden hesaplar. Aynı yeni kanal, farklı eski/bilinen kanalları barındıran aynalanmış feed'lerde iki bağımsız oy almaz. Kod `f4ef8312ff713d32f729075260d7635d81823f4d`, regresyon `1100410d83c5f47e5947a08fce480705463a1bee`.
+- Önceki kontrol karakteri regresyonu `096eb603` tam SHA için Actions `39871799412` sonucu `success`. Yeni bilinen-kanal kaynak oyu regresyonu Actions `39872022686` ilk kontrolde `pending`, başarılı CI henüz doğrulanmadı.
+- Kaynak envanteri oyları gerçek yayıncı bağımsızlığını/lisansı kanıtlamaz (`source_independence_verified=false`). K2-05/06/07/08 açık. IBO Player Pro cihaz testini en son kullanıcı yapacak; üretim playlist/EPG/favori/yedekleri değiştirilmedi.

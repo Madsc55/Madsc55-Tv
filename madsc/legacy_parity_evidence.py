@@ -2,6 +2,8 @@
 
 Inventory is not proof. Only independently supplied evidence can advance acceptance.
 """
+import hashlib
+import json
 REQUIRED = ("legacy_execution", "new_execution", "input_output_comparison",
             "side_effect_comparison", "failure_timeout_comparison", "reviewer_approval")
 def validate_inventory(inventory):
@@ -249,6 +251,14 @@ def compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair, *,
 def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_root=None):
     """Compare only the pinned 92 behavior workflows with origin-bound pairs."""
     scope = reconcile_legacy_scope(inventory)
+    # Pin the full catalog identities, not merely the syntax of each blob SHA.
+    identities = sorted((row["path"], row["git_blob_sha"], row["bytes"])
+                        for row in inventory["workflows"])
+    catalog_digest = hashlib.sha256(json.dumps(identities, separators=(",", ":")).encode()).hexdigest()
+    if (catalog_digest != "748e033f131269f030206f9c1f70e5a392c8f882dbe93e32e7d6ace575cc643b"
+            or inventory.get("source_tree_sha") != "a88dfa874b6964dcaa4de7a8f9075af2f146acd8"
+            or inventory.get("scope_script_blob_sha") != "9a35ecd797e5c1c595d6796cfffba6cd8a289853"):
+        raise ValueError("Execution pair source catalog differs from pinned identities")
     legacy_paths = set(scope["legacy_paths"])
     if not isinstance(pairs, dict) or set(pairs) - legacy_paths:
         raise ValueError("Unknown or excluded workflow pair")
@@ -261,18 +271,39 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
     }
     rows = []
     for path in scope["legacy_paths"]:
+        preparation = {
+            "source_identity": {
+                "repository": inventory["source_repository"], "branch": inventory["source_branch"],
+                "commit_sha": inventory["source_commit"], "tree_sha": inventory["source_tree_sha"],
+                "workflow_path": path, "workflow_blob_sha": by_path[path]["git_blob_sha"],
+                "workflow_bytes": by_path[path]["bytes"],
+            },
+            "replacement_repository": "Madsc55/Madsc55-Tv", "replacement_branch": "main",
+            "replacement_workflow_choices": sorted(CENTRAL_REPLACEMENT_WORKFLOWS),
+            "replacement_mapping_review_required": True,
+            "same_input_sha256": comparisons.get(path, {}).get("same_input_sha256"),
+            "execution_pair_metadata_supplied": path in comparisons,
+            "independent_evidence_missing": ["legacy_api_origin", "replacement_api_origin",
+                "legacy_artifact_bytes", "replacement_artifact_bytes",
+                "independent_side_effect_observation", "reviewer_approval"],
+            "catalog_identity_bound": True, "production_ready": False,
+        }
         if path not in comparisons:
             rows.append({"path": path, "status": "missing_provenance_bound_pair",
+                         "pair_preparation": preparation,
                          "behavioral_parity_accepted": False})
             continue
         comparison = comparisons[path]
         rows.append({"path": path,
+                     "pair_preparation": preparation,
                      "status": ("snapshot_match_origin_unverified"
                                 if comparison["snapshot_fields_match"]
                                 else "snapshot_mismatch_origin_unverified"),
                      **comparison})
     return {
         "schema": "madsc-legacy-provenance-pairs-v1",
+        "source_catalog_identity_sha256": catalog_digest,
+        "pair_preparation_rows": len(rows),
         "total": 92,
         "pairs_supplied": len(pairs),
         "origin_bindings_complete": sum(

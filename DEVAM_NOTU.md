@@ -1,6 +1,6 @@
 # Madsc55-Tv — DEVAM NOTU
 
-**En yeni kayıt:** Madsc55-Tv K1/K5 aktarım paketi; 670 yerel test ve beş izole kapı başarılı. Kod/kanıt bu notla aynı [skip ci] commitinde. Güncel ayrıntılar dosyanın sonundadır.
+**En yeni kayıt:** 92 davranışın pinned kaynak kimlikli pair hazırlığı; 679 yerel test ve beş izole K kapısı başarılı. Kod/kanıt bu notla aynı [skip ci] commitinde; ayrıntılar dosyanın sonundadır.
 
 ## YENİ SOHBETE GEÇİŞ — önce bu özeti oku (22 Ekim 2026)
 
@@ -321,3 +321,12 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Bu devirden hemen önce HEAD `0bd40de657410a309949626f4f4dfcd61bfd3222` görüldü; diğer sohbet yeni K1–K5 transfer paketi ve 670 test + 5 offline kapı sonucunu not etmiş. Bu sonuç yalnız notta belirtilen kendi kaynak sürümüne aittir, bizim iki yeni commitin tamamını kapsadığı ayrıca kontrol edilmeli.
 - Sonraki iş: güncel HEAD'de `python -m unittest tests.test_diagnostic_outcome_type_confusion tests.test_diagnostic_outcome_strictness tests.test_failure_diagnostic_api_fail_closed -v` ve `python -m madsc.offline_gate` çalıştır; gerçek sonuçları kaydet. Bağımsız legacy/replacement run-artifact aynı input kabul kanıtlarını üretmeden kabul artırma. Tam kabul 0/92, 0/26, 0/22.
 - Actions dispatch/rerun, canlı probing, cihaz testi, merge ve PR #71 merge izinsiz yapılmaz. Korunan yayın/EPG/YEDEKLER/YENİLER/FAVORİLER/logo/arşivlere dokunma. Commitlerde [skip ci] kullan.
+
+## 22 Ekim 2026 — 92 davranış için kaynak kimlikli pair hazırlığı
+- Tek hedef Madsc55/Madsc55-Tv/main. a37086e tabanında başlayan paket, diğer sohbetin 28b1f08 ve 27ea4c81dcb8fee19ae28489c6dcf3e4100a3562 commitlerindeki diagnostic düzeltme/test/notları korunarak güncel main üzerine uygulandı. Önceki yayın denemesi main ilerlediğinde dalı değiştirmedi; yeni HEAD üzerine kaydedildi.
+- Mevcut compare_provenance_bound_batch ve legacy_parity_cli genişletildi; yeni workflow/yazıcı/CLI yok. 92 satırda pinned eski repo/dal/commit/tree/workflow/blob/boyut, gözden geçirilecek beş merkezi replacement seçeneği, varsa aynı-input SHA256 ve altı bağımsız eksik kanıt alanı var. Yedi kapsam dışı workflow eklenmez; eksik çiftin input hash'i null kalır. Gerçek run/artifact uydurulmaz.
+- 99 kaynak yol/blob/boyut digest'i sıralamadan bağımsız sabitlendi; pinned tree ve scope-script SHA da kontrol edilir. Biçimi geçerli fakat değiştirilmiş blob/boyut/yol/tree/script kimliği karşılaştırmadan önce reddedilir. Bu offline kaynak katalog bağıdır; API kökeni veya canlı yürütme doğrulaması değildir.
+- Mevcut CLI ile docs/PARITY_PAIR_PREPARATION_2026-10-22.json üretildi: 92 kaynak kimliği bağlı hazırlık satırı, 92 eksik gerçek pair, sıfır kabul. Eşleşen fixture metadata'sında dahi API kökeni/artifact baytları/yan etki/gözden geçirme açık kalır. K5 izole kapısı bu 92-satır sözleşmesini gerçekten çağırır.
+- İlk toplu denemede yeni test dosyasındaki kullanılmayan yanlış sınıf import'u 1 keşif hatası verdi (671 keşif kaydı); import kaldırıldı. Sonraki 675 ve 677 yerel testler geçti. Main yeniden ilerlediği için son dört eşzamanlı test de korunup nihai toplu python -m madsc.offline_gate çalıştırıldı: **679 test + beş izole K1–K5 kapısı success**; 92+7 kaynak, 10 yardımcı komut, 22 görev envanteri geçti. git diff --check temiz. Kanıt docs/PARITY_PAIR_PREPARATION_KANIT_2026-10-22.json; kaynak ve üretilen rapor SHA256'ları kayıtlı.
+- Kod/test/rapor/notlar aynı [skip ci] commitinde; kendi SHA'sı dosya geçmişindedir. Actions/rerun/live probing, üretim dosyası, workflow/cron/izin, eski repo yazısı veya merge yok. Kabul **0/92, 0/26, 0/22** korunur.
+- Sonraki iş 92 satırın replacement davranış eşlemelerini mevcut uygulanmış komut ve input/output role sözleşmelerine bağlamak; beş seçenekten otomatik onaylı eşleme türetmemek. Gerçek bağımsız eski/yeni aynı-input run/artifact ve yan etki kanıtları dış bağımlılık olarak açık.

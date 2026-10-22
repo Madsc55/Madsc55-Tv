@@ -23,6 +23,7 @@ from madsc.fixture_report_writer import write_fixture_report, write_stage_report
 from madsc.history_pair_bridge import bridge_legacy_pair, merge_into_envelope
 from madsc.history_pair_store import decode_pair
 from madsc.legacy_workflow_safety import assess_workflow_source
+from madsc.legacy_parity_evidence import compare_provenance_bound_batch
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -187,6 +188,9 @@ def execute(category: str) -> dict:
                         "external_backup_not_claimed": not manifest["external_backup_verified"],
                         "restore_not_claimed": not manifest["restore_verified"]}
     elif category == "k5":
+        source_catalog = json.loads((Path(__file__).resolve().parents[1] /
+                                    "docs/LEGACY_SOURCE_SCOPE.json").read_text(encoding="utf-8"))
+        pair_preparation = compare_provenance_bound_batch(source_catalog, {})
         history_rows = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
                          "status": "in_progress", "conclusion": None} for i in range(104, 4, -1)]
         old_failures = [{"id": i, "head_branch": "fixture", "created_at": "2026-10-22T00:00:00Z",
@@ -245,6 +249,13 @@ def execute(category: str) -> dict:
         guarded_handoff_ok = (saved_report == k5_payload and rejected_unsafe
                               and rejected_overwrite and guarded_report["production_write_allowed"] is False)
         evidence = {"k1_guards_k5_report_write": guarded_handoff_ok,
+                    "all_92_pair_requirements_bound_without_acceptance": (
+                        pair_preparation["pair_preparation_rows"] == 92
+                        and pair_preparation["missing_pairs"] == 92
+                        and pair_preparation["behavioral_parity_accepted"] == 0
+                        and all(row["pair_preparation"]["catalog_identity_bound"]
+                                and row["pair_preparation"]["independent_evidence_missing"]
+                                for row in pair_preparation["rows"])),
                     "paginated_failure_history_blocks_retry": history_result["blocked"] and not history_result["runtime_history_origin_verified"],
                     "separate_job_gate_not_false_writer_clearance": source_scope["mutation_signal_count"] == 1 and not source_scope["runtime_verified"],
                     "k4_corruption_blocks_k5_review": (

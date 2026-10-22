@@ -1,0 +1,56 @@
+{
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "base_commit": "27ea4c81dcb8fee19ae28489c6dcf3e4100a3562",
+  "validation": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 679,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "initial_failure": "Unused invalid test-class import caused one discovery error; removed before final full regression.",
+  "github_actions_triggered": false,
+  "production_writes": false,
+  "source_sha256": {
+    "madsc/core.py": "c0ebd2110da77693ba7f832a519c0876f2bbc08778689c5e3a862f6020b5374d",
+    "madsc/legacy_parity_evidence.py": "aeff49272b3525980e17212cf68fde53296d3ffac25a66bf0d908f392231c175",
+    "tests/test_pair_preparation.py": "3dc49ce4ee24444a2b965c7a034705d154ef31b89c27e69c13c0b867dac59261",
+    "docs/PARITY_PAIR_PREPARATION_2026-10-22.json": "3d6f5d9413a6d9df519bd0b61c54490a638e7a5b3abadce88720384e4b5424a7"
+  },
+  "requirements_rows": 92,
+  "real_execution_pairs": 0,
+  "acceptance": 0
+}

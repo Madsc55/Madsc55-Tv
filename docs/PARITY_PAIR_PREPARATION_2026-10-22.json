@@ -1,0 +1,3513 @@
+{
+  "behavioral_parity_accepted": 0,
+  "independent_origins_api_verified": 0,
+  "missing_pairs": 92,
+  "origin_bindings_complete": 0,
+  "pair_preparation_rows": 92,
+  "pairs_supplied": 0,
+  "production_ready": false,
+  "replacement_workflow_contracts_checked": 0,
+  "rows": [
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "b12f53a17434fe719a65edfdc968f675e1f16b95",
+          "workflow_bytes": 867,
+          "workflow_path": ".github/workflows/390-aday-tekrar-test.yml"
+        }
+      },
+      "path": ".github/workflows/390-aday-tekrar-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "68564680a2c32b11d1c5ed78825f01c85d0378e8",
+          "workflow_bytes": 2358,
+          "workflow_path": ".github/workflows/aday-bekletme.yml"
+        }
+      },
+      "path": ".github/workflows/aday-bekletme.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "21214309014625c4a63f00ee16c9017efac6b0a7",
+          "workflow_bytes": 1243,
+          "workflow_path": ".github/workflows/aday-logo-epg-test.yml"
+        }
+      },
+      "path": ".github/workflows/aday-logo-epg-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "1c2aa765b59ebad5ddbe3f0a06fcc9ead088e52b",
+          "workflow_bytes": 1785,
+          "workflow_path": ".github/workflows/aday-oncelik-kontrol.yml"
+        }
+      },
+      "path": ".github/workflows/aday-oncelik-kontrol.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "6ee9e08cc161b1fc975a8108fa102867de2d9690",
+          "workflow_bytes": 808,
+          "workflow_path": ".github/workflows/aday-yedekleme.yml"
+        }
+      },
+      "path": ".github/workflows/aday-yedekleme.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "8efd3656127031ebd3d73ca32d13ae55f9e22cb8",
+          "workflow_bytes": 1253,
+          "workflow_path": ".github/workflows/akilli-aday-puanlama.yml"
+        }
+      },
+      "path": ".github/workflows/akilli-aday-puanlama.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "268e05a82df328090ccf61c6335197350df8b99b",
+          "workflow_bytes": 2172,
+          "workflow_path": ".github/workflows/altinci-aday-tekrar-test.yml"
+        }
+      },
+      "path": ".github/workflows/altinci-aday-tekrar-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "3d321b81f023647d1cd29c99f015d296a34df525",
+          "workflow_bytes": 1760,
+          "workflow_path": ".github/workflows/automatic-png-logos.yml"
+        }
+      },
+      "path": ".github/workflows/automatic-png-logos.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "d36327a5b8846deab730e02043b3abc6a689ca63",
+          "workflow_bytes": 1091,
+          "workflow_path": ".github/workflows/besinci-zaman-asimi-test.yml"
+        }
+      },
+      "path": ".github/workflows/besinci-zaman-asimi-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "26c0cb7bfc5af366d462eeb72461fb4ca2f9ff23",
+          "workflow_bytes": 1876,
+          "workflow_path": ".github/workflows/birlesik-aday-raporu.yml"
+        }
+      },
+      "path": ".github/workflows/birlesik-aday-raporu.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "cfd859aa1c5d474749edd09d99506b006ab0f82b",
+          "workflow_bytes": 1420,
+          "workflow_path": ".github/workflows/birlesik-durum-raporu.yml"
+        }
+      },
+      "path": ".github/workflows/birlesik-durum-raporu.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "ad54773ea6d7bb46d0c5deb51454fe8189f87c32",
+          "workflow_bytes": 465,
+          "workflow_path": ".github/workflows/dokuzuncu-akilli-tekrar-test.yml"
+        }
+      },
+      "path": ".github/workflows/dokuzuncu-akilli-tekrar-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "d43d5c469b54b8ef89794e8fcc2c2cee9b0d84b9",
+          "workflow_bytes": 1374,
+          "workflow_path": ".github/workflows/epg-gunluk.yml"
+        }
+      },
+      "path": ".github/workflows/epg-gunluk.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "00e956c71c389d015209293b5de5b325cd4cb116",
+          "workflow_bytes": 3426,
+          "workflow_path": ".github/workflows/epg-pages.yml"
+        }
+      },
+      "path": ".github/workflows/epg-pages.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "53081c63ade88138049d8da1fef43ecfab588b5f",
+          "workflow_bytes": 830,
+          "workflow_path": ".github/workflows/felaket-kurtarma-tatbikati.yml"
+        }
+      },
+      "path": ".github/workflows/felaket-kurtarma-tatbikati.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "8d313fa5936799f86fd026831a3a149cbb0c250b",
+          "workflow_bytes": 1060,
+          "workflow_path": ".github/workflows/genel-aday-medya-test.yml"
+        }
+      },
+      "path": ".github/workflows/genel-aday-medya-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "ffea4c826bf1ea9f2b586ddbd279d169f930b9b1",
+          "workflow_bytes": 722,
+          "workflow_path": ".github/workflows/genis-kanal-tarama.yml"
+        }
+      },
+      "path": ".github/workflows/genis-kanal-tarama.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "be63acf659a9b50c68a8b01ff5434a3151877a8f",
+          "workflow_bytes": 1180,
+          "workflow_path": ".github/workflows/ibo-bagimsiz-test-listesi.yml"
+        }
+      },
+      "path": ".github/workflows/ibo-bagimsiz-test-listesi.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "67ffc18c6cd79a5ea0960de72aeeecbc98fab7d7",
+          "workflow_bytes": 1351,
+          "workflow_path": ".github/workflows/ibo-epg-kimlik-denetimi.yml"
+        }
+      },
+      "path": ".github/workflows/ibo-epg-kimlik-denetimi.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "da48c5195c35094a2a519feafd6b51f20f526edc",
+          "workflow_bytes": 811,
+          "workflow_path": ".github/workflows/ibo-yedek-kalite.yml"
+        }
+      },
+      "path": ".github/workflows/ibo-yedek-kalite.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "5cd014cb94e68be22f5f68b07618920c82fee740",
+          "workflow_bytes": 964,
+          "workflow_path": ".github/workflows/iptv-test.yml"
+        }
+      },
+      "path": ".github/workflows/iptv-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "c968204d3d9d54cf218d92954189c9e6945a509f",
+          "workflow_bytes": 1460,
+          "workflow_path": ".github/workflows/kanal-kararlilik.yml"
+        }
+      },
+      "path": ".github/workflows/kanal-kararlilik.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "0ffc33a27ff7d6bb459fbfa608db1095218379f0",
+          "workflow_bytes": 610,
+          "workflow_path": ".github/workflows/kaynak-puanlama-kontrol.yml"
+        }
+      },
+      "path": ".github/workflows/kaynak-puanlama-kontrol.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "fb04cdcc5abede182df764804e8a5055956dcece",
+          "workflow_bytes": 379,
+          "workflow_path": ".github/workflows/madsc-11599-yedek-geri-yukle.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-11599-yedek-geri-yukle.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "6ba3cc60b74f26d3e7dcfecdf84d0cd2ce85baf7",
+          "workflow_bytes": 2027,
+          "workflow_path": ".github/workflows/madsc-ana-liste-saglik.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ana-liste-saglik.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "d2062b168db134177cb1683d86eaafa2c2937d54",
+          "workflow_bytes": 438,
+          "workflow_path": ".github/workflows/madsc-arsiv-yedek-aktarim.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-arsiv-yedek-aktarim.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "8cca9b93855c1e2184863b8e59b07817e546366f",
+          "workflow_bytes": 14027,
+          "workflow_path": ".github/workflows/madsc-aylik-merkezi-denetim.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-aylik-merkezi-denetim.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "da472ae0e45aa0d3c03a7dc8f9833bf43f733902",
+          "workflow_bytes": 4670,
+          "workflow_path": ".github/workflows/madsc-birlesik-kesif.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-birlesik-kesif.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "b14aca32502179ae27e2399b0278502c512c2984",
+          "workflow_bytes": 1123,
+          "workflow_path": ".github/workflows/madsc-cuma-ana-liste-denetimi.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-cuma-ana-liste-denetimi.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "0678a8a201eb194503f9097265fe37e68b1e4d3d",
+          "workflow_bytes": 472,
+          "workflow_path": ".github/workflows/madsc-documentation-check.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-documentation-check.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "396d33dd8d5f3440dc81ae76abb91fc0d43f6a94",
+          "workflow_bytes": 2776,
+          "workflow_path": ".github/workflows/madsc-genis-kaynak-kontrol.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-genis-kaynak-kontrol.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "4b0745614a11625f020baa39b832983ce5fc42ca",
+          "workflow_bytes": 471,
+          "workflow_path": ".github/workflows/madsc-ibo-3-5281.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ibo-3-5281.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "165bb7fc69775be790beab972dc68e92cf40c2c3",
+          "workflow_bytes": 989,
+          "workflow_path": ".github/workflows/madsc-ibo-354-classify.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ibo-354-classify.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "7dff039f081b93c0efab2ced1ab8e873f021e496",
+          "workflow_bytes": 958,
+          "workflow_path": ".github/workflows/madsc-ibo-364-355-364.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ibo-364-355-364.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "7b3dd19eb1fc1651e4f921e5b4f1c79fa0c91dc1",
+          "workflow_bytes": 946,
+          "workflow_path": ".github/workflows/madsc-ibo-398-16-49.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ibo-398-16-49.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "85bb9898838d253c99bc10f7d98468d71a522a37",
+          "workflow_bytes": 985,
+          "workflow_path": ".github/workflows/madsc-ibo-530-archive.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ibo-530-archive.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "4591be38fed55b81e6bf8d3a22319c262f11c01b",
+          "workflow_bytes": 1222,
+          "workflow_path": ".github/workflows/madsc-ibo-6115-second.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ibo-6115-second.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "7cfc6061bb1714c08cd52ff130a54c36bcee15c7",
+          "workflow_bytes": 1103,
+          "workflow_path": ".github/workflows/madsc-ibo-ilk-239.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ibo-ilk-239.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "d79a157a13c667d6dd60a0c4837cca2c1da4f220",
+          "workflow_bytes": 1341,
+          "workflow_path": ".github/workflows/madsc-ibo-kararlar-grup1.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ibo-kararlar-grup1.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "ad14d3daf071f8503651581ba93f6b6008fa0aee",
+          "workflow_bytes": 1270,
+          "workflow_path": ".github/workflows/madsc-ibo-second-voice.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-ibo-second-voice.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "4cf99f3ce1801588c24082c2122b1d781192e7dd",
+          "workflow_bytes": 382,
+          "workflow_path": ".github/workflows/madsc-otomatik-devam.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-otomatik-devam.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "8092ea97979380e7af71aaa9383dc28f41c86ab8",
+          "workflow_bytes": 662,
+          "workflow_path": ".github/workflows/madsc-rule24-test.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-rule24-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "c3c18155d13c2ca5e1a76304729fbcc6739849a5",
+          "workflow_bytes": 3633,
+          "workflow_path": ".github/workflows/madsc-sistem-saglik-denetimi.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-sistem-saglik-denetimi.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "471540a306c4146fa12123510a4c70dcfe1356eb",
+          "workflow_bytes": 1786,
+          "workflow_path": ".github/workflows/madsc-son-kontrol-kurtarma-teshis.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-son-kontrol-kurtarma-teshis.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "08871f1b397184459a093606c2519e1c19e5167a",
+          "workflow_bytes": 3792,
+          "workflow_path": ".github/workflows/madsc-son-kontrol.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-son-kontrol.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "d7456c7a5526350b0d52e39b6708cf288d209dbf",
+          "workflow_bytes": 708,
+          "workflow_path": ".github/workflows/madsc-toplu-butunluk.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-toplu-butunluk.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "f56db59dc9a8a12f21296a80ea53b602340454ef",
+          "workflow_bytes": 1121,
+          "workflow_path": ".github/workflows/madsc-tum-sistem-yedek.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-tum-sistem-yedek.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "ee4538c2b9e11f5589d8babacd9f3ff39457cc9b",
+          "workflow_bytes": 1356,
+          "workflow_path": ".github/workflows/madsc-turk-kanal-geri-sec.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-turk-kanal-geri-sec.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "93c3a87372b1dfbe80ba9e59dabc2180511112ae",
+          "workflow_bytes": 4701,
+          "workflow_path": ".github/workflows/madsc-uc-asama.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-uc-asama.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "67b12b441fab5fa57eded1a7684ebf24e7d819c2",
+          "workflow_bytes": 1298,
+          "workflow_path": ".github/workflows/madsc-yedek-turk-ayir.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-yedek-turk-ayir.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "e4de46aa7edbd84b8dc3bdda0e3d75a39421118b",
+          "workflow_bytes": 570,
+          "workflow_path": ".github/workflows/madsc-yedekler-aktarim-test.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-yedekler-aktarim-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "feb92ccf12c62b3818cac164f0effe319083872f",
+          "workflow_bytes": 870,
+          "workflow_path": ".github/workflows/madsc-yedekler-sayi-duzelt.yml"
+        }
+      },
+      "path": ".github/workflows/madsc-yedekler-sayi-duzelt.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "ae7c910e5f7d840a6bceb0ab99cad3c9d414d63f",
+          "workflow_bytes": 838,
+          "workflow_path": ".github/workflows/oncelikli-kanal-dogrulama.yml"
+        }
+      },
+      "path": ".github/workflows/oncelikli-kanal-dogrulama.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "41bf9c8b94b7f1e4ad045b1708cf52bb6edbe8da",
+          "workflow_bytes": 2107,
+          "workflow_path": ".github/workflows/onikinci-hata-siniflandirma-test.yml"
+        }
+      },
+      "path": ".github/workflows/onikinci-hata-siniflandirma-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "7b8fa621b2cfaf151e26855d92a6ccbc326d6ed3",
+          "workflow_bytes": 1262,
+          "workflow_path": ".github/workflows/publish-iptv-png-logos.yml"
+        }
+      },
+      "path": ".github/workflows/publish-iptv-png-logos.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "64665da9b8f4602e0b9310e012c835729a73afa7",
+          "workflow_bytes": 2195,
+          "workflow_path": ".github/workflows/sekizinci-tekrar-raporu-test.yml"
+        }
+      },
+      "path": ".github/workflows/sekizinci-tekrar-raporu-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "b74d2db6f7acced67f514cae037be44b9722059d",
+          "workflow_bytes": 792,
+          "workflow_path": ".github/workflows/sozcu-akit-ozel-test.yml"
+        }
+      },
+      "path": ".github/workflows/sozcu-akit-ozel-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "44c95db225dca48f6a50a72f72f6e4ce2f7d5457",
+          "workflow_bytes": 1766,
+          "workflow_path": ".github/workflows/test-13-kaynak-degisiklik.yml"
+        }
+      },
+      "path": ".github/workflows/test-13-kaynak-degisiklik.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "4915ba2ac06a188a9ae4dddcfc46fda78f37515b",
+          "workflow_bytes": 1682,
+          "workflow_path": ".github/workflows/test-14-istikrar.yml"
+        }
+      },
+      "path": ".github/workflows/test-14-istikrar.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "de27646659c70b0206f998ac2b69a3aa948682d2",
+          "workflow_bytes": 1421,
+          "workflow_path": ".github/workflows/test-15-logo-epg.yml"
+        }
+      },
+      "path": ".github/workflows/test-15-logo-epg.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "902925df650f77f80e618a80da101cdeb68da23e",
+          "workflow_bytes": 1658,
+          "workflow_path": ".github/workflows/test-16-workflow-safety.yml"
+        }
+      },
+      "path": ".github/workflows/test-16-workflow-safety.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "70d1ae2d665ebc398d1c41d7134ea7c89a3186f1",
+          "workflow_bytes": 1525,
+          "workflow_path": ".github/workflows/test-17-candidate-summary.yml"
+        }
+      },
+      "path": ".github/workflows/test-17-candidate-summary.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "e39f6603c188d72f7ebb87f8b1cfbb858962d553",
+          "workflow_bytes": 1331,
+          "workflow_path": ".github/workflows/test-18-change-simulation.yml"
+        }
+      },
+      "path": ".github/workflows/test-18-change-simulation.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "bd8c5c1401661fc1dff468274d9e4f6ebe963279",
+          "workflow_bytes": 2061,
+          "workflow_path": ".github/workflows/test-19-integration.yml"
+        }
+      },
+      "path": ".github/workflows/test-19-integration.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "41d5fd3ff8024f960a4c4f5e15810ea48d1fb3b8",
+          "workflow_bytes": 2214,
+          "workflow_path": ".github/workflows/test-20-full-integration.yml"
+        }
+      },
+      "path": ".github/workflows/test-20-full-integration.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "f13904e84f0116b53120b792a89e1a4377f6dbc3",
+          "workflow_bytes": 2785,
+          "workflow_path": ".github/workflows/test-21-functional-e2e.yml"
+        }
+      },
+      "path": ".github/workflows/test-21-functional-e2e.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "f1fe0cc001eac113f56acffaece5850d3eba515d",
+          "workflow_bytes": 1726,
+          "workflow_path": ".github/workflows/test-22-real-playlist.yml"
+        }
+      },
+      "path": ".github/workflows/test-22-real-playlist.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "412b3f263bab8d8f7c96f2776e56aa939a6b73b2",
+          "workflow_bytes": 2794,
+          "workflow_path": ".github/workflows/test-23-live-stream.yml"
+        }
+      },
+      "path": ".github/workflows/test-23-live-stream.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "4cdb0dce456bd49cbb082c9506f7019f62776dc7",
+          "workflow_bytes": 3605,
+          "workflow_path": ".github/workflows/test-24-system-audit.yml"
+        }
+      },
+      "path": ".github/workflows/test-24-system-audit.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "c00a6295182f7b31b7a0bc95af7056c0f20cae47",
+          "workflow_bytes": 4276,
+          "workflow_path": ".github/workflows/test-25-full-project-readonly.yml"
+        }
+      },
+      "path": ".github/workflows/test-25-full-project-readonly.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "ada482112b58e47bd56b8c742ad08633e1f3b840",
+          "workflow_bytes": 2519,
+          "workflow_path": ".github/workflows/test-26-automation-safety.yml"
+        }
+      },
+      "path": ".github/workflows/test-26-automation-safety.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "41a24282bd6785cba1025d32040ccb1c994bf38a",
+          "workflow_bytes": 2667,
+          "workflow_path": ".github/workflows/test-27-pipeline-contract.yml"
+        }
+      },
+      "path": ".github/workflows/test-27-pipeline-contract.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "d9253678d662c7bb2caefe12286ce15d5e6f702f",
+          "workflow_bytes": 2561,
+          "workflow_path": ".github/workflows/test-28-approval-gate.yml"
+        }
+      },
+      "path": ".github/workflows/test-28-approval-gate.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "93b083583024215f0340b2d70974732ab9478c4d",
+          "workflow_bytes": 2554,
+          "workflow_path": ".github/workflows/test-29-write-path-audit.yml"
+        }
+      },
+      "path": ".github/workflows/test-29-write-path-audit.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "97879b5d4f95546b521ecb5b034571fe230374dd",
+          "workflow_bytes": 2580,
+          "workflow_path": ".github/workflows/test-30-write-risk-report.yml"
+        }
+      },
+      "path": ".github/workflows/test-30-write-risk-report.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "eca623c47a4cb81e88e14d59f58862c8e110e6d1",
+          "workflow_bytes": 2501,
+          "workflow_path": ".github/workflows/test-31-protected-write-gate.yml"
+        }
+      },
+      "path": ".github/workflows/test-31-protected-write-gate.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "ca2bd0ed80045bc3ce0c027397172e16e28bdb5e",
+          "workflow_bytes": 2215,
+          "workflow_path": ".github/workflows/test-32-unapproved-write-regression.yml"
+        }
+      },
+      "path": ".github/workflows/test-32-unapproved-write-regression.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "76d1d09da818fe8b8fe531167e8dd30b9a8717a2",
+          "workflow_bytes": 2884,
+          "workflow_path": ".github/workflows/test-33-all-write-paths.yml"
+        }
+      },
+      "path": ".github/workflows/test-33-all-write-paths.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "453f8ca6c0bcde59ef8fd4afc22fcc72baafc002",
+          "workflow_bytes": 1355,
+          "workflow_path": ".github/workflows/test-34-protected-write-regression.yml"
+        }
+      },
+      "path": ".github/workflows/test-34-protected-write-regression.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "8bec3b96e6b084f6f2b44f9bd5af3af7bfd103c4",
+          "workflow_bytes": 984,
+          "workflow_path": ".github/workflows/test-35-remaining-write-gate.yml"
+        }
+      },
+      "path": ".github/workflows/test-35-remaining-write-gate.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "f83899a4733d6bf979cd7ee74835ace179f6708e",
+          "workflow_bytes": 3118,
+          "workflow_path": ".github/workflows/test-36-system-integration-audit.yml"
+        }
+      },
+      "path": ".github/workflows/test-36-system-integration-audit.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "36b1c85749f7358efeb45962ffae0cae88525d56",
+          "workflow_bytes": 2851,
+          "workflow_path": ".github/workflows/test-37-indirect-write-audit.yml"
+        }
+      },
+      "path": ".github/workflows/test-37-indirect-write-audit.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "bbe368fffdf354d9f61d654f009dcd749da8183f",
+          "workflow_bytes": 2900,
+          "workflow_path": ".github/workflows/test-38-audit-selftest.yml"
+        }
+      },
+      "path": ".github/workflows/test-38-audit-selftest.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "2d495c94091c7c2194686c41181ac981f5a5d8aa",
+          "workflow_bytes": 772,
+          "workflow_path": ".github/workflows/test-39-protected-playlist.yml"
+        }
+      },
+      "path": ".github/workflows/test-39-protected-playlist.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "324040ec251f5bc9a0dc5c652312500d6cf37d67",
+          "workflow_bytes": 891,
+          "workflow_path": ".github/workflows/test-kanal-adaylari.yml"
+        }
+      },
+      "path": ".github/workflows/test-kanal-adaylari.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "34cf72108fb7aea4a1abde31027cfd3a859db43d",
+          "workflow_bytes": 5968,
+          "workflow_path": ".github/workflows/toplu-sistem-kontrol.yml"
+        }
+      },
+      "path": ".github/workflows/toplu-sistem-kontrol.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "78c3b8aa8e27b9f25e439337e2e94be9468b6f3b",
+          "workflow_bytes": 1152,
+          "workflow_path": ".github/workflows/vod-guncelle.yml"
+        }
+      },
+      "path": ".github/workflows/vod-guncelle.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "08a38be283550147e0e267f72fcc1291bfc9f88c",
+          "workflow_bytes": 850,
+          "workflow_path": ".github/workflows/yedek-geri-yukleme-tatbikat.yml"
+        }
+      },
+      "path": ".github/workflows/yedek-geri-yukleme-tatbikat.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "43fd2b8bc0f6f4173bb3dde16744d10376d1027b",
+          "workflow_bytes": 969,
+          "workflow_path": ".github/workflows/yedekler-yeniler-medya-kontrol.yml"
+        }
+      },
+      "path": ".github/workflows/yedekler-yeniler-medya-kontrol.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "a0d0625a65233e35f37dbcda25e6a3fd71915f75",
+          "workflow_bytes": 749,
+          "workflow_path": ".github/workflows/yeni-aday-on-test.yml"
+        }
+      },
+      "path": ".github/workflows/yeni-aday-on-test.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "89f74c54f72f48583ff5abf1d148e3cc5b57f8f6",
+          "workflow_bytes": 938,
+          "workflow_path": ".github/workflows/yeni-kanal-arama-2026.yml"
+        }
+      },
+      "path": ".github/workflows/yeni-kanal-arama-2026.yml",
+      "status": "missing_provenance_bound_pair"
+    },
+    {
+      "behavioral_parity_accepted": false,
+      "pair_preparation": {
+        "catalog_identity_bound": true,
+        "execution_pair_metadata_supplied": false,
+        "independent_evidence_missing": [
+          "legacy_api_origin",
+          "replacement_api_origin",
+          "legacy_artifact_bytes",
+          "replacement_artifact_bytes",
+          "independent_side_effect_observation",
+          "reviewer_approval"
+        ],
+        "production_ready": false,
+        "replacement_branch": "main",
+        "replacement_mapping_review_required": true,
+        "replacement_repository": "Madsc55/Madsc55-Tv",
+        "replacement_workflow_choices": [
+          ".github/workflows/madsc-01-guvenlik.yml",
+          ".github/workflows/madsc-02-kesif.yml",
+          ".github/workflows/madsc-03-kanal-test.yml",
+          ".github/workflows/madsc-04-yedek.yml",
+          ".github/workflows/madsc-05-bakim.yml"
+        ],
+        "same_input_sha256": null,
+        "source_identity": {
+          "branch": "madsc/bes-sistem-toplu-birlestirme",
+          "commit_sha": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+          "repository": "Madsc55/madsc-tv",
+          "tree_sha": "a88dfa874b6964dcaa4de7a8f9075af2f146acd8",
+          "workflow_blob_sha": "fabb2cf59223a983ed22046d19617a210efc16f2",
+          "workflow_bytes": 2084,
+          "workflow_path": ".github/workflows/yeniler-guvenli-arama.yml"
+        }
+      },
+      "path": ".github/workflows/yeniler-guvenli-arama.yml",
+      "status": "missing_provenance_bound_pair"
+    }
+  ],
+  "schema": "madsc-legacy-provenance-pairs-v1",
+  "snapshot_matches": 0,
+  "snapshot_mismatches": 0,
+  "source_catalog_identity_sha256": "748e033f131269f030206f9c1f70e5a392c8f882dbe93e32e7d6ace575cc643b",
+  "total": 92
+}

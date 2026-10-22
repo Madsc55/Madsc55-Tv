@@ -61,6 +61,15 @@ def mutate(path):
         rows = scan_python_source(source)
         self.assertEqual([row["api"] for row in rows], ["path.open"])
 
+    def test_dynamic_positional_and_keyword_open_modes_are_reviewed(self):
+        source = '''\ndef mutate(path, requested_mode):\n    open(path, requested_mode)\n    path.open(requested_mode)\n    open(path, mode=requested_mode)\n'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 3)
+        self.assertEqual([row["api"] for row in rows],
+                         ["open [dynamic mode]", "path.open [dynamic mode]",
+                          "open [dynamic mode]"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

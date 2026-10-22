@@ -139,3 +139,13 @@ class EpgTests(unittest.TestCase):
             result = check_epg_mapping(p, e)
             self.assertEqual(result["missing_tvg_id"], 1)
             self.assertFalse(result["matching_verified"])
+
+    def test_tvg_id_text_in_display_name_is_not_an_attribute(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1,News tvg-id="trt1.tr"\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            result = check_epg_mapping(p, e)
+            self.assertEqual(result["missing_tvg_id"], 1)
+            self.assertFalse(result["matching_verified"])

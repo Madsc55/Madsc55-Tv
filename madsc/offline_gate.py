@@ -26,6 +26,11 @@ def main():
             stdout = stdout.decode("utf-8", errors="replace")
         if isinstance(stderr, bytes):
             stderr = stderr.decode("utf-8", errors="replace")
+    except OSError as exc:
+        exit_code = 125
+        timed_out = False
+        stdout = ""
+        stderr = f"unittest launch failed: {type(exc).__name__}: {exc}"
     # unittest can exit 0 after discovering zero tests: never accept that as green.
     matches = re.findall(r"Ran (\d+) tests? in", stderr + "\n" + stdout)
     test_count = int(matches[-1]) if matches else 0
@@ -33,8 +38,8 @@ def main():
     if exit_code == 0 and test_count == 0:
         exit_code = 2
     # Require the real K1-K5 isolated executors, not only passing unit tests.
-    from madsc.offline_five_gate import assess_all
     try:
+        from madsc.offline_five_gate import assess_all
         five_stage = assess_all()
         expected = {"k1", "k2", "k3", "k4", "k5"}
         categories = five_stage.get("categories")
@@ -101,8 +106,8 @@ def main():
     if not installation_passed and exit_code == 0:
         exit_code = 6
     # Verify actual report serialization and K5 consumption in the same gate.
-    from madsc.offline_five_gate import assess_report_roundtrip
     try:
+        from madsc.offline_five_gate import assess_report_roundtrip
         roundtrip = assess_report_roundtrip()
         roundtrip_passed = (roundtrip.get("passed") is True
                             and roundtrip.get("reports_written") == 5

@@ -176,6 +176,22 @@ class MappingReviewTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 review_replacement_mappings(self.inventory, [self.row], ".")
 
+    def test_duplicate_legacy_scope_paths_rejected(self):
+        with patch("madsc.legacy_replacement_mapping_review.reconcile_legacy_scope",
+                   return_value={"legacy_paths": [LEGACY, LEGACY],
+                                 "legacy_behavior_workflows": 1,
+                                 "source_workflows": 1}):
+            with self.assertRaises(ValueError):
+                review_replacement_mappings(self.inventory, [self.row], ".")
+
+    def test_malformed_legacy_scope_paths_rejected(self):
+        with patch("madsc.legacy_replacement_mapping_review.reconcile_legacy_scope",
+                   return_value={"legacy_paths": [None],
+                                 "legacy_behavior_workflows": 1,
+                                 "source_workflows": 1}):
+            with self.assertRaises(ValueError):
+                review_replacement_mappings(self.inventory, [self.row], ".")
+
     def test_missing_rationale_rejected(self):
         with self.assertRaises(ValueError):
             self.review([{**self.row, "review_rationale": ""}])

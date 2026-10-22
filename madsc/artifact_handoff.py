@@ -13,7 +13,10 @@ def pack(discovery, run_id, commit_sha):
         raise ValueError("Invalid discovery")
     if len(discovery["candidates"]) > 20000:
         raise ValueError("Too many candidates in discovery")
-    if len(discovery.get("alternatives", [])) > 20000:
+    alternatives = discovery.get("alternatives", [])
+    if not isinstance(alternatives, list):
+        raise ValueError("Invalid alternative evidence")
+    if len(alternatives) > 20000:
         raise ValueError("Too many alternatives in discovery")
     assess_candidates(discovery, {})
     body = {"schema": 1, "run_id": run_id, "commit_sha": commit_sha, "discovery": discovery}

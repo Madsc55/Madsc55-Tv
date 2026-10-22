@@ -5,9 +5,9 @@ import re
 from madsc.discovery import classify_candidates
 
 def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict:
+    source = Path(source)
     if source.suffix.lower() not in (".m3u", ".m3u8"):
         raise ValueError("Only M3U and M3U8 playlists are supported")
-    source = Path(source)
     if source.is_symlink() or not source.is_file():
         raise ValueError("Invalid source file")
     import os

@@ -16,6 +16,13 @@ ATTR = re.compile(r'([\w-]+)="([^"]*)"')
 def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     if not isinstance(text, str) or not isinstance(source, str) or not source.strip() or len(text) > 8_000_000:
         raise ValueError("Source and M3U text are required")
+    # Surrogate code points cannot be represented in UTF-8 output and must
+    # fail at ingestion rather than during downstream hashing or rendering.
+    try:
+        text.encode("utf-8", errors="strict")
+        source.encode("utf-8", errors="strict")
+    except UnicodeEncodeError as exc:
+        raise ValueError("M3U source and text must be valid UTF-8") from exc
     if type(max_entries) is not int or not 1 <= max_entries <= 20000:
         raise ValueError("Invalid candidate limit")
     lines = text.removeprefix("\ufeff").splitlines()

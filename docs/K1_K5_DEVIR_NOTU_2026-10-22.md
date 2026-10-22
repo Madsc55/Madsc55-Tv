@@ -71,3 +71,12 @@ GitHub main üzerinde dört modülün kaynakları doğrudan okundu:
 3. `madsc/parity_snapshot_writer.py`: `write_execution_snapshot` yine fixture yazıcısını kullanır; `_sha256_regular_file` salt-okunur dosya gözlemidir, fstat/lstat sürüm kontrolü yapar. Harici üretim kanıtı değildir.
 4. `madsc/backup.py`: `snapshot_manifest` salt-okunur hash envanteri, `verify_manifest` salt-okunur karşılaştırma, `compare_copy` salt-okunur izole kopya karşılaştırması. Dış depolama/gerçek restore kanıtı değildir.
 **Sınır:** Bu 4 modül, daha önce sözü edilen 20 dinamik/subprocess adayının tam listesi değildir. 20/20 incelendi iddiası yok. Önceki rapordaki `tools/protected_write_gate.py` güncel main üzerinde yok; kaynak/dal karışıklığı çözülmeden o kapının kapsamı varsayılmamalı.
+
+
+## 22 Ekim — K1 izole rapor yazıcısı sağlamlaştırma
+- `9679bea`: `write_fixture_report` açık `open("x")` yerine mevcut `_exclusive_bytes` (O_EXCL, mümkünse O_NOFOLLOW, fstat, fsync) yolunu kullanıyor.
+- `5308e28`: tek seferlik oluşturma, üzerine yazmama ve M3U8 reddi testleri.
+- `46f1d33`: başarısız yazma temizliği yalnız kendi açtığı inode kimliği eşleşirse hedefi siliyor; yarışta değiştirilmiş hedefi silmiyor.
+- `d48c85e`: fsync hatası sırasında hedefin değiştirilmesini simüle eden regresyon testi.
+- `5f67e06`: başlangıç `fstat` çağrısı try/finally içine alındı; hata halinde açık descriptor sızıntısı engellendi.
+- **Doğrulama sınırı:** Güncel HEAD üzerinde testlerin çalıştığı kanıtlanmadı. Bu düzenlemeler genel repo yazıcılarının hepsini kapsamaz ve üretim güvenlik kabulünü tamamlamaz.

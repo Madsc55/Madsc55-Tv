@@ -35,7 +35,10 @@ def main():
     enforce_local_output_path(destination)
     if args.report.is_symlink() or any(parent.is_symlink() for parent in args.report.parents):
         raise ValueError("Invalid K4 evidence file")
-    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    # Fail closed on platforms without kernel-enforced final-component symlink protection.
+    if not hasattr(os, "O_NOFOLLOW"):
+        raise ValueError("K4 evidence reader requires O_NOFOLLOW")
+    flags = os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0)
     try:
         fd = os.open(args.report, flags)
     except OSError as exc:

@@ -17,6 +17,17 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     for root in (Path(source), Path(backup), Path(restored)):
         if any(ancestor.is_symlink() for ancestor in (root, *root.parents)):
             raise ValueError("Restore audit paths must not contain symlink ancestors")
+    # Reject oversized declared inventories before performing any file hashing.
+    # Directory entries also count toward the bounded traversal budget.
+    if isinstance(names, list) and all(isinstance(name, str) for name in names):
+        declared_dirs = {
+            parent.as_posix()
+            for name in names
+            for parent in Path(name).parents
+            if str(parent) != "."
+        }
+        if len(names) + len(declared_dirs) > 20000:
+            raise ValueError("Restore audit inventory exceeds safe entry limit")
     result = verify_independent_restore(source, backup, restored, names)
     # The restore acceptance gate requires an exact file inventory, not just
     # matching hashes for a caller-selected subset. Reject unexpected files,

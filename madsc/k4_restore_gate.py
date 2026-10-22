@@ -18,7 +18,7 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     # symlinks and extra directories in any of the three sandbox trees.
     expected_files = set(names)
     expected_dirs = {
-        str(parent).replace("\\\\", "/")
+        parent.as_posix()
         for name in names
         for parent in Path(name).parents
         if str(parent) != "."

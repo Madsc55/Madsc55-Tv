@@ -57,7 +57,11 @@ def main() -> None:
                 parser.error("Manifest exceeds 1 MiB limit")
     except OSError as exc:
         parser.error(f"Cannot safely open manifest: {exc.strerror}")
-    validate_manifest(json.loads(payload.decode("utf-8")))
+    try:
+        manifest = json.loads(payload.decode("utf-8"))
+        validate_manifest(manifest)
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        parser.error(f"Invalid or unsafe manifest: {exc}")
     print("K1 read-only output gate: PASS")
 
 if __name__ == "__main__":

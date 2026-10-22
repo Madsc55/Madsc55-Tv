@@ -11,8 +11,8 @@ _TURKISH_TV_PLAYLIST = "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
 
 def _prepare_fixture_root(root: Path) -> Path:
     root = Path(root).absolute()
-    if root.is_symlink() or not root.is_dir():
-        raise PermissionError("Invalid fixture root")
+    if root.is_symlink() or not root.is_dir() or root.resolve(strict=True) != root:
+        raise PermissionError("Fixture root and its ancestors must be real, nonsymlink directories")
     reports = root / "reports"
     if reports.is_symlink() or (reports.exists() and not reports.is_dir()):
         raise PermissionError("Invalid reports directory")
@@ -107,8 +107,8 @@ def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
         raise TypeError("Report content must be text")
     enforce_write_paths([relative_path])
     root = Path(root).absolute()
-    if root.is_symlink() or not root.is_dir():
-        raise PermissionError("Invalid fixture root")
+    if root.is_symlink() or not root.is_dir() or root.resolve(strict=True) != root:
+        raise PermissionError("Fixture root and its ancestors must be real, nonsymlink directories")
     destination = root.joinpath(*relative_path.split("/"))
     if destination.exists() and not destination.is_file():
         raise PermissionError("Report target must be a regular file")

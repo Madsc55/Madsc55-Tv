@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: c5a7060684e57f1e35d2b367e1757d5901dfcafb
+Son geliştirme commit SHA: 6b07cb1a7fa27e643e89cad6f1a7ffdb5a5d2c1a
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -109,3 +109,11 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Actions, canlı probe, cihaz veya üretim yazması yapılmadı. Manifest üretimi artifact upload/origin doğrulaması veya parity kabulü değildir; sayaçlar 0/92, 0/26, 0/22.
 - Açık engel: eski salt-okunur 92 workflow artifactlerinde v1 manifest üretimi yok. Gerçek aynı-girdi çifti için iki tarafta gerçek davranış girdisi ve snapshot üretimi gerekir; eski tarafa yazmadan bu tur tamamlanamaz.
 - Sıradaki güvenli adım: replacement üreticisini gerçek davranış girdisi ve snapshotı olan açık opt-in job çağrılarına bağlayacak CLI/iş akışı kontratını ekle. Yalnız beyan edilen hash kabul etme; input baytını yerinde hashle. Actions izni olmadan çalıştırma ve legacy kabulü verme.
+
+## Dokuzuncu önemli geliştirme — gerçek dosyadan opt-in manifest CLI
+- Son kod commit SHA: 6b07cb1a7fa27e643e89cad6f1a7ffdb5a5d2c1a; taban e80291daf5225b60a1fa327610d5c88a0b9d138b.
+- parity_manifest_cli beyan edilmiş bir input hash kabul etmez. Gerçek input ve snapshot dosyalarını read-only açar; O_NOFOLLOW (platformda varsa), fstat regular-file ve boyut sınırlarını uygular; input baytlarını kendisi SHA256 ile bağlar. Snapshot JSON duplicate key reddiyle okunur ve sıkı snapshot şemasından geçer.
+- CLI repository/branch/run/head kimliğini GitHub runtime environment değişkenlerinden alabilir, workflow yolu açık argümandır ve gerçek beşli allowlist'ine tabidir. Çıktı yine sabit K1-korumalı reports/madsc-parity-evidence.json; artifact yüklemez, Actions başlatmaz, kabul vermez.
+- İlk odak testinde test_real_file_bytes_are_hashed_and_written başarısız oldu: sabit test girdisinin beklenen SHA256 literal'i yanlıştı. Doğru hashlib sonucu yazıldı; odak testleri ve tam offline_gate geçti.
+- Nihai yerel sonuç: 583 test ve beş K kapısı success; 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET9.json. Kabul 0/92, 0/26, 0/22.
+- Açık: beş workflow'da gerçek davranış input/snapshot dosyalarını üreten ortak job sözleşmesi yok; mevcut fixture raporlarını davranış eşdeğerliği diye paketlemek yasak. Sıradaki adım, yalnız gerçek input/snapshot üretebilen workflow noktalarını statik eşleştirip güvenli opt-in entegrasyon planı/kontrat testi eklemek; Actions çalıştırmamak.

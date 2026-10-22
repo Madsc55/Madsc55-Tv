@@ -1906,3 +1906,10 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Replacement workflow allowlist'i depodaki gerçek kurulumla eşitlendi: madsc-01-guvenlik.yml, madsc-02-kesif.yml, madsc-03-kanal-test.yml, madsc-04-yedek.yml, madsc-05-bakim.yml. Önceki yanlış K4/K5 replacement adları kaldırıldı; legacy scope exclusion isimleri değiştirilmedi.
 - Offline sonuç: 580 test ve K1–K5 fixture gates success; 92+7 kapsam ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET8.json. Actions/live probe/production write yok; 0/92, 0/26, 0/22 değişmedi.
 - Açık: üretici henüz gerçek job davranış girdisi/snapshot çağrılarına bağlanmış bir CLI değil. Eski read-only workflow artifactlerinde v1 manifest yok. Sonraki güvenli iş input dosyasını yerinde hashleyen opt-in CLI ve yalnız gerçek job verisi mevcutken workflow bağlantısı; deklaratif hash tek başına kabul edilmeyecek.
+
+
+## 22 Ekim 2026 — K5 gerçek dosya hashleyen manifest CLI
+- Kod 6b07cb1a7fa27e643e89cad6f1a7ffdb5a5d2c1a: parity_manifest_cli gerçek input ve snapshot dosyalarını read-only/O_NOFOLLOW açıp fstat ile regular-file ve boyut sınırlarını doğrular. Input hash kullanıcı beyanından alınmaz; gerçek baytlardan hesaplanır. Snapshot duplicate JSON key ve bozuk şema durumunda yazıdan önce reddedilir.
+- Runtime repo/dal/run/head değişkenleri ile açık workflow path, paket 8'deki gerçek beşli allowlist ve ortak K1 writer üzerinden madsc-parity-evidence.json üretir. Bu yalnız opt-in çağrı yüzeyidir; artifact upload veya Actions dispatch yapmaz, production_ready=false ve behavioral acceptance=false kalır.
+- İlk odak testindeki tek hata yanlış beklenen SHA256 test literal'iydi; gerçek hashlib sonucu ile düzeltildi. Nihai offline_gate 583 test ve beş fixture K kapısını, 92+7 kapsamı ve 22 görev envanterini geçirdi. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET9.json; 0/92, 0/26, 0/22.
+- Sıradaki: beş workflow içinde gerçek davranış input/snapshot dosyası üreten noktaları statik olarak belirle. Fixture raporunu parity kanıtı sayma; gerçek veri sözleşmesi olmayan job'a CLI ekleme. Eski tarafın v1 artifact eksikliği blocker olarak sürer.

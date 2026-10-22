@@ -37,7 +37,8 @@ def validate_manifest(manifest: dict) -> None:
     normalized = [unicodedata.normalize("NFKC", p).casefold() for p in paths]
     if len(normalized) != len(set(normalized)):
         raise ValueError("Duplicate output paths")
-    if any(not isinstance(p, str) or not safe_relative_path(p) or not p.replace("\\", "/").startswith("artifacts/") for p in paths):
+    normalized_paths = [unicodedata.normalize("NFKC", p) for p in paths]
+    if any(not safe_relative_path(p) or not p.startswith("artifacts/") for p in normalized_paths):
         raise ValueError("outputs must stay under artifacts/ and outside protected paths")
 
 def main() -> None:

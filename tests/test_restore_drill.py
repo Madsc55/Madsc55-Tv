@@ -4,6 +4,7 @@ from unittest.mock import patch
 import unittest
 from pathlib import Path
 from madsc.restore_drill import run_drill, main
+from madsc.write_path_audit import ProtectedWriteRejected
 
 
 class RestoreDrillTests(unittest.TestCase):
@@ -75,5 +76,35 @@ class RestoreDrillTests(unittest.TestCase):
             payload = json.loads(output.read_text())
             self.assertEqual(payload["category"], "k4")
             self.assertFalse(payload["production_writes"])
-            with patch("sys.argv", args), self.assertRaises(FileExistsError):
+            with patch("sys.argv", args), self.assertRaises(ProtectedWriteRejected):
                 main()
+
+    def test_rejected_isolated_output_does_not_start_drill(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            source.mkdir()
+            (source / "a.txt").write_text("safe")
+            bad = root / "reports/wrong-name.json"
+            args = ["restore_drill", "--source", str(source), "--file", "a.txt",
+                    "--output", str(bad), "--isolated-report-root", str(root)]
+            with patch("sys.argv", args), patch("madsc.restore_drill.run_drill") as drill:
+                with self.assertRaises(ValueError):
+                    main()
+                drill.assert_not_called()
+
+    def test_rejected_regular_output_does_not_start_drill(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            source.mkdir()
+            (source / "a.txt").write_text("safe")
+            output = root / "existing.json"
+            output.write_text("keep")
+            args = ["restore_drill", "--source", str(source), "--file", "a.txt",
+                    "--output", str(output)]
+            with patch("sys.argv", args), patch("madsc.restore_drill.run_drill") as drill:
+                with self.assertRaises(ProtectedWriteRejected):
+                    main()
+                drill.assert_not_called()
+            self.assertEqual(output.read_text(), "keep")

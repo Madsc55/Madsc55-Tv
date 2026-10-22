@@ -48,9 +48,9 @@ class K5PipelineChainContractTests(unittest.TestCase):
         self.assertIn('exit "$hata"', aggregate)
 
     def test_k5_cross_stage_evidence_is_required(self):
-        k5 = self.source.split("\n  k5:\n", 1)[1]
+        k5 = self.source.split("\n  k5:\n", 1)[1].split("\n  toplu-kabul:\n", 1)[0]
         for command in ("madsc.handoff_acceptance", "madsc.k5_channel_gate",
-                        "madsc.batch_acceptance"):
+                        "madsc.stage_report_cli"):
             self.assertIn(command, k5)
         self.assertIn("madsc-k3-guarded-evidence", k5)
         self.assertIn("madsc-k2-candidate-handoff", k5)

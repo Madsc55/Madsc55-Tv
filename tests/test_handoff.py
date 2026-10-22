@@ -397,3 +397,14 @@ class HandoffTests(unittest.TestCase):
         known = {"https://example.org/stream/" + str(i) for i in range(20001)}
         with self.assertRaisesRegex(ValueError, "Too many known URLs"):
             classify_candidates([], known_urls=known)
+
+    def test_discovery_normalized_urls_remain_utf8_safe(self):
+        from madsc.discovery import normalize_url
+        for value in ("https://example.org/" + chr(0xD800),
+                      "https://example.org/?q=" + chr(0xDFFF),
+                      "https://" + chr(0xD800) + ".example.org/"):
+            with self.subTest(value=repr(value)):
+                with self.assertRaises(ValueError):
+                    normalize_url(value)
+        self.assertEqual(normalize_url("https://example.org/ok"),
+                         "https://example.org/ok")

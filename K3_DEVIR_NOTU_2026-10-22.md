@@ -55,3 +55,10 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - K3 bu sohbetin değişiklik alanı: madsc/candidate_probe_link.py, tests/test_candidate_probe_link.py ve bu devir notu; ortak madsc/channel_test.py üzerinde değişiklik öncesi güncel SHA ve son commit sahipliği yeniden kontrol edilecek.
 - GitHub üzerinden commit ve blob SHA denetimi yapılıyor; sohbetler arasında gerçek zamanlı kilit veya mesajlaşma yok. Çakışma ihtimali sıfır değil.
 - Açık güvenlik konusu: CLI kanıt okumasında dosya açıldıktan sonra descriptor/fstat doğrulaması; önceki yazma girişimi araç güvenlik kontrolünde engellendi, commit oluşmadı.
+
+## Son devir — K3 CLI dosya koruması ve paralel commit çakışması
+- 610a6ac488dfcea7766ced0ce57e4247cfbae1b4: K3 CLI seek edilemeyen kanıt girişlerini reddediyor.
+- 38e7ab86c70c7a33994476066094b4c7aa8a5a33: seekable koruması için test sözleşmesi güncellendi.
+- Önceki devir notu yazma girişimi, paralel sohbetin d686a73e8e7b15be0704a0d4200ddae93e087b5 commit'iyle eşzamanlı olduğu için 409 conflict aldı. O denemede not değişmedi; bu kayıt güncel SHA üzerinden yeniden yapılıyor.
+- Seekable kontrolü, açılan dosyanın fstat ile normal dosya ve doğru boyutunun doğrulanmasının eşdeğeri değildir. Bu açık iş sürüyor.
+- Güncel K3 testleri çalıştırılmadı. Canlı kanal testi, IBO cihaz doğrulaması ve üretim onayı yapılmadı. K1/K5 ve K2/K4 kapsamındaki çalışmaları tekrar etme.

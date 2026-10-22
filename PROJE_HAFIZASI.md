@@ -2262,3 +2262,8 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 ## 22 Ekim 2026 — K4 son değişikliklerin devir özeti
 - K4 kanıt doğrulayıcısı: d8e5e1925c7ea9994f3e0649b4640cf5569b038a; K4 pozitif ve tekrar-yazma testi: bc21ebd0954250b65b0ae4665d40775242ecee91. Sonraki DEVAM_NOTU.md kaydı: a3f8217081562177e25a3347ac899fff6fe25353.
 - Kodun yeni sürümü için regresyon henüz çalıştırılmadı. github.com DNS erişimi bu çalışma ortamında yok; Actions tetiklenmedi. Gerçek kabul 0/92, 0/26, 0/22. Öncelik K4 odaklı testler ve offline_gate doğrulaması.
+
+
+## 22 Ekim 2026 — K4 JSON/üst-dizin negatif testleri
+- tests/test_k4_evidence.py commit b853106868f1cc13bc2172051c22bd71641ec7a8 [skip ci]: yinelenen files_checked JSON anahtarı ve sembolik bağlantılı kanıt üst dizini reddi; başarısız doğrulamada çıktı yokluğu. Kod davranışı değişmedi.
+- Yerel ortam github.com DNS çözümleyemiyor; testler/offline_gate bu yeni SHA'da çalıştırılmadı, Actions dispatch yok. Gerçek kabul 0/92, 0/26, 0/22. Öncelik erişilebilir test koşucusunda odaklı testler ve tam offline_gate; test sonucu olmadan yeşil iddia edilmez.

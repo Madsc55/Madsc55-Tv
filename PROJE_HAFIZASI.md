@@ -2597,3 +2597,11 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 
 ## 23 Ekim 2026 — K1 lambda guard scope düzeltmesi
 `_ScopeCalls` iç içe lambda gövdelerini taramadığı halde önceden varsayılan ziyaretçi lambda içine giriyor, ertelenmiş guard çağrısını dış fonksiyonun guard listesine katabiliyordu. `visit_Lambda` dış kapsamda artık erken dönüyor; çift tanımlı visitor temizlendi. Kod: `9bf7f9926ddab13c3bebc4ca108e8d2908ef8a6b`, `bbb975e650456ae29d89d5c66dbc4ce51e7c2f6a`; test: `3c3610e35eef121b6e876eccd62c50754fd7ee6e`. Son CI sonucu henüz doğrulanmadı. K1 0/26; üretim verisine dokunulmadı.
+
+
+## 2026-10-23 K5 — Batches 13–15
+- Raporlar `docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_13_2026-10-23.md` through `...BATCH_15...`; total frozen-source static review is 45/92, 47 remaining. No legacy repo write or live workflow dispatch.
+- Batch 13 found the legacy combined discovery publisher has `contents: write` and `actions: write`, can commit reports and chain-dispatch the three-stage workflow; Friday health checks are warning-only, and docs checks are literal-string smoke tests.
+- Batch 14 reviewed the manual broad-source scan with write permissions and downstream dispatch, static cutover preflight, and an IBO workflow placeholder that performs no actual classification.
+- Batch 15 found three backup archive scripts rewrite `CALISANLAR.m3u` in the runner workspace; the protected-write gate rejects all M3U mutations, so these pushes should fail closed. User classification is not proof of identity or playback.
+- `DEVAM_NOTU.md` and `docs/K1_K5_KANITLI_GOREV_DEFTERI.json` updated. Behavioral parity remains 0/92; runtime security 0/26; main-task acceptance 0/22. Offline K5 export tests succeeded on SHA `a0469c34ec9a8642acffdddfbda55dadf9d39aba` (Actions run `39868459061`) but this is not production or legacy-parity acceptance.

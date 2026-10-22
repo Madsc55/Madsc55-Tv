@@ -27,6 +27,7 @@ _MUTATING_METHODS = {
 _OS_MUTATORS = {
     "remove", "unlink", "rename", "replace", "mkdir", "makedirs",
     "rmdir", "removedirs", "symlink", "link", "truncate",
+    "write", "writev", "pwrite", "pwritev", "ftruncate",
 }
 # Process launchers can perform writes outside Python's filesystem APIs (cp,
 # mv, redirection, scripts, etc.). Record them for command-level review.

@@ -2552,3 +2552,10 @@ CI sonucu henüz doğrulanmadı; eski 990-test run bu değişiklikleri kapsamaz.
 
 ## 23 Ekim 2026 — K1 AST open()/os.open() sınıflandırma düzeltmesi
 Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısını Path.open gibi yorumlayabiliyor ve `os.open(path, flags)` flags kontrolünü yutabiliyordu. Kod bunu düzeltti: `os.open/posix.open` önce flags ile ele alınıyor; builtins/io/unqualified open mode index 1, Path.open index 0. Keyword `flags=` da inceleniyor. Kod commitleri `ccf5bfea56c9ebbd741d28afa9ed97482c57f513`, `5138e550e9ac2cba2cd7f8eec016a7c018aad999`; regresyon commit `4eacdf0f70d7fb1bf0391a015216bde64e8516c3`. CI sonucu henüz doğrulanmadı; K1 0/26.
+
+
+## 23 Ekim 2026 — K2 kaynak fingerprint biçim normalizasyonu
+- `corroborate_sources` artık feed fingerprint'ini üretmeden önce UTF-8 BOM'u, CRLF/LF farkını, boş satırları ve satırların dış boşluklarını normalize eder. Aynı içeriğin yalnız aktarım biçimi değişti diye bağımsız kaynak oyu sayısı artmaz.
+- Kod commitleri: `c1d29af73cbc0a08c82d93d31d8d83b8508986c9` (ilk normalizasyon), `3696f2c0221c1c571ec145b2fa2e97fdf07d9399` (kaçış düzeltmesi). Test commit: `e8eb0b34e60b612dc0d09b096dafa1e0123eaead`.
+- Güncel dosya blobları yeniden okundu; canonical fingerprint kodu ve LF/CRLF+BOM regresyon testi depoda mevcut. Bu, yerel test çalıştırması veya CI başarısı değildir. CI combined status yeni test SHA'sı için boş; manuel workflow dispatch yapılmadı.
+- Sınır: semantik olarak yeniden yazılmış feed kopyaları veya farklı URL'lerle yayımlanan aynı kaynak hâlâ gerçek kaynak URL/kökeni ile çözülmelidir. K2 gerçek kaynak/lisans, günlük keşif parity ve bağımsız artifact SHA kabulü açık kalır. Üretim dosyaları ve eski depo değişmedi.

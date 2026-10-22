@@ -201,3 +201,20 @@ class EpgTests(unittest.TestCase):
             e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "missing channel-name separator"):
                 check_epg_mapping(p, e)
+
+    def test_comma_inside_quoted_metadata_does_not_split_extinf(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 group-title="News, International" tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            self.assertTrue(check_epg_mapping(p, e)["matching_verified"])
+
+    def test_unclosed_quoted_attribute_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 group-title="News, International tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "missing channel-name separator"):
+                check_epg_mapping(p, e)

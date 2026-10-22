@@ -1,3 +1,13 @@
+# EN YENİ K3 GÜNCELLEMESİ — 23 Ekim 2026
+- Bu turdaki K3 EPG/XMLTV değişiklikleri: `madsc/epg.py` artık eksik/boş XMLTV `programme channel` alanını reddeder; XMLTV'de tanımlanmayan programme channel eşleşmeyi başarısız yapar. Üç regresyon testi eklendi.
+- Kod commit: `62211f43813ef87ec8a75329cf89506dcebac261`; test commit: `4a3eee527902eea22a99afc9f82901ae3e837ed4`; görev defteri commit: `b700d68370b261567a1c6518db5ebc70e98f2753`; K3 raporu: `docs/K3_EPG_FAIL_CLOSED_PROGRESS_2026-10-23.md` commit `0b544c35b1bd469eec9bc75190848324ef789ee8`.
+- Bu commit'ler `[skip ci]` ile kaydedildi; CI veya yerel test sonucu iddia edilmiyor. Actions dispatch/rerun yapılmadı.
+- K3 gerçek yayın/ffprobe, 6+ saat bağımsız süreklilik, IBO Player Pro cihaz kabulü, Pages EPG zinciri ve logo kimliği hâlâ açık. K3 kabulü tamamlanmış sayılmadı.
+- Korunan üretim dosyalarına dokunulmadı; PR #71 merge edilmedi. Genel sayaçlar 0/92, 0/26, 0/22.
+- Güncel main HEAD'i bu nottan sonra yeniden kontrol et; eşzamanlı değişiklik varsa onu esas al.
+
+---
+
 # Madsc55-Tv — DEVAM NOTU
 
 > Son doğrulama: 22 Ekim 2026, kod/test SHA `61bbf78214a63400083cf7d615c64a1b13547896`; 800/800 offline test + beş kapı, kurulum, rapor round-trip ve statik sözleşme kapısı başarılı. Ayrıntı en sondaki kayıt ve `K1_K4_K5_PENDING_VALIDATION_2026-10-22.json`. Gerçek kabul 0/92, 0/26, 0/22.

@@ -134,7 +134,7 @@ class BackupManifestHardeningTests(unittest.TestCase):
                 opened.append(descriptor)
                 return descriptor
 
-            with patch("madsc.backup._open_relative_file_nofollow", side_effect=capture_open), \\
+            with patch("madsc.backup._open_relative_file_nofollow", side_effect=capture_open), \
                  patch("madsc.backup._create_relative_file_nofollow",
                        side_effect=OSError("simulated target failure")):
                 with self.assertRaisesRegex(OSError, "simulated target failure"):
@@ -162,7 +162,7 @@ class BackupManifestHardeningTests(unittest.TestCase):
                 opened.append(descriptor)
                 return descriptor
 
-            with patch("madsc.backup._open_relative_file_nofollow", side_effect=capture_open), \\
+            with patch("madsc.backup._open_relative_file_nofollow", side_effect=capture_open), \
                  patch("madsc.backup._create_relative_file_nofollow",
                        side_effect=OSError("simulated target failure")):
                 with self.assertRaisesRegex(OSError, "simulated target failure"):

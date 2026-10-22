@@ -13,7 +13,7 @@ def validate_inventory(inventory):
     if any(not isinstance(row, dict) for row in rows):
         raise ValueError("Workflow rows must be objects")
     if any(type(row.get("candidate_k_stages", [])) is not list
-           or any(stage not in {"K1", "K2", "K3", "K4", "K5"}
+           or any(type(stage) is not str or stage not in {"K1", "K2", "K3", "K4", "K5"}
                   for stage in row.get("candidate_k_stages", []))
            for row in rows):
         raise ValueError("Invalid candidate K stage mapping")

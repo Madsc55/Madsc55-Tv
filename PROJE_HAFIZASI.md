@@ -1945,3 +1945,11 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Standalone K2/K3 ortak dosya input'u yerine canlı, harici veya örtük kaynak kullandığı için entegrasyon yapılmadı. Fixture input uydurulmadı.
 - İlk odak komutunda yanlış/olmayan tests.test_madsc_guard adı ImportError verdi; gerçek tests.test_guard ile 18 odak testi geçti. Tam offline_gate 593 test ve K1–K5 fixture gates success; kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET13.json. Actions/live probe yok; 0/92, 0/26, 0/22.
 - Sıradaki: K2/K3 input sınıfı ve eksik parity bağlarını makine-okunur dataflow blocker raporuna ekle. Gerçek runtime için ayrı Actions izni, legacy v1 artifact için eski read-only sistemden mevcut kanıt gerekir.
+
+
+## 22 Ekim 2026 — parity input veri-akışı sınıflaması
+- Kod 51267b0bee39522d2017381594827f4bf7d3265c: readiness denetçisi K1/K4/K5'in gerçek tüketici komutunu, input ve output tokenlarını fail-closed doğrulayıp `isolated_file_bound` sınıfını üretir. Yalnız parity markerlarının bulunması yeterli değildir; K1 input drift testi statik bağı düşürür.
+- Standalone K2 canlı stream kaynaklarına, K3 harici teslim/bildirim durumuna bağlı olduğundan ikisi `external_or_live_input_blocked` ve ayrı blocker nedenleriyle raporlanır. Statik bağ 3/5, dış/canlı girdi engeli 2/5; runtime origin, gerçek behavior ready ve acceptance 0.
+- Odak 7 test ve tam offline_gate 594 test başarılı; K1–K5 fixture gates, 92+7 kapsam ve 22 görev envanteri geçti. Kanıt `docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET14.json`. Actions/live probe/production write yok; kabul 0/92, 0/26, 0/22.
+- Açık: K1/K4/K5'in bağımsız gerçek run/artifact kökeni için ayrı Actions izni, legacy 92 v1 manifest için mevcut read-only artifact gerekir. K2/K3 için yetkili ortak gerçek dosya girişi yok.
+- Sıradaki yerel iş: readiness veri-akışı alanlarını parity manifest preflight doğrulamasına bağla; statik kanıtın runtime kabulüne dönüşmesini engelle.

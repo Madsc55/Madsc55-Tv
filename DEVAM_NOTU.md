@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: 32db584bdeff7d2bc42bb54c68d7bf3c2aa3af17
+Son geliştirme commit SHA: 51267b0bee39522d2017381594827f4bf7d3265c
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -153,3 +153,12 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Odak test komutunda olmayan tests.test_madsc_guard modülü çağrıldığı için bir ImportError kaydedildi; gerçek tests.test_guard ile odak 18/18 ve ardından tam offline_gate geçti.
 - Nihai python -m madsc.offline_gate: 593 test ve beş izole K kapısı success; 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri başarılı. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET13.json. Actions çalıştırılmadı; kabul 0/92, 0/26, 0/22.
 - Sıradaki güvenli yerel adım: K2/K3 blocker sınıflamasını makine-okunur dataflow raporuna bağlamak ve readiness denetçisinin marker eksikliğini gerçek input sınıfıyla açıklamasını sağlamak. Canlı/harici input için Actions veya probing yapma.
+
+## On dördüncü önemli geliştirme — parity input veri-akışı sınıflaması
+- Son kod commit SHA: 51267b0bee39522d2017381594827f4bf7d3265c; taban 2d584f703aabb3f7ab5c2af17c2683e5c3dd1f13.
+- parity_workflow_readiness artık K1, K4 ve K5 için gerçek tüketici komutu, tüketilen input ve üretilen output tokenlarını parity snapshot/manifest sırasından bağımsız olarak doğrular. Üç yol `isolated_file_bound`; marker mevcut olsa bile tüketici input'u kayarsa bağ fail-closed bozulur.
+- Standalone K2 `live_stream_sources_required`, standalone K3 `external_delivery_or_notification_state_required` olarak makine-okunur `external_or_live_input_blocked` sınıfındadır. Fixture input veya sahte runtime kanıtı üretilmedi.
+- Odak 7/7 ve nihai `python -m madsc.offline_gate` 594/594 test başarılı; beş izole K fixture kapısı, 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri geçti. Başarısız test yok; `git diff --check` temiz. Kanıt `docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET14.json`.
+- Actions/live probe/production write/eski repo yazısı yok. Statik file binding 3/5; runtime origin ve gerçek behavior ready 0, kabul 0/92, 0/26, 0/22.
+- Açık blocker: üç opt-in zincirin bağımsız gerçek run/artifact kökeni için ayrıca Actions izni gerekir; eski read-only 92 artifactlerinde v1 manifest yok. K2/K3 canlı veya harici girdiyi yetkisiz kullanmadan karşılaştırılabilir ortak gerçek dosyaya bağlanamıyor.
+- Sıradaki güvenli yerel adım: readiness JSON şemasını ve üç statik bağın kaynak SHA/input/output alanlarını parity manifest karşılaştırıcısının preflight doğrulamasına bağlamak; bu işlem runtime/acceptance üretmemeli ve Actions çalıştırmamalı.

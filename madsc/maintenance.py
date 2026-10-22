@@ -103,8 +103,6 @@ def aggregate(reports: list[dict]) -> dict:
     categories = {report.get("category") for report in reports if isinstance(report.get("category"), str)}
     expected = {"k1", "k2", "k3", "k4", "k5"}
     complete = categories == expected and len(reports) == 5
-    safe = complete and all(report.get("production_writes") is False for report in reports)
-    successful = safe and all(report.get("status") == "success" for report in reports)
     # A report that only declares read-only status is not runtime evidence.
     # Reject duplicate/unknown categories and require explicit five-way identity.
     identity_valid = (len(reports) == 5 and
@@ -149,7 +147,8 @@ def verify_fixture_evidence(reports: list[dict]) -> dict:
     for report in reports:
         category = str(report.get("category", "unknown"))
         checks = report.get("fixture_checks")
-        if not isinstance(checks, dict) or not checks:
+        if (not isinstance(checks, dict) or not checks
+                or any(type(key) is not str or not key.strip() for key in checks)):
             missing_evidence.append(category)
         elif any(value is not True for value in checks.values()):
             failed_checks.append(category)

@@ -82,3 +82,9 @@ K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen
 - `tests/test_backup_manifest_hardening.py` commit `1394bcfc75eb716a947b56349ce8e7d5d2e44b39`: 10.001 girdili manifestin `snapshot_manifest` çağırmadan reddedildiğini ve normal tek dosyalı manifestin doğrulandığını test ediyor.
 - Bu sınır yalnız yerel doğrulama kaynak tüketimini azaltır; gerçek harici yedek/restore kanıtı değildir. İlgili Actions `39870802547` paralel commit yüzünden `cancelled`; sonraki başarılı main CI'de yeni testin dahil olduğu ayrıca teyit edilmeli.
 - IBO Player Pro gerçek cihaz doğrulaması kullanıcı tarafından en son yapılacak; cihaz kabulü henüz yapılmadı.
+
+
+## 23 Ekim 2026 — Manifest yol uzunluğu sınırı
+- `madsc/backup.py` commit `1b40b3d2014801140b5a5aa5ebc48346aa670534`: `verify_manifest`, dosya yolunun 4.096 karakteri aşmasını dosya sistemine erişmeden reddediyor.
+- `tests/test_backup_manifest_hardening.py` commit `0e80fb7b9b9dd0048195b0d97b459eb080ebf0f5`: 4.097 karakterli sahte yolun `snapshot_manifest` çağırmadan reddedilmesini ve normal manifestin çalışmasını test ediyor.
+- İlgili Actions `39871017628` paralel commit nedeniyle iptal edildi; daha sonraki başarılı entegre CI kanıtı bekleniyor. Harici yedek ve gerçek restore kanıtı hâlâ yok. IBO Player Pro cihaz testi en sona bırakıldı.

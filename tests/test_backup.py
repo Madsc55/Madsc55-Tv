@@ -575,3 +575,13 @@ class BackupTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     restore_to_new_sandbox(backup, destination, ["file.txt"])
             self.assertFalse(destination.exists())
+
+    def test_manifest_rejects_hardlinked_source_file(self):
+        import os
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            original = root / "original.txt"
+            original.write_bytes(b"shared")
+            os.link(original, root / "alias.txt")
+            with self.assertRaises(ValueError):
+                snapshot_manifest(root, ["original.txt"])

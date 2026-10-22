@@ -41,6 +41,14 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     export_6115_archive_manifest(self.urls, destination)
             self.assertFalse(destination.exists())
 
+    def test_root_and_dot_destinations_fail_without_writing(self):
+        with TemporaryDirectory() as tmp:
+            with self.assertRaises((PermissionError, FileExistsError)):
+                export_6115_archive_manifest(self.urls, Path(tmp) / ".")
+            with self.assertRaises((PermissionError, FileExistsError)):
+                export_6115_archive_manifest(self.urls, Path("/"))
+            self.assertFalse((Path(tmp) / "ibo_6115_archive_preview.json").exists())
+
     def test_symlink_parent_and_protected_destination_rejected(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)

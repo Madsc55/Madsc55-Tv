@@ -911,3 +911,9 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - `parse_m3u`, `corroborate_sources`, `build_m3u8_preview` kaynak köken etiketlerini 256 karakterle sınırlar; 257 ve üzeri reddedilir. Kod `b79ff7a8e6855911104ee5b38388a592c64b9e7f`, sınır regresyonu `91f32d6ebd7540c1bce2fb07628db6648299261b`.
 - Önceki etiket doğrulama sırası regresyonu `bd0aab8b` daha sonraki `0e2d5e6844f93f4e04970f9992018d00ad593eaf` commit'i için başarılı Actions `39870824796` ile doğrulandı (compare ahead=3, behind=0). Yeni 256 karakter sınır testinin CI sonucu ilk kontrolde bekliyordu (`39870982558`); doğrulanmadan başarılı sayma.
 - K2-08 in_progress; K2-05/06/07 gerçek kaynak/lisans, günlük keşif eşdeğerliği ve artifact köken kanıtı açık. Kullanıcı IBO Player Pro cihaz testini en son kendisi yapacak. Korunan üretim dosyaları değişmedi.
+
+
+## 23 Ekim 2026 — K2 aynalanmış feed kaynak oyları
+- `corroborate_sources` semantik feed fingerprint'i `tvg-id` bulunan kanallarda URL SHA-256 + tvg-id kimliğini kullanır; kanal adı, logo veya grup değişimi kopya feed'e ikinci oy vermez. `tvg-id` bulunmayan kanallarda isim+grup kimliği korunur. Kod `53f5850e1678ec6e2dcf639d15a22365478f9145`; iki regresyon `3cebc66d1d48b53ce7b2f9cd86b6f8ebb6bfe5d9`.
+- Önceki 256 karakter kaynak etiketi regresyonu `91f32d6e`, sonraki `41a61d61b92f0e6c043abd969caeb01100df4b1b` commit'i için başarılı Actions `39871021673` ile kapsandı (compare ahead=7, behind=0). Yeni fingerprint regresyonu Actions `39871248968` ilk kontrolde bekliyordu; sonuç doğrulanmadan kabul kapatılmayacak.
+- `source_independence_verified=false`; kaynak sayısı gerçek bağımsız yayıncı/lisans kanıtı değildir. K2-05/06/07/08 açık. IBO Player Pro cihaz testini en son kullanıcı yapacak; üretim dosyalarına dokunulmadı.

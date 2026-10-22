@@ -185,6 +185,21 @@ class BackupManifestHardeningTests(unittest.TestCase):
                         module._open_relative_file_nofollow(root, parts)
             self.assertEqual((root / "safe.txt").read_bytes(), b"safe")
 
+    def test_manifest_rejects_forged_external_backup_and_restore_claims(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_bytes(b"fixture")
+            original = snapshot_manifest(root, ["good.txt"])
+            self.assertTrue(verify_manifest(root, original))
+            for claim in ("external_backup_verified", "restore_verified", "production_writes"):
+                for forged in (True, 1, "true", None):
+                    with self.subTest(claim=claim, forged=forged):
+                        manifest = dict(original)
+                        manifest[claim] = forged
+                        with self.assertRaisesRegex(ValueError, "Unverified backup manifest attestation"):
+                            verify_manifest(root, manifest)
+            self.assertTrue(verify_manifest(root, original))
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

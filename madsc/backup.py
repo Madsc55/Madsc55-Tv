@@ -253,6 +253,8 @@ def backup_to_new_sandbox(source: Path, destination: Path, names: list[str]) -> 
     original = snapshot_manifest(source, names)
     enforce_local_output_path(destination.absolute())
     destination.mkdir()
+    created = destination.lstat()
+    created_identity = (created.st_dev, created.st_ino)
     try:
         for entry in original["entries"]:
             relative = Path(entry["path"])

@@ -52,6 +52,29 @@ class DiagnosticApiFailClosedTests(unittest.TestCase):
                     origin, artifact, archive, fetch=fetch)
 
 
+    def test_incomplete_api_listing_and_run_state_are_rejected(self):
+        for mismatch in ("total_count", "run_status", "run_conclusion", "run_repository"):
+            origin, artifact, archive = evidence()
+            original_fetch, _ = fetcher(origin, artifact)
+
+            def fetch(url, token=None):
+                data = original_fetch(url, token=token)
+                if "/artifacts?" in url and mismatch == "total_count":
+                    data["total_count"] = 2
+                elif "/actions/runs/" in url and "/artifacts?" not in url:
+                    if mismatch == "run_status":
+                        data["status"] = "in_progress"
+                    elif mismatch == "run_conclusion":
+                        data["conclusion"] = "success"
+                    elif mismatch == "run_repository":
+                        data["repository"]["full_name"] = "other/repo"
+                return data
+
+            with self.subTest(mismatch=mismatch), self.assertRaises(ValueError):
+                verify_failure_diagnostic_evidence(
+                    origin, artifact, archive, fetch=fetch)
+
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -378,3 +378,14 @@ class HandoffTests(unittest.TestCase):
                                           field: discovery["candidates"][0][field] + chr(0xD800)}]
                 with self.assertRaisesRegex(ValueError, "Unsafe candidate"):
                     assess_candidates(altered, {})
+
+    def test_discovery_rejects_invalid_unicode_without_aborting_batch(self):
+        base = {"name": "News", "url": "https://example.org/news",
+                "tvg_id": "news", "tvg_logo": "", "group_title": ""}
+        for field in ("url", "name", "tvg_id", "tvg_logo", "group_title"):
+            with self.subTest(field=field):
+                invalid = {**base, field: base[field] + chr(0xD800)}
+                report = classify_candidates([invalid, base])
+                self.assertEqual(len(report["rejected"]), 1)
+                self.assertEqual(len(report["candidates"]), 1)
+                self.assertEqual(report["candidates"][0]["name"], "News")

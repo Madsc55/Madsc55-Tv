@@ -202,6 +202,19 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(candidate["source_count"], 1)
         self.assertEqual(candidate["sources"], ["source-a", "source-b"])
 
+    def test_transport_formatting_does_not_inflate_feed_independence(self):
+        feed_lf = ('#EXTM3U\n'
+                   '#EXTINF:-1 tvg-id="news.tv",News TV\n'
+                   'https://example.org/news.m3u8\n')
+        feed_crlf = ('\ufeff#EXTM3U\r\n'
+                     '\r\n'
+                     '#EXTINF:-1 tvg-id="news.tv",News TV   \r\n'
+                     'https://example.org/news.m3u8  \r\n')
+        report = corroborate_sources({"source-lf": feed_lf, "source-crlf": feed_crlf})
+        candidate = report["identity_candidates"][0]
+        self.assertEqual(candidate["source_count"], 1)
+        self.assertEqual(candidate["sources"], ["source-crlf", "source-lf"])
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

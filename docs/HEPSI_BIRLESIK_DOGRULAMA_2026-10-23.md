@@ -54,3 +54,12 @@
 ## Kalan somut öncelik
 - 99 workflow'un salt kaynak envanteri mevcut `madsc/legacy_99_bulk_audit.py` tarafından kaynak SHA/bytes/komut/trigger/permissions/artifact satırlarıyla çıkarılıyor; ancak her workflow için eksik kanıt seti aynı: legacy execution, new execution, input/output comparison, side-effect comparison, failure/timeout comparison, reviewer approval. Bu yüzden 0/92 sayacı dürüstçe korunuyor.
 - Sıradaki anlamlı iş, her workflow için ayrı bir behavior contract ve izole fixture kurmak; önce yan etkisiz/deterministik workflow'lardan başlayıp eski ve yeni çıktı/exit code/artifact/izin/timeout davranışını kıyaslamak. Canlı IPTV, EPG, cihaz ve yedek operasyonları için üretim izni/kanıtı olmadan çalıştırma yapılmamalı.
+
+
+## 23 Ekim 2026 — K1 workflow envanterinde sembolik bağlantı koruması
+- Yeni incelemede `madsc/workflow_consolidation.py` envanteri `Path.is_file()` ile kuruyordu; bu çağrı symlink hedefini takip edebilir ve beklenmeyen dış dosyayı workflow envanterine dahil edebilirdi.
+- Envanter oluşturulmadan önce dizin girdileri listeleniyor ve herhangi bir sembolik bağlantı varsa `ValueError("Symlinked workflow entry")` ile fail-closed davranılıyor. Kod commit: `3d22c4ce3988357a6e38654a3c4cc5a9fe30cb17`.
+- İzole regresyon testi eklendi: `tests/test_workflow_consolidation.py::test_symlinked_workflow_entry_rejected`, geçici dizinde dış dosyaya işaret eden workflow symlink'i oluşturur ve envanterin reddetmesini bekler. Test commit: `a25af57f4373299e25ced205bcea9bdb311b0f29`.
+- Bu iki commit için test henüz çalıştırılmadı; başarılı CI iddiası yok. Actions dispatch yapılmadı.
+- Üretim playlist/EPG/favori/cihaz/yedek/arşiv verilerine dokunulmadı; PR #71 birleştirilmedi.
+- Kabul sayaçları değişmedi: 92 workflow 0/92, güvenlik 0/26, ana görevler 0/22. Önceki başarılı offline CI yalnızca kendi test ettiği SHA ve izole kapsam için geçerlidir.

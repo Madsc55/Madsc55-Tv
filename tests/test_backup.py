@@ -501,3 +501,35 @@ class BackupTests(unittest.TestCase):
             # not by an unvalidated file metadata lookup.
             with self.assertRaises(ValueError):
                 verify_independent_restore(*roots, ["../outside"])
+
+    def test_backup_rejects_symlinked_source_ancestor(self):
+        from madsc.backup import backup_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            real = base / "real"
+            real.mkdir()
+            source = real / "source"
+            source.mkdir()
+            (source / "file.txt").write_text("fixture")
+            alias = base / "alias"
+            alias.symlink_to(real, target_is_directory=True)
+            destination = base / "new-backup"
+            with self.assertRaises(ValueError):
+                backup_to_new_sandbox(alias / "source", destination, ["file.txt"])
+            self.assertFalse(destination.exists())
+
+    def test_restore_rejects_symlinked_source_ancestor(self):
+        from madsc.backup import restore_to_new_sandbox
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            real = base / "real"
+            real.mkdir()
+            backup = real / "backup"
+            backup.mkdir()
+            (backup / "file.txt").write_text("fixture")
+            alias = base / "alias"
+            alias.symlink_to(real, target_is_directory=True)
+            destination = base / "new-restore"
+            with self.assertRaises(ValueError):
+                restore_to_new_sandbox(alias / "backup", destination, ["file.txt"])
+            self.assertFalse(destination.exists())

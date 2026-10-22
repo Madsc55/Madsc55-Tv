@@ -24,6 +24,15 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
             self.assertEqual(pilot.verify_av("https://example.org/media.m3u8"),
                              (False, False, "probe_error"))
 
+    def test_ffprobe_nonzero_exit_cannot_verify_video(self):
+        manifest = b'#EXTM3U\\n#EXTINF:4,\\nsegment.ts\\n'
+        with patch.object(pilot, "safe_curl", side_effect=[manifest, b"x" * 188]), \\
+             patch.object(pilot.subprocess, "run") as probe:
+            probe.return_value.returncode = 1
+            probe.return_value.stdout = b'{"streams": [{"codec_type": "video"}, {"codec_type": "audio"}]}'
+            self.assertEqual(pilot.verify_av("https://example.org/media.m3u8"),
+                             (False, False, "probe_error"))
+
     def test_radio_does_not_consume_tv_probe_quota(self):
         rows = [("Radyo Haber", "https://example.org/radio.m3u8")]
         rows += [(f"TV {i}", f"https://example.org/tv{i}.m3u8") for i in range(pilot.LIMIT + 2)]

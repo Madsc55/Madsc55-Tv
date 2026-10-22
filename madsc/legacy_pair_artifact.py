@@ -104,7 +104,7 @@ def verify_failure_diagnostic_artifact(origin, diagnostic_artifact, archive):
                 if total > MAX_DIAGNOSTIC_TOTAL_BYTES:
                     raise ValueError("Oversized diagnostic artifact contents")
                 payloads[info.filename] = bundle.read(info)
-    except (zipfile.BadZipFile, RuntimeError, OSError) as exc:
+    except (zipfile.BadZipFile, RuntimeError, OSError, NotImplementedError) as exc:
         raise ValueError("Invalid diagnostic artifact ZIP") from exc
 
     snapshot = _json_object(payloads[DIAGNOSTIC_SNAPSHOT_NAME],
@@ -174,7 +174,7 @@ def verify_parity_artifact_manifest(origin, archive):
                     or stat.S_ISLNK(mode)):
                 raise ValueError("Unsafe artifact manifest entry")
             raw = bundle.read(info)
-    except (zipfile.BadZipFile, RuntimeError, OSError) as exc:
+    except (zipfile.BadZipFile, RuntimeError, OSError, NotImplementedError) as exc:
         raise ValueError("Invalid artifact ZIP") from exc
     if len(raw) > MAX_MANIFEST_BYTES:
         raise ValueError("Oversized parity manifest")

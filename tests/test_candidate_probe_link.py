@@ -94,6 +94,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
         from pathlib import Path
         source = Path("madsc/candidate_probe_link.py").read_text(encoding="utf-8")
         self.assertIn("any(parent.is_symlink() for parent in path.parents)", source)
+        self.assertIn('if not handle.seekable():', source)
         self.assertIn('handle.read(16 * 1024 * 1024 + 1)', source)
         self.assertIn('if len(raw) > 16 * 1024 * 1024:', source)
 

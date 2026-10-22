@@ -29,8 +29,10 @@ def verify_execution_origin_api(origin, run, artifact_page, workflow_file):
             or run.get("event") != origin.get("event")
             or run.get("status") != "completed"
             or run.get("conclusion") != origin.get("conclusion")
-            or (run.get("repository") or {}).get("full_name") != repository
-            or (run.get("head_repository") or {}).get("full_name") != repository):
+            or not isinstance(run.get("repository"), dict)
+            or run["repository"].get("full_name") != repository
+            or not isinstance(run.get("head_repository"), dict)
+            or run["head_repository"].get("full_name") != repository):
         raise ValueError("GitHub run origin mismatch")
     if (workflow_file.get("type") != "file"
             or workflow_file.get("path") != origin.get("workflow_path")
@@ -45,13 +47,17 @@ def verify_execution_origin_api(origin, run, artifact_page, workflow_file):
     declared = origin.get("artifact")
     if not isinstance(declared, dict):
         raise ValueError("Missing declared artifact")
+    if not all(isinstance(item, dict) for item in artifacts):
+        raise ValueError("Invalid artifact listing entries")
     matches = [item for item in artifacts
                if item.get("id") == declared.get("id")
                and item.get("name") == declared.get("name")]
     if len(matches) != 1:
         raise ValueError("Missing or ambiguous artifact")
     artifact = matches[0]
-    workflow_run = artifact.get("workflow_run") or {}
+    workflow_run = artifact.get("workflow_run")
+    if not isinstance(workflow_run, dict):
+        raise ValueError("Invalid artifact workflow origin")
     if (artifact.get("expired") is not False
             or workflow_run.get("id") != origin.get("run_id")
             or workflow_run.get("head_sha") != origin.get("head_sha")

@@ -50,6 +50,10 @@ def verify_execution_origin_api(origin, run, artifact_page, workflow_file):
         raise ValueError("Missing declared artifact")
     if not all(isinstance(item, dict) for item in artifacts):
         raise ValueError("Invalid artifact listing entries")
+    artifact_ids = [item.get("id") for item in artifacts]
+    if (any(type(value) is not int or value <= 0 for value in artifact_ids)
+            or len(set(artifact_ids)) != len(artifact_ids)):
+        raise ValueError("Invalid or duplicate artifact IDs")
     matches = [item for item in artifacts
                if item.get("id") == declared.get("id")
                and item.get("name") == declared.get("name")]

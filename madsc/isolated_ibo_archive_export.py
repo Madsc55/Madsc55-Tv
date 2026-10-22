@@ -1,6 +1,7 @@
 """K5 create-only offline IBO manifest export outside the source tree."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -40,6 +41,14 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
             handle.write("\n")
             handle.flush()
             os.fsync(handle.fileno())
+        # Verify the persisted bytes before claiming a successful export.
+        saved = target.read_bytes()
+        if json.loads(saved) != manifest:
+            raise OSError("Archive manifest readback mismatch")
+        if hashlib.sha256(saved).digest() != hashlib.sha256(
+            (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\\n").encode("utf-8")
+        ).digest():
+            raise OSError("Archive manifest byte integrity mismatch")
         return manifest
     except BaseException:
         target.unlink(missing_ok=True)

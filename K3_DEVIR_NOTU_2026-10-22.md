@@ -88,3 +88,8 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 - 03b82dc: CLI içindeki kanıt yükleyicisi load_evidence(path) olarak ayrıldı; CLI aynı işlevi kullanıyor.
 - 5026751: Normal JSON, tekrarlanan JSON anahtarı, symlink ve 16 MiB üstü dosya için doğrudan yükleyici testleri eklendi.
 - Yeni testler henüz CI/yerel ortamda çalıştırılmadı; başarılı oldukları iddia edilmemeli. Üst dizinlerin atomik açılması ve gerçek kanal/IBO ölçümleri hâlâ açık.
+
+## K3 yükleyici regresyon onarımı
+- acb6cf1: CLI testinde eski load() beklentisi load_evidence() olarak düzeltildi.
+- c8d4e62: Ayrılan load_evidence işlevine eksik json ve _unique_json_pairs importları eklendi; olası NameError giderildi.
+- Bu düzeltmeler kaynak incelemesiyle belirlendi; güncel test çalıştırması henüz doğrulanmadı.

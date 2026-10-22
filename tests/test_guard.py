@@ -1,7 +1,27 @@
 import unittest
+import tempfile
+from pathlib import Path
+from unittest.mock import patch
 from src.madsc_guard import safe_relative_path, validate_manifest
 
 class GuardTests(unittest.TestCase):
+    def test_cli_rejects_symlink_and_oversized_manifest(self):
+        from src.madsc_guard import main
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            valid = root / "valid.json"
+            valid.write_text('{"production_write": false, "output_paths": ["artifacts/a.json"]}')
+            link = root / "link.json"
+            link.symlink_to(valid)
+            oversized = root / "oversized.json"
+            oversized.write_bytes(b" " * (1024 * 1024 + 1))
+            for path in (link, oversized):
+                with self.subTest(path=path.name):
+                    with patch("sys.argv", ["madsc_guard", str(path)]):
+                        with self.assertRaises(SystemExit) as caught:
+                            main()
+                        self.assertEqual(caught.exception.code, 2)
+
     def test_allowed(self):
         validate_manifest({"production_write": False, "output_paths": ["artifacts/report.json"]})
     def test_denied(self):

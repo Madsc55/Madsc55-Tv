@@ -48,6 +48,16 @@ class FixtureReportWriterTests(unittest.TestCase):
             self.assertFalse((root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8").exists())
             self.assertFalse((root / "reports/turkish-tv-batch-validation.json").exists())
 
+    def test_exclusive_writer_fails_closed_without_nofollow(self):
+        import os
+        from madsc.fixture_report_writer import _exclusive_bytes
+        with tempfile.TemporaryDirectory() as d:
+            destination = Path(d) / "evidence.json"
+            with patch.object(os, "O_NOFOLLOW", None, create=True):
+                with self.assertRaisesRegex(PermissionError, "without O_NOFOLLOW"):
+                    _exclusive_bytes(destination, b'{"ok": true}')
+            self.assertFalse(destination.exists())
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

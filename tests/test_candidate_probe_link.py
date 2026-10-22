@@ -200,6 +200,18 @@ class CandidateProbeLinkTests(unittest.TestCase):
                 load_evidence(target)
 
 
+    def test_evidence_loader_rejects_malformed_json_and_utf8(self):
+        import tempfile
+        from pathlib import Path
+        from madsc.candidate_probe_link import load_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid.json"
+            for payload in (b'{"broken":', b'\\xff'):
+                with self.subTest(payload=payload):
+                    path.write_bytes(payload)
+                    with self.assertRaises((ValueError, UnicodeError)):
+                        load_evidence(path)
+
     def test_evidence_loader_rejects_fifo_without_waiting_for_writer(self):
         import os
         import tempfile

@@ -64,6 +64,11 @@ class OnlineEvidenceReconcileTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 main([str(link), str(k3_path)])
 
+    def test_rejects_boolean_audio_video_counter(self):
+        self.k3["audio_video_verified"] = False
+        with self.assertRaisesRegex(ValueError, "audio/video verification"):
+            reconcile(self.k2, self.k3)
+
     def test_cli_rejects_missing_evidence(self):
         from madsc.online_evidence_reconcile import main
         with TemporaryDirectory() as directory:

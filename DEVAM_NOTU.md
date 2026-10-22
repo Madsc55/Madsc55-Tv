@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: 51267b0bee39522d2017381594827f4bf7d3265c
+Son geliştirme commit SHA: 7635cbe28071df818ecdefb77cc43e40ea5ffb09
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -162,3 +162,14 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Actions/live probe/production write/eski repo yazısı yok. Statik file binding 3/5; runtime origin ve gerçek behavior ready 0, kabul 0/92, 0/26, 0/22.
 - Açık blocker: üç opt-in zincirin bağımsız gerçek run/artifact kökeni için ayrıca Actions izni gerekir; eski read-only 92 artifactlerinde v1 manifest yok. K2/K3 canlı veya harici girdiyi yetkisiz kullanmadan karşılaştırılabilir ortak gerçek dosyaya bağlanamıyor.
 - Sıradaki güvenli yerel adım: readiness JSON şemasını ve üç statik bağın kaynak SHA/input/output alanlarını parity manifest karşılaştırıcısının preflight doğrulamasına bağlamak; bu işlem runtime/acceptance üretmemeli ve Actions çalıştırmamalı.
+
+## Parity dosya okuma güvenliği — güncel kayıt
+- Son kod commit SHA: 7635cbe28071df818ecdefb77cc43e40ea5ffb09; taban 53ca334a0eb7b209251f41b06909e5ebb0cfdf85. Eşzamanlı otomatik turdaki 51267b0 K2/K3 readiness geliştirmesi ve 53ca334 devir kaydı korunarak üzerine normal commit hazırlandı; eski HEAD'e zorla yazılmadı, merge yapılmadı.
+- parity_manifest_cli ve parity_snapshot_writer FIFO açılışında fstat'a ulaşmadan bekliyordu. Gerçek FIFO alt süreç testi iki entrypoint'te de 2 saniye timeout verdi. O_NONBLOCK ile regular olmayan girdi artık beklemeden reddedilir.
+- Gerçek dosya okuma sırasında değiştirildiğinde önceki iki negatif test hata atmadan kanıt üretildiğini gösterdi. Descriptor ve pathname dev/inode/size/mtime_ns/ctime_ns/nlink değerleri okuma sonunda denetleniyor; değişim, kaybolma veya aynı boyutta inode değiştirme tespit edilirse kanıt yazılmıyor. Bu metadata tutarlılık kontrolüdür; tam atomiklik veya execution boyunca input dondurma iddiası değildir.
+- Başarısız test kaydı: FIFO manifest/snapshot alt vakalarında 2 ERROR (TimeoutExpired); input/output değişiminde 2 FAIL (ValueError gelmedi). Düzeltme sonrası hepsi geçti. Aynı boyutta dosya değiştirme de her iki entrypoint'te sınandı; ret durumlarında reports oluşmadı.
+- Nihai birleşik yerel sonuç: python -m madsc.offline_gate, 598 test ve beş izole K kapısı success; 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri geçti. Kanıt docs/PARITY_FILE_READ_KANIT_2026-10-22.json. Paket14 dosyası otomatik turun ayrı kanıtı olarak aynen korundu.
+- Kaydetme sırasında main değiştiği için ilk ref güncellemesi doğrulanamadı. Main yeniden okundu, yeni turun kod/testleri alınarak regresyon tekrarlandı ve güncel HEAD üzerine kaydedildi. Yalnız main'den erişilebilir son commitler ilerleme kanıtıdır.
+- Önceki devirde K3 için yazılan external_delivery_or_notification_state_required ifadesi kaynak kod sınıfı değildir. Gerçek readiness kodundaki K3 engeli canlı stream probe/harici aday kaynağı; sınıf external_or_live_input_blocked'dır. K2 de canlı ağ/harici history girdisine bağlıdır. Bu ifadeleri delivery sistemi kurulmuş gibi yorumlama.
+- Actions/live probe/cihaz/production write/eski depo yazısı yok. Korunan yayın listeleri, EPG, YEDEKLER/YENİLER/FAVORİLER ve PR #71 değişmedi; kabul 0/92, 0/26, 0/22.
+- Sıradaki güvenli yerel iş: mevcut readiness'deki üç statik file binding kaydını parity manifest preflight doğrulamasına bağla; marker ya da yerel dosya hashini bağımsız runtime veya 92 kabulü sayma. Gerçek opt-in run/artifact kökeni ve legacy 92 v1 manifest eksikliği açık.

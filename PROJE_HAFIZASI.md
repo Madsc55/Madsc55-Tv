@@ -1953,3 +1953,12 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Odak 7 test ve tam offline_gate 594 test başarılı; K1–K5 fixture gates, 92+7 kapsam ve 22 görev envanteri geçti. Kanıt `docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET14.json`. Actions/live probe/production write yok; kabul 0/92, 0/26, 0/22.
 - Açık: K1/K4/K5'in bağımsız gerçek run/artifact kökeni için ayrı Actions izni, legacy 92 v1 manifest için mevcut read-only artifact gerekir. K2/K3 için yetkili ortak gerçek dosya girişi yok.
 - Sıradaki yerel iş: readiness veri-akışı alanlarını parity manifest preflight doğrulamasına bağla; statik kanıtın runtime kabulüne dönüşmesini engelle.
+
+
+## 22 Ekim 2026 — FIFO ve okuma sırasında değişen parity dosyası
+- Kod 7635cbe28071df818ecdefb77cc43e40ea5ffb09, taban 53ca334a0eb7b209251f41b06909e5ebb0cfdf85; eşzamanlı K2/K3 veri-akışı geliştirmesi korunarak birlikte test edildi. İlk ref güncellemesi sonrası main yeniden okundu; eski HEAD ezilmedi.
+- parity_manifest_cli/parity_snapshot_writer O_NONBLOCK ile FIFO'da beklemez; fstat regular-file kontrolüne ulaşır. Dosya okuma sonunda açık descriptor ve pathname inode/dev/size/mtime_ns/ctime_ns/nlink eşleşmesi zorunlu; değişen/yerine başka dosya konan girdiden kanıt yazılmaz. Tam atomik dosya dondurma iddiası yok.
+- Önce testlerde iki FIFO alt vakası TimeoutExpired (2 ERROR), iki değişim vakası ValueError gelmediği için FAIL verdi. Düzeltildi; aynı boyutta inode değiştirme de iki entrypoint'te reddedildi.
+- Nihai birleşik offline_gate: 598 test, K1–K5 fixture kapıları, 92+7 kaynak, 10 yardımcı komut ve 22 görev envanteri geçti. Kanıt docs/PARITY_FILE_READ_KANIT_2026-10-22.json. Otomatik turun Paket14 kanıtı korundu.
+- Önceki K3 external_delivery_or_notification_state_required devir ifadesi gerçek kod alanı değildir; kaynak kod K3 canlı probe/harici aday kaynağı engelini external_or_live_input_blocked olarak raporlar.
+- Üretim/korunan veri, eski repo, PR #71 değişmedi; Actions veya gerçek ağ testi yok. Tam kabul 0/92, 0/26, 0/22. Sonraki iş readiness file binding ile manifest preflight bağı; runtime kökeni hâlâ bağımsız kanıt ister.

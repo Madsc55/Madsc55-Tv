@@ -25,7 +25,7 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
         raise ValueError("Restore audit inventory exceeds safe entry limit")
     declared_dirs = set()
     for name in names:
-        if (not name or name.startswith("~") or ":" in name or "\\\\" in name
+        if (not name or name.startswith("~") or ":" in name or chr(92) in name
                 or any(ord(character) < 32 or ord(character) == 127 for character in name)
                 or Path(name).is_absolute()
                 or any(part in ("", ".", "..") for part in name.split("/"))):

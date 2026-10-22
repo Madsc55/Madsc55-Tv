@@ -238,3 +238,12 @@
 - Kod commitleri: `c6affc2824a1c8e5288da16eff853f7bb690e1ca`, `d6f1ce5c98c85658336198b542d0a7ccb65a6394`. Regresyon testleri: `2a0796ebe98b03db88905534c6546153dd92020a`, `cb0a046252e1a75d119ae12e0af6c76028b3379c`.
 - Bu sınıflar inceleme adaylarıdır; subprocess çağrısının mutlaka yazdığı iddia edilmez. CI combined-status sorgusu henüz status/check döndürmedi; 990 testlik eski run yeni SHA'lar için kanıt sayılmaz.
 - K1 0/26, legacy parity 0/92, ana görev 0/22 ve production_ready=false korunur. 75 adayın tümünün sınıflandırılması henüz tamamlanmadı.
+
+
+## 23 Ekim 2026 — K2 M3U metadata kimliği fail-closed sertleştirmesi
+- `madsc/discovery_batch.py` artık aynı `#EXTINF` satırındaki yinelenen metadata alanlarını (büyük/küçük harf farkı dahil) aday kabul etmek yerine `duplicate_metadata_attribute` parse hatasıyla reddeder; metadata alan adları küçük harfe normalize edilir.
+- Kod commitleri: `a83211a36e9ad1dd1c6047b74888970ddc33b381` (yinelenen alanları reddetme), `b0ab88f2ab2043ecbd24620bd76066a0cd924b45` (metadata anahtarlarını normalize etme).
+- Regresyon commitleri: `b4b13f9de4913af05f5ddcc21e714fff8227c667` (yinelenen alan), `75d1fa756a232d4ee594bb5ae28faa01abba931b` (büyük/küçük harf uyumu).
+- Doğrulama sınırı: workflow `workflow_dispatch` ile tetikleniyor; bu oturumda dispatch aracı kullanılmadı. Combined-status sorgusu yeni test commitleri için sonuç döndürmedi. Bu nedenle testler CI'da başarılı sayılmaz; eski 990-test baseline bu yeni SHA'ları kapsamaz.
+- Etki: belirsiz `tvg-id` çakışmasının sessizce son değerle ezilmesi engellenir; tekil büyük harfli `TVG-ID` alanı da tanınır. K2-05/06/07/08 kabul durumları değiştirilmedi; gerçek kaynak/lisans, günlük eşdeğerlik ve bağımsız artifact SHA kanıtı hâlâ açık.
+- Üretim playlist/EPG/favoriler/yedekler değişmedi; eski `Madsc55/madsc-tv` deposuna yazılmadı; canlı kaynak veya IBO cihaz testi yapılmadı.

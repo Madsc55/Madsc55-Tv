@@ -62,3 +62,12 @@ Bu dosya yalnız K1/K5'e ait ayrı devir kaydıdır.
 - Main üzerinde `madsc/write_path_audit.py` mevcuttur, ancak `enforce_write_paths` çağrısı yapan yazıcıların tam listesi ve 26 güvenlik kuralının çalışma zamanı icrası henüz doğrulanmadı. `runtime_gate_enforced` dönüş değeri yalnız fonksiyonun çağrıldığını gösterir; bağımsız yazıcıları kapsadığını göstermez.
 - `madsc/k1_k5_acceptance_requirements.py` 22 görev için eksik kanıt anahtarlarını hesaplar, fakat modülün kendi açıklamasına göre doğrulama/gerçek üretim kabulü değildir. `verified` girdisini bağımsız kanıt yerine kullanıp görev kapatma.
 - **Kritik sonraki adım:** doğru depo/dal ve eski kapının kaynak revizyonu arasında iz sür; main üzerindeki gerçek yazıcı çağrılarını envanterle, dinamik/subprocess adaylarını ayrı sınıflandır. Korunan üretim M3U kapısını kullanıcı onayı olmadan gevşetme.
+
+
+## 22 Ekim — K1 yazıcı envanterinde doğrudan kaynak incelemesi
+GitHub main üzerinde dört modülün kaynakları doğrudan okundu:
+1. `madsc/fixture_report_writer.py`: `_exclusive_bytes` os.open(O_EXCL|O_CREAT), mümkünse O_NOFOLLOW ve fstat ile yalnız izole fixture çıktısı üretir. `write_fixture_report` ve K3 test paketi için kapsamı sınırlıdır; depo genelinde otomatik yazma engeli değildir.
+2. `madsc/parity_manifest_writer.py`: `write_replacement_parity_manifest` çıktı üretimini `write_fixture_report` üzerinden yapar. Davranış eşdeğerliğini kabul etmez.
+3. `madsc/parity_snapshot_writer.py`: `write_execution_snapshot` yine fixture yazıcısını kullanır; `_sha256_regular_file` salt-okunur dosya gözlemidir, fstat/lstat sürüm kontrolü yapar. Harici üretim kanıtı değildir.
+4. `madsc/backup.py`: `snapshot_manifest` salt-okunur hash envanteri, `verify_manifest` salt-okunur karşılaştırma, `compare_copy` salt-okunur izole kopya karşılaştırması. Dış depolama/gerçek restore kanıtı değildir.
+**Sınır:** Bu 4 modül, daha önce sözü edilen 20 dinamik/subprocess adayının tam listesi değildir. 20/20 incelendi iddiası yok. Önceki rapordaki `tools/protected_write_gate.py` güncel main üzerinde yok; kaynak/dal karışıklığı çözülmeden o kapının kapsamı varsayılmamalı.

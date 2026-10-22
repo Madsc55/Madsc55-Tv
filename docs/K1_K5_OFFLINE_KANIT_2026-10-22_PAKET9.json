@@ -1,0 +1,39 @@
+{
+  "schema": "madsc-k1-k5-offline-evidence-v1",
+  "date": "2026-10-22",
+  "package": 9,
+  "base_main_sha": "e80291daf5225b60a1fa327610d5c88a0b9d138b",
+  "scope": "real-file parity manifest producer CLI",
+  "tests": {
+    "command": "python -m madsc.offline_gate",
+    "discovered": 583,
+    "passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "legacy_behavioral_parity_accepted": 0,
+    "runtime_security_accepted": 0,
+    "task_acceptance": 0
+  },
+  "changes": [
+    "The opt-in CLI hashes actual bounded regular-file bytes instead of accepting a declared input hash.",
+    "Input and snapshot files are opened read-only with O_NOFOLLOW when available and verified through fstat.",
+    "Snapshot JSON rejects duplicate keys and is validated before the shared K1 manifest writer runs.",
+    "The CLI defaults repository, branch, run and head identity from GitHub runtime environment variables but starts no workflow."
+  ],
+  "resolved_test_failure": {
+    "test": "ParityManifestCliTests.test_real_file_bytes_are_hashed_and_written",
+    "cause": "The initial test literal contained the wrong expected SHA256 for the fixed byte string.",
+    "resolution": "The literal was corrected to the independently observed hashlib value; focused and full suites then passed."
+  },
+  "source_sha256": {
+    "madsc/parity_manifest_cli.py": "c06baa07f730170bf175f0a3b9a01745e32869fb94c7ae2f90d177c5f496158f",
+    "tests/test_parity_manifest_cli.py": "3854024f8ca13111ea5ba3458d8713a8ddb04b089249a1b998e86a15229f42ea"
+  },
+  "constraints": {
+    "github_actions_started": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_written": false,
+    "fixture_is_acceptance": false
+  }
+}

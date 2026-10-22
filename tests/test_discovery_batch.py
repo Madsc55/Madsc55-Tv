@@ -182,6 +182,15 @@ class DiscoveryBatchTests(unittest.TestCase):
             ["duplicate_metadata_attribute"],
         )
 
+    def test_metadata_attribute_names_are_case_insensitive(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 TVG-ID="news.tv" GROUP-TITLE="News",News TV\n'
+                'https://example.org/news.m3u8\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(report["candidate_rows"][0]["tvg_id"], "news.tv")
+        self.assertEqual(report["candidate_rows"][0]["group_title"], "News")
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

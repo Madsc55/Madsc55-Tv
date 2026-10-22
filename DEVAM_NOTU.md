@@ -819,3 +819,8 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Regresyon testi `tests/test_source_import.py` içinde tam ve büyük/küçük harf farkı olan duplicate `tvg-id` ile duplicate `group-title` durumlarını kapsıyor. Test fixture satır sonları doğrulandı.
 - Entegre offline regression workflow `39868653542` SHA `9c1c8a594849d730f75d9c050265df74b382b8ec` için `success` ile tamamlandı. Bu çalışma yeni duplicate metadata testini içerir; ayrı K3 regex commit çalışması `39868610849` de `success` oldu.
 - Bu değişiklik aday içe aktarım doğrulamasını sıkılaştırır; kaynak M3U değiştirilmedi, gerçek yayın URL'leri denenmedi ve kanal canlı doğrulandı olarak işaretlenmedi.
+
+
+## K2 CI sonuç güncellemesi — 23 Ekim 2026
+- Güncelleme: `source_independence_verified` korumasını içeren kod/test commit'i `9c1c8a594849d730f75d9c050265df74b382b8ec` için GitHub Actions run `39868653542` başarıyla tamamlandı: https://github.com/Madsc55/Madsc55-Tv/actions/runs/39868653542
+- Böylece bu regresyon için önceki “CI bekleniyor” notu geçersizdir. Görev defterine başarılı koşum kanıtı eklendi. Bu başarı gerçek kaynak/lisans kanıtı veya günlük tetik eşdeğerliği anlamına gelmez; K2-05/06/07 ve gerçek kaynak davranış kabulü açık kalır.

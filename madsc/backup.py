@@ -2,6 +2,7 @@
 from __future__ import annotations
 import hashlib
 from pathlib import Path
+from madsc.write_path_audit import enforce_local_output_path
 
 def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     root = Path(root)
@@ -136,7 +137,6 @@ def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) ->
     destination = Path(destination)
     if not isinstance(names, list) or not names:
         raise ValueError("Sandbox restore requires a nonempty file list")
-    original = snapshot_manifest(backup, names)
     if destination.is_symlink() or destination.exists():
         raise ValueError("Restore destination must not exist")
     parent = destination.parent
@@ -152,6 +152,9 @@ def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) ->
         raise ValueError("Restore destination must be outside backup tree")
     if source_root.is_relative_to(target_root):
         raise ValueError("Restore destination must not contain backup tree")
+    enforce_local_output_path(destination.absolute())
+    original = snapshot_manifest(backup, names)
+    enforce_local_output_path(destination.absolute())
     destination.mkdir()
     try:
         for entry in original["entries"]:
@@ -178,7 +181,6 @@ def backup_to_new_sandbox(source: Path, destination: Path, names: list[str]) -> 
     destination = Path(destination)
     if not isinstance(names, list) or not names:
         raise ValueError("Sandbox backup requires a nonempty file list")
-    original = snapshot_manifest(source, names)
     if destination.is_symlink() or destination.exists():
         raise ValueError("Backup destination must not exist")
     parent = destination.parent
@@ -189,6 +191,9 @@ def backup_to_new_sandbox(source: Path, destination: Path, names: list[str]) -> 
     if (target_root == source_root or target_root.is_relative_to(source_root)
             or source_root.is_relative_to(target_root)):
         raise ValueError("Backup destination must be independent from source")
+    enforce_local_output_path(destination.absolute())
+    original = snapshot_manifest(source, names)
+    enforce_local_output_path(destination.absolute())
     destination.mkdir()
     try:
         for entry in original["entries"]:

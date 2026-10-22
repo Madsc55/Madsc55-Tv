@@ -111,8 +111,8 @@ class FixtureReportWriterTests(unittest.TestCase):
                        side_effect=PermissionError("runtime gate rejected")) as gate:
                 with self.assertRaises(PermissionError):
                     write_fixture_report(root, "reports/rejected.json", "forbidden")
-            gate.assert_called_once_with(root / "reports/rejected.json", allowed_root=root)
-            self.assertFalse((root / "reports/rejected.json").exists())
+            gate.assert_called_once_with(root / "reports", allowed_root=root)
+            self.assertFalse((root / "reports").exists())
 
     def test_existing_report_evidence_cannot_be_overwritten(self):
         with tempfile.TemporaryDirectory() as d:

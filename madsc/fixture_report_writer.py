@@ -114,6 +114,13 @@ def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
             raise PermissionError("Report ancestor must be a directory")
     if not destination.parent.resolve().is_relative_to(base):
         raise PermissionError("Escaping fixture root")
+    # Reject protected ancestors before even creating a reports directory.
+    enforce_write_paths([destination.relative_to(destination.anchor).as_posix()])
+    first_new = destination
+    while not first_new.parent.exists():
+        first_new = first_new.parent
+    if not first_new.exists():
+        enforce_local_output_path(first_new, allowed_root=root)
     destination.parent.mkdir(parents=True, exist_ok=True)
     if destination.exists():
         raise FileExistsError("Refusing to overwrite existing report evidence")

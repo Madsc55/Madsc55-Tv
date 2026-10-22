@@ -1,0 +1,188 @@
+{
+  "schema": "madsc-k2-k4-write-preflight-evidence-v1",
+  "tested_base": "56f64fa929cc5c91462196517ba72f9f43ac51db",
+  "focused_tests": 87,
+  "focused_success": true,
+  "full_gate": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 1,
+    "timed_out": false,
+    "tests_discovered": 816,
+    "tests_passed": false,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": false,
+    "five_stage_installation_inventory_passed": false,
+    "five_stage_installation_inventory_error": "ValueError",
+    "five_report_roundtrip_passed": true,
+    "five_report_roundtrip": {
+      "passed": true,
+      "reports_written": 5,
+      "reports_sha256": {
+        "madsc-batch-k1/k1.json": "a4c59ef902ddcdae5ebd8c25af0b80f6364fbab514e660bca0499c5585083bee",
+        "madsc-batch-k2/k2.json": "1665e33a3f342f036f30da3a86a625372d43c69ec2e05164f6c756dd75c6675c",
+        "madsc-batch-k3/k3.json": "2e9dc4c8bc600dd95d8a4d94fd6dfdb36a611b796927ffcc2b61bedf35865fa8",
+        "madsc-batch-k4/k4.json": "f6a9114661a740ab2fdb1f963d791075c68d3e128ec0ad833ed0504e86d6498e",
+        "madsc-batch-k5/k5.json": "b0cae92f3b74633ec41968df363af9b48c2ecd6f20cf5d43a1b2870b1b5eedd3"
+      },
+      "consumer_preserved_report_bytes": true,
+      "acceptance": {
+        "category_order": [
+          "k1",
+          "k2",
+          "k3",
+          "k4",
+          "k5"
+        ],
+        "categories": {
+          "k1": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "security",
+            "fixture_checks": 7,
+            "fixture_check_names": [
+              "audit_does_not_claim_runtime_gate",
+              "favorite_metadata_and_nested_logo_write_denied",
+              "fixture_report_write_guard",
+              "integrity_comparison",
+              "no_playlist_mutation",
+              "protected_write_paths_identified",
+              "valid_playlist"
+            ]
+          },
+          "k2": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "discovery",
+            "fixture_checks": 8,
+            "fixture_check_names": [
+              "both_m3u_and_m3u8",
+              "duplicates_separated",
+              "invalid_rejected",
+              "legacy_history_bridge_isolated",
+              "no_production_mutation",
+              "source_inventory_reconciled",
+              "sources_unchanged",
+              "unique_candidates"
+            ]
+          },
+          "k3": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "channel_testing",
+            "fixture_checks": 14,
+            "fixture_check_names": [
+              "ffprobe_json_fixture_not_live",
+              "handoff_read_only",
+              "ibo_fixture_not_live_device_evidence",
+              "ibo_report_not_device_verified",
+              "ibo_working_survives_technical_failure",
+              "k2_to_k3_handoff",
+              "legacy_390_offline_decode_contract",
+              "legacy_epg_logo_pilot_join",
+              "no_device_approval",
+              "no_production_approval",
+              "preliminary_classification",
+              "preliminary_not_approved",
+              "repeated_measurements_fixture_only",
+              "xmltv_id_matching"
+            ]
+          },
+          "k4": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "backup",
+            "fixture_checks": 7,
+            "fixture_check_names": [
+              "external_backup_not_claimed",
+              "independent_restore_reports_no_production_proof",
+              "manifest_integrity",
+              "restore_not_claimed",
+              "sandbox_copy_integrity",
+              "sandbox_restore_audit",
+              "three_tree_restore_fixture"
+            ]
+          },
+          "k5": {
+            "status": "isolated_fixture_checks_passed_not_production_verified",
+            "module": "maintenance",
+            "fixture_checks": 20,
+            "fixture_check_names": [
+              "all_92_pair_requirements_bound_without_acceptance",
+              "batch_failure_summary",
+              "candidate_k2_k3_k5_consistent",
+              "candidate_k2_k3_k5_join",
+              "candidate_metadata_counts",
+              "candidate_report_read_only",
+              "cross_category_handoff",
+              "failure_limit",
+              "five_categories",
+              "five_fixture_reports_successful",
+              "k1_guards_k5_report_write",
+              "k2_k3_k4_k5_candidate_restore_review",
+              "k4_corruption_blocks_k5_review",
+              "no_legacy_shutdown",
+              "no_schedule_activation",
+              "paginated_failure_history_blocks_retry",
+              "production_not_approved",
+              "read_only",
+              "separate_job_gate_not_false_writer_clearance",
+              "single_batch_no_extra_triggers"
+            ]
+          }
+        },
+        "k5_fixture_evidence_verified": true,
+        "five_isolated_reports_valid": true,
+        "runtime_rules_verified": false,
+        "legacy_92_behavioral_equivalence_verified": false,
+        "ibo_device_verified": false,
+        "external_restore_verified": false,
+        "production_ready": false,
+        "automatic_schedule_enabled": false
+      },
+      "independent_execution_evidence": false,
+      "production_ready": false
+    },
+    "workflow_and_task_inventory_passed": false,
+    "operational_contract_gate": {
+      "pass": false,
+      "error": "ValueError"
+    },
+    "auxiliary_workflows_mapped": null,
+    "auxiliary_commands_integrated_in_main": null,
+    "task_requirements_inventoried": null,
+    "legacy_scope_source_workflows": null,
+    "legacy_scope_behavior_workflows": null,
+    "legacy_scope_excluded": null,
+    "workflow_inventory_error": "ValueError",
+    "task_inventory_error": "ValueError",
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "failures": [
+    "ERROR: test_complete_static_inventory_never_claims_production (test_five_stage_installation.InstallationInventoryTests.test_complete_static_inventory_never_claims_production)",
+    "ERROR: test_import_to_five_playlists_end_to_end_offline (test_playlist_previews.PlaylistPreviewTests.test_import_to_five_playlists_end_to_end_offline)",
+    "ERROR: test_offline_cli_emits_five_drafts_without_writing_files (test_playlist_previews.PlaylistPreviewTests.test_offline_cli_emits_five_drafts_without_writing_files)",
+    "FAIL: test_bad_report_roundtrip_blocks_otherwise_green_gate (test_five_report_roundtrip.FiveReportRoundtripTests.test_bad_report_roundtrip_blocks_otherwise_green_gate)",
+    "FAIL: test_missing_installation_contract_blocks_green_unit_tests (test_five_stage_offline_gate_integration.InstallationGateIntegrationTests.test_missing_installation_contract_blocks_green_unit_tests)",
+    "FAIL: test_both_gates_required_for_success (test_offline_gate.OfflineGateTests.test_both_gates_required_for_success)",
+    "FAIL: test_lost_operational_contract_blocks_green_tests (test_offline_gate.OfflineGateTests.test_lost_operational_contract_blocks_green_tests)",
+    "FAIL: test_success (test_offline_gate.OfflineGateTests.test_success)"
+  ],
+  "source_sha256": {
+    "madsc/backup.py": "760a4015e985b1c1bf8ea0d8c181667af67ddf9395ce540abca92e68b8d1e333",
+    "madsc/fixture_report_writer.py": "8b0b588941acc1333a2aa0635b2ef9fbe59223a509e9e43a5397445752bfb589",
+    "madsc/history_artifact_download.py": "31f63b0a56142c223a72783fcf22f367b17c878912154c0be16b5b1a940a7558",
+    "madsc/history_pair_store.py": "185524ee87baeac0ac46c9c5023db4f4f78f9eef8e4394636b3126e04f2a0182",
+    "tests/test_fixture_report_writer.py": "ee70d9a3ab37d6be26f5d506196ea824d899749f317f20108766379387a0a1c9",
+    "tests/test_k4_write_preflight.py": "ff4e6b32f9fb19e9d4aaf78727d5e419e873130db3541772b0f4c4b0bf5bdc51",
+    "tests/test_k2_history_write_preflight.py": "6176da994d39eb174e5fff70867d519bc0ae3bf11c4fa55a03afdf91b2d57d14"
+  },
+  "production_ready": false
+}

@@ -8,7 +8,7 @@ from madsc.write_path_audit import enforce_local_output_path
 from urllib.request import Request
 from madsc.github_transport import github_opener
 
-from madsc.history_pair_store import KEYS
+from madsc.history_pair_store import KEYS, encode_pair
 from madsc.history_pair_bridge import import_legacy_pair
 
 
@@ -39,6 +39,7 @@ def extract_verified_history(archive, expected_hashes, destination):
     decoded = {name: json.loads(raw) for name, raw in validated.items()}
     if not all(isinstance(value, dict) for value in decoded.values()):
         raise ValueError("Invalid history JSON")
+    encode_pair(decoded)
     enforce_local_output_path(destination.absolute())
     destination.mkdir(exist_ok=False)
     for name, raw in validated.items():

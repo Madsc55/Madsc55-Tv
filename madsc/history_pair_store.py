@@ -40,13 +40,14 @@ def decode_pair(raw):
 
 def atomic_write_pair(destination, pair):
     """One same-directory os.replace commit point, with cleanup on failure."""
-    from madsc.write_path_audit import enforce_write_paths
+    from madsc.write_path_audit import enforce_write_paths, enforce_local_append_path
     path = Path(destination)
     # K1 preflight also covers the atomic replacement entry point.
     enforce_write_paths([path.name])
     if (path.is_symlink() or not path.parent.is_dir()
             or any(parent.is_symlink() for parent in (path.parent, *path.parent.parents))):
         raise ValueError("Unsafe history destination")
+    enforce_local_append_path(path.absolute())
     raw = encode_pair(pair)
     staged = None
     try:
@@ -56,6 +57,7 @@ def atomic_write_pair(destination, pair):
             handle.write(raw)
             handle.flush()
             os.fsync(handle.fileno())
+        enforce_local_append_path(path.absolute())
         os.replace(staged, path)
         staged = None
     finally:

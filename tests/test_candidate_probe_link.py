@@ -88,7 +88,7 @@ class CandidateProbeLinkTests(unittest.TestCase):
         self.assertIn("add_mutually_exclusive_group(required=True)", source)
         self.assertIn('evidence_group.add_argument("--probes", type=Path)', source)
         self.assertIn('evidence_group.add_argument("--continuity", type=Path)', source)
-        self.assertIn("link_candidate_continuity(candidates, load(args.continuity)", source)
+        self.assertIn("link_candidate_continuity(candidates, load_evidence(args.continuity)", source)
 
     def test_cli_rejects_symlink_ancestors_and_bounds_file_reads(self):
         from pathlib import Path

@@ -215,3 +215,11 @@
 - Main bu test SHA'sından sonra yalnızca `PROJE_HAFIZASI.md` ve bu devir notuyla ilerledi; kod/test ağacı aynı.
 - CI raporu `legacy_92_behavioral_equivalence_verified=false`, `production_ready=false` tutuyor. Kabul sayaçları: K1 0/26 bağımsız kabul; legacy 0/92; ana görev 0/22.
 - K5 için `docs/legacy-workflow-contracts/madsc-documentation-check.json` eski workflow kaynak semantiğini sabit SHA ile belgeliyor, ama replacement ve yürütme karşılaştırması yok; davranışsal eşdeğerlik kabul edilmedi.
+
+
+## K3/K4 güncel devam — 23 Ekim 2026
+- K3 XMLTV eşleşmesinde yinelenen channel ID'ler ve eksik ID/root fail-closed: `madsc/trial_epg_matching.py` + `madsc/epg.py`; regresyonlar CI run `39865719002` içinde doğrulandı (982 test).
+- K4 sandbox kopyalama hedef tarafı da dirfd/no-follow ile sertleştirildi: `madsc/backup.py::_create_relative_file_nofollow` root inode identity kontrolü, descriptor-relative nested mkdir, O_NOFOLLOW/O_EXCL dosya oluşturma kullanır. Symlink'li hedef alt dizin, root inode uyuşmazlığı ve backslash yolu testleri eklendi. Run `39865933101` SHA `a4c70f7277be8aad73cdd95d027115b7bcab469d` başarılı: 990 test, five-stage fixture gate true, all offline gates true, AST scan 97 dosya/75 aday.
+- Run `39863892845` için GitHub API 404; sonucu doğrulanamıyor. Bu yüzden son erişilebilir sonuçlar kullanıldı.
+- K3 gerçek HLS/ffprobe workflow'ları `workflow_dispatch` gerektirir; bu GitHub bağlantısında workflow dispatch aracı bulunmadığı için canlı pilot bu oturumda başlatılmadı. IBO Player Pro cihaz kabulü yok. K4 harici storage ve bağımsız dış restore kanıtı da yok.
+- Üretim kabulü false; 92 workflow 0/92, 26 runtime güvenlik kuralı 0/26, 22 ana görev 0/22. Üretim playlist/EPG/favori/yedekler değişmedi; eski depo ve PR #71'e dokunulmadı.

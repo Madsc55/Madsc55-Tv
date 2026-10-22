@@ -48,8 +48,9 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
         return True, name
     if name in {"open", "builtins.open", "io.open"} or leaf == "open":
         mode = None
-        if len(node.args) >= 2 and isinstance(node.args[1], ast.Constant):
-            mode = node.args[1].value
+        mode_index = 0 if isinstance(node.func, ast.Attribute) else 1
+        if len(node.args) > mode_index and isinstance(node.args[mode_index], ast.Constant):
+            mode = node.args[mode_index].value
         for kw in node.keywords:
             if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
                 mode = kw.value.value

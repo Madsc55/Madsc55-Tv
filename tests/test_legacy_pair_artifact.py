@@ -95,6 +95,19 @@ class LegacyPairArtifactTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Unsafe artifact manifest entry"):
             verify_parity_artifact_manifest(origin, archive)
 
+    def test_unsupported_zip_compression_fails_closed(self):
+        origin = self.pair["legacy"]
+        archive = bytearray(archive_for(origin))
+        # Change the compression method in local and central directory records.
+        for signature, offset in ((b"PK\x03\x04", 8), (b"PK\x01\x02", 10)):
+            start = archive.find(signature)
+            self.assertGreaterEqual(start, 0)
+            archive[start + offset:start + offset + 2] = (99).to_bytes(2, "little")
+        archive = bytes(archive)
+        origin["artifact"]["sha256"] = hashlib.sha256(archive).hexdigest()
+        with self.assertRaisesRegex(ValueError, "Invalid artifact ZIP"):
+            verify_parity_artifact_manifest(origin, archive)
+
     def test_duplicate_json_keys_are_rejected(self):
         origin = self.pair["legacy"]
         raw = ('{"schema":"madsc-parity-artifact-v1","schema":"duplicate",'

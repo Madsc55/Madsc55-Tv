@@ -9,12 +9,16 @@ def assess_candidates(discovery: dict, probes: dict[str, dict], ibo_results: dic
         raise ValueError("Probe evidence must be a dictionary")
     if not isinstance(discovery, dict) or not isinstance(discovery.get("candidates"), list):
         raise ValueError("Invalid discovery evidence")
+    if len(discovery["candidates"]) > 20000:
+        raise ValueError("Too many candidates in discovery")
     assessed = []
     seen = set()
     alternative_map = {}
     alternatives = discovery.get("alternatives", [])
     if not isinstance(alternatives, list):
         raise ValueError("Invalid alternative evidence")
+    if len(alternatives) > 20000:
+        raise ValueError("Too many alternatives in discovery")
     for alternative in alternatives:
         if not isinstance(alternative, dict):
             raise ValueError("Invalid alternative evidence")

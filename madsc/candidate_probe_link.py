@@ -68,22 +68,38 @@ def link_candidate_continuity(envelope: dict, measurements: dict,
 
 
 def load_evidence(path):
+    """Read bounded JSON evidence without following path-component symlinks."""
     import json
-    from madsc.batch_acceptance import _unique_json_pairs
-    if (path.is_symlink() or any(parent.is_symlink() for parent in path.parents)
-            or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024):
-        raise ValueError("Invalid or oversized evidence")
     import os
     import stat
-    if not isinstance(getattr(os, "O_NOFOLLOW", None), int):
+    from pathlib import Path
+    from madsc.batch_acceptance import _unique_json_pairs
+
+    if (not isinstance(getattr(os, "O_NOFOLLOW", None), int)
+            or not isinstance(getattr(os, "O_DIRECTORY", None), int)
+            or os.open not in os.supports_dir_fd):
         raise ValueError("Secure evidence opening is unavailable")
-    flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
-    descriptor = os.open(path, flags)
-    with os.fdopen(descriptor, "rb") as handle:
-        opened = os.fstat(handle.fileno())
-        if not stat.S_ISREG(opened.st_mode) or opened.st_size > 16 * 1024 * 1024:
-            raise ValueError("Evidence must be a bounded regular file")
-        raw = handle.read(16 * 1024 * 1024 + 1)
+
+    path = Path(path).absolute()
+    parts = path.parts
+    descriptor = os.open(parts[0], os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        for component in parts[1:-1]:
+            next_descriptor = os.open(
+                component, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                dir_fd=descriptor)
+            os.close(descriptor)
+            descriptor = next_descriptor
+        file_descriptor = os.open(
+            parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK,
+            dir_fd=descriptor)
+        with os.fdopen(file_descriptor, "rb") as handle:
+            opened = os.fstat(handle.fileno())
+            if not stat.S_ISREG(opened.st_mode) or opened.st_size > 16 * 1024 * 1024:
+                raise ValueError("Evidence must be a bounded regular file")
+            raw = handle.read(16 * 1024 * 1024 + 1)
+    finally:
+        os.close(descriptor)
     if len(raw) > 16 * 1024 * 1024:
         raise ValueError("Invalid or oversized evidence")
     return json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_json_pairs)

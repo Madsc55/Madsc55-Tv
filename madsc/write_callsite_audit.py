@@ -49,14 +49,24 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
     if name in {"open", "builtins.open", "io.open"} or leaf == "open":
         mode = None
         mode_index = 0 if isinstance(node.func, ast.Attribute) else 1
-        if len(node.args) > mode_index and isinstance(node.args[mode_index], ast.Constant):
+        mode_supplied = len(node.args) > mode_index
+        dynamic_mode = mode_supplied and not isinstance(node.args[mode_index], ast.Constant)
+        if mode_supplied and isinstance(node.args[mode_index], ast.Constant):
             mode = node.args[mode_index].value
         for kw in node.keywords:
-            if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
-                mode = kw.value.value
+            if kw.arg == "mode":
+                mode_supplied = True
+                if isinstance(kw.value, ast.Constant):
+                    mode = kw.value.value
+                    dynamic_mode = False
+                else:
+                    dynamic_mode = True
         if isinstance(mode, str) and any(flag in mode for flag in "wax+"):
             return True, name
-        if mode is None and any(kw.arg == "mode" for kw in node.keywords):
+        # A nonliteral positional or keyword mode can enable writing (e.g.
+        # open(path, requested_mode)); inventory it conservatively rather than
+        # silently treating it as a read-only open.
+        if dynamic_mode:
             return True, name + " [dynamic mode]"
         return False, ""
     if name in {"os.open", "posix.open"}:

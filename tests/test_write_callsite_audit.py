@@ -122,6 +122,21 @@ def mutate(path):
                           "os.open [flags require review]"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_os_open_complex_flags_are_always_reviewed(self):
+        source = '''
+import os
+def mutate(path, flags, enabled):
+    os.open(path, build_flags(flags))
+    os.open(path, flags if enabled else os.O_RDONLY)
+    os.open(path, flags=~flags)
+    os.open(path, (flags,))
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 4)
+        self.assertEqual([row["api"] for row in rows],
+                         ["os.open [flags require review]"] * 4)
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

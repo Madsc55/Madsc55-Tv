@@ -236,6 +236,24 @@ def create():
             with self.assertRaisesRegex(ValueError, "Symlinked source entry"):
                 scan_python_tree(root)
 
+    def test_metadata_mutations_are_inventoried(self):
+        source = '''
+import os
+from pathlib import Path
+def mutate(path, fd):
+    os.chmod(path, 0o600)
+    os.fchmod(fd, 0o600)
+    os.chown(path, 1, 1)
+    os.utime(path, None)
+    Path(path).chmod(0o600)
+    Path(path).lchmod(0o600)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["os.chmod", "os.fchmod", "os.chown",
+                          "os.utime", "Path.chmod", "Path.lchmod"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

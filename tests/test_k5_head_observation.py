@@ -11,7 +11,7 @@ class K5HeadObservationTests(unittest.TestCase):
         self.run = "123"
         self.sha = "a" * 40
         self.digest = hashlib.sha256(b"https://video.example.com/a").hexdigest()
-        self.envelope = pack({"candidates": [{"url_sha256": self.digest}]},
+        self.envelope = pack({"candidates": [{"url_sha256": self.digest, "name": "Fixture channel"}]},
                              self.run, self.sha)
         self.observation = {
             "schema": "madsc-k3-https-head-observation-v1",

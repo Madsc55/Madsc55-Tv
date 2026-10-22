@@ -34,3 +34,11 @@
 - Güncel main bu açığı zaten kapatıyor: `7c2aae9d028bdebd5159a2f157141420b8cfc855` (`fix(k1): reject noncanonical Unicode output paths`) orijinal ve NFKC normalize edilmiş yol farklıysa `ValueError` fırlatıyor. Testi güncel main'de yeniden düzeltmeye çalışıp değişikliği tekrarlamadım.
 - Karşılaştırma `c40c765... → main`: main 3 commit ileride; `src/madsc_guard.py` değişmiş. Güncel main için sonradan çalıştırılmış Actions sonucu henüz kanıtlanmadı. CI tekrar çalıştırılmadı.
 - Eski failure'ın kök nedeni belirlendi ve mevcut main'de kodla giderilmiş; doğrulama için yeni CI sonucu bekliyor.
+
+## K5 devam kontrolü — 2026-10-23
+- Güncel main HEAD doğrulandı: fb4a738e1be8860acc9fcd508ec580511cfeb951.
+- GitHub Actions run 39862185213, SHA fb4a738e1be8860acc9fcd508ec580511cfeb951: offline-tests başarılı.
+- Job logu: tests_passed=true, all_offline_gates_passed=true.
+- Aynı log açıkça production_acceptance=false, legacy_92_behavioral_acceptance=0, runtime_security_26_acceptance=0 raporluyor. Bu CI başarısı yalnızca offline regresyon ve izole kabul kapsamındadır; 92 workflow, 26 runtime kuralı veya üretim kabulü için kanıt sayılmaz.
+- K1 noncanonical Unicode path testi Non-canonical Unicode output path hatasını açıkça bekleyecek şekilde güncellendi; bu değişiklik aynı başarılı run'ın kapsamındadır.
+- Kaynak kodu/test kapısı için yeni hata görülmedi; kalan işler gerçek veri ve runtime kabul kanıtlarıdır. Üretim listeleri, EPG, cihaz verileri, yedekler ve eski depo değiştirilmedi.

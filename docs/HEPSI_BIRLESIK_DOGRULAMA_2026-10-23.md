@@ -72,3 +72,12 @@
 - Aynı CI raporu `runtime_rules_verified=false`, `legacy_92_behavioral_equivalence_verified=false`, `production_ready=false` olarak kalır.
 - Kabul sayaçları değişmedi: eski 92 workflow 0/92, güvenlik kuralları 0/26 bağımsız kabul, 22 ana görev 0/22 bağımsız kabul.
 - Canlı IPTV/EPG/favoriler/cihazlar/yedekler/arşivler değiştirilmedi; Actions yeniden tetiklenmedi; PR #71 birleştirilmedi.
+
+
+## 23 Ekim 2026 — Eski workflow davranış sözleşmesi şablonu
+- Eklendi: `docs/LEGACY_WORKFLOW_BEHAVIOR_CONTRACT_TEMPLATE_2026-10-23.json` (commit `8da05d2ad09b7fb2f1923b6f359cb878b8f68ff8`).
+- Şablon; sabitlenmiş eski/yeni kaynak blob kimlikleri, tetikleyiciler, girdiler, sırayla komutlar, izinler, timeout/exit code, çıktılar/artifact'lar, kalıcı yan etkiler, ağ/destructive davranış, iptal/tekrar çalıştırma ve idempotency alanlarını içerir. İzole test planı ve iki taraftaki çalıştırma kanıtı, çıktı/yan etki/hata-zaman aşımı karşılaştırması ve bağımsız inceleme zorunludur.
+- Şablon yalnızca inceleme başlangıcıdır; hiçbir workflow'a otomatik eşdeğerlik atamaz. 99 workflow için gerçek değerler kaynak dosyası ve kanıtlarla doldurulmalıdır. Canlı/üretim verilerine erişim, yetki olmadan yasaktır.
+- Bu commit dokümantasyondur ve `[skip ci]` kullanılmıştır; yeni test koşusu oluşmadı. Önceki başarılı Actions run `39862697684` SHA `483bce535b585e5c750b7cfa54b87fb9f578d72c` için geçerlidir, yeni dokümantasyon commit'ini test etmiş sayılmaz.
+- Güncel workflow consolidation symlink kodu/testi commit'leri `3d22c4c` ve `a25af57` için ayrıca başarılı CI kanıtı henüz yoktur.
+- Kabul sayaçları değişmedi: 92 legacy 0/92, güvenlik 0/26 bağımsız kabul, ana görevler 0/22.

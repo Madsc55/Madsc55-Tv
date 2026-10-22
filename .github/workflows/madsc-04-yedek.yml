@@ -37,7 +37,7 @@ jobs:
           set -e
           if [[ "$consumer_status" -ne 0 ]]; then
             if [[ "${{ inputs.allow_parity_evidence }}" == "true" && -f reports/k4-restore-drill.json ]]; then
-              python -m madsc.parity_snapshot_cli --exit-code "$consumer_status" --output restore=reports/k4-restore-drill.json --output-root .
+              python -m madsc.parity_snapshot_cli --exit-code "$consumer_status" --output restore=reports/k4-restore-drill.json --output-root . || echo "WARNING: failure snapshot unavailable; preserving original consumer exit status" >&2
             fi
             exit "$consumer_status"
           fi

@@ -34,3 +34,10 @@ Bu dosya yalnız K1/K5'e ait ayrı devir kaydıdır.
 - K5 `madsc/maintenance.py` ve bağımsız `tests/test_k5_*.py` dosyaları: `0d9ad9a` durum/sonuç tutarlılığı, `e8b9726` test; `174492f` hatalı zaman damgası hatası, `3e680a3` test; `76a17c2` sonuç tipi, `48ce649` test; `ab4c39a` aynı dalda daha yeni çalışmanın eski hedefi geçersiz kılması, `add5501` test; `47e8cbc` 1000 kayıt üst sınırı, `846bb16` sayfalama sınırı testleri.
 - Bunlar `[skip ci]` commitleridir; yeni HEAD üzerinde odaklı veya tam test başarısı doğrulanmadı. Sonradan gelen K2/K3 commitleri de test gerektirir.
 - Sohbetler arasında otomatik kilit/gerçek zamanlı senkronizasyon yok; her yazma öncesinde son HEAD ve dosya SHA kontrol edilmeli. Ortak dosya değişikliklerinden kaçınmak temel kuraldır. Kabul sayaçları 0/92, 0/26, 0/22.
+
+
+## 22 Ekim — K1 aygıt adı koruması ve son durum
+- K1 `madsc/write_path_audit.py` commit `8768682792535285640c0e62c688a162bfee844b`: Windows özel aygıt kökleri `CON`, `PRN`, `AUX`, `NUL`, `COM1`–`COM9`, `LPT1`–`LPT9`, dosya uzantısı ve NFKC eşdeğeri olsa bile her dizin seviyesinde reddedilir. `tests/test_k1_reserved_device_paths.py` commit `9109b49f026541e81ea93eb45173cb09269b94b6`: 8 reddedilen ve 4 geçerli yol vakası.
+- Bu iki commit GitHub'a yazıldı ancak güncel HEAD üzerinde çalıştırılmış test kanıtı **yok**. Kod incelemesi test çalıştırmasının yerine geçmez.
+- Son main kontrolünde K3 sohbeti ardışık commitler yayımlıyor; K1/K5 bu dosyalara dokunmuyor. Sohbetler arasında gerçek zamanlı kilit yok; yalnız son HEAD/dosya SHA kontrolü ve ayrı dosya sahipliğiyle çakışma riski azaltılıyor.
+- Öncelikler: güncel HEAD üzerinde odaklı K1/K5 testleri ve tam offline gate; K1 20 dinamik yazıcı/subprocess adayı; K5 gerçek eski/yeni davranış çiftleri. 0/92, 0/26, 0/22 gerçek kabul sayaçları değişmedi.

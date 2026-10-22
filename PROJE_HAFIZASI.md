@@ -2581,3 +2581,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - K5 izole export/manifest regresyonu Actions run `39868459061`, SHA `a0469c34ec9a8642acffdddfbda55dadf9d39aba`, `success`. Bu offline test kapısıdır; üretim/cihaz veya eski workflow parity kabulü değildir.
 - Kümülatif statik kaynak incelemesi 36/92; 56 kaldı. Davranışsal parity 0/92, runtime güvenlik 0/26, ana görevler 0/22. K5-19 defteri ve `DEVAM_NOTU.md` güncellendi.
 - Korunan playlist, EPG, favoriler, logolar, yedekler ve cihaz değişmedi; eski depo salt okunur kaldı; PR #71 merge edilmedi.
+
+
+## 23 Ekim 2026 — K2 kaynak bağımsızlığı açıkça doğrulanmamış olarak işaretlendi
+- `corroborate_sources` çıktısına `source_independence_verified: false` ve `source_count_semantics: distinct_semantic_feed_inventories_not_verified_origins` eklendi. Farklı semantik envanter sayıları, gerçek ayrı işletmeci/kaynak kökeni kanıtı olarak yorumlanamaz.
+- Kod commit `e8e686bfa0f2bf31376bcf58230bc8b5aa212a6d`; regresyon testi commit `9c1c8a594849d730f75d9c050265df74b382b8ec`. K2-08 görev defterine CI ve sınırlar işlendi (`42841d5e`).
+- Son bilinen tam offline CI başarısı `39868459061` (commit `a0469c34`); 1016 testlik paket sonraki K3 devir notunda raporlandı. Yeni açık `source_independence_verified` regresyonu için workflow `39868653542` çalışıyor; bu SHA için sonuç henüz doğrulanmadı.
+- K2-05 gerçek kaynak URL/işletmeci/lisans mutabakatı, K2-06 günlük keşif/tetik eşdeğerliği ve K2-07 bağımsız gerçek artifact SHA kanıtı açık. Gerçek kaynak verisi olmadan kabul kapatılmadı; üretim verisi değiştirilmedi.

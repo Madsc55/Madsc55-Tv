@@ -84,6 +84,27 @@ class K4RestoreGateTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "symlink ancestors"):
                 audit_k4_restore(alias / "source", roots[1], roots[2], ["file.txt"])
 
+    def test_inventory_scan_rejects_more_than_twenty_thousand_entries(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ("source", "backup", "restored")]
+            for root in trees:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            original_rglob = Path.rglob
+
+            def oversized_inventory(root, pattern):
+                if root == trees[2]:
+                    return iter([root / "file.txt"] * 20001)
+                return original_rglob(root, pattern)
+
+            with patch.object(Path, "rglob", autospec=True, side_effect=oversized_inventory):
+                result = audit_k4_restore(*trees, ["file.txt"])
+            self.assertFalse(result["sandbox_restore_accepted"])
+            self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
+            self.assertFalse(result["production_restore_approved"])
+
     def test_nested_tree_rejected(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

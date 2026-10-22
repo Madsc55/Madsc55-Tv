@@ -23,6 +23,15 @@ class K5IboArchiveExportTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 export_6115_archive_manifest(self.urls, destination)
 
+    def test_export_bytes_end_with_one_real_newline(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            export_6115_archive_manifest(self.urls, destination)
+            payload = (destination / "ibo_6115_archive_preview.json").read_bytes()
+            self.assertTrue(payload.endswith(bytes([10])))
+            self.assertFalse(payload.endswith(bytes([92, 110])))
+            self.assertEqual(payload.count(bytes([10, 10])), 0)
+
     def test_bad_input_creates_no_directory(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"

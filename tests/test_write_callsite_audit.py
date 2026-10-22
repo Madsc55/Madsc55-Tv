@@ -219,6 +219,16 @@ def create():
             with self.assertRaisesRegex(ValueError, "Symlinked Python source"):
                 scan_python_tree(root)
 
+    def test_tree_scan_rejects_symlinked_source_directory(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            actual = root / "actual"
+            actual.mkdir()
+            (actual / "writer.py").write_text("print('ok')", encoding="utf-8")
+            (root / "linked_dir").symlink_to(actual, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "Symlinked source directory"):
+                scan_python_tree(root)
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

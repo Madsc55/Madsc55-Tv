@@ -92,6 +92,20 @@ class SourceImportTests(unittest.TestCase):
                 self.assertFalse(assessed["ibo_device_verified"])
                 self.assertEqual(p.read_bytes(), original)
 
+    def test_duplicate_metadata_attributes_rejected_case_insensitively(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u"
+            for metadata in (
+                '#EXTINF:-1 tvg-id="first" tvg-id="second",Channel',
+                '#EXTINF:-1 tvg-id="first" TVG-ID="second",Channel',
+                '#EXTINF:-1 group-title="News" group-title="Sports",Channel',
+            ):
+                p.write_text("#EXTM3U\\n" + metadata + "\\nhttps://example.org/live\\n",
+                             encoding="utf-8")
+                with self.subTest(metadata=metadata), self.assertRaisesRegex(
+                        ValueError, "Duplicate metadata attribute"):
+                    extract_candidates(p)
+
     def test_symlink_source_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             original = Path(d) / "original.m3u"

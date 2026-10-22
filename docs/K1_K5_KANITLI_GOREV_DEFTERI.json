@@ -78,7 +78,10 @@
       "a794aeca: surrogate regression for parse/corroboration/preview; CI run 39870351806 pending at first check",
       "39870389256: successful descendant CI on 0524a7d0 after UTF-8 regression a794aeca (GitHub compare ahead=5, behind=0)",
       "a9e193bd: reject ASCII control characters in K2 source provenance labels",
-      "e03b92d1: regression covers newline/tab/NUL/DEL source labels across parser, corroboration and preview; CI pending"
+      "e03b92d1: regression covers newline/tab/NUL/DEL source labels across parser, corroboration and preview; CI pending",
+      "39870604494: success on exact source-label regression SHA e03b92d1",
+      "eb4b3fc8: source label validation before known URL normalization without double-parsing feeds",
+      "bd0aab8b: regression for source label validation precedence; CI pending"
     ],
     "note": "Offline suite succeeded on descendant SHA 205ad1bf (run 39869009399), covering latest K2 fail-closed metadata and bounded known URL inputs. Real-source/licensing, independent origins, and behavioral acceptance still unverified."
   },

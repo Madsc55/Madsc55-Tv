@@ -25,7 +25,8 @@ class K5IboArchivePreviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_6115_archive_preview(self.urls[:-1])
         for bad in ("http://example.invalid/live", "https://example.invalid/space path",
-                    " https://example.invalid/live", "", None):
+                    " https://example.invalid/live", "", None, "https://", "https://user:secret@example.invalid/live",
+                    "https://example.invalid/live#fragment", "https://example.invalid/\u0001bad"):
             candidate = self.urls.copy()
             candidate[10] = bad
             with self.subTest(bad=bad), self.assertRaises(ValueError):

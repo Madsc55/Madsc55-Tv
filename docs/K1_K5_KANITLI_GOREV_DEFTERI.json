@@ -148,7 +148,10 @@
     "stage": "K4",
     "title": "Ayın 1 ve 15'i yedek davranış eşdeğerliği",
     "status": "pending",
-    "evidence": []
+    "evidence": [
+      "docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md: reviewed .github/workflows/madsc-04-yedek.yml blob 28910baa5840da87c97834a9fe4d2708db99a949; workflow_dispatch only, no schedule/cron, fixture-only"
+    ],
+    "note": "Source review found .github/workflows/madsc-04-yedek.yml has workflow_dispatch only and no schedule/cron trigger; it creates a local fixture and uploads 14-day artifacts, not a real external backup. No scheduler should be added until a safe, authorized real backup target and credentials model are designed. See docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md."
   },
   {
     "id": "K5-19",

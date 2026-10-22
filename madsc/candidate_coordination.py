@@ -11,7 +11,7 @@ def coordinate(rows: list[dict], probes: dict, attempts: dict,
                epg_ids: set[str] | None = None, logo_ids: set[str] | None = None,
                ibo_results: dict | None = None) -> dict:
     """Classify supplied evidence by URL fingerprint; never mutate playlists."""
-    if not isinstance(probes, dict) or not isinstance(attempts, dict):
+    if not isinstance(rows, list) or len(rows) > 20000 or not isinstance(probes, dict) or not isinstance(attempts, dict):
         raise ValueError("Invalid evidence mapping")
     if epg_ids is not None and (not isinstance(epg_ids, set) or any(not isinstance(x, str) for x in epg_ids)):
         raise ValueError("Invalid EPG identifiers")

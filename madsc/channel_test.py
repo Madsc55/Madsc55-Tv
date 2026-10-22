@@ -30,7 +30,7 @@ def evaluate_probe(probe: dict) -> dict:
 
 def evaluate_repeated_probes(probes: list[dict], minimum_passes: int = 2) -> dict:
     """Evaluate independently supplied measurements, without claiming a live run."""
-    if not isinstance(probes, list) or not probes or type(minimum_passes) is not int or minimum_passes < 2:
+    if not isinstance(probes, list) or not probes or len(probes) > 20000 or type(minimum_passes) is not int or minimum_passes < 2:
         raise ValueError("Invalid repeated-probe evidence")
     if len(probes) < minimum_passes:
         raise ValueError("Insufficient independent samples")
@@ -77,8 +77,8 @@ def evaluate_ffprobe_json(payload: dict, url_sha256: str, http_status: int = 200
 
 def summarize_offline_probe_evidence(records: list[dict]) -> dict:
     """Summarize supplied ffprobe-style measurements without probing any URLs."""
-    if not isinstance(records, list):
-        raise ValueError("Probe records must be a list")
+    if not isinstance(records, list) or len(records) > 20000:
+        raise ValueError("Probe records must be a bounded list")
     results = []
     seen = set()
     for record in records:

@@ -125,6 +125,13 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(report["entries"], 0)
         self.assertEqual(report["parse_errors"][0]["reason"], "missing_channel_name")
 
+    def test_unbalanced_metadata_quote_is_rejected(self):
+        feed = ('#EXTM3U\n#EXTINF:-1 tvg-id="broken" group-title="oops,Channel\n'
+                'https://example.org/live.m3u8\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 0)
+        self.assertEqual(report["parse_errors"][0]["reason"], "missing_channel_name")
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

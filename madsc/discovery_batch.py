@@ -47,6 +47,10 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 pending = None
                 errors.append({"line": number, "reason": "empty_channel_name"})
                 continue
+            if meta.count('"') % 2:
+                pending = None
+                errors.append({"line": number, "reason": "unbalanced_metadata_quotes"})
+                continue
             attrs = dict(ATTR.findall(meta))
             pending = {"name": title.strip(), "tvg_id": attrs.get("tvg-id", ""),
                        "tvg_logo": attrs.get("tvg-logo", ""),

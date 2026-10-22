@@ -37,6 +37,31 @@ class K3SourceSnapshotTests(unittest.TestCase):
             self.assertEqual(report["probed"], pilot.LIMIT)
             self.assertFalse(report["production_playlist_modified"])
 
+    def test_duplicate_urls_only_probed_once(self):
+        data = (b"#EXTM3U\\n" +
+                b"#EXTINF:-1,One\\nhttps://example.org/one\\n" * 15 +
+                b"#EXTINF:-1,Two\\nhttps://example.org/two\\n")
+        class Response:
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def read(self, size): return data[:size]
+        with TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            def fake_write(_root, path, content):
+                (root / path).write_text(content)
+            with (patch.object(pilot, "urlopen", return_value=Response()),
+                  patch.object(pilot, "probe", side_effect=lambda url: {
+                      "url_sha256": hashlib.sha256(url.encode()).hexdigest(),
+                      "hls_manifest_seen": False}) as probe_mock,
+                  patch.object(pilot, "write_fixture_report", side_effect=fake_write),
+                  patch.object(pilot.Path, "cwd", return_value=root)):
+                pilot.run()
+            report = json.loads((root / "reports/k3-real-manifest-pilot.json").read_text())
+            self.assertEqual(report["probed"], 2)
+            self.assertEqual(probe_mock.call_count, 2)
+            self.assertEqual(len({r["url_sha256"] for r in report["results"]}), 2)
+
     def test_k3_rejects_oversize_source(self):
         class Response:
             def __enter__(self): return self

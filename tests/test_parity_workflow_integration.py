@@ -146,6 +146,28 @@ fi
             timeout=5, check=False)
         self.assertEqual(result.returncode, 124)
 
+    def test_failure_snapshot_artifact_is_opt_in_and_failure_only(self):
+        cases = {
+            "madsc-01-guvenlik.yml": "madsc-k1-failed-consumer-snapshot",
+            "madsc-04-yedek.yml": "madsc-k4-failed-consumer-snapshot",
+            "madsc-05-bakim.yml": "madsc-k2-failed-consumer-snapshot",
+        }
+        for filename, artifact_name in cases.items():
+            data = (WORKFLOWS / filename).read_text(encoding="utf-8")
+            steps = re.split(r"(?=^      - name: )", data, flags=re.MULTILINE)
+            matches = [step for step in steps if "name: " + artifact_name in step]
+            with self.subTest(workflow=filename):
+                self.assertEqual(len(matches), 1)
+                step = matches[0]
+                self.assertIn(
+                    "if: ${{ failure() && !cancelled() && inputs.allow_parity_evidence == true }}",
+                    step)
+                self.assertIn("uses: actions/upload-artifact@v4", step)
+                self.assertIn("path: reports/madsc-parity-snapshot.json", step)
+                self.assertIn("if-no-files-found: ignore", step)
+                self.assertLess(data.index('exit "$consumer_status"'),
+                                data.index("name: " + artifact_name))
+
     def test_every_parity_hook_is_default_off_and_conditioned(self):
         for filename in ("madsc-01-guvenlik.yml", "madsc-04-yedek.yml",
                          "madsc-05-bakim.yml"):

@@ -105,14 +105,16 @@ def verify_video(url):
 def run():
     results = []
     verified = []
+    tv_tested = 0
     for name, url in candidates():
-        if len(results) >= LIMIT:
+        if tv_tested >= LIMIT:
             break
         cat = category(name)
         digest = hashlib.sha256(url.encode()).hexdigest()
         if not cat:
             results.append({"sha256": digest, "status": "radio_excluded"})
             continue
+        tv_tested += 1
         try:
             ok, reason = verify_video(url)
         except (ValueError, OSError, subprocess.TimeoutExpired):
@@ -120,7 +122,7 @@ def run():
         results.append({"sha256": digest, "status": reason, "video_verified": ok})
         if ok:
             verified.append({"name": name, "category": cat, "sha256": digest})
-    report = {"stage": "K3_REAL_TURKISH_TV_VIDEO_PILOT", "tested": len(results),
+    report = {"stage": "K3_REAL_TURKISH_TV_VIDEO_PILOT", "tested": tv_tested,
               "video_verified": len(verified), "radio_excluded": sum(x["status"] == "radio_excluded" for x in results),
               "playlist_modified": False, "language_confirmed_by_audio": False,
               "results": results, "verified_metadata": verified}

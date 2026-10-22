@@ -149,6 +149,24 @@ class K4RestoreGateTests(unittest.TestCase):
                             audit_k4_restore(*trees, [name])
                         verify.assert_not_called()
 
+    def test_duplicate_oversized_and_surrogate_paths_fail_before_hashing(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ("source", "backup", "restored")]
+            for root in trees:
+                root.mkdir()
+            for names, error in (
+                (["file.txt", "file.txt"], "Duplicate restore audit path"),
+                (["a" * 4097], "bounded length"),
+                (["bad\\ud800name"], "Unsafe restore audit path"),
+            ):
+                with self.subTest(error=error):
+                    with patch("madsc.k4_restore_gate.verify_independent_restore") as verify:
+                        with self.assertRaisesRegex(ValueError, error):
+                            audit_k4_restore(*trees, names)
+                        verify.assert_not_called()
+
     def test_nested_tree_rejected(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

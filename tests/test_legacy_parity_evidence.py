@@ -227,6 +227,20 @@ class LegacyScopeTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             compare_provenance_bound_batch(source, {path: pair})
 
+    def test_unhashable_origin_identity_is_rejected_cleanly(self):
+        import json
+        from pathlib import Path
+        from madsc.legacy_parity_evidence import compare_provenance_bound_batch, reconcile_legacy_scope
+        source = json.loads((Path(__file__).resolve().parents[1] /
+                             "docs/LEGACY_SOURCE_SCOPE.json").read_text())
+        path = reconcile_legacy_scope(source)["legacy_paths"][0]
+        blob = next(row["git_blob_sha"] for row in source["workflows"] if row["path"] == path)
+        for field, value in (("event", []), ("conclusion", {}), ("workflow_path", [])):
+            pair = self.provenance_pair(path, blob)
+            pair["replacement"][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                compare_provenance_bound_batch(source, {path: pair})
+
     def test_pinned_source_scope_is_92_plus_seven(self):
         import json
         from pathlib import Path

@@ -70,12 +70,13 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
         if flags is None:
             return True, name + " [missing or dynamic flags require review]"
     is_builtin_open = name in {"open", "builtins.open", "io.open"}
-    is_path_open = leaf == "open" and name not in {"os.open", "posix.open"}
+    is_path_open = (isinstance(node.func, ast.Attribute) and leaf == "open"
+                    and name not in {"os.open", "posix.open", "builtins.open", "io.open"})
     if is_builtin_open or is_path_open:
         mode = None
-        # Path.open(file_mode) takes mode as its first argument; builtins.open
-        # and io.open take (file, mode), regardless of attribute-call syntax.
-        mode_index = 0 if is_path_open and name not in {"builtins.open", "io.open"} else 1
+        # Path.open(mode) takes mode as its first argument; builtins.open and
+        # io.open take (file, mode), as does the unqualified built-in open().
+        mode_index = 0 if is_path_open else 1
         mode_supplied = len(node.args) > mode_index
         dynamic_mode = mode_supplied and not isinstance(node.args[mode_index], ast.Constant)
         if mode_supplied and isinstance(node.args[mode_index], ast.Constant):

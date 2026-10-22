@@ -49,7 +49,7 @@ def render_playlist_previews(catalog: dict, source_rows: list[dict]) -> dict:
             if not isinstance(entry.get(key), str):
                 raise ValueError("Invalid channel metadata")
         name = entry["display_name"]
-        if not isinstance(name, str) or not name or any(ord(ch) < 32 or ord(ch) == 127 for ch in name):
+        if not isinstance(name, str) or not name or "\\" in name or any(ord(ch) < 32 or ord(ch) == 127 for ch in name):
             raise ValueError("Unsafe channel name")
         logo = entry.get("logo_url") or ""
         if logo and (entry.get("logo_verified") is not True or

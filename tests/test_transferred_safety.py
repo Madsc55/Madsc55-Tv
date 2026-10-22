@@ -41,18 +41,19 @@ class TransferredSafetyTests(unittest.TestCase):
                  {'total_count': 103, 'workflow_runs': [record(i, 'failure') for i in (4, 3, 2)]}]
         with self.assertRaisesRegex(ValueError, 'Incomplete prior run in failure history|More failure history'):
             assess_failure_history(pages[:1], current_run_id=104, branch='main')
-        result = assess_failure_history(pages, current_run_id=104, branch='main')
-        self.assertTrue(result['blocked'])
-        self.assertEqual(result['history_pages_checked'], 2)
-        self.assertFalse(result['runtime_history_origin_verified'])
+        # Pagination completeness is necessary but not sufficient: older active
+        # runs make the retry streak ambiguous, so K5 must still fail closed.
+        with self.assertRaisesRegex(ValueError, 'Incomplete prior run in failure history'):
+            assess_failure_history(pages, current_run_id=104, branch='main')
 
     def test_rerun_does_not_count_later_failures_and_success_resets(self):
         rows = [record(7, 'failure'), record(6, 'failure'), record(5, status='in_progress'),
                 record(4, 'failure'), record(3, 'success'), record(2, 'failure')]
-        result = assess_failure_history([{'total_count': len(rows), 'workflow_runs': rows}],
-                                        current_run_id=5, branch='main')
-        self.assertFalse(result['blocked'])
-        self.assertEqual(result['consecutive_failures'], 1)
+        # A newer same-branch run supersedes this retry decision; don't silently
+        # ignore it and make a retry based on stale history.
+        with self.assertRaisesRegex(ValueError, 'Newer branch run supersedes current history target'):
+            assess_failure_history([{'total_count': len(rows), 'workflow_runs': rows}],
+                                   current_run_id=5, branch='main')
 
     def test_missing_duplicate_ambiguous_history_denied(self):
         current = record(4, status='in_progress')

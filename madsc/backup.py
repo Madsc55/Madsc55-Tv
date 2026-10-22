@@ -221,7 +221,11 @@ def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) ->
             relative = Path(entry["path"])
             target = destination / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            with (backup / relative).open("rb") as reader, target.open("xb") as writer:
+            descriptor = _open_relative_file_nofollow(backup, relative.parts)
+            with os.fdopen(descriptor, "rb") as reader, target.open("xb") as writer:
+                metadata = os.fstat(reader.fileno())
+                if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
+                    raise ValueError("Sandbox copy source must be an independent regular file")
                 shutil.copyfileobj(reader, writer, length=1024 * 1024)
         if not verify_manifest(backup, original) or not verify_manifest(destination, original):
             raise ValueError("Backup changed or sandbox restore failed integrity verification")
@@ -266,7 +270,11 @@ def backup_to_new_sandbox(source: Path, destination: Path, names: list[str]) -> 
             relative = Path(entry["path"])
             target = destination / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            with (source / relative).open("rb") as reader, target.open("xb") as writer:
+            descriptor = _open_relative_file_nofollow(source, relative.parts)
+            with os.fdopen(descriptor, "rb") as reader, target.open("xb") as writer:
+                metadata = os.fstat(reader.fileno())
+                if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
+                    raise ValueError("Sandbox copy source must be an independent regular file")
                 shutil.copyfileobj(reader, writer, length=1024 * 1024)
         if not verify_manifest(source, original) or not verify_manifest(destination, original):
             raise ValueError("Source changed or sandbox backup failed integrity verification")

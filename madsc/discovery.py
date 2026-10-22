@@ -24,6 +24,10 @@ def normalize_url(value: str) -> str:
     return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path or "/", parts.query, ""))
 
 def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) -> dict:
+    if not isinstance(rows, list):
+        raise ValueError("Candidate rows must be a list")
+    if len(rows) > 20000:
+        raise ValueError("Too many candidate rows")
     if known_urls is not None and not isinstance(known_urls, (set, frozenset)):
         raise ValueError("Known URLs must be a set")
     if known_urls is not None and len(known_urls) > 20000:
@@ -32,10 +36,6 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
     seen = set()
     accepted, duplicates, rejected, alternatives = [], [], [], []
     identities = {}
-    if not isinstance(rows, list):
-        raise ValueError("Candidate rows must be a list")
-    if len(rows) > 20000:
-        raise ValueError("Too many candidate rows")
     for index, item in enumerate(rows):
         try:
             url = normalize_url(item["url"])

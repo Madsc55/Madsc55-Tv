@@ -156,6 +156,13 @@ class DiscoveryBatchTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Combined sources exceed bounded candidate limit"):
             build_m3u8_preview({"first": first, "second": second})
 
+    def test_preview_rejects_combined_input_size_before_parsing(self):
+        # Individually under the 8-million-character source limit.
+        feeds = {"a": "#EXTM3U\n" + " " * 4_000_000,
+                 "b": "#EXTM3U\n" + " " * 4_000_000}
+        with self.assertRaisesRegex(ValueError, "Combined source text"):
+            build_m3u8_preview(feeds)
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

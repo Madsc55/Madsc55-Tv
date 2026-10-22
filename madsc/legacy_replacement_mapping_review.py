@@ -14,7 +14,10 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
     mapping from workflow names or K-stage hints is allowed.
     """
     scope = reconcile_legacy_scope(inventory)
-    catalog = {row["path"]: row for row in validate_inventory(inventory)}
+    inventory_rows = validate_inventory(inventory)
+    catalog = {row["path"]: row for row in inventory_rows}
+    if len(catalog) != len(inventory_rows):
+        raise ValueError("Legacy inventory contains duplicate workflow identities")
     paths = scope["legacy_paths"]
     if (not isinstance(paths, list) or any(not isinstance(p, str) for p in paths)
             or len(paths) != len(set(paths))):

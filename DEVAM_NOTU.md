@@ -925,3 +925,9 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Güncel K1 salt-okunur callsite envanteri 99 Python dosyasında 141 aday gösteriyor. Bu yalnız statik inceleme kuyruğudur; tüm satırlar `review_required=true`, runtime güvenlik kabulü değildir.
 - Kabul değişmedi: davranışsal parity **0/92**, runtime güvenlik **0/26**, ana görev **0/22**. Canlı probing, cihaz testi, üretim yazması, korunan playlist/EPG/favori/logo/yedek/arşiv değişikliği, eski depo yazısı, merge veya PR #71 işlemi yapılmadı; Actions elle başlatılmadı.
 - Sıradaki somut yerel iş: 141 adayın gerçek dosya etkisi olmayan string `.replace` ve salt-okunur descriptor false-positive'larını kaynak-bağlı disposition ile ayır; gerçek writer ve subprocess satırlarını K1 guard/call-chain kanıtıyla fail-closed bırak. Gerçek aynı-input bağımsız legacy/replacement run+artifact çiftleri gelmeden 92 kabulünü artırma.
+
+
+## 23 Ekim 2026 — K2 bilinen URL girdisi sınırı
+- `corroborate_sources` bilinen URL kümesindeki 8192 karakterden uzun veya UTF-8 surrogate içeren adresleri normalizasyondan önce reddeder. Kod `ea305e1650a19fd592064f71d4b3cbdfd94aa670`, regresyon `a11999c7bc6888e6ba46c86803cb3154f4182300`. Normal bilinen URL dışlama davranışı da test edilir.
+- Önceki aynalanmış feed fingerprint testi `3cebc66d`, sonraki `a22684d4a259ccc986c2b4baa8fcb92ecbf02b10` commit'inde başarılı Actions `39871279885` ile kapsandı (compare ahead=2, behind=0). Yeni URL sınırı testinin CI sonucu ilk kontrolde bekliyordu (`39871566283`), doğrulanmadan başarılı denemez.
+- K2-05/06/07/08 açık. IBO Player Pro cihaz doğrulaması en sonda kullanıcı tarafından yapılacak; üretim playlist/EPG/favori/yedekler değiştirilmedi.

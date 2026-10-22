@@ -1,3 +1,13 @@
+# EN YENİ K3 GÜNCELLEMESİ — 15 EPG testi içeren offline suite başarılı (2026-10-23)
+- M3U başlığı ve tvg-id ayrıştırması sıkılaştırıldı. `tvg-id` yalnız `#EXTINF` virgülünden önceki nitelik alanında aranıyor; görünen kanal adındaki sahte metin kabul edilmiyor.
+- GitHub Actions run `39868761301`, tested commit `bbb975e650456ae29d89d5c66dbc4ce51e7c2f6a`: **success**. Log: 1020 test keşfedildi, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`, K3 fixture success.
+- Tested commit'te `tests/test_epg.py` 15 test içeriyor; EPG kod/test blob'ları `03755ace638bf3f788b8d3cfdf95d7d77ef077ed` / `aea48db70cee57802dda5e993d365c1e53ab6480`. Rapor: `docs/K3_HARDENING_2026-10-23.md`.
+- Daha yeni `main` HEAD K1/K2/K4 commit'lerini de içeriyor; son başarılı suite ile K3 dosyalarının blob'ları aynı. Güncel HEAD üzerinde tekrar koşu yine tercih edilir.
+- Canlı HLS video/ses, 6+ saat süreklilik, Pages/XMLTV canlı zinciri, IBO Player Pro EPG ve logo doğrulaması açık. Canlı pilot workflow'ları `workflow_dispatch` ile tanımlı, ancak bu oturumdaki GitHub aracı manuel workflow dispatch yapamıyor; çalıştırılmış gibi raporlama.
+- Üretim verilerine dokunulmadı; PR #71 merge edilmedi; genel sayaçlar 0/92, 0/26, 0/22. K3-13 açık kalsın.
+
+---
+
 # EN YENİ K3 GÜNCELLEMESİ — 1017 test başarılı (2026-10-23)
 - `madsc/epg.py` artık `tvg-id` değerini yalnız `#EXTINF` satırının virgülden önceki nitelik alanından okur; görünen kanal adındaki sahte `tvg-id` kabul edilmez.
 - EPG test sayısı 15. GitHub Actions Offline Unit Tests run `39868610849`, commit `8e78f26d855f8c4bb89b22f1b8f026d4a6234902`: **success**, 1017 test keşfedildi, `test_exit_code=0`, `tests_passed=true`, `all_offline_gates_passed=true`, K3 fixture success.

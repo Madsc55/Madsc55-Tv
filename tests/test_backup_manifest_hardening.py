@@ -37,6 +37,30 @@ class BackupManifestHardeningTests(unittest.TestCase):
                 handle.write(b"!")
             self.assertFalse(verify_manifest(root, manifest))
 
+    def test_change_during_manifest_read_fails_closed(self):
+        import os
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "stable.bin"
+            target.write_bytes(b"stable-data")
+            original_fstat = os.fstat
+            observations = []
+
+            def mutate_on_second_stat(fd):
+                if len(observations) == 1:
+                    # Same inode and byte count, but a changed source timestamp.
+                    original = original_fstat(fd)
+                    os.utime(target, ns=(original.st_atime_ns,
+                                         original.st_mtime_ns + 1_000_000_000))
+                observations.append(fd)
+                return original_fstat(fd)
+
+            with patch("madsc.backup.os.fstat", side_effect=mutate_on_second_stat):
+                with self.assertRaisesRegex(ValueError, "changed during manifest read"):
+                    snapshot_manifest(root, ["stable.bin"])
+            self.assertEqual(len(observations), 2)
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

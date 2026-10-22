@@ -82,5 +82,21 @@ class CandidateProbeLinkTests(unittest.TestCase):
             link_candidate_continuity(envelope, {}, "124", sha)
 
 
+    def test_cli_exposes_mutually_exclusive_offline_evidence_modes(self):
+        from pathlib import Path
+        source = Path("madsc/candidate_probe_link.py").read_text(encoding="utf-8")
+        self.assertIn("add_mutually_exclusive_group(required=True)", source)
+        self.assertIn('evidence_group.add_argument("--probes", type=Path)', source)
+        self.assertIn('evidence_group.add_argument("--continuity", type=Path)', source)
+        self.assertIn("link_candidate_continuity(candidates, load(args.continuity)", source)
+
+    def test_continuity_link_rejects_duplicate_candidates(self):
+        run, sha = "123", "b" * 40
+        envelope = pack({"candidates": [{"url_sha256": "a" * 64},
+                                         {"url_sha256": "a" * 64}]}, run, sha)
+        with self.assertRaises(ValueError):
+            link_candidate_continuity(envelope, {}, run, sha)
+
+
 if __name__ == "__main__":
     unittest.main()

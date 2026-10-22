@@ -128,3 +128,8 @@ Notun yazıldığı anda main HEAD: bfb606865a408f1bb6d8351ed3ace6b610a8f263 (di
 ## K3 dizin kanıtı negatif testi
 - ecd85c1: Kanıt dosyası olarak dizin verilirse yükleyicinin hata üretmesini kontrol eden test eklendi.
 - Test henüz CI veya unittest ile çalıştırılmadı; son dirfd değişikliğinin gerçek regresyon çalıştırması önceliklidir.
+
+## K3 güvenli açma hata türü düzeltmesi
+- 90c9202: Dirfd yol açma sırasında oluşan OSError artık ValueError olarak raporlanıyor; önceki symlink reddi testleriyle hata sözleşmesi tutarlı.
+- e18cb02: Dizin girdisi testinin beklediği hata açık mesajla kesinleştirildi.
+- Henüz yeni unittest/CI çalışması doğrulanmadı. Kod ve test commitleri [skip ci] ile gönderildi.

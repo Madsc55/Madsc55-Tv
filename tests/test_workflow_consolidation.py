@@ -383,5 +383,20 @@ class WorkflowConsolidationTests(unittest.TestCase):
                 consolidation_plan(root)
 
 
+    def test_symlinked_github_directory_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            folder = self.make_root(root)
+            github_dir = root / ".github"
+            external_github = root / "external-github"
+            github_dir.rename(external_github)
+            try:
+                github_dir.symlink_to(external_github, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("Filesystem does not permit directory symlinks")
+            with self.assertRaisesRegex(ValueError, "Workflow directory missing or unsafe"):
+                consolidation_plan(root)
+
+
 if __name__ == "__main__":
     unittest.main()

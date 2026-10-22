@@ -32,6 +32,10 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
     identities = {}
     if not isinstance(rows, list):
         raise ValueError("Candidate rows must be a list")
+    if len(rows) > 20000:
+        raise ValueError("Too many candidate rows")
+    if len(known) > 20000:
+        raise ValueError("Too many known URLs")
     for index, item in enumerate(rows):
         try:
             url = normalize_url(item["url"])

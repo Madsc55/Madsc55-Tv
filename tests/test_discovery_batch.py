@@ -242,6 +242,31 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertTrue(all(not row["source_independence_verified"]
                             for row in report["identity_candidates"]))
 
+
+    def test_known_urls_count_is_bounded_in_corroboration(self):
+        known = {f"https://example.org/{i}" for i in range(20001)}
+        with self.assertRaisesRegex(ValueError, "Too many known URLs"):
+            corroborate_sources({"source": "#EXTM3U"}, known_urls=known)
+
+    def test_unquoted_or_malformed_identity_metadata_is_rejected(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id=news.tv,Malformed\n'
+                'https://example.org/malformed\n'
+                '#EXTINF:-1 tvg-id="valid.tv",Valid\n'
+                'https://example.org/valid\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(report["candidate_rows"][0]["tvg_id"], "valid.tv")
+        self.assertEqual(
+            [row["reason"] for row in report["parse_errors"]],
+            ["invalid_metadata_attribute"],
+        )
+        preview = build_m3u8_preview({"fixture": feed})
+        self.assertEqual(preview["channel_count"], 1)
+        self.assertEqual(preview["rejected"], 1)
+        self.assertFalse(preview["production_writes"])
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

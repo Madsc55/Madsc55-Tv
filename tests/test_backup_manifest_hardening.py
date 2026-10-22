@@ -286,6 +286,17 @@ class BackupManifestHardeningTests(unittest.TestCase):
                             verify_manifest(root, forged)
             self.assertTrue(verify_manifest(root, original))
 
+    def test_snapshot_rejects_surrogate_source_before_file_open(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_bytes(b"fixture")
+            with patch("madsc.backup._open_relative_file_nofollow",
+                       side_effect=AssertionError("unexpected source open")):
+                with self.assertRaisesRegex(ValueError, "Unsafe backup source path"):
+                    snapshot_manifest(root, ["good" + chr(0xD800) + ".txt"])
+            self.assertEqual(len(snapshot_manifest(root, ["good.txt"])["entries"]), 1)
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

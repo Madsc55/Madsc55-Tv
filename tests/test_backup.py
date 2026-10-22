@@ -611,3 +611,15 @@ class BackupTests(unittest.TestCase):
                 result = snapshot_manifest(root, ["file.txt"])
             self.assertEqual(result["entries"][0]["bytes"], len(b"descriptor"))
             self.assertTrue(checked.called)
+
+    def test_manifest_rejects_symlinked_root_ancestor(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            real = base / "real"
+            root = real / "backup"
+            root.mkdir(parents=True)
+            (root / "file.txt").write_text("fixture", encoding="utf-8")
+            alias = base / "alias"
+            alias.symlink_to(real, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "ancestors"):
+                snapshot_manifest(alias / "backup", ["file.txt"])

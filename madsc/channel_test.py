@@ -124,6 +124,8 @@ def evaluate_three_stage_continuity(samples: list[dict], minimum_hours: float = 
     fingerprints = {item[1]["url_sha256"] for item in parsed}
     if len(fingerprints) != 1:
         raise ValueError("Mixed channel fingerprints")
+    spacing_ok = all((b[0] - a[0]).total_seconds() / 3600 >= minimum_hours
+                     for a, b in zip(parsed, parsed[1:]))
     elapsed = (parsed[-1][0] - parsed[0][0]).total_seconds() / 3600
     passes = sum(item[1]["technical_status"] == "PRELIMINARY_PASS" for item in parsed)
     return {
@@ -131,7 +133,7 @@ def evaluate_three_stage_continuity(samples: list[dict], minimum_hours: float = 
         "stages_observed": len(parsed),
         "elapsed_hours": round(elapsed, 6),
         "preliminary_passes": passes,
-        "three_stage_six_hour_preliminary": elapsed >= minimum_hours and passes == len(parsed),
+        "three_stage_six_hour_preliminary": spacing_ok and passes == len(parsed),
         "observation_provenance_verified": False,
         "actual_network_measurements_verified": False,
         "stream_continuity_verified": False,

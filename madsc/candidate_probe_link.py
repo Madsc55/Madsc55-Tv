@@ -88,6 +88,8 @@ def main():
                 or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024):
             raise ValueError("Invalid or oversized evidence")
         with path.open("rb") as handle:
+            if not handle.seekable():
+                raise ValueError("Evidence must be a regular seekable file")
             raw = handle.read(16 * 1024 * 1024 + 1)
         if len(raw) > 16 * 1024 * 1024:
             raise ValueError("Invalid or oversized evidence")

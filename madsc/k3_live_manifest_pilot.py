@@ -15,11 +15,14 @@ SOURCE = "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/tr.m3u"
 LIMIT = 12
 
 
-def candidates():
+def candidates(source_evidence=None):
     with urlopen(Request(SOURCE, headers={"User-Agent": "Madsc55-Tv-K3-pilot"}), timeout=15) as r:
         raw = r.read(300_001)
     if len(raw) > 300_000 or not raw.startswith(b"#EXTM3U"):
         raise ValueError("Unexpected source size or format")
+    if source_evidence is not None:
+        source_evidence["source_sha256"] = hashlib.sha256(raw).hexdigest()
+        source_evidence["source_bytes"] = len(raw)
     from madsc.remote_m3u_parser import parse_remote_m3u
     for row in parse_remote_m3u(raw, max_bytes=300_000):
         yield row["name"], row["url"]
@@ -51,7 +54,8 @@ def probe(url):
 
 def run():
     results = []
-    for name, url in candidates():
+    source_evidence = {}
+    for name, url in candidates(source_evidence):
         if len(results) >= LIMIT:
             break
         try:
@@ -63,6 +67,7 @@ def run():
                       "audio_video_verified": False}
         results.append(result)
     report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT", "source": SOURCE,
+              **source_evidence,
               "probed": len(results), "manifest_seen": sum(x.get("hls_manifest_seen", False) for x in results),
               "audio_video_verified": 0, "production_playlist_modified": False,
               "results": results}

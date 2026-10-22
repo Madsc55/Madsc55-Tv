@@ -18,6 +18,12 @@ def reconcile(k2: dict, k3: dict) -> dict:
     source = k2.get("source")
     if not isinstance(source, str) or source != k3.get("source"):
         raise ValueError("K2 and K3 must use the same declared source")
+    source_sha = k2.get("source_sha256")
+    k3_source_sha = k3.get("source_sha256")
+    if (not isinstance(source_sha, str) or len(source_sha) != 64
+            or any(ch not in "0123456789abcdef" for ch in source_sha)
+            or source_sha != k3_source_sha):
+        raise ValueError("K2/K3 remote source bytes do not match")
     hashes = k2.get("candidate_hashes")
     results = k3.get("results")
     if not isinstance(hashes, list) or not isinstance(results, list):
@@ -40,7 +46,7 @@ def reconcile(k2: dict, k3: dict) -> dict:
     matched = set(hashes).intersection(observed)
     manifests = [r["url_sha256"] for r in results if r["url_sha256"] in matched
                  and r.get("hls_manifest_seen") is True]
-    return {"source": source, "k2_candidates": len(hashes), "k3_probed": len(results),
+    return {"source": source, "source_sha256": source_sha, "k2_candidates": len(hashes), "k3_probed": len(results),
             "matched_by_digest": len(matched), "matched_manifest_seen": len(manifests),
             "manifest_hashes": sorted(manifests), "audio_video_verified": False,
             "device_verified": False, "production_ready": False,

@@ -13,18 +13,19 @@ from madsc.probe_target_gate import validate_probe_target, validate_resolved_add
 
 SOURCE = "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/tr.m3u"
 LIMIT = 12
+SOURCE_MAX_BYTES = 2_000_000  # Same cap as K2 discovery
 
 
 def candidates(source_evidence=None):
     with urlopen(Request(SOURCE, headers={"User-Agent": "Madsc55-Tv-K3-pilot"}), timeout=15) as r:
-        raw = r.read(300_001)
-    if len(raw) > 300_000 or not raw.startswith(b"#EXTM3U"):
+        raw = r.read(SOURCE_MAX_BYTES + 1)
+    if len(raw) > SOURCE_MAX_BYTES or not raw.startswith(b"#EXTM3U"):
         raise ValueError("Unexpected source size or format")
     if source_evidence is not None:
         source_evidence["source_sha256"] = hashlib.sha256(raw).hexdigest()
         source_evidence["source_bytes"] = len(raw)
     from madsc.remote_m3u_parser import parse_remote_m3u
-    for row in parse_remote_m3u(raw, max_bytes=300_000):
+    for row in parse_remote_m3u(raw, max_bytes=SOURCE_MAX_BYTES):
         yield row["name"], row["url"]
 
 

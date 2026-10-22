@@ -159,3 +159,18 @@ class EpgTests(unittest.TestCase):
             result = check_epg_mapping(p, e)
             self.assertEqual(result["duplicate_playlist_ids"], ["trt1.tr"])
             self.assertFalse(result["matching_verified"])
+
+    def test_multiple_duplicate_ids_are_sorted_and_empty_ids_excluded(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            ids = ("z.tr", "a.tr", "z.tr", "", "a.tr", "")
+            rows = ['#EXTM3U']
+            for i, channel_id in enumerate(ids):
+                rows.extend((f'#EXTINF:-1 tvg-id="{channel_id}",Channel {i}', f'https://example.org/{i}.m3u8'))
+            p.write_text("\n".join(rows) + "\n", encoding="utf-8")
+            e.write_text('<tv><channel id="a.tr"/><channel id="z.tr"/></tv>', encoding="utf-8")
+            result = check_epg_mapping(p, e)
+            self.assertEqual(result["duplicate_playlist_ids"], ["a.tr", "z.tr"])
+            self.assertEqual(result["missing_tvg_id"], 2)
+            self.assertFalse(result["matching_verified"])

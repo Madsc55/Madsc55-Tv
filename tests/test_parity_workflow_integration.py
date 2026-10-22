@@ -20,6 +20,8 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
             ".github/workflows/madsc-05-bakim.yml",
         })
         self.assertEqual(report["marker_contract_complete"], 3)
+        self.assertEqual(report["static_file_bindings_complete"], 3)
+        self.assertEqual(report["external_or_live_input_blockers"], 2)
         self.assertEqual(report["real_behavior_ready"], 0)
         self.assertEqual(report["behavioral_parity_accepted"], 0)
 

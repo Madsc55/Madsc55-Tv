@@ -1,0 +1,48 @@
+{
+  "schema": "madsc-k1-k5-offline-evidence-v1",
+  "date": "2026-10-22",
+  "package": 14,
+  "base_main_sha": "2d584f703aabb3f7ab5c2af17c2683e5c3dd1f13",
+  "scope": "static parity input dataflow classification and blocker reporting",
+  "tests": {
+    "focused_command": "python -m unittest -v tests.test_parity_workflow_readiness tests.test_parity_workflow_integration",
+    "focused_discovered": 7,
+    "focused_passed": true,
+    "command": "python -m madsc.offline_gate",
+    "discovered": 594,
+    "passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "parity_marker_contract_complete": 3,
+    "static_file_bindings_complete": 3,
+    "external_or_live_input_blockers": 2,
+    "real_behavior_ready": 0,
+    "legacy_behavioral_parity_accepted": 0,
+    "runtime_security_accepted": 0,
+    "task_acceptance": 0
+  },
+  "changes": [
+    "The readiness report now verifies exact consumer, input and output command tokens for K1, K4 and K5 before accepting their static isolated-file binding.",
+    "K2 and K3 are explicitly classified as external_or_live_input_blocked with machine-readable blocker reasons.",
+    "A drift test proves that changing the real K1 consumer input breaks the static file binding even when all parity hook markers remain present.",
+    "Static file binding does not set runtime origin, real behavior readiness or acceptance counters."
+  ],
+  "source_sha256": {
+    "madsc/parity_workflow_readiness.py": "a4292fac04f6a0e5c9ee6656343b8bdba53bdfa3df7bd6cdfdf5b5346d0936b5",
+    "tests/test_parity_workflow_readiness.py": "6bdd61e88d57bfcf99f36c9a2eda26abd993971619e4e251f217d48e9ce074d4",
+    "tests/test_parity_workflow_integration.py": "adffa4987ecbdd754677c575df01c119823b17653b8e41ae4808d655f162135a"
+  },
+  "constraints": {
+    "github_actions_started": false,
+    "workflow_default_opt_in": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_written": false,
+    "fixture_is_acceptance": false
+  },
+  "blockers": [
+    "The three static isolated-file bindings have not been run and therefore have no independent runtime execution or artifact origin evidence.",
+    "Standalone K2 depends on live stream source activity and standalone K3 depends on external delivery or notification state; neither has an authorized comparable common real file input.",
+    "The read-only legacy 92 workflow artifacts do not contain the v1 manifest."
+  ]
+}

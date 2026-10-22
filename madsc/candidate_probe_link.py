@@ -87,9 +87,13 @@ def main():
         if (path.is_symlink() or any(parent.is_symlink() for parent in path.parents)
                 or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024):
             raise ValueError("Invalid or oversized evidence")
-        with path.open("rb") as handle:
-            import os
-            import stat
+        import os
+        import stat
+        flags = os.O_RDONLY
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        descriptor = os.open(path, flags)
+        with os.fdopen(descriptor, "rb") as handle:
             opened = os.fstat(handle.fileno())
             if not stat.S_ISREG(opened.st_mode) or opened.st_size > 16 * 1024 * 1024:
                 raise ValueError("Evidence must be a bounded regular file")

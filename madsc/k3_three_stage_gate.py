@@ -20,7 +20,7 @@ def assess_three_stage_probes(samples: list[dict]) -> dict:
         if not isinstance(sample, dict) or not isinstance(sample.get("captured_at"), str):
             raise ValueError("Timestamp required")
         stamp = sample["captured_at"]
-        if not re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z", stamp):
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z", stamp):
             raise ValueError("UTC RFC3339 timestamp required")
         try:
             when = datetime.fromisoformat(stamp.replace("Z", "+00:00"))

@@ -105,6 +105,8 @@ def evaluate_three_stage_continuity(samples: list[dict], minimum_hours: float = 
             or type(minimum_hours) not in (int, float)
             or not math.isfinite(minimum_hours) or minimum_hours < 6):
         raise ValueError("Three stages and at least six hours are required")
+    if len(samples) > 20000:
+        raise ValueError("Too many continuity samples")
     parsed = []
     for sample in samples:
         if not isinstance(sample, dict) or not isinstance(sample.get("observed_at"), str):
@@ -152,7 +154,7 @@ def summarize_candidate_continuity(candidate_fingerprints: list[str],
            or any(ch not in "0123456789abcdef" for ch in key)
            for key in candidate_fingerprints):
         raise ValueError("Invalid candidate fingerprint")
-    if any(not isinstance(key, str) for key in measurements):
+    if any(not isinstance(key, str) or len(key) != 64 or any(ch not in "0123456789abcdef" for ch in key) for key in measurements):
         raise ValueError("Invalid measurement fingerprint")
     if any(key not in candidate_fingerprints for key in measurements):
         raise ValueError("Orphan continuity measurements")

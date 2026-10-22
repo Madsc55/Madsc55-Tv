@@ -61,3 +61,10 @@ K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen
 - Yeni regresyon testleri: `tests/test_backup_manifest_hardening.py`, commit `3305e620b9186cdd3544a4962bd45303413cc7f4`. İki ağaçlı kopya ve üç ağaçlı restore kontrolünde manifestten sonra kaynak dosyanın symlink'e çevrilmesi simüle ediliyor; dış hedefin içeriği korunmalı, denetim başarısız olmalı.
 - Kod commit CI: Actions `39868881731`, `success`. Test commitine ait Actions `39868921875`, paralel dal güncellemeleri nedeniyle `cancelled`; yeni iki test için tek başına tamamlanmış CI kanıtı yok. Sonraki main CI'de tüm testlerin geçtiği doğrulanmalı.
 - Bu yalnızca izole kopya inode-denetim güvenliğini geliştirir; gerçek harici yedek makbuzu, bağımsız harici restore, VOD/arşiv kabulü ve ayın 1'i/15'i scheduler davranışı hâlâ eksik. Kabul sayaçları değişmedi.
+
+
+## 23 Ekim 2026 — Kaynak dosya tanıtıcısı sızıntısı ve CI takibi
+- `madsc/backup.py` commit `477bece204df03d1896b529e5368f3f2a3a8a819`: hem `backup_to_new_sandbox` hem `restore_to_new_sandbox` hedef oluşturma hatasında açık kaynak tanıtıcısını `os.close` ile kapatıyor. Hata önceki gibi geri alma mekanizmasına aktarılıyor.
+- `tests/test_backup_manifest_hardening.py` commit `aae9e86fc2cd40fe6d08e6fcc9ab71efb0623044`: iki yeni hata enjeksiyonu testi kaynak tanıtıcısının kapandığını ve yarım hedefin temizlendiğini doğrulamak için eklendi.
+- Actions `39869948785` **failure**: K4 testinde hatalı çok satırlı `with` sözdizimi (`SyntaxError`) ve ayrı K2 `test_empty_name_and_orphan_url_are_reported` beklenti uyuşmazlığı. Paralel `fix(ci): correct malformed multiline mock context managers` commitinin Actions `39870164408` çalıştırmasında artık K4 SyntaxError görülmüyor; **yalnız K2 testi başarısız**, toplam 1035 test. Bu nedenle henüz tam yeşil CI kabulü yok. K2 dosyası paralel sohbet tarafından düzeltiliyor, çakışma yaratmamak için burada tekrar değiştirilmedi.
+- Gerçek harici yedek makbuzu, bağımsız dış restore, korunan VOD/arşiv eşdeğerliği ve ayın 1/15 zamanlayıcı kanıtı hâlâ yok. Üretim dosyaları değiştirilmedi.

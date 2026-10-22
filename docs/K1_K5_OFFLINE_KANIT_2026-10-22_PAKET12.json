@@ -1,0 +1,44 @@
+{
+  "schema": "madsc-k1-k5-offline-evidence-v1",
+  "date": "2026-10-22",
+  "package": 12,
+  "base_main_sha": "3409a2c7a50ec20ae215f207c0af053a0740be05",
+  "scope": "opt-in parity hooks for two real isolated file-processing slices",
+  "tests": {
+    "command": "python -m madsc.offline_gate",
+    "discovered": 593,
+    "passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "parity_marker_contract_complete": 2,
+    "real_behavior_ready": 0,
+    "legacy_behavioral_parity_accepted": 0,
+    "runtime_security_accepted": 0,
+    "task_acceptance": 0
+  },
+  "changes": [
+    "K4 restore drill has a default-false opt-in chain that snapshots the actual restore report and binds the sample file actually consumed by restore_drill.",
+    "The K5 batch K2 handoff slice has a default-false opt-in chain that snapshots the actual candidate handoff and binds the M3U file actually consumed by artifact_transport.",
+    "Both chains upload only reports/madsc-parity-evidence.json with read-only repository permissions and no production write.",
+    "K1, standalone K2 and K3 were deliberately not given synthetic markers because they do not expose an equivalent common real input contract."
+  ],
+  "source_sha256": {
+    ".github/workflows/madsc-04-yedek.yml": "dcb0922deaaeedaf5c531c794c487dcb51140b3f3a301bbcb3b5581516cea068",
+    ".github/workflows/madsc-05-bakim.yml": "6460eb279f85338a5026b1632e24fa9896425531b0d54d120e0d21cbe2c18f53",
+    "tests/test_parity_workflow_integration.py": "05309721733f93df225d879a048a0eb7edecbb91588ff41c731f6932c6714260",
+    "tests/test_parity_workflow_readiness.py": "9126fea0dc23e48abf3ad4d679224acc650af7eb6387200afe7492e58ad4dfe3"
+  },
+  "constraints": {
+    "github_actions_started": false,
+    "workflow_default_opt_in": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_written": false,
+    "fixture_is_acceptance": false
+  },
+  "blockers": [
+    "The two static hook contracts have not been run and therefore have no runtime origin or artifact evidence.",
+    "K1, standalone K2 and K3 still lack comparable common real input/side-effect bindings.",
+    "The read-only legacy 92 workflow artifacts do not contain the v1 manifest."
+  ]
+}

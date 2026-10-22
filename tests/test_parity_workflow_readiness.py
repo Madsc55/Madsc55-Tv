@@ -19,16 +19,16 @@ def synthetic_workflows(root, content):
 
 
 class ParityWorkflowReadinessTests(unittest.TestCase):
-    def test_current_five_workflows_are_truthfully_blocked(self):
+    def test_current_five_workflows_report_only_integrated_file_slices(self):
         report = audit_parity_workflow_readiness(ROOT)
         self.assertEqual(report["workflow_count"], 5)
-        self.assertEqual(report["marker_contract_complete"], 0)
+        self.assertEqual(report["marker_contract_complete"], 2)
         self.assertEqual(report["real_behavior_ready"], 0)
         self.assertEqual(report["behavioral_parity_accepted"], 0)
         self.assertFalse(report["production_ready"])
         self.assertEqual({row["workflow_path"] for row in report["rows"]},
                          CENTRAL_REPLACEMENT_WORKFLOWS)
-        self.assertTrue(all(row["missing_markers"] for row in report["rows"]))
+        self.assertEqual(sum(bool(row["missing_markers"]) for row in report["rows"]), 3)
 
     def test_complete_ordered_static_markers_still_do_not_prove_runtime(self):
         content = "\n".join([

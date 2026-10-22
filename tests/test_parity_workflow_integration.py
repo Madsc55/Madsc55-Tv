@@ -1,0 +1,67 @@
+import re
+import unittest
+from pathlib import Path
+
+from madsc.parity_workflow_readiness import audit_parity_workflow_readiness
+
+
+ROOT = Path(__file__).resolve().parents[1]
+WORKFLOWS = ROOT / ".github" / "workflows"
+
+
+class ParityWorkflowIntegrationTests(unittest.TestCase):
+    def test_only_two_real_file_slices_have_complete_opt_in_hooks(self):
+        report = audit_parity_workflow_readiness(ROOT)
+        complete = {row["workflow_path"] for row in report["rows"]
+                    if row["marker_contract_complete"]}
+        self.assertEqual(complete, {
+            ".github/workflows/madsc-04-yedek.yml",
+            ".github/workflows/madsc-05-bakim.yml",
+        })
+        self.assertEqual(report["marker_contract_complete"], 2)
+        self.assertEqual(report["real_behavior_ready"], 0)
+        self.assertEqual(report["behavioral_parity_accepted"], 0)
+
+    def test_k4_and_k5_inputs_are_consumed_before_snapshot_and_manifest(self):
+        cases = {
+            "madsc-04-yedek.yml": (
+                "python -m madsc.restore_drill --source reports/k4-source",
+                "--input reports/k4-source/nested/sample.txt",
+                "--output restore=reports/k4-restore-drill.json",
+            ),
+            "madsc-05-bakim.yml": (
+                "python -m madsc.artifact_transport produce --path reports/k2-candidates.json --source reports/k2-input.m3u",
+                "--input reports/k2-input.m3u",
+                "--output candidates=reports/k2-candidates.json",
+            ),
+        }
+        for filename, (producer, manifest_input, snapshot_output) in cases.items():
+            data = (WORKFLOWS / filename).read_text(encoding="utf-8")
+            with self.subTest(workflow=filename):
+                self.assertLess(data.index(producer), data.index(snapshot_output))
+                self.assertLess(data.index(snapshot_output), data.index(manifest_input))
+                self.assertLess(data.index(manifest_input),
+                                data.index("path: reports/madsc-parity-evidence.json"))
+
+    def test_every_parity_hook_is_default_off_and_conditioned(self):
+        for filename in ("madsc-04-yedek.yml", "madsc-05-bakim.yml"):
+            data = (WORKFLOWS / filename).read_text(encoding="utf-8")
+            self.assertRegex(
+                data,
+                r"(?m)^      allow_parity_evidence:\n"
+                r"(?:(?!^      [A-Za-z_][A-Za-z_0-9]*:).+\n)*?"
+                r"        default: false\s*$",
+            )
+            parity_steps = [
+                step for step in re.split(r"(?=^      - name: )", data, flags=re.MULTILINE)
+                if ("madsc.parity_" in step
+                    or "path: reports/madsc-parity-evidence.json" in step)
+            ]
+            self.assertEqual(len(parity_steps), 3, filename)
+            self.assertTrue(all(
+                "if: ${{ inputs.allow_parity_evidence == true }}" in step
+                for step in parity_steps), filename)
+
+
+if __name__ == "__main__":
+    unittest.main()

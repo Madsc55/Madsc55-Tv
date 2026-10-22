@@ -1,6 +1,12 @@
 name: MADSC K4 — Yedek
 on:
   workflow_dispatch:
+    inputs:
+      allow_parity_evidence:
+        description: 'Opt-in isolated parity manifest for the restore drill (no acceptance)'
+        type: boolean
+        required: true
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -30,6 +36,20 @@ jobs:
         with:
           name: madsc-k4-restore-drill
           path: reports/k4-restore-drill.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Snapshot K4 restore drill output (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        run: python -m madsc.parity_snapshot_cli --exit-code 0 --output restore=reports/k4-restore-drill.json --output-root .
+      - name: Bind K4 parity input and snapshot (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        run: python -m madsc.parity_manifest_cli --input reports/k4-source/nested/sample.txt --snapshot reports/madsc-parity-snapshot.json --workflow-path .github/workflows/madsc-04-yedek.yml --output-root .
+      - name: Upload K4 parity manifest (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k4-parity-evidence
+          path: reports/madsc-parity-evidence.json
           if-no-files-found: error
           retention-days: 14
       - name: Isolated report

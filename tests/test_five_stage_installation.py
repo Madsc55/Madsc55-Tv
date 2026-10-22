@@ -24,6 +24,17 @@ class InstallationInventoryTests(unittest.TestCase):
             self.assertFalse(row["runtime_verified"])
             self.assertFalse(row["production_accepted"])
 
+    def test_k1_writer_inventory_includes_os_open_descriptor_writes(self):
+        from madsc.five_system_installation import inspect_installation
+        report = inspect_installation(ROOT)
+        descriptor_writes = [row for row in report["writer_callsite_candidates"]
+                             if row["operation"] == "open"
+                             and row["classification"] == "write"
+                             and row["file"] == "madsc/k4_evidence.py"]
+        self.assertTrue(descriptor_writes, "os.open(O_CREAT) writer missing from K1 inventory")
+        self.assertFalse(report["all_writer_callsites_manually_verified"])
+        self.assertFalse(report["production_ready"])
+
     def test_missing_workflow_fails_closed(self):
         from madsc.five_stage_installation import consolidation_plan
         with patch("madsc.five_stage_installation.consolidation_plan",

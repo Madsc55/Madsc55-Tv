@@ -154,9 +154,10 @@
     "title": "92 eski otomasyonun gerçek davranışsal kabulü",
     "status": "in_progress",
     "evidence": [
-      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_07_2026-10-23.md: three additional frozen-source workflow contracts; static review only, no parity acceptance"
+      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_07_2026-10-23.md: three additional frozen-source workflow contracts; static review only, no parity acceptance",
+      "docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_08_2026-10-23.md: three additional frozen-source workflow contracts; static review only, no parity acceptance"
     ],
-    "note": "99 YAML kaynak envanteri; altı önceki batch 18 workflow, batch 07 ile 21/92 statik inceleme. 71 statik inceleme bekliyor. Davranışsal eşdeğerlik kabulü 0/92; batch 07 kaynak incelemesi kabul sayacını artırmaz."
+    "note": "99 YAML source inventory; batches 01-08 document 24/92 static workflow reviews, 68 remain. Batch 08 found that IBO list workflow discovers broadly but probes only first 30 candidates, plus cache persistence and scoring-write boundaries needing isolated differential tests. Behavioral equivalence acceptance remains 0/92; source review is not acceptance."
   },
   {
     "id": "K5-20",

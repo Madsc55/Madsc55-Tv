@@ -585,3 +585,18 @@ class BackupTests(unittest.TestCase):
             os.link(original, root / "alias.txt")
             with self.assertRaises(ValueError):
                 snapshot_manifest(root, ["original.txt"])
+
+    def test_backup_rejects_hardlinked_source_without_output(self):
+        import os
+        from madsc.backup import backup_to_new_sandbox
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "source"
+            source.mkdir()
+            file = source / "file.txt"
+            file.write_bytes(b"shared")
+            os.link(file, base / "other.txt")
+            destination = base / "backup"
+            with self.assertRaises(ValueError):
+                backup_to_new_sandbox(source, destination, ["file.txt"])
+            self.assertFalse(destination.exists())

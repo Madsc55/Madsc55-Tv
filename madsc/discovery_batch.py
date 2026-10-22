@@ -62,6 +62,15 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 errors.append({"line": number, "reason": "unbalanced_metadata_quotes"})
                 continue
             attr_pairs = ATTR.findall(meta)
+            # Do not silently discard malformed identity-related attributes.
+            # A bare or unquoted tvg-id could otherwise turn a channel into a
+            # misleading name-only match instead of a rejected candidate.
+            remainder = ATTR.sub("", meta)
+            if re.search(r'(?i)(?:^|\\s)(?:tvg-id|tvg-logo|group-title)\\s*=', remainder):
+                pending = None
+                errors.append({"line": number, "reason": "invalid_metadata_attribute"})
+                discard_url_for_rejected_entry = True
+                continue
             attr_names = [name.casefold() for name, _ in attr_pairs]
             # Repeated attributes make channel identity ambiguous. Reject the
             # row instead of silently keeping the last value via dict().

@@ -2075,3 +2075,9 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - `fd4756d6fd481fd56558d63f78f1da965da0b988`: `tests/test_failure_diagnostic_api_fail_closed.py` içine üç negatif senaryo eklendi: farklı isimde aynı ID, boolean ID ve eksik ID.
 - Çalışma konteynerinde `/mnt/data` altında checkout yok. `git ls-remote https://github.com/Madsc55/Madsc55-Tv.git HEAD` DNS `Could not resolve host: github.com` ile başarısız. Bu yüzden yeni testler/offline gate gerçekten koşulmadı; 632 geçmiş test yeni kodu doğrulamaz. İzinsiz Actions tetiklenmedi. Kabul **0/92**, **0/26**, **0/22**; korunan IPTV dosyaları ve eski repo değiştirilmedi.
 - Eksiklerin tamamlanması için engel: erişilebilir tam checkout üzerinde testler ve iki repodaki eski/yeni aynı girdiyle gerçek Actions yürütmeleri, doğrulanabilir artifact hashleri, bağımsız yan etki kıyası ve gözden geçirme kabulü. Negatif fixture testlerini gerçek davranışsal kabul yerine sayma.
+
+
+## 22 Ekim 2026 — GitHub köken kimliklerinde bool/int ayrımı
+- `8a66833beb4d047441e95498d3db16eeec352158`: API run `id`, `run_attempt`, artifact `workflow_run.id` ve beyan edilen artifact `id` için `type(...) is int` kontrolü eklendi. Python `True == 1` eşitliğinin köken kimliğini geçerli göstermesi engellendi.
+- `e5009e34d2907c340e4deaae59a6f3a1105de885`: dört bool kimlik negatif testi eklendi. Testlerin çalıştırılması hâlâ bekliyor.
+- Container kontrolü: `/mnt/data` içinde checkout yok; `git ls-remote` GitHub DNS çözümlemesinde başarısız. GitHub connector yalnız dosya okuma/yazma için erişilebilir. Actions izinsiz tetiklenmedi. Kabul sayıları 0/92, 0/26, 0/22. Sonraki öncelik, checkout/test ortamı ve bağımsız gerçek eski/yeni yürütme kanıtlarıdır. Korunan IPTV içerikleri ve eski repo değiştirilmedi.

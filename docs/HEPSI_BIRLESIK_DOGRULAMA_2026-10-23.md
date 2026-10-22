@@ -247,3 +247,10 @@
 - Doğrulama sınırı: workflow `workflow_dispatch` ile tetikleniyor; bu oturumda dispatch aracı kullanılmadı. Combined-status sorgusu yeni test commitleri için sonuç döndürmedi. Bu nedenle testler CI'da başarılı sayılmaz; eski 990-test baseline bu yeni SHA'ları kapsamaz.
 - Etki: belirsiz `tvg-id` çakışmasının sessizce son değerle ezilmesi engellenir; tekil büyük harfli `TVG-ID` alanı da tanınır. K2-05/06/07/08 kabul durumları değiştirilmedi; gerçek kaynak/lisans, günlük eşdeğerlik ve bağımsız artifact SHA kanıtı hâlâ açık.
 - Üretim playlist/EPG/favoriler/yedekler değişmedi; eski `Madsc55/madsc-tv` deposuna yazılmadı; canlı kaynak veya IBO cihaz testi yapılmadı.
+
+
+## K1 — izole kanıt yazıcısında TOCTOU/rollback sertleştirmesi (23 Ekim 2026)
+- `madsc/fixture_report_writer.py::_exclusive_bytes` tam yolu doğrudan açmak yerine her üst dizini `O_DIRECTORY|O_NOFOLLOW` + `dir_fd` ile açıyor; hedefi açık parent descriptor üzerinden `O_EXCL|O_NOFOLLOW` ile oluşturuyor. Hata temizliği aynı parent fd içindeki aynı inode/metadata ile sınırlı.
+- Kod: `967977def72e1f184c7e2920d323401f4afb035b`. Testler: `6d9624592a93a885fddd5aaccab2cfcc5f8f1d95` (fsync hatasında kısmi dosya temizliği), `32fd75b48d334068efe5687b085daeb86603a0b4` (symlink parent kaçışı).
+- GitHub'da kod/test dosyaları doğrulandı; bu SHA'lar için CI sonucu henüz doğrulanmadı. Önceki 990 testlik baseline yeni değişikliklerin kanıtı değildir.
+- Bu, paylaşılan izole rapor yazıcısını sertleştirir; repository çapında tüm yazma noktaları kapısı veya 26 kural kabulü değildir. K1 0/26, production_ready=false.

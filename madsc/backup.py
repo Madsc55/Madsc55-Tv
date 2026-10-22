@@ -278,7 +278,11 @@ def restore_to_new_sandbox(backup: Path, destination: Path, names: list[str]) ->
         for entry in original["entries"]:
             relative = Path(entry["path"])
             descriptor = _open_relative_file_nofollow(backup, relative.parts)
-            target_descriptor = _create_relative_file_nofollow(destination, relative.parts, created_identity)
+            try:
+                target_descriptor = _create_relative_file_nofollow(destination, relative.parts, created_identity)
+            except BaseException:
+                os.close(descriptor)
+                raise
             with os.fdopen(descriptor, "rb") as reader, os.fdopen(target_descriptor, "wb") as writer:
                 metadata = os.fstat(reader.fileno())
                 if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
@@ -326,7 +330,11 @@ def backup_to_new_sandbox(source: Path, destination: Path, names: list[str]) -> 
         for entry in original["entries"]:
             relative = Path(entry["path"])
             descriptor = _open_relative_file_nofollow(source, relative.parts)
-            target_descriptor = _create_relative_file_nofollow(destination, relative.parts, created_identity)
+            try:
+                target_descriptor = _create_relative_file_nofollow(destination, relative.parts, created_identity)
+            except BaseException:
+                os.close(descriptor)
+                raise
             with os.fdopen(descriptor, "rb") as reader, os.fdopen(target_descriptor, "wb") as writer:
                 metadata = os.fstat(reader.fileno())
                 if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:

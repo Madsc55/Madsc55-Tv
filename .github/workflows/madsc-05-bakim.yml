@@ -124,7 +124,10 @@ jobs:
         env:
           RUN_ID: ${{ github.run_id }}
           COMMIT_SHA: ${{ github.sha }}
-        run: python -m madsc.artifact_transport produce --path reports/k2-candidates.json --source reports/k2-input.m3u --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
+        shell: bash
+        run: |
+          if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then sha256sum reports/k2-input.m3u > reports/parity-input-before.sha256; fi
+          python -m madsc.artifact_transport produce --path reports/k2-candidates.json --source reports/k2-input.m3u --run-id "$RUN_ID" --commit-sha "$COMMIT_SHA"
       - name: K2 fixture history input
         run: |
           mkdir -p reports/history-input
@@ -152,9 +155,17 @@ jobs:
       - name: Snapshot K2 handoff output (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         run: python -m madsc.parity_snapshot_cli --exit-code 0 --output candidates=reports/k2-candidates.json --output-root .
+      - name: Verify unchanged parity input before manifest (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        shell: bash
+        run: sha256sum --check --status reports/parity-input-before.sha256
       - name: Bind K2 handoff input and snapshot (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         run: python -m madsc.parity_manifest_cli --input reports/k2-input.m3u --snapshot reports/madsc-parity-snapshot.json --workflow-path .github/workflows/madsc-05-bakim.yml --output-root .
+      - name: Verify unchanged parity input after manifest (explicit opt-in only)
+        if: ${{ inputs.allow_parity_evidence == true }}
+        shell: bash
+        run: sha256sum --check --status reports/parity-input-before.sha256
       - name: Upload K2 handoff parity manifest (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         uses: actions/upload-artifact@v4

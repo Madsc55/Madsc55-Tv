@@ -52,7 +52,9 @@ def audit_write_paths(paths: list[str]) -> dict:
             or any(part in (".git", ".github") for part in normalized_parts)
             or any(part in (".gitmodules", ".gitattributes", ".gitignore",
                             ".mailmap") for part in normalized_parts)
-            or ":" in name
+            # NFKC can turn fullwidth/compatibility punctuation into a colon.
+            # Windows interprets colons as alternate data stream separators.
+            or ":" in name or ":" in folded
             or "\x00" in name
             or name.startswith("~")
             or folded in {item.casefold() for item in PROTECTED_EXACT}

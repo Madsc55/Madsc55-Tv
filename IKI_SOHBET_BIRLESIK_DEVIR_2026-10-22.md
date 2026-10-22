@@ -25,3 +25,8 @@
 
 ## Yeni sohbet için tek komut
 “`Madsc55/Madsc55-Tv` `main` dalında `IKI_SOHBET_BIRLESIK_DEVIR_2026-10-22.md`, `DEVAM_NOTU.md` ve `PROJE_HAFIZASI.md` dosyalarını oku. İki sohbetin birleşik HEAD'inden devam et. Çakışma kontrolü yap, son testleri gerçek ortamda çalıştır, eksikleri düzelt, [skip ci] ile kaydet. Korunan yayın dosyalarına ve eski depoya dokunma; PR #71'i birleştirme; izinsiz Actions başlatma; kabulü kanıtsız artırma.”
+
+## Nihai birleştirme teyidi — diğer sohbet tamamlandı
+- Kullanıcı diğer sohbetin çalışmasının bittiğini teyit etti. Son GitHub HEAD kontrolünde `ccda375bde9e6e06650dc14b64a726346c6bb135` görüldü; daha yeni başka sohbet commit'i henüz görünmüyor. Herhangi bir eksik sohbet mesajının otomatik taşındığı iddia edilmez.
+- `DEVAM_NOTU.md` diğer sohbetin `71ba4ae` diagnostic outcome strictness testlerini ve bu sohbetin `e34b948` API run-state testlerini birlikte içeriyor. Bu belge ikisini de kapsar; hiçbir eski değişiklik üzerine yazılmadı.
+- Yeni sohbette artık **tek kanonik çalışma akışı** kullan: önce güncel HEAD'i oku, bu belgeyi ve iki ana notu oku, yeni testleri gerçekten çalıştır, kanıt yoksa kabulü değiştirme. Mevcut test engeli ve 0/92, 0/26, 0/22 sınırları aynen geçerlidir.

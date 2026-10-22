@@ -119,17 +119,20 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         report = parse_m3u(text, source)
         reports[source] = {"entries": report["entries"], "rejected": len(report["rejected"]),
                            "parse_errors": len(report["parse_errors"])}
-        # Labels are caller-supplied and do not prove independence. Exact
-        # duplicate feed bodies share one fingerprint and can contribute only
-        # one corroboration vote, even when given different source names.
-        # Normalize transport-only formatting (BOM, CRLF/LF, blank lines,
-        # and outer line whitespace) before fingerprinting. These differences
-        # must not manufacture independent corroboration votes.
-        canonical_feed = "\n".join(
-            line.strip() for line in text.removeprefix("\ufeff").splitlines()
-            if line.strip()
+        # Labels and serialization order do not prove independence. Fingerprint
+        # the parsed channel inventory so transport formatting, comments, and
+        # row ordering cannot manufacture corroboration votes.
+        semantic_rows = sorted(
+            (
+                entry["url_sha256"],
+                entry["name"].casefold(),
+                entry["tvg_id"].casefold(),
+                entry["tvg_logo"],
+                entry["group_title"].casefold(),
+            )
+            for entry in report["candidates"]
         )
-        source_fingerprint = sha256(canonical_feed.encode("utf-8")).hexdigest()
+        source_fingerprint = sha256(repr(semantic_rows).encode("utf-8")).hexdigest()
         for entry, original in zip(report["candidates"], report["candidate_rows"]):
             if normalize_url(original["url"]) in known:
                 continue

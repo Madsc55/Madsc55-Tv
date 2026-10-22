@@ -206,3 +206,8 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - ÖNEMLİ: Bu turda offline test çalıştırılmadı; 605 test önceki commitin kanıtıdır, yeni kodun test başarısı değildir. YAML/kontrat ve toplu offline_gate testleri henüz doğrulanmalı. Kodun hash kontrolü input dosyasının atomik dondurulması veya gerçek legacy runtime parity kanıtı değildir.
 - Sonraki adım: kaynak YAML'larını ve statik readiness testlerini doğrula, gerekli kontrat testlerini güncelle, tek toplu offline regresyon çalıştır, başarısızlık varsa düzelt. GitHub Actions için ayrı izin gerekir. Kabul 0/92, 0/26, 0/22.
 - Korunan playlist/EPG/YEDEKLER/YENİLER/FAVORİLER/logo/arşiv, eski repo ve PR #71 değişmedi; merge yapılmadı.
+
+## 22 Ekim 2026 — Hash sırası kontrat testi
+- Kod/test commit: 0abc1e5ab3243eb0a4bfd7d5df268153e597067b. tests/test_parity_workflow_integration.py içinde K1/K4/K5 için girdi hash kaydı < gerçek tüketici < ilk hash doğrulaması < manifest CLI < ikinci hash doğrulaması < artifact upload sırasını statik olarak denetleyen test eklendi.
+- Test çalıştırılmadı: yerel container GitHub DNS çözümlemesi başarısız (Could not resolve host: github.com); GitHub Actions kota izni olmadığı için dispatch/rerun yapılmadı. 605 eski kanıt yeni commit için geçerli sayılmaz.
+- Sonraki adım: erişilebilir checkout ile tek offline_gate, statik test ve YAML doğrulaması; hataları düzeltip kanıt SHA'larıyla kaydet. Tam kabul 0/92, 0/26, 0/22. Korunan üretim verileri, eski repo ve PR #71 değişmedi.

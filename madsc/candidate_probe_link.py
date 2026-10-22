@@ -75,7 +75,7 @@ def load_evidence(path):
         raise ValueError("Invalid or oversized evidence")
     import os
     import stat
-    if not hasattr(os, "O_NOFOLLOW"):
+    if not isinstance(getattr(os, "O_NOFOLLOW", None), int):
         raise ValueError("Secure evidence opening is unavailable")
     flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
     descriptor = os.open(path, flags)

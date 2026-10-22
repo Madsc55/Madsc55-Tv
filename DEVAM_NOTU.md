@@ -488,3 +488,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - madsc/k4_evidence.py commit 37f74521295d84705a702da4d4b13d696f50fcb8 [skip ci]: çıktı yolu okumadan önce denetlenir; kanıt os.open/O_NOFOLLOW (varsa), fstat ile regular/single-link, 1 MiB bounded read kullanır. Symlink parent kontrolü korunur. Test commit 80972e5badcc47173df7f4d613891b268daeade5: mevcut çıktı, symlink ve büyük kanıt negatif senaryoları.
 - Kod/test GitHub'a kaydedildi; bu turda yerel test ve offline_gate çalıştırılmadı, Actions tetiklenmedi. O_NOFOLLOW olmayan platformlarda yarış koruması sınırlıdır; parent değişimi yarışına karşı tam fd-tabanlı dizin zinciri henüz yoktur.
 - Öncelik: test_restore_drill ve test_k4_evidence + tüm offline_gate çalıştırıp gerçek sonuçları kaydet; K1-03 gerçek writer denetimine devam et. Gerçek kabul 0/92, 0/26, 0/22; korunan veriye dokunulmadı.
+
+
+## 22 Ekim 2026 — K4 doğrulayıcı çıktısında ikinci kapı
+- madsc/k4_evidence.py commit d8e5e1925c7ea9994f3e0649b4640cf5569b038a: parse/doğrulama sonrası çıktı yolunu tekrar denetle; os.open(O_EXCL|O_CREAT|O_NOFOLLOW varsa) ile tek seferlik çıktı oluştur. tests/test_k4_evidence.py commit bc21ebd0954250b65b0ae4665d40775242ecee91: geçerli kanıttan çıktı, production_ready=false, external_storage_proven=false ve ikinci yazmayı reddetme senaryosu.
+- Yerel depo indirme github.com DNS hatası nedeniyle mümkün olmadı; bu yeni SHA için testler/offline_gate çalıştırılmış değildir, GitHub Actions tetiklenmedi. Elde doğrulanmış yeni test sonucu yoktur. Tam parent-ancestor TOCTOU koruması halen açık; K1 runtime kabul iddiası yok.
+- Sonraki öncelik: erişilebilir çalıştırma ortamında test_restore_drill, test_k4_evidence ve python -m madsc.offline_gate; gerçek sonuçlar gelmeden 783 sayısını güncel sayma. Gerçek kabul 0/92, 0/26, 0/22. Korunan dosyalar, eski depo ve IBO cihaz testi değişmedi.

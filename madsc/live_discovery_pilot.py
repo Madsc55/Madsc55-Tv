@@ -1,7 +1,7 @@
 """Read-only K2 live discovery pilot from one allowlisted public playlist."""
 import hashlib
 import json
-import os
+import argparse
 from pathlib import Path
 from madsc.fixture_report_writer import write_fixture_report
 from urllib.request import Request, urlopen
@@ -13,10 +13,17 @@ MAX_BYTES = 2_000_000
 MAX_ROWS = 100
 
 
-def run():
-    request = Request(SOURCE, headers={"User-Agent": "Madsc55-Tv-readonly-pilot/1.0"})
-    with urlopen(request, timeout=20) as response:
-        data = response.read(MAX_BYTES + 1)
+def run(source_file=None):
+    if source_file is None:
+        request = Request(SOURCE, headers={"User-Agent": "Madsc55-Tv-readonly-pilot/1.0"})
+        with urlopen(request, timeout=20) as response:
+            data = response.read(MAX_BYTES + 1)
+    else:
+        source_path = Path(source_file)
+        if source_path.is_symlink() or not source_path.is_file():
+            raise ValueError("Invalid source snapshot")
+        with source_path.open("rb") as source:
+            data = source.read(MAX_BYTES + 1)
     if len(data) > MAX_BYTES:
         raise ValueError("Source exceeds pilot byte limit")
     from madsc.remote_m3u_parser import parse_remote_m3u
@@ -45,4 +52,6 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    parser = argparse.ArgumentParser(description="Read-only K2 discovery")
+    parser.add_argument("--source-file", type=Path)
+    run(parser.parse_args().source_file)

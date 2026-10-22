@@ -61,7 +61,7 @@ def consolidation_plan(root: Path) -> dict:
     files = {p.name for p in folder.iterdir() if p.is_file() and p.suffix in (".yml", ".yaml")}
     expected = set(AUXILIARY) | set(MAIN.values())
     # Offline CI is an additional diagnostic workflow, not a production stage.
-    permitted_diagnostics = {"madsc-unit-tests.yml"}
+    permitted_diagnostics = {"madsc-unit-tests.yml", "madsc-online-evidence-join.yml", "madsc-online-pilot-gates.yml"}
     if not expected <= files or files - expected - permitted_diagnostics:
         raise ValueError("Workflow inventory drift: " + repr(sorted((expected - files) | (files - expected - permitted_diagnostics))))
     for stage, name in MAIN.items():

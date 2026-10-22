@@ -1,0 +1,46 @@
+{
+  "schema": "madsc-k1-k5-offline-evidence-v1",
+  "date": "2026-10-22",
+  "package": 11,
+  "base_main_sha": "f4f14fd668e37ca382f50c2991c4c1616ed7fbd9",
+  "scope": "five-workflow parity hook readiness audit",
+  "tests": {
+    "command": "python -m madsc.offline_gate",
+    "discovered": 590,
+    "passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "parity_marker_contract_complete": 0,
+    "real_behavior_ready": 0,
+    "legacy_behavioral_parity_accepted": 0,
+    "runtime_security_accepted": 0,
+    "task_acceptance": 0
+  },
+  "changes": [
+    "A fail-closed static auditor inventories opt-in, snapshot, manifest, upload and producer-order markers for exactly the five installed workflows.",
+    "Whole-line comments cannot satisfy readiness markers, and symlink/nonregular/oversized workflow sources are rejected.",
+    "Even a complete ordered marker contract remains runtime_origin_verified=false, real_behavior_ready=false and behavioral_parity_accepted=false.",
+    "The current real five workflows truthfully report zero of five marker contracts complete; no fixture report was relabeled as parity evidence."
+  ],
+  "source_sha256": {
+    "madsc/parity_workflow_readiness.py": "08254f42abb26a47068cf359ecf7b1fc809625b91605e61ded4a2b40899b8ff6",
+    "tests/test_parity_workflow_readiness.py": "0bf8275c28153da0d393ae6581c0ffc9b223ffe710c079fabe8a2543f3f5be0d",
+    ".github/workflows/madsc-01-guvenlik.yml": "f848a6632abfe7a5d8475faae886050138ba35300b8b46bfcb5a74f9c6f03d65",
+    ".github/workflows/madsc-02-kesif.yml": "02632ea0a67558fefc92b720b0f5c2f7c02733fb7cbc131699e56cd88884a65d",
+    ".github/workflows/madsc-03-kanal-test.yml": "a9db69a5f4498cd1dfa7384d308214bfd579912a3c3ff89e514bfbbee9dbf8fe",
+    ".github/workflows/madsc-04-yedek.yml": "e5eec01bce0279a3e49bb22ef708b6691aa2a9c8b30a0c1b38f1f13f55af5504",
+    ".github/workflows/madsc-05-bakim.yml": "519f5c071354b0ac0a29a26b03e7c7009121974b6a3a4ea6d243cf742b532def"
+  },
+  "constraints": {
+    "github_actions_started": false,
+    "live_stream_probe_performed": false,
+    "production_write_performed": false,
+    "legacy_repository_written": false,
+    "static_markers_are_runtime_proof": false
+  },
+  "blockers": [
+    "No current central workflow contains the opt-in snapshot/manifest/artifact producer chain.",
+    "No common real behavior input and side-effect contract is available across the five workflows.",
+    "The read-only legacy 92 workflow artifacts do not contain the v1 manifest."
+  ]
+}

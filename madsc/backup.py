@@ -157,6 +157,10 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
            or any(c not in "0123456789abcdef" for c in entry["sha256"])
            for entry in manifest["entries"]):
         raise ValueError("Invalid backup manifest entry")
+    # Reject undeclared per-file claims rather than silently ignoring them.
+    # A checksum-only manifest cannot certify external storage or restoration.
+    if any(set(entry) != {"path", "bytes", "sha256"} for entry in manifest["entries"]):
+        raise ValueError("Unsupported backup manifest entry fields")
     paths = [entry["path"] for entry in manifest["entries"]]
     # Reject pathological names before sorting, hashing, or filesystem access.
     if any(len(path) > 4096 for path in paths):

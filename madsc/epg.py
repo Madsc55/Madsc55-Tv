@@ -25,5 +25,5 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     return {"playlist_channels": len(ids), "missing_tvg_id": sum(not x for x in ids),
             "xmltv_channels": len(channel_ids), "unmatched_playlist_ids": missing,
             "unmatched_programme_ids": sorted(program_ids - channel_ids),
-            "matching_verified": not missing and all(ids) and not (program_ids - channel_ids),
+            "matching_verified": bool(ids) and not missing and all(ids) and not (program_ids - channel_ids),
             "device_verified": False, "read_only": True}

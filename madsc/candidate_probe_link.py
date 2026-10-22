@@ -68,6 +68,8 @@ def link_candidate_continuity(envelope: dict, measurements: dict,
 
 
 def load_evidence(path):
+    import json
+    from madsc.batch_acceptance import _unique_json_pairs
         if (path.is_symlink() or any(parent.is_symlink() for parent in path.parents)
                 or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024):
             raise ValueError("Invalid or oversized evidence")

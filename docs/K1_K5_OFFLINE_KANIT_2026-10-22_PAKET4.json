@@ -1,0 +1,56 @@
+{
+  "mode": "offline_local",
+  "scope": "unit_regression_and_isolated_five_stage_fixture",
+  "tested_base_commit": "861932763c247b5402015e3bd33ab403854fddac",
+  "production_acceptance": false,
+  "legacy_92_behavioral_acceptance": 0,
+  "runtime_security_26_acceptance": 0,
+  "task_acceptance_22": 0,
+  "test_exit_code": 0,
+  "timed_out": false,
+  "tests_discovered": 568,
+  "tests_passed": true,
+  "five_stage_fixture_gate_passed": true,
+  "all_offline_gates_passed": true,
+  "workflow_and_task_inventory_passed": true,
+  "auxiliary_workflows_mapped": 10,
+  "auxiliary_commands_integrated_in_main": 10,
+  "task_requirements_inventoried": 22,
+  "legacy_scope_source_workflows": 99,
+  "legacy_scope_behavior_workflows": 92,
+  "legacy_scope_excluded": [
+    ".github/workflows/k1-protected-write-tests.yml",
+    ".github/workflows/madsc-01-guvenlik.yml",
+    ".github/workflows/madsc-02-kesif.yml",
+    ".github/workflows/madsc-03-kanal-test.yml",
+    ".github/workflows/madsc-04-arsiv-yedek.yml",
+    ".github/workflows/madsc-05-genel-bakim.yml",
+    ".github/workflows/madsc-hizli-on-kontrol.yml"
+  ],
+  "five_stage_fixture_categories": {
+    "k1": "success",
+    "k2": "success",
+    "k3": "success",
+    "k4": "success",
+    "k5": "success"
+  },
+  "tested_files_sha256": {
+    "madsc/fixture_report_writer.py": "0f088ebe4045dd11d25d0e5cc25566290e7a7b376d71c66ce0d5234596d0ed41",
+    "madsc/turkish_tv_batch_validation.py": "cc7183e6a10d72a29cdbdd3cb3685672d84dad05232abd055436c294e8519899",
+    "madsc/write_path_audit.py": "dde6fb784e371a7e0af4be56797209ad378de1dc667679f63747f0f4384f135d",
+    "tests/test_channel_test.py": "f1e0bf702a61946b2cd341be61b7ba043d93951fa10c52812a618b328161e9a9",
+    "tests/test_fixture_report_writer.py": "4ed3b539a8bde082b375ac9ebf134f1bb6e52cd136715a17ecd95459e69a10b4",
+    "tests/test_write_path_audit.py": "c0d91e459d1519f9149ff37f04a8d7bb55453463274d833c1020eac49afd6aa7"
+  },
+  "verified_boundaries": [
+    "fixed reports-only M3U8 exception does not weaken the general M3U/M3U8 guard",
+    "existing JSON or playlist evidence is rejected before source scan",
+    "symlinked reports directory is rejected",
+    "playlist and JSON use exclusive create",
+    "playlist is removed if companion JSON creation fails",
+    "offline empty-source run produces a SHA256-bound bundle"
+  ],
+  "network_probes_performed": false,
+  "github_actions_started": false,
+  "note": "Offline fixture success is not production, device, runtime-26 or legacy-92 acceptance."
+}

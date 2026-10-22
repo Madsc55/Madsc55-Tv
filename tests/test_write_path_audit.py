@@ -1,7 +1,10 @@
 import unittest
 import tempfile
 from pathlib import Path
-from madsc.write_path_audit import audit_write_paths, enforce_write_paths, enforce_local_output_path, ProtectedWriteRejected
+from madsc.write_path_audit import (audit_write_paths, enforce_write_paths,
+                                    enforce_local_output_path,
+                                    enforce_local_turkish_tv_test_playlist,
+                                    ProtectedWriteRejected)
 
 class WritePathAuditTests(unittest.TestCase):
     def test_protected_paths_blocked(self):
@@ -122,6 +125,19 @@ class WritePathAuditTests(unittest.TestCase):
 
 
 class LocalOutputGuardTests(unittest.TestCase):
+    def test_fixed_turkish_tv_playlist_exception_does_not_relax_general_guard(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            target = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+            result = enforce_local_turkish_tv_test_playlist(target, allowed_root=root)
+            self.assertTrue(result["isolated_test_playlist"])
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(target, allowed_root=root)
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_turkish_tv_test_playlist(
+                    root / "reports/another.m3u8", allowed_root=root)
+
     def test_safe_absolute_output_is_only_preflight(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "reports"

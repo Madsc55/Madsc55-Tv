@@ -2,11 +2,52 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from madsc.fixture_report_writer import write_fixture_report, write_stage_report
+from madsc.fixture_report_writer import (write_fixture_report, write_stage_report,
+                                         write_turkish_tv_test_bundle)
 from madsc.history_pair_store import write_isolated_history_pair, decode_pair
 
 
 class FixtureReportWriterTests(unittest.TestCase):
+    def test_turkish_tv_bundle_is_fixed_scoped_and_non_overwriting(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            result = write_turkish_tv_test_bundle(root, b"#EXTM3U\n", '{"ok": true}\n')
+            playlist = root / result["playlist_path"]
+            report = root / result["report_path"]
+            self.assertEqual(playlist.read_bytes(), b"#EXTM3U\n")
+            self.assertEqual(report.read_text(), '{"ok": true}\n')
+            self.assertFalse(result["production_write_allowed"])
+            with self.assertRaises(PermissionError):
+                write_turkish_tv_test_bundle(root, b"changed", "changed")
+            self.assertEqual(playlist.read_bytes(), b"#EXTM3U\n")
+
+    def test_turkish_tv_bundle_rejects_symlinked_reports_before_write(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            outside = root / "outside"
+            outside.mkdir()
+            (root / "reports").symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(PermissionError):
+                write_turkish_tv_test_bundle(root, b"#EXTM3U\n", "{}\n")
+            self.assertEqual(list(outside.iterdir()), [])
+
+    def test_turkish_tv_bundle_rolls_back_first_file_on_second_write_failure(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            original = __import__("madsc.fixture_report_writer", fromlist=["_exclusive_bytes"])
+            real_write = original._exclusive_bytes
+            calls = []
+            def fail_second(path, payload):
+                calls.append(path)
+                if len(calls) == 2:
+                    raise OSError("report write failed")
+                return real_write(path, payload)
+            with patch("madsc.fixture_report_writer._exclusive_bytes", side_effect=fail_second):
+                with self.assertRaises(OSError):
+                    write_turkish_tv_test_bundle(root, b"#EXTM3U\n", "{}\n")
+            self.assertFalse((root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8").exists())
+            self.assertFalse((root / "reports/turkish-tv-batch-validation.json").exists())
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

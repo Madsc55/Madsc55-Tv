@@ -1,7 +1,41 @@
 import unittest
+import tempfile
+import hashlib
+import json
+from pathlib import Path
+from unittest.mock import patch
 from madsc.channel_test import evaluate_probe, evaluate_repeated_probes, evaluate_ffprobe_json
 
 class ChannelTests(unittest.TestCase):
+
+    def test_bulk_existing_evidence_is_rejected_before_source_scan(self):
+        from madsc import turkish_tv_batch_validation as batch
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            evidence = root / "reports/turkish-tv-batch-validation.json"
+            evidence.write_text("original", encoding="utf-8")
+            with patch("madsc.turkish_tv_batch_validation.Path.cwd", return_value=root), \
+                 patch("madsc.turkish_tv_batch_validation.scan") as scan:
+                with self.assertRaises(PermissionError):
+                    batch.run()
+            scan.assert_not_called()
+            self.assertEqual(evidence.read_text(encoding="utf-8"), "original")
+
+    def test_bulk_offline_empty_source_writes_hash_bound_isolated_bundle(self):
+        from madsc import turkish_tv_batch_validation as batch
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            with patch("madsc.turkish_tv_batch_validation.Path.cwd", return_value=root), \
+                 patch("madsc.turkish_tv_batch_validation.SOURCES", {}):
+                batch.run()
+            playlist = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+            report = json.loads(
+                (root / "reports/turkish-tv-batch-validation.json").read_text(encoding="utf-8"))
+            self.assertEqual(playlist.read_bytes(), b"#EXTM3U\n")
+            self.assertEqual(report["test_playlist_sha256"],
+                             hashlib.sha256(playlist.read_bytes()).hexdigest())
+            self.assertFalse(report["production_approved"])
 
     def test_three_stage_six_hour_preliminary_window(self):
         from madsc.channel_test import evaluate_three_stage_continuity
@@ -106,7 +140,7 @@ class ChannelTests(unittest.TestCase):
     def test_bulk_playlist_is_sha256_bound_to_json_report(self):
         from pathlib import Path
         source = Path("madsc/turkish_tv_batch_validation.py").read_text(encoding="utf-8")
-        self.assertIn('playlist_out.write_bytes(playlist_bytes)', source)
+        self.assertIn('write_turkish_tv_test_bundle(', source)
         self.assertIn('report["test_playlist_sha256"] = hashlib.sha256(playlist_bytes).hexdigest()', source)
         self.assertIn('report["test_playlist_path"] = str(playlist_out)', source)
 

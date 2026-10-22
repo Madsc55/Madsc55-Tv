@@ -1,6 +1,91 @@
-"""Restricted writer for isolated fixture reports; not a repository-wide write gate."""
+"""Restricted writers for isolated evidence; not a repository-wide write gate."""
+import os
+import stat
 from pathlib import Path
-from madsc.write_path_audit import enforce_write_paths, enforce_local_output_path
+from madsc.write_path_audit import (enforce_write_paths, enforce_local_output_path,
+                                    enforce_local_turkish_tv_test_playlist)
+
+
+_TURKISH_TV_PLAYLIST = "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+
+
+def _prepare_fixture_root(root: Path) -> Path:
+    root = Path(root).absolute()
+    if root.is_symlink() or not root.is_dir():
+        raise PermissionError("Invalid fixture root")
+    reports = root / "reports"
+    if reports.is_symlink() or (reports.exists() and not reports.is_dir()):
+        raise PermissionError("Invalid reports directory")
+    if not reports.exists():
+        reports.mkdir()
+    return root
+
+
+def _exclusive_bytes(destination: Path, payload: bytes) -> None:
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(destination, flags, 0o600)
+    completed = False
+    try:
+        metadata = os.fstat(descriptor)
+        if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
+            raise PermissionError("Evidence output must be an independent regular file")
+        with os.fdopen(descriptor, "wb", closefd=False) as handle:
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        completed = True
+    finally:
+        os.close(descriptor)
+        if not completed:
+            destination.unlink(missing_ok=True)
+
+
+def prepare_turkish_tv_test_bundle(root: Path) -> tuple[Path, Path, Path]:
+    """Create only the reports directory and preflight both fixed outputs."""
+    root = _prepare_fixture_root(root)
+    playlist_path = root / _TURKISH_TV_PLAYLIST
+    report_path = root / "reports/turkish-tv-batch-validation.json"
+    enforce_write_paths(["reports/turkish-tv-batch-validation.json"])
+    enforce_local_turkish_tv_test_playlist(playlist_path, allowed_root=root)
+    enforce_local_output_path(report_path, allowed_root=root)
+    return root, playlist_path, report_path
+
+
+def write_turkish_tv_test_bundle(root: Path, playlist: bytes, report: str) -> dict:
+    """Write the fixed, opt-in K3 test playlist and its JSON evidence once.
+
+    The general M3U/M3U8 write prohibition remains unchanged.  This narrowly
+    scoped writer can only create the named reports artifact and its companion
+    JSON evidence under an isolated root.
+    """
+    if not isinstance(playlist, bytes) or not isinstance(report, str):
+        raise TypeError("Playlist must be bytes and report must be text")
+    root, playlist_path, report_path = prepare_turkish_tv_test_bundle(root)
+    # The JSON side still passes the ordinary K1 policy.  The M3U8 exception is
+    # exact-name only and receives the same local path/symlink/overwrite checks.
+    for destination in (playlist_path, report_path):
+        if destination.exists() or destination.is_symlink():
+            raise FileExistsError("Refusing to overwrite existing report evidence")
+        if destination.parent != root / "reports":
+            raise PermissionError("Evidence output outside reports directory")
+    created = []
+    try:
+        _exclusive_bytes(playlist_path, playlist)
+        created.append(playlist_path)
+        _exclusive_bytes(report_path, report.encode("utf-8"))
+        created.append(report_path)
+    except Exception:
+        for path in reversed(created):
+            path.unlink(missing_ok=True)
+        raise
+    return {
+        "isolated_bundle_written": True,
+        "playlist_path": _TURKISH_TV_PLAYLIST,
+        "report_path": "reports/turkish-tv-batch-validation.json",
+        "production_write_allowed": False,
+    }
 
 
 def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:

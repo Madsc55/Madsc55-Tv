@@ -129,3 +129,20 @@ def enforce_local_append_path(destination: Path) -> dict:
     """
     return _enforce_local_path(destination, allowed_root=None,
                                allow_existing_regular_file=True)
+
+
+def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: Path) -> dict:
+    """Permit one isolated K3 artifact without weakening the general M3U ban."""
+    root = Path(allowed_root).absolute()
+    expected = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+    if Path(destination) != expected:
+        raise ProtectedWriteRejected("Only the fixed isolated K3 test playlist is permitted")
+    # Reuse all local boundary checks, substituting a harmless JSON name solely
+    # for the repository-path suffix policy.  The exact real destination was
+    # checked above and is returned in the evidence.
+    policy_probe = root / "reports/turkish-tv-test-playlist-boundary.json"
+    result = _enforce_local_path(policy_probe, allowed_root=root,
+                                 allow_existing_regular_file=False)
+    if expected.exists() or expected.is_symlink():
+        raise ProtectedWriteRejected("Existing test playlist evidence")
+    return {**result, "path_checked": True, "isolated_test_playlist": True}

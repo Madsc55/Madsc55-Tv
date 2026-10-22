@@ -7,6 +7,8 @@ from pathlib import Path
 
 from madsc.legacy_multisource_discovery import SOURCES, scan, RADIO
 from madsc.k3_turkish_tv_video_pilot import verify_av, category
+from madsc.fixture_report_writer import (prepare_turkish_tv_test_bundle,
+                                         write_turkish_tv_test_bundle)
 
 MAX_PROBES = min(1000, max(1, int(os.environ.get("MADSC_MAX_PROBES", "1000"))))
 TURKISH_FEEDS = ("-TR", "TURKCE", "TURKIYE", "TURK_KANAL", "iptv-turk")
@@ -14,6 +16,9 @@ def eligible_source(name):
     return any(term in name.upper() for term in ("-TR", "TURKCE", "TURKIYE")) or name == "iptv-turk-tr"
 
 def run():
+    root = Path.cwd()
+    # Refuse unsafe/existing evidence before any network discovery or probing.
+    _, playlist_out, _ = prepare_turkish_tv_test_bundle(root)
     found = {}
     sources_ok = 0
     total = 0
@@ -85,10 +90,7 @@ def run():
         playlist.append(f'#EXTINF:-1 group-title="{group}",{safe_title}')
         playlist.append(url)
         exported += 1
-    playlist_out = Path("reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8")
-    playlist_out.parent.mkdir(parents=True, exist_ok=True)
     playlist_bytes = ("\n".join(playlist) + "\n").encode("utf-8")
-    playlist_out.write_bytes(playlist_bytes)
     report["test_playlist_sha256"] = hashlib.sha256(playlist_bytes).hexdigest()
     report["test_playlist_candidates"] = exported
     report["test_playlist_path"] = str(playlist_out)
@@ -96,9 +98,11 @@ def run():
     report["three_stage_six_hour_verified"] = False
     report["device_verified"] = False
     report["test_playlist_language_status"] = "unverified"
-    out = Path("reports/turkish-tv-batch-validation.json")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_turkish_tv_test_bundle(
+        root,
+        playlist_bytes,
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+    )
     print(json.dumps({k:v for k,v in report.items() if k != "results"}, ensure_ascii=False))
 
 if __name__ == "__main__":

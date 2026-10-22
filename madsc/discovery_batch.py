@@ -51,7 +51,15 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 pending = None
                 errors.append({"line": number, "reason": "unbalanced_metadata_quotes"})
                 continue
-            attrs = dict(ATTR.findall(meta))
+            attr_pairs = ATTR.findall(meta)
+            attr_names = [name.casefold() for name, _ in attr_pairs]
+            # Repeated attributes make channel identity ambiguous. Reject the
+            # row instead of silently keeping the last value via dict().
+            if len(attr_names) != len(set(attr_names)):
+                pending = None
+                errors.append({"line": number, "reason": "duplicate_metadata_attribute"})
+                continue
+            attrs = dict(attr_pairs)
             pending = {"name": title.strip(), "tvg_id": attrs.get("tvg-id", ""),
                        "tvg_logo": attrs.get("tvg-logo", ""),
                        "group_title": attrs.get("group-title", "")}

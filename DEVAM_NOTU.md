@@ -567,3 +567,8 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Testler çalıştırılmadı; commit mesajlarında [skip ci] olduğu için CI otomatik tetiklenmedi. Kod ve test sonucu doğrulanmayı bekliyor.
 - Önceki sandbox rollback inode-koruması d3ce6cb5eeb962473dfd0cc95ec05d84e679d0b6; testler 34028a822c9d38738a7edcf35a84913e3c0b17c4.
 - Üretim playlist/EPG/favoriler/cihaz verileri ve yedekler değiştirilmedi. Gerçek harici backup/restore ve K3 cihaz kabulü açık. Kabul sayaçları: 0/92 workflow, 0/26 runtime güvenlik kuralı, 0/22 ana görev.
+
+## 23 Ekim 2026 — K1/K4 son CI hata kök nedenleri
+- İncelenen Actions çalışması 39863302393, commit 38c2a46702: 970 testten 4 hata. K4 backup rollback hata yolunda created_identity eksik olduğuna dair NameError raporlanmıştı; güncel main dosyası yeniden okundu ve destination.mkdir() hemen sonrasında lstat ile created_identity alınmasının mevcut olduğu doğrulandı (main blob 780c64811d0cf1267548bcf94a2da009e408d847). Eski CI commit'i bu düzeltmeyi içermiyordu.
+- K1 test_fixture_report_writer.py içindeki yarış testi unlink()+write() yapıyordu; dosya sistemi inode numarasını hemen yeniden kullanırsa yeni dosya yanlışlıkla aynı inode gibi görünebilirdi. Test artık eski inode'u ayrı bir yolda tutmak için rename ediyor, ardından concurrent replacement oluşturuyor. Commit e3ee2405d9dd3bc23ca567e43c26288fcab16d28.
+- Bu test değişikliği [skip ci] ile kaydedildi; yeni CI sonucu henüz yok. Canlı playlist/EPG ve üretim yedekleri değişmedi. Beşli offline fixture gate önceki kayıtta başarılıydı; tüm güncel regresyon kapısı bu yeni commit için doğrulanmayı bekliyor. 92 workflow/26 güvenlik kuralı/22 ana görev davranışsal kabulü hâlâ kanıtlanmış değil.

@@ -51,6 +51,39 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
                 self.assertLess(data.index(manifest_input),
                                 data.index("path: reports/madsc-parity-evidence.json"))
 
+    def test_opt_in_input_hash_guards_surround_consumer_and_manifest(self):
+        cases = {
+            "madsc-01-guvenlik.yml": (
+                "config/shadow_manifest.json",
+                "python -m src.madsc_guard config/shadow_manifest.json",
+            ),
+            "madsc-04-yedek.yml": (
+                "reports/k4-source/nested/sample.txt",
+                "python -m madsc.restore_drill --source reports/k4-source",
+            ),
+            "madsc-05-bakim.yml": (
+                "reports/k2-input.m3u",
+                "python -m madsc.artifact_transport produce --path reports/k2-candidates.json",
+            ),
+        }
+        for filename, (input_path, consumer) in cases.items():
+            data = (WORKFLOWS / filename).read_text(encoding="utf-8")
+            before = f"sha256sum {input_path} > reports/parity-input-before.sha256"
+            check = "sha256sum --check --status reports/parity-input-before.sha256"
+            manifest = "python -m madsc.parity_manifest_cli"
+            with self.subTest(workflow=filename):
+                self.assertIn(before, data)
+                self.assertEqual(data.count(check), 2)
+                first_check = data.index(check)
+                second_check = data.index(check, first_check + len(check))
+                self.assertLess(data.index(before), data.index(consumer))
+                self.assertLess(data.index(consumer), first_check)
+                self.assertLess(first_check, data.index(manifest))
+                self.assertLess(data.index(manifest), second_check)
+                self.assertLess(second_check,
+                                data.index("path: reports/madsc-parity-evidence.json"))
+                self.assertIn('inputs.allow_parity_evidence', data)
+
     def test_every_parity_hook_is_default_off_and_conditioned(self):
         for filename in ("madsc-01-guvenlik.yml", "madsc-04-yedek.yml",
                          "madsc-05-bakim.yml"):

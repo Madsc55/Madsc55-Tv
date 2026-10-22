@@ -12,6 +12,7 @@ from madsc.k3_live_manifest_pilot import candidates, probe
 from madsc.probe_target_gate import validate_probe_target
 
 LIMIT = 12
+MAX_SOURCE_ROWS = 120  # Bound source scanning even when every row is radio.
 MAX_SEGMENT = 1_500_000
 CATEGORIES = ("🇹🇷 ULUSAL", "📺 HABER", "⚽ SPOR", "🌍 BELGESEL", "🧸 ÇOCUK", "🎧 MÜZİK", "📍 YEREL", "🕌 DİNİ", "⭐ FAVORİLER", "🔄 ALTERNATİF", "⭐ YENİLER", "📦 YEDEKLER")
 
@@ -106,7 +107,11 @@ def run():
     results = []
     verified = []
     tv_tested = 0
+    source_rows = 0
     for name, url in candidates():
+        source_rows += 1
+        if source_rows > MAX_SOURCE_ROWS:
+            break
         if tv_tested >= LIMIT:
             break
         cat = category(name)
@@ -123,6 +128,8 @@ def run():
         if ok:
             verified.append({"name": name, "category": cat, "sha256": digest})
     report = {"stage": "K3_REAL_TURKISH_TV_VIDEO_PILOT", "tested": tv_tested,
+              "source_rows_scanned": min(source_rows, MAX_SOURCE_ROWS),
+              "source_scan_limit": MAX_SOURCE_ROWS,
               "video_verified": len(verified), "radio_excluded": sum(x["status"] == "radio_excluded" for x in results),
               "playlist_modified": False, "language_confirmed_by_audio": False,
               "results": results, "verified_metadata": verified}

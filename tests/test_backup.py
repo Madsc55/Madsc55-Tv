@@ -533,3 +533,45 @@ class BackupTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 restore_to_new_sandbox(alias / "backup", destination, ["file.txt"])
             self.assertFalse(destination.exists())
+
+    def test_backup_detects_source_mutation_during_copy(self):
+        from unittest.mock import patch
+        from madsc.backup import backup_to_new_sandbox
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source, destination = root / "source", root / "backup"
+            source.mkdir()
+            file = source / "file.txt"
+            file.write_bytes(b"original")
+            original_copy = shutil.copyfileobj
+
+            def mutate_after_copy(reader, writer, length=0):
+                original_copy(reader, writer, length)
+                file.write_bytes(b"changed")
+
+            with patch("shutil.copyfileobj", side_effect=mutate_after_copy):
+                with self.assertRaises(ValueError):
+                    backup_to_new_sandbox(source, destination, ["file.txt"])
+            self.assertFalse(destination.exists())
+
+    def test_restore_detects_backup_mutation_during_copy(self):
+        from unittest.mock import patch
+        from madsc.backup import restore_to_new_sandbox
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            backup, destination = root / "backup", root / "restored"
+            backup.mkdir()
+            file = backup / "file.txt"
+            file.write_bytes(b"original")
+            original_copy = shutil.copyfileobj
+
+            def mutate_after_copy(reader, writer, length=0):
+                original_copy(reader, writer, length)
+                file.write_bytes(b"changed")
+
+            with patch("shutil.copyfileobj", side_effect=mutate_after_copy):
+                with self.assertRaises(ValueError):
+                    restore_to_new_sandbox(backup, destination, ["file.txt"])
+            self.assertFalse(destination.exists())

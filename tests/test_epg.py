@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from madsc.epg import check_epg_mapping
 

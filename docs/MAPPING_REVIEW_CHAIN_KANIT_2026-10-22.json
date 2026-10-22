@@ -1,0 +1,67 @@
+{
+  "repository": "Madsc55/Madsc55-Tv",
+  "branch": "main",
+  "base_commit": "bf56ac1826d9e0d43a9e9c218e3865865b580b8d",
+  "validation": {
+    "mode": "offline_local",
+    "scope": "unit_regression_and_isolated_five_stage_fixture",
+    "production_acceptance": false,
+    "legacy_92_behavioral_acceptance": 0,
+    "runtime_security_26_acceptance": 0,
+    "test_exit_code": 0,
+    "timed_out": false,
+    "tests_discovered": 702,
+    "tests_passed": true,
+    "five_stage_fixture_gate_passed": true,
+    "all_offline_gates_passed": true,
+    "workflow_and_task_inventory_passed": true,
+    "auxiliary_workflows_mapped": 10,
+    "auxiliary_commands_integrated_in_main": 10,
+    "task_requirements_inventoried": 22,
+    "legacy_scope_source_workflows": 99,
+    "legacy_scope_behavior_workflows": 92,
+    "legacy_scope_excluded": [
+      ".github/workflows/k1-protected-write-tests.yml",
+      ".github/workflows/madsc-01-guvenlik.yml",
+      ".github/workflows/madsc-02-kesif.yml",
+      ".github/workflows/madsc-03-kanal-test.yml",
+      ".github/workflows/madsc-04-arsiv-yedek.yml",
+      ".github/workflows/madsc-05-genel-bakim.yml",
+      ".github/workflows/madsc-hizli-on-kontrol.yml"
+    ],
+    "workflow_inventory_error": null,
+    "task_inventory_error": null,
+    "five_stage_fixture_categories": {
+      "k1": "success",
+      "k2": "success",
+      "k3": "success",
+      "k4": "success",
+      "k5": "success"
+    },
+    "five_stage_fixture_errors": {},
+    "note": "Unit tests AND real isolated K1-K5 fixture gate required; never production certification."
+  },
+  "source_sha256": {
+    "madsc/legacy_parity_evidence.py": "04ea207458d939bdf2c2974d5b09762ab5b8c4f62be376decf50a64d0949176f",
+    "madsc/legacy_parity_cli.py": "a7266c16ffe11baedc64d61c3b3a854a8ba41e707ab71125d18350db361af035",
+    "tests/test_mapping_review_chain.py": "f0ad4071f050b74a992d202cffcb044034097cfeb64735df8bd238a2eaee827b"
+  },
+  "change": "Existing review_replacement_mappings feeds existing batch/CLI and pair preparation; same selected source and input/output role are required.",
+  "fixture_only": true,
+  "real_semantic_mappings_approved": 0,
+  "independent_execution_evidence_verified": false,
+  "github_actions_triggered": false,
+  "k_impact": {
+    "k1": "existing output guard unchanged; invalid review fails before writer",
+    "k2": "no external discovery input change",
+    "k3": "no live technical input change",
+    "k4": "no restore/backup write change",
+    "k5": "existing parity batch now carries bound review candidates"
+  },
+  "remaining": [
+    "Real source-rationale review per behavior",
+    "Independent same-input legacy/new runs and artifact bytes",
+    "Authenticated API origin and side-effect observation"
+  ],
+  "production_acceptance": false
+}

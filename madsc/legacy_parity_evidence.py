@@ -249,7 +249,7 @@ def compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair, *,
 
 
 def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_root=None,
-                                   behavior_mappings=None):
+                                   behavior_mappings=None, mapping_review_rows=None):
     """Compare only the pinned 92 behavior workflows with origin-bound pairs."""
     scope = reconcile_legacy_scope(inventory)
     # Pin the full catalog identities, not merely the syntax of each blob SHA.
@@ -301,6 +301,26 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
                     or replacement.get("workflow_path") != mapping["replacement_workflow_path"]
                     or replacement.get("workflow_blob_sha") != mapping["replacement_workflow_blob_sha"]):
                 raise ValueError("Execution pair differs from source-bound mapping")
+    mapping_review = None
+    reviews_by_path = {}
+    if mapping_review_rows is not None:
+        if replacement_workflow_root is None:
+            raise ValueError("Mapping review requires current replacement sources")
+        from madsc.legacy_replacement_mapping_review import review_replacement_mappings
+        mapping_review = review_replacement_mappings(
+            inventory, mapping_review_rows, replacement_workflow_root)
+        for candidate, reviewed in zip(mapping_review_rows, mapping_review["rows"]):
+            path = candidate["legacy_path"]
+            mapping = mappings.get(path)
+            if (mapping is None
+                    or candidate["legacy_blob_sha"] != mapping["legacy_workflow_blob_sha"]
+                    or candidate["replacement_workflow_path"] != mapping["replacement_workflow_path"]
+                    or candidate["replacement_blob_sha"] != mapping["replacement_workflow_blob_sha"]
+                    or candidate["input_role"] != mapping["input_path"]
+                    or candidate["output_role"] != mapping["output_label"] + "=" + mapping["output_path"]
+                    or reviewed["static_contract_complete"] is not True):
+                raise ValueError("Mapping review differs from bound consumer dataflow")
+            reviews_by_path[path] = reviewed
     comparisons = {
         path: compare_provenance_bound_pair(
             path, by_path[path].get("git_blob_sha"), pair,
@@ -321,6 +341,7 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
             "replacement_mapping_review_required": True,
             "replacement_source_mapping": dict(mappings[path]) if path in mappings else None,
             "replacement_source_mapping_bound": path in mappings,
+            "replacement_mapping_review_candidate": reviews_by_path.get(path),
             "replacement_contract_catalog_checked": contract_catalog is not None,
             "same_input_sha256": comparisons.get(path, {}).get("same_input_sha256"),
             "execution_pair_metadata_supplied": path in comparisons,
@@ -348,6 +369,8 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
         "replacement_contract_catalog_checked": contract_catalog is not None,
         "replacement_contract_catalog": contract_catalog,
         "source_mappings_bound": len(mappings),
+        "source_mapping_review_candidates_bound": len(reviews_by_path),
+        "source_mapping_review": mapping_review,
         "source_mappings_independently_reviewed": 0,
         "total": 92,
         "pairs_supplied": len(pairs),

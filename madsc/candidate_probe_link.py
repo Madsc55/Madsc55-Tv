@@ -84,9 +84,14 @@ def main():
     parser.add_argument("--isolated-report-root", type=Path, required=True)
     args = parser.parse_args()
     def load(path):
-        if path.is_symlink() or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024:
+        if (path.is_symlink() or any(parent.is_symlink() for parent in path.parents)
+                or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024):
             raise ValueError("Invalid or oversized evidence")
-        return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
+        with path.open("rb") as handle:
+            raw = handle.read(16 * 1024 * 1024 + 1)
+        if len(raw) > 16 * 1024 * 1024:
+            raise ValueError("Invalid or oversized evidence")
+        return json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_json_pairs)
     candidates = load(args.candidates)
     if args.continuity is not None:
         linked = link_candidate_continuity(candidates, load(args.continuity),

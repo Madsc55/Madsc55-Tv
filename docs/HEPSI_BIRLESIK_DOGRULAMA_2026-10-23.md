@@ -122,3 +122,13 @@
 - Regresyon testleri `tests/test_kararlilik_gecmis.py` dosyasına eklendi (gelecek, naive, bozuk, eski, UTC offset ve 7 günlük sınır). Birleşik rapor workflow'una bu testleri ffmpeg kurulumu ve canlı aday işlemlerinden önce çalıştıran kapı eklendi.
 - İlgili kaynak commit'leri: `f5ad1c7816f2722c9618f8a099462abce90e294d`, `2fbe6a0f5299ab120fc236bd10152f34222b08f4`, `d143692c78fc1b8748ad53778a37ec9587ac0c11`, `4a0d38c390d343299e289e03a558fca1e08a9d01`, `796ce918399e1cea60c44d3d856f0ec8187bd419`.
 - Run `39863524500` (unified report workflow) queued at last check; run `39863499174` (stability tracker) in progress. Test result not yet confirmed. No behavioral acceptance counters changed; legacy 92 parity remains 0/92, runtime security 0/26, main task acceptance 0/22.
+
+
+## K1–K5 devamı — K4 rollback hataları ve CI yeniden doğrulaması
+- Run `39863302393` 970 test çalıştırdı; 4 hata: K4 backup/restore rollback testlerinde üç hata `backup_to_new_sandbox` içinde tanımsız `created_identity` nedeniyle gerçek integrity hatasının NameError ile maskelenmesi; K1 fixture report writer testinde eşzamanlı değiştirilmiş dosyanın rollback sırasında silinmesi.
+- K4 düzeltmesi commit `42b72c462681b40543c2e91db816d1657730fcf1`: yeni sandbox backup dizini oluşturulduktan sonra lstat identity kaydedilir, başarısızlıkta yalnızca bu oluşturulan dizin rollback edilir.
+- K1 düzeltmesi commit `a20a3159c1b6ab6d36d1656ddbbcaf1080401dbd`: rollback temizliği device/inode yanında size, mtime_ns, ctime_ns alanlarını da karşılaştırır; böylece eşzamanlı dosya replacement'ı korunur.
+- İlk doğrulama CI koşusu `39863482320` yeni bir syntax hatası ortaya çıkardı: kaynak satırına gerçek satır sonu yerine literal `\\n` kaçışları girmişti. Bu hata commit `031a6978ce85d32256ab7dc800c9b7e57bac6189` ile düzeltildi.
+- Ek regresyon assertion'ı `tests/test_fixture_report_writer.py` içine eklendi; güncel offline CI run `39863567977`, SHA `de82210cdea1281b8ad2d1f622925fa1d8d8c397`, kayıt anında in_progress. Sonuç gelmeden başarı kabul edilmez.
+- Üretim yedekleri veya canlı kaynaklar üzerinde işlem yapılmadı; bütün kopyalama/rollback testleri izole fixture'lara yöneliktir. PR #71 birleştirilmedi.
+- Kabul sayaçları değişmedi: 92 workflow 0/92, 26 güvenlik kuralı 0/26, 22 ana görev 0/22.

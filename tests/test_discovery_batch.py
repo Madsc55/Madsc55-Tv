@@ -191,6 +191,17 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(report["candidate_rows"][0]["tvg_id"], "news.tv")
         self.assertEqual(report["candidate_rows"][0]["group_title"], "News")
 
+    def test_identical_feed_bodies_do_not_count_as_independent_sources(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="news.tv",News TV\n'
+                'https://example.org/news.m3u8\n')
+        report = corroborate_sources({"source-a": feed, "source-b": feed})
+        self.assertEqual(report["sources_checked"], 2)
+        self.assertEqual(len(report["identity_candidates"]), 1)
+        candidate = report["identity_candidates"][0]
+        self.assertEqual(candidate["source_count"], 1)
+        self.assertEqual(candidate["sources"], ["source-a", "source-b"])
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

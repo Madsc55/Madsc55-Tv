@@ -136,6 +136,11 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Too many known URLs")
     if known_urls is not None and any(not isinstance(url, str) for url in known_urls):
         raise ValueError("Known URLs must contain strings")
+    if known_urls is not None and any(
+        len(url) > 8192 or any(0xD800 <= ord(ch) <= 0xDFFF for ch in url)
+        for url in known_urls
+    ):
+        raise ValueError("Known URLs contain oversized or invalid Unicode values")
     if any(not isinstance(body, str) for body in sources.values()):
         raise ValueError("M3U source bodies must be text")
     if sum(len(body) for body in sources.values()) > 8_000_000:

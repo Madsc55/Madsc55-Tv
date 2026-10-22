@@ -623,3 +623,13 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - K1/K5 için kritik bulgu: `scripts/automatic_png_logos.py` korunan `CALISANLAR.m3u` dosyasını doğrudan `playlist.write_text(updated,...)` ile yazıyor. Workflow sonrasında diff görürse `git restore -- CALISANLAR.m3u` çalıştırıyor; write-then-restore, protected path'e hiç yazmama garantisi değildir. Replacement parity, izole fixture kopyası ve sıfır protected-path write ile kanıtlanmalı. Bu eski workflow çalıştırılmadı; playlist değişmedi.
 - Birleşik durum workflow'u snapshot JSON'ları üretir ve sadece generated health report yazar; tarihsel snapshot'ı canlı durum gibi sunmamalı. Geniş kanal taraması 9 public M3U kaynağı ve ffprobe kullandığı için gerçek ağ/probe işidir; fixture/parity amaçlı tetiklenmedi.
 - Statik inceleme toplamı 21/92; statik inceleme bekleyen 71. Bu kabul değildir: davranışsal parity 0/92, runtime güvenlik 0/26, ana görev kabulü 0/22, production_ready=false.
+
+
+## 23 Ekim 2026 — K1 yazma-adayı tarayıcısındaki iki gerçek kapsam boşluğu
+- K1 kod commit'leri: `c6affc2824a1c8e5288da16eff853f7bb690e1ca` (dinamik open modu envanteri), `d6f1ce5c98c85658336198b542d0a7ccb65a6394` (shell/subprocess çağrıları envanteri).
+- Regresyon test commit'leri: `2a0796ebe98b03db88905534c6546153dd92020a` (positional/keyword dinamik open modu), `cb0a046252e1a75d119ae12e0af6c76028b3379c` (subprocess.run ve os.system).
+- Bulgu 1: `open(path, requested_mode)` ve `path.open(requested_mode)` sabit metin olmayan modlarda yazma modu taşıyabilmesine rağmen AST envanterinden düşüyordu. Tarayıcı artık bu çağrıları `[dynamic mode]` etiketiyle incelemeye alıyor.
+- Bulgu 2: shell/subprocess komutları Python dosya API mutasyonları gibi envantere alınmıyordu. `subprocess.run/call/Popen/check_call/check_output`, `os.system` ve `os.popen` artık `[process command requires review]` adayı olarak listeleniyor; bu sınıflandırma her komutun yazma yaptığı anlamına gelmez, manuel komut incelemesi gerektirir.
+- İki yeni test dosyaya kaydedildi. Bu kayıtta GitHub birleşik status API'si commit için status/check döndürmedi; bu nedenle yeni testlerin CI sonucu **henüz doğrulanmış değil**. Son doğrulanmış genel baseline run `39865933101`, SHA `a4c70f7277be8aad73cdd95d027115b7bcab469d`, 990 testtir ve yeni kodu kapsamaz.
+- Sonraki K1 adımı: güncel Actions sonucu erişilebilir hale gelince test edilen SHA'yı doğrula; ardından 75 adayın her birini gerçek mutasyon/yan etki, guard sırası ve çağıran zincirine göre sınıflandırıp kritik korumasız yazıcılara hedefli negatif test ekle.
+- Kabul sayaçları değişmez: K1 runtime 0/26, legacy davranış 0/92, ana görev 0/22; production acceptance false. Korunan üretim verilerine dokunulmadı.

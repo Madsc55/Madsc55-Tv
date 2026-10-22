@@ -215,6 +215,26 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(candidate["source_count"], 1)
         self.assertEqual(candidate["sources"], ["source-crlf", "source-lf"])
 
+    def test_reordered_semantically_identical_feeds_do_not_inflate_votes(self):
+        feed_a = ('#EXTM3U\n'
+                  '# comment from mirror A\n'
+                  '#EXTINF:-1 tvg-id="news.tv",News TV\n'
+                  'https://example.org/news.m3u8\n'
+                  '#EXTINF:-1 tvg-id="sports.tv",Sports TV\n'
+                  'https://example.org/sports.m3u8\n')
+        feed_b = ('\ufeff#EXTM3U\r\n'
+                  '# mirror B has different comments\r\n'
+                  '#EXTINF:-1 tvg-id="sports.tv",Sports TV\r\n'
+                  'https://example.org/sports.m3u8\r\n'
+                  '#EXTINF:-1 tvg-id="news.tv",News TV\r\n'
+                  'https://example.org/news.m3u8\r\n')
+        report = corroborate_sources({"source-a": feed_a, "source-b": feed_b})
+        self.assertEqual(len(report["identity_candidates"]), 2)
+        self.assertTrue(all(row["source_count"] == 1
+                            for row in report["identity_candidates"]))
+        self.assertTrue(all(row["sources"] == ["source-a", "source-b"]
+                            for row in report["identity_candidates"]))
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

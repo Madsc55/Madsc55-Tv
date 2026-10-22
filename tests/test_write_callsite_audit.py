@@ -180,6 +180,22 @@ def mutate(fd, options):
         self.assertEqual(len(rows), 3)
         self.assertTrue(all(row["api"] == "os.fdopen [dynamic mode]" for row in rows))
 
+    def test_descriptor_level_writes_are_inventoried(self):
+        source = '''
+import os
+def mutate(fd):
+    os.write(fd, b"data")
+    os.writev(fd, [b"data"])
+    os.pwrite(fd, b"data", 0)
+    os.pwritev(fd, [b"data"], 0)
+    os.ftruncate(fd, 0)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["os.write", "os.writev", "os.pwrite",
+                          "os.pwritev", "os.ftruncate"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

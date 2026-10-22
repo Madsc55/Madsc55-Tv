@@ -18,6 +18,12 @@ class OnlineEvidenceJoinWorkflowTests(unittest.TestCase):
         positions = [text.index(cmd) for cmd in commands]
         self.assertEqual(positions, sorted(positions))
         self.assertIn("reports/k2-k3-joined-evidence.json", text)
+        self.assertIn("Download one bounded public source snapshot", text)
+        self.assertIn("data = response.read(MAX_BYTES + 1)", text)
+        snapshot = "--source-file reports/k2-k3-source-snapshot.m3u"
+        self.assertEqual(text.count(snapshot), 2)
+        self.assertLess(text.index("Download one bounded public source snapshot"),
+                        text.index("python -m madsc.live_discovery_pilot"))
 
 
 if __name__ == "__main__":

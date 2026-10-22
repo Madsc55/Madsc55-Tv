@@ -49,6 +49,25 @@ class K4EvidenceTests(unittest.TestCase):
                 main()
             self.assertEqual(output.read_text(), "unchanged")
 
+    def test_cli_rejects_duplicate_json_keys_and_symlinked_parent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            report = root / "duplicate.json"
+            report.write_text(json.dumps(GOOD)[:-1] + ', "files_checked": 99}')
+            real_dir = root / "real"
+            real_dir.mkdir()
+            real_report = real_dir / "valid.json"
+            real_report.write_text(json.dumps(GOOD))
+            alias_dir = root / "alias"
+            alias_dir.symlink_to(real_dir, target_is_directory=True)
+            for candidate in (report, alias_dir / "valid.json"):
+                with self.subTest(candidate=candidate):
+                    output = root / "result.json"
+                    args = ["k4_evidence", "--report", str(candidate), "--output", str(output)]
+                    with patch("sys.argv", args), self.assertRaises(ValueError):
+                        main()
+                    self.assertFalse(output.exists())
+
     def test_cli_rejects_symlink_and_oversized_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

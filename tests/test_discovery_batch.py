@@ -379,6 +379,18 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(result["identity_candidates"], [])
 
 
+
+    def test_known_urls_reject_control_characters_before_normalization(self):
+        feed = "#EXTM3U\n#EXTINF:-1,Safe\nhttps://example.org/safe\n"
+        for known in ("https://example.org/\nattack",
+                      "https://example.org/\x00attack",
+                      "https://example.org/\tattack",
+                      "https://example.org/\x7fattack"):
+            with self.subTest(known=repr(known)):
+                with self.assertRaisesRegex(ValueError, "control characters"):
+                    corroborate_sources({"source": feed}, known_urls={known})
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

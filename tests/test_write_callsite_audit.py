@@ -52,6 +52,15 @@ def mutate(path, folder):
         self.assertEqual([row["api"] for row in rows], ["open", "mkdir", "unlink"])
         self.assertEqual([row["line"] for row in rows], [3, 4, 5])
 
+    def test_pathlib_open_with_write_mode_is_detected(self):
+        source = '''
+def mutate(path):
+    with path.open("w", encoding="utf-8") as handle:
+        handle.write("data")
+'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows], ["path.open"])
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

@@ -17,7 +17,9 @@ _GUARDS = {
     "enforce_local_turkish_tv_test_playlist",
 }
 _MUTATING_METHODS = {
-    "write_text", "write_bytes", "unlink", "mkdir", "makedirs", "rmdir",
+    # File-object writes matter too: an open(..., "w") may be wrapped or
+    # passed through a helper, so inventory write()/writelines() callsites.
+    "write", "writelines", "write_text", "write_bytes", "unlink", "mkdir", "makedirs", "rmdir",
     "removedirs", "rename", "replace", "symlink_to", "hardlink_to",
     "touch", "truncate", "copy", "copy2", "copyfile", "copytree",
     "move", "rmtree", "remove",

@@ -1,0 +1,82 @@
+{
+  "schema": "madsc-legacy-workflow-behavior-contract-v1",
+  "purpose": "Per-workflow contract template for evidence-backed equivalence review; template is not a claim that any workflow is accepted.",
+  "acceptance_defaults": {
+    "behavioral_parity_accepted": false,
+    "production_writes_allowed": false,
+    "independent_reviewer_approved": false
+  },
+  "source_identity": {
+    "legacy_repository": "Madsc55/madsc-tv",
+    "legacy_branch": "madsc/bes-sistem-toplu-birlestirme",
+    "legacy_path": "",
+    "legacy_git_blob_sha": "",
+    "replacement_repository": "Madsc55/Madsc55-Tv",
+    "replacement_branch": "main",
+    "replacement_workflow_path": "",
+    "replacement_git_blob_sha": ""
+  },
+  "behavior_contract": {
+    "purpose_and_owner": "",
+    "trigger_events": [],
+    "manual_inputs": [],
+    "environment_and_secrets": [],
+    "permissions": [],
+    "commands_in_order": [],
+    "expected_exit_codes": [],
+    "timeout_seconds": null,
+    "outputs_and_artifacts": [],
+    "persistent_side_effects": [],
+    "network_access": "",
+    "destructive_actions": [],
+    "failure_and_retry_behavior": "",
+    "cancellation_behavior": "",
+    "schedule_semantics": "",
+    "idempotency_and_concurrency": ""
+  },
+  "isolated_test_plan": {
+    "fixture_inputs": [],
+    "expected_output_sha256": {},
+    "expected_side_effect_sha256": {},
+    "expected_exit_code": null,
+    "expected_timeout": false,
+    "network_disabled": true,
+    "production_data_access": false
+  },
+  "evidence": {
+    "legacy_execution": {
+      "run_id": null,
+      "head_sha": "",
+      "artifact_name": "",
+      "artifact_sha256": ""
+    },
+    "replacement_execution": {
+      "run_id": null,
+      "head_sha": "",
+      "artifact_name": "",
+      "artifact_sha256": ""
+    },
+    "input_output_comparison": {
+      "report_sha256": ""
+    },
+    "side_effect_comparison": {
+      "report_sha256": ""
+    },
+    "failure_timeout_comparison": {
+      "report_sha256": ""
+    },
+    "independent_reviewer": {
+      "reviewer_id": "",
+      "approval_reference": "",
+      "approved_at": ""
+    }
+  },
+  "blocking_rules": [
+    "Missing source blob identity blocks review.",
+    "Filename/stage hints are not behavioral mapping evidence.",
+    "Static command presence is not execution evidence.",
+    "Matching output digests without verified provenance do not prove equivalence.",
+    "Any unapproved production write or live IPTV/EPG/device/backup access blocks the test.",
+    "Any missing legacy/new run, output, side-effect, failure/timeout comparison, or reviewer approval blocks acceptance."
+  ]
+}

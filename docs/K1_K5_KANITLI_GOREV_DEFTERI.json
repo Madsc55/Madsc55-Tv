@@ -93,7 +93,10 @@
       "a11999c7: regression for known URL length/Unicode rejection and normal known-URL exclusion; CI pending 39871566283",
       "39871569940: successful descendant CI c59bd4bf, one commit after known URL length/Unicode test a11999c7",
       "d64a03a0: reject ASCII control characters in known URL set before normalization",
-      "096eb603: regression newline/NUL/tab/DEL known URLs; CI pending 39871799412"
+      "096eb603: regression newline/NUL/tab/DEL known URLs; CI pending 39871799412",
+      "39871799412: successful exact SHA CI for control-character known URL regression 096eb603",
+      "f4ef8312: fingerprint only previously unknown channel inventories to avoid known-channel vote inflation",
+      "1100410d: regression known channels differ but identical unknown channel still one vote; CI pending 39872022686"
     ],
     "note": "Offline suite succeeded on descendant SHA 205ad1bf (run 39869009399), covering latest K2 fail-closed metadata and bounded known URL inputs. Real-source/licensing, independent origins, and behavioral acceptance still unverified."
   },

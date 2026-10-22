@@ -13,7 +13,8 @@ def evaluate_probe(probe: dict) -> dict:
         raise ValueError("Invalid URL fingerprint")
     status = probe["http_status"]
     duration = probe["duration_seconds"]
-    if type(status) is not int or type(duration) not in (int, float) or not math.isfinite(duration) or duration < 0:
+    if (type(status) is not int or not 100 <= status <= 599
+            or type(duration) not in (int, float) or not math.isfinite(duration) or duration < 0):
         raise ValueError("Invalid probe measurements")
     if type(probe["video"]) is not bool or type(probe["audio"]) is not bool:
         raise ValueError("Invalid video/audio evidence")

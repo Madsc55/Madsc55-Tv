@@ -24,6 +24,11 @@ def reconcile(k2: dict, k3: dict) -> dict:
             or any(ch not in "0123456789abcdef" for ch in source_sha)
             or source_sha != k3_source_sha):
         raise ValueError("K2/K3 remote source bytes do not match")
+    source_bytes = k2.get("source_bytes")
+    if (type(source_bytes) is not int or not 0 < source_bytes <= 2_000_000
+            or type(k3.get("source_bytes")) is not int
+            or source_bytes != k3["source_bytes"]):
+        raise ValueError("K2/K3 source byte counts do not match")
     hashes = k2.get("candidate_hashes")
     results = k3.get("results")
     if not isinstance(hashes, list) or not isinstance(results, list):

@@ -21,6 +21,14 @@ class BackupTests(unittest.TestCase):
             self.assertFalse((outside / "escaped.txt").exists())
             self.assertEqual((outside / "sentinel.txt").read_text(), "keep")
 
+    def test_sandbox_destination_open_rejects_backslash_path_component(self):
+        from madsc.backup import _create_relative_file_nofollow
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with self.assertRaisesRegex(ValueError, "Unsafe sandbox destination path"):
+                _create_relative_file_nofollow(root, ("nested\\\\escaped.txt",))
+            self.assertEqual(list(root.iterdir()), [])
+
     def test_sandbox_destination_open_requires_original_root_inode(self):
         from madsc.backup import _create_relative_file_nofollow
         with tempfile.TemporaryDirectory() as tmp:

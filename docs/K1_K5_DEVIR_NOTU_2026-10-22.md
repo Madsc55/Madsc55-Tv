@@ -48,3 +48,10 @@ Bu dosya yalnız K1/K5'e ait ayrı devir kaydıdır.
 - K5 tarih damgası doğrulaması: ilk `5a83ec4` ve `8729f06` test; tam RFC3339 biçim kontrolü `5bdd2f6` ve `tests/test_k5_strict_rfc3339.py` `13a830c`. İlgili kod ve testler ana dala yazıldı.
 - **Test engeli teyidi:** çalışma konteynerinde `git ls-remote https://github.com/Madsc55/Madsc55-Tv.git HEAD` komutu DNS çözümleme hatasıyla sonuçlandı (`Could not resolve host: github.com`). GitHub bağlayıcısı kaynak okuma/yazma ve eski Actions sonuçlarını görmeyi sağlıyor; mevcut araçlarla yeni HEAD için tam test koşusu başlatılamadı. Eski yeşil Actions koşusu güncel HEAD'i doğrulamaz.
 - Son incelemede K2/K3/K4 paralel commitleri sürüyor. K1/K5 ayrı dosyaları dışında değişiklik yapılmadı; testler gerçek çalışmadan kabul sayıları artırılmamalı.
+
+
+## 22 Ekim — K1/K5 son uygulama ve düzeltme notları
+- K1 geçersiz Unicode surrogate koruması `50b1288`, test `6e0ce96`. Testin ilk sürümü gerçek surrogate karakterleri yerine kaçış metinlerini deniyordu; `a4f9e28` ile `chr(0xD800)` vb. gerçek karakterler kullanılarak düzeltildi.
+- K1 yerel çıktı denetiminde eklenen erken politika kontrolü `224a950`, mevcut geç aşama kontrolünü yinelediği ve hata türünü değiştirdiği için `3ae9989` ile geri alındı. **Son geçerli K1 kaynak durumunda tekrar yoktur.**
+- Paralel sohbetler K2/K3 dosyalarını değiştirmeye devam ediyor; bu sohbet yalnız K1/K5 ve ayrı devir dosyasına yazdı.
+- Son durum: Kod ve test dosyaları commit edildi, fakat güncel HEAD üzerinde CI/offline test koşusu kanıtlanmadı. Gerçek kabul 0/92, 0/26, 0/22 olarak tutulur. Bir sonraki iş test altyapısını doğrulamak ve 20 K1 dinamik yazıcı adayının salt-okunur sınıflandırmasını tamamlamaktır.

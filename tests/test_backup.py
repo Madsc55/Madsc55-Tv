@@ -691,3 +691,71 @@ class BackupTests(unittest.TestCase):
             (nested / "file.txt").write_text("safe", encoding="utf-8")
             manifest = snapshot_manifest(root, ["nested/file.txt"])
             self.assertEqual(manifest["entries"][0]["path"], "nested/file.txt")
+
+    def test_manifest_refuses_missing_nofollow_support(self):
+        import os
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "file.txt").write_bytes(b"fixture")
+            with patch.object(os, "O_NOFOLLOW", None, create=True):
+                with self.assertRaisesRegex(ValueError, "Secure no-follow"):
+                    snapshot_manifest(root, ["file.txt"])
+
+    def test_backup_copy_rejects_source_symlink_swapped_after_manifest(self):
+        from unittest.mock import patch
+        from madsc import backup as module
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source"
+            source.mkdir()
+            original = source / "file.txt"
+            original.write_bytes(b"original")
+            external = root / "external.txt"
+            external.write_bytes(b"private")
+            destination = root / "new-backup"
+            real_open = module._open_relative_file_nofollow
+            calls = []
+
+            def switch_before_copy(base, parts):
+                calls.append(1)
+                if len(calls) == 2:
+                    original.rename(source / "held.txt")
+                    original.symlink_to(external)
+                return real_open(base, parts)
+
+            with patch("madsc.backup._open_relative_file_nofollow",
+                       side_effect=switch_before_copy):
+                with self.assertRaises(OSError):
+                    module.backup_to_new_sandbox(source, destination, ["file.txt"])
+            self.assertFalse(destination.exists())
+            self.assertEqual(external.read_bytes(), b"private")
+
+    def test_restore_copy_rejects_backup_symlink_swapped_after_manifest(self):
+        from unittest.mock import patch
+        from madsc import backup as module
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            backup = root / "backup"
+            backup.mkdir()
+            original = backup / "file.txt"
+            original.write_bytes(b"original")
+            external = root / "external.txt"
+            external.write_bytes(b"private")
+            destination = root / "new-restore"
+            real_open = module._open_relative_file_nofollow
+            calls = []
+
+            def switch_before_copy(base, parts):
+                calls.append(1)
+                if len(calls) == 2:
+                    original.rename(backup / "held.txt")
+                    original.symlink_to(external)
+                return real_open(base, parts)
+
+            with patch("madsc.backup._open_relative_file_nofollow",
+                       side_effect=switch_before_copy):
+                with self.assertRaises(OSError):
+                    module.restore_to_new_sandbox(backup, destination, ["file.txt"])
+            self.assertFalse(destination.exists())
+            self.assertEqual(external.read_bytes(), b"private")

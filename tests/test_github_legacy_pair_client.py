@@ -87,6 +87,17 @@ class GithubLegacyPairClientTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaisesRegex(ValueError, "event origin"):
                 verify_provenance_pair_api(LEGACY_PATH, LEGACY_BLOB, self.pair, fetch=fetch)
 
+    def test_artifact_run_status_and_conclusion_must_agree(self):
+        for field, value in (("status", "in_progress"), ("status", None),
+                             ("conclusion", "failure"), ("conclusion", None)):
+            def conflicting_result(url, record):
+                if "/artifacts?" in url:
+                    record["artifacts"][0]["workflow_run"][field] = value
+                return record
+            fetch, _ = self.fetcher(mutate=conflicting_result)
+            with self.subTest(field=field, value=value), self.assertRaisesRegex(ValueError, field):
+                verify_provenance_pair_api(LEGACY_PATH, LEGACY_BLOB, self.pair, fetch=fetch)
+
     def test_missing_digest_and_wrong_workflow_blob_fail_closed(self):
         def missing_digest(url, value):
             if "/artifacts?" in url:

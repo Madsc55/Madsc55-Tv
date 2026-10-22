@@ -108,6 +108,12 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
         raise ProtectedWriteRejected("Ambiguous or traversing output path")
     if path.is_symlink():
         raise ProtectedWriteRejected("Symlink output")
+    # Reject the lexical destination if it aliases a protected name before
+    # checking existence; local filesystem checks must not bypass Git policy.
+    try:
+        enforce_write_paths([path.relative_to(path.anchor).as_posix()])
+    except ValueError as exc:
+        raise ProtectedWriteRejected("Invalid local output path") from exc
     if path.exists():
         metadata = path.lstat()
         if (not allow_existing_regular_file or not stat.S_ISREG(metadata.st_mode)

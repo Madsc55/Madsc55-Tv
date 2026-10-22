@@ -2404,3 +2404,10 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Run `39863482320`, SHA `0d25b09b`, 818 testte 37 import error ve 2 failure. Kök neden `madsc/fixture_report_writer.py` rollback inode-metadata karşılaştırmasında satır sonlarının literal `\\n` olarak kaynak dosyaya yazılmasıydı; bu, modülün import edilmesini engelledi ve birçok K1-K5 testi zincirleme düştü. Ek olarak testlerin offline-gate exit-code beklentileri, gate daha erken başarısız olduğu için yanlış sonuç gösterdi.
 - Güncel main'deki `031a6978ce85d32256ab7dc800c9b7e57bac6189` bu sözdizimi sorununu düzeltiyor ve eşzamanlı replacement temizliğinde inode metadata karşılaştırmasını koruyor. K4 `backup_to_new_sandbox` created identity de `42b72c4` ile eklendi. K1 rollback testi inode reuse riskini önlemek için eski inode'u ayrı tutma adına taşıyor (`e3ee240`).
 - Bu son düzeltmeler [skip ci] commitleri olduğundan yeni offline run gereklidir. Aşağıdaki commit güncel main üzerinde standart offline CI tetiklemesi içindir; sonucu tamamlanmadan yeşil kabul edilmeyecek.
+
+
+## 23 Ekim 2026 — Beşli offline kapı yeniden yeşil
+- Güncel run `39863567977`, commit `de82210cdea1281b8ad2d1f622925fa1d8d8c397`, conclusion `success`. Job `offline-tests` başarıyla tamamlandı. Rapor: `test_exit_code=0`, `tests_passed=true`, `five_stage_fixture_gate_passed=true`, `all_offline_gates_passed=true`.
+- Önceki 818 test/37 import error zincirinin kök nedeni K1 writer'daki hatalı literal satır sonu sözdizimiydi. `031a697` ile syntax onarıldı; K4 backup sandbox created-inode kimliği `42b72c4` ile kaydedildi; K1 concurrent replacement rollback koruması ve test fixture düzeltmeleri `a20a315`, `e3ee240`, `de82210` commitleriyle tamamlandı. Son koşu bu birleşik durumu kapsıyor.
+- Offline beşli fixture gate'in yeşil olması gerçek üretim kabulü değildir. Raporda `production_acceptance=false`, `runtime_security_26_acceptance=0`, `legacy_92_behavioral_acceptance=0`. K1 çalışma zamanı 26 kuralı, 92 workflow davranışsal eşdeğerliği ve K3/K4 gerçek cihaz/harici depolama kanıtları açık kalır.
+- Actions bağlantısı: `https://github.com/Madsc55/Madsc55-Tv/actions/runs/39863567977`.

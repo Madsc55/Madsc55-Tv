@@ -64,7 +64,17 @@ def inspect_installation(root: Path) -> dict:
                               "makedirs", "remove", "rmdir", "touch", "chmod",
                               "symlink_to", "hardlink_to", "link", "truncate", "writelines",
                               "write", "dump", "dumps_to_file", "to_csv", "to_json"}
-                if name in ("open", "fdopen"):
+                if name == "open" and isinstance(target, ast.Attribute) and isinstance(target.value, ast.Name) and target.value.id == "os":
+                    # os.open(path, flags) is a file-descriptor writer when flags include
+                    # O_WRONLY/O_RDWR/O_CREAT/O_TRUNC/O_APPEND. Dynamic flags need review.
+                    flag_node = node.args[1] if len(node.args) >= 2 else next(
+                        (kw.value for kw in node.keywords if kw.arg == "flags"), None)
+                    flag_names = {part.attr for part in ast.walk(flag_node)
+                                  if isinstance(part, ast.Attribute)} if flag_node is not None else set()
+                    classification = ("write" if flag_names & {
+                        "O_WRONLY", "O_RDWR", "O_CREAT", "O_TRUNC", "O_APPEND"}
+                        else "dynamic_mode_review")
+                elif name in ("open", "fdopen"):
                     mode_node = next((kw.value for kw in node.keywords if kw.arg == "mode"), None)
                     if mode_node is None and len(node.args) >= (2 if isinstance(target, ast.Name) else 1):
                         mode_node = node.args[1] if isinstance(target, ast.Name) else node.args[0]

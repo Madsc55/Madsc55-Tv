@@ -55,12 +55,17 @@ def probe(url):
 
 def run():
     results = []
+    seen_hashes = set()
     source_evidence = {}
     # Keep the first LIMIT candidates while still exhausting the generator:
     # the source SHA-256 must describe the complete downloaded snapshot.
     for name, url in candidates(source_evidence):
         if len(results) >= LIMIT:
             continue
+        digest = hashlib.sha256(url.encode()).hexdigest()
+        if digest in seen_hashes:
+            continue
+        seen_hashes.add(digest)
         try:
             result = probe(url)
             result["status"] = "manifest_only" if result["hls_manifest_seen"] else "unverified"

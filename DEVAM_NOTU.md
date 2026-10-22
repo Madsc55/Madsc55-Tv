@@ -696,3 +696,9 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Doğrulama: dosyalar main üzerinde SHA ile tekrar okundu; fakat bu commitler için doğrulanmış Actions/check sonucu henüz yok. Önceki 990 test baseline'ı bu değişiklikleri kapsamaz.
 - Kapsam: bu koruma paylaşılan izole kanıt yazıcısını güçlendirir; tüm Python/shell yazma noktalarının merkezi K1 kapısından geçtiğini kanıtlamaz. K1 0/26, K1-03 in_progress, production_ready=false. Üretim dosyalarına dokunulmadı.
 - Sonraki adım: yeni test SHA için otomatik CI sonucunu doğrula; sonra 75 mutasyon adayının kalanlarını çağıran zinciri ve gerçek yan etkileriyle sınıflandır.
+
+
+## K2 devamı — birebir aynı M3U feed oy şişirmesi
+- `corroborate_sources` artık feed gövdesi SHA-256 fingerprint'ine göre birebir aynı metni tek bağımsız oy sayar; kaynak etiketleri listelenir ama `source_count` şişmez.
+- Kod `3ea2415ba29b08994c892dca2cdcfd23b42bd9e5`, regresyon testi `70433a0079dff063187ce5c094cd5c70d4f828be`; rapor `53abbed82744c7e966d8feaa453ad33627fc8bf5`, hafıza `c852c120ed74e28393495c38f840f74b879a0a39`.
+- CI doğrulanmadı; testleri yeşil sayma. Birebir olmayan yeniden biçimlendirilmiş kopyalar hâlâ gerçek kaynak URL/köken kanıtı gerektirir. K2-05/06/07/08 açık; üretim verisine dokunulmadı.

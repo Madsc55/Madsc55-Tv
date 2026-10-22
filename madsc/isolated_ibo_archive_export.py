@@ -51,7 +51,10 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
             raise OSError("Archive manifest byte integrity mismatch")
         # Ensure the new directory entry is durable as well as the file bytes.
         if hasattr(os, "O_DIRECTORY"):
-            directory_fd = os.open(destination, os.O_RDONLY | os.O_DIRECTORY)
+            directory_flags = os.O_RDONLY | os.O_DIRECTORY
+            if hasattr(os, "O_NOFOLLOW"):
+                directory_flags |= os.O_NOFOLLOW
+            directory_fd = os.open(destination, directory_flags)
             try:
                 os.fsync(directory_fd)
             finally:

@@ -14,6 +14,23 @@ class BackupManifestHardeningTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 snapshot_manifest(root, ["bad\nname.txt"])
 
+    def test_per_entry_external_attestations_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_text("ok")
+            for field, value in (
+                ("external_backup_verified", True),
+                ("restore_verified", True),
+                ("production_writes", True),
+                ("provider_receipt", "unverified"),
+            ):
+                with self.subTest(field=field):
+                    manifest = snapshot_manifest(root, ["good.txt"])
+                    manifest["entries"][0][field] = value
+                    with self.assertRaisesRegex(ValueError, "entry fields"):
+                        verify_manifest(root, manifest)
+            self.assertTrue(verify_manifest(root, snapshot_manifest(root, ["good.txt"])))
+
     def test_duplicate_manifest_entries_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

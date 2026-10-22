@@ -194,7 +194,8 @@ def _validate_execution_origin(origin, *, role, legacy_path, legacy_blob_sha):
     return origin
 
 
-def compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair):
+def compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair, *,
+                                  replacement_workflow_root=None):
     """Validate a same-input, separately originated legacy/replacement pair.
 
     Supplied metadata is structurally bound but is not independently verified
@@ -218,9 +219,15 @@ def compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair):
                             replacement["artifact"]["id"])
     if legacy_execution == replacement_execution or legacy_artifact == replacement_artifact:
         raise ValueError("Execution and artifact origins must be independent")
+    preflight = None
+    if replacement_workflow_root is not None:
+        from madsc.parity_workflow_readiness import preflight_replacement_execution
+        preflight = preflight_replacement_execution(replacement_workflow_root, replacement)
     comparison = compare_execution_snapshots(legacy["snapshot"], replacement["snapshot"])
     return {
         "same_input_sha256": legacy["input_sha256"],
+        "replacement_workflow_contract_checked": preflight is not None,
+        "replacement_static_preflight": preflight,
         "execution_origins_distinct": True,
         "artifact_origins_distinct": True,
         "origin_binding_complete": True,
@@ -231,7 +238,7 @@ def compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair):
     }
 
 
-def compare_provenance_bound_batch(inventory, pairs):
+def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_root=None):
     """Compare only the pinned 92 behavior workflows with origin-bound pairs."""
     scope = reconcile_legacy_scope(inventory)
     legacy_paths = set(scope["legacy_paths"])
@@ -239,7 +246,9 @@ def compare_provenance_bound_batch(inventory, pairs):
         raise ValueError("Unknown or excluded workflow pair")
     by_path = {row["path"]: row for row in validate_inventory(inventory)}
     comparisons = {
-        path: compare_provenance_bound_pair(path, by_path[path].get("git_blob_sha"), pair)
+        path: compare_provenance_bound_pair(
+            path, by_path[path].get("git_blob_sha"), pair,
+            replacement_workflow_root=replacement_workflow_root)
         for path, pair in pairs.items()
     }
     rows = []
@@ -266,6 +275,8 @@ def compare_provenance_bound_batch(inventory, pairs):
             row["status"] == "snapshot_mismatch_origin_unverified" for row in rows),
         "missing_pairs": sum(
             row["status"] == "missing_provenance_bound_pair" for row in rows),
+        "replacement_workflow_contracts_checked": sum(
+            row.get("replacement_workflow_contract_checked") is True for row in rows),
         "independent_origins_api_verified": 0,
         "behavioral_parity_accepted": 0,
         "production_ready": False,

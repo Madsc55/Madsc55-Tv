@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 
 from madsc.fixture_report_writer import write_fixture_report
-from madsc.legacy_parity_evidence import CENTRAL_REPLACEMENT_WORKFLOWS
+from madsc.legacy_parity_evidence import (CENTRAL_REPLACEMENT_WORKFLOWS,
+                                         compare_execution_snapshots)
 
 
 OUTPUT_PATH = "reports/parity-workflow-readiness.json"
@@ -94,9 +95,18 @@ def audit_parity_workflow_readiness(root):
             file_binding_complete = False
             input_classification = "external_or_live_input_blocked"
             dataflow_blocker = EXTERNAL_INPUT_BLOCKERS[relative_path]
+        binding = None
+        if contract:
+            label, output_path = contract["snapshot_output"].removeprefix("--output ").split("=", 1)
+            binding = {"consumer_command": contract["consumer"],
+                       "input_path": contract["manifest_input"].removeprefix("--input "),
+                       "output_label": label, "output_path": output_path}
         rows.append({
             "workflow_path": relative_path,
             "workflow_sha256": hashlib.sha256(raw).hexdigest(),
+            "workflow_blob_sha": hashlib.sha1(
+                b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest(),
+            "declared_file_binding": binding,
             "markers": markers,
             "marker_contract_complete": not missing,
             "missing_markers": missing,
@@ -135,3 +145,48 @@ def write_parity_workflow_readiness(root):
             "external_or_live_input_blockers": report["external_or_live_input_blockers"],
             "real_behavior_ready": 0, "behavioral_parity_accepted": 0,
             "production_ready": False}
+
+
+def preflight_replacement_execution(root, origin):
+    """Check the claimed replacement against freshly read local workflow bytes.
+
+    The source Git blob binds this static review to the workflow claimed by
+    the origin. GitHub origin verification and artifact bytes remain separate.
+    No local readiness JSON or caller-supplied approval is trusted here.
+    """
+    if (not isinstance(origin, dict)
+            or origin.get("repository") != "Madsc55/Madsc55-Tv"
+            or origin.get("branch") != "main"):
+        raise ValueError("Invalid replacement preflight identity")
+    report = audit_parity_workflow_readiness(root)
+    rows = [row for row in report["rows"]
+            if row["workflow_path"] == origin.get("workflow_path")]
+    if len(rows) != 1:
+        raise ValueError("Unknown replacement workflow")
+    row = rows[0]
+    if (row["marker_contract_complete"] is not True
+            or row["static_file_binding_complete"] is not True):
+        raise ValueError("Replacement has no complete isolated file contract: " +
+                         str(row["dataflow_blocker"]))
+    if origin.get("workflow_blob_sha") != row["workflow_blob_sha"]:
+        raise ValueError("Replacement source blob differs from reviewed workflow")
+    snapshot = origin.get("snapshot")
+    compare_execution_snapshots(snapshot, snapshot)
+    binding = row["declared_file_binding"]
+    if binding["output_label"] not in snapshot["outputs"]:
+        raise ValueError("Snapshot is missing the contracted output label")
+    digest = origin.get("input_sha256")
+    if (not isinstance(digest, str) or len(digest) != 64
+            or any(char not in "0123456789abcdef" for char in digest)):
+        raise ValueError("Missing replacement input digest")
+    return {"schema": "madsc-replacement-static-preflight-v1",
+            "workflow_path": row["workflow_path"],
+            "workflow_blob_sha": row["workflow_blob_sha"],
+            "workflow_sha256": row["workflow_sha256"],
+            "file_binding": dict(binding),
+            "input_sha256": digest,
+            "contracted_output_sha256": snapshot["outputs"][binding["output_label"]],
+            "static_workflow_contract_checked": True,
+            "input_bytes_independently_verified": False,
+            "runtime_origin_verified": False,
+            "behavioral_parity_accepted": False, "production_ready": False}

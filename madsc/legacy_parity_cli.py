@@ -21,14 +21,17 @@ def unique_pairs(pairs):
     return result
 
 
-def run(inventory_path, snapshots_path, output_path):
+def run(inventory_path, snapshots_path, output_path, *, replacement_workflow_root=None):
     inventory = load_json(inventory_path)
     snapshots = load_json(snapshots_path)
     if (isinstance(snapshots, dict)
             and snapshots.get("schema") == "madsc-legacy-provenance-pairs-v1"
             and set(snapshots) == {"schema", "pairs"}):
-        report = compare_provenance_bound_batch(inventory, snapshots["pairs"])
+        report = compare_provenance_bound_batch(
+            inventory, snapshots["pairs"], replacement_workflow_root=replacement_workflow_root)
     else:
+        if replacement_workflow_root is not None:
+            raise ValueError("Workflow preflight requires provenance-bound pairs")
         report = compare_snapshot_batch(inventory, snapshots)
     destination = Path(output_path)
     if destination.exists() or destination.is_symlink():
@@ -44,8 +47,10 @@ def main():
     parser.add_argument("--inventory", required=True)
     parser.add_argument("--snapshots", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--replacement-workflow-root", type=Path)
     args = parser.parse_args()
-    report = run(args.inventory, args.snapshots, args.output)
+    report = run(args.inventory, args.snapshots, args.output,
+                 replacement_workflow_root=args.replacement_workflow_root)
     print(json.dumps({key: report[key] for key in
                       ("total", "pairs_supplied", "snapshot_matches",
                        "snapshot_mismatches", "missing_pairs", "behavioral_parity_accepted")}))

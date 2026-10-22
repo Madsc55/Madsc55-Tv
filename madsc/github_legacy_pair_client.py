@@ -88,9 +88,11 @@ def fetch_verified_execution_origin(origin, *, token=None, fetch=github_json):
 
 
 def verify_provenance_pair_api(legacy_path, legacy_blob_sha, pair, *, token=None,
-                               fetch=github_json):
+                               fetch=github_json, replacement_workflow_root=None):
     """Verify both API origins, then compare their same-input snapshots."""
-    comparison = compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair)
+    comparison = compare_provenance_bound_pair(
+        legacy_path, legacy_blob_sha, pair,
+        replacement_workflow_root=replacement_workflow_root)
     legacy_api = fetch_verified_execution_origin(pair["legacy"], token=token, fetch=fetch)
     replacement_api = fetch_verified_execution_origin(
         pair["replacement"], token=token, fetch=fetch)

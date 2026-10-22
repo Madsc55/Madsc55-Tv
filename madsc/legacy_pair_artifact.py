@@ -66,9 +66,12 @@ def verify_parity_artifact_manifest(origin, archive):
 
 
 def verify_provenance_pair_artifacts(legacy_path, legacy_blob_sha, pair,
-                                     legacy_archive, replacement_archive):
+                                     legacy_archive, replacement_archive, *,
+                                     replacement_workflow_root=None):
     """Verify both artifact manifests before comparing the declared pair."""
-    comparison = compare_provenance_bound_pair(legacy_path, legacy_blob_sha, pair)
+    comparison = compare_provenance_bound_pair(
+        legacy_path, legacy_blob_sha, pair,
+        replacement_workflow_root=replacement_workflow_root)
     legacy = verify_parity_artifact_manifest(pair["legacy"], legacy_archive)
     replacement = verify_parity_artifact_manifest(
         pair["replacement"], replacement_archive)

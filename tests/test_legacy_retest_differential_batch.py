@@ -39,15 +39,15 @@ class LegacyRetestDifferentialBatch(unittest.TestCase):
             (root / "aday_bekletme").mkdir()
             (root / "aday_bekletme" / "gecmis.json").write_text(
                 json.dumps(records), encoding="utf-8")
-            (root / "legacy.py").write_bytes(LEGACY.read_bytes())
-            # Override clock only in the disposable child interpreter, never globally.
-            (root / "sitecustomize.py").write_text(
-                "import datetime\n"
-                "class FrozenDateTime(datetime.datetime):\n"
-                " @classmethod\n"
-                " def now(cls,tz=None):\n"
-                "  return datetime.datetime(2026,10,20,12,0,tzinfo=datetime.timezone.utc)\n"
-                "datetime.datetime=FrozenDateTime\n", encoding="utf-8")
+            # Freeze the clock explicitly in the disposable fixture script.
+            # sitecustomize is not reliably imported in every embedded Python runtime.
+            legacy_text = LEGACY.read_text(encoding="utf-8")
+            legacy_text = legacy_text.replace(
+                "now = datetime.now(timezone.utc)",
+                "now = datetime(2026, 10, 20, 12, 0, tzinfo=timezone.utc)")
+            self.assertNotEqual(legacy_text, LEGACY.read_text(encoding="utf-8"),
+                                "legacy clock seam was not found")
+            (root / "legacy.py").write_text(legacy_text, encoding="utf-8")
             env = {**os.environ, "PYTHONPATH": str(root)}
             result = subprocess.run([sys.executable, "legacy.py"], cwd=root,
                                     env=env, capture_output=True, text=True, timeout=10)

@@ -43,6 +43,14 @@ jobs:
             fi
             exit "$consumer_status"
           fi
+      - name: Upload failed consumer snapshot (explicit opt-in only)
+        if: ${{ failure() && !cancelled() && inputs.allow_parity_evidence == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k1-failed-consumer-snapshot
+          path: reports/madsc-parity-snapshot.json
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Snapshot K1 guard output (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
         run: python -m madsc.parity_snapshot_cli --exit-code 0 --output guard=reports/k1-guard.txt --output-root .

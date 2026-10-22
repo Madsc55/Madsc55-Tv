@@ -200,6 +200,20 @@ class BackupManifestHardeningTests(unittest.TestCase):
                             verify_manifest(root, manifest)
             self.assertTrue(verify_manifest(root, original))
 
+    def test_oversized_manifest_rejected_before_filesystem_reads(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "good.txt").write_bytes(b"fixture")
+            original = snapshot_manifest(root, ["good.txt"])
+            forged = dict(original)
+            forged["entries"] = [dict(original["entries"][0]) for _ in range(10001)]
+            with patch("madsc.backup.snapshot_manifest",
+                       side_effect=AssertionError("must not access filesystem")):
+                with self.assertRaisesRegex(ValueError, "bounded entry limit"):
+                    verify_manifest(root, forged)
+            self.assertTrue(verify_manifest(root, original))
+
     def test_original_manifest_still_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

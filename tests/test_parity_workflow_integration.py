@@ -125,6 +125,27 @@ fi
                     timeout=5, check=False)
                 self.assertEqual(result.returncode, original)
 
+    def test_real_gnu_timeout_exit_status_is_not_masked(self):
+        import shutil
+        import subprocess
+
+        if shutil.which("timeout") is None:
+            self.skipTest("GNU timeout unavailable")
+        script = """set -e
+set +e
+timeout 0.1s bash -c 'sleep 2'
+consumer_status=$?
+set -e
+if [[ "$consumer_status" -ne 0 ]]; then
+  bash -c 'exit 31' || echo 'snapshot unavailable' >&2
+  exit "$consumer_status"
+fi
+"""
+        result = subprocess.run(
+            ["bash", "-c", script], capture_output=True, text=True,
+            timeout=5, check=False)
+        self.assertEqual(result.returncode, 124)
+
     def test_every_parity_hook_is_default_off_and_conditioned(self):
         for filename in ("madsc-01-guvenlik.yml", "madsc-04-yedek.yml",
                          "madsc-05-bakim.yml"):

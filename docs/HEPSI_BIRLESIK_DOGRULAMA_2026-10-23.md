@@ -198,3 +198,10 @@
 - Eşdeğer replacement workflow kanıtlanmadı, legacy/yeni run yok, davranışsal kabul false. Bu sözleşme kaynak anlamını kaydeder; 92 sayacını artırmaz. İzole replacement daha sonra fixture checkout üzerinde tasarlanmalı, korunan gerçek playlist'i kullanmamalı.
 - Güncel main test edilen SHA'dan sonra yalnızca proje hafızası ve doküman değişiklikleriyle ilerledi; çalışma kodu/test ağacı CI ile aynı.
 - Açık kabul sayaçları: K1 0/26, eski 92 workflow 0/92, ana görevler 0/22. Üretim verileri korunuyor; PR #71 birleştirilmedi.
+
+
+## K1-03 — Fixture bundle preflight sırası
+- AST callsite taramasında `madsc/fixture_report_writer.py::_prepare_fixture_root` içinde `reports.mkdir()` korunan JSON sidecar path politikasından önce gerçekleşebildiği görüldü.
+- Artık `reports/` yaratılmadan önce `reports/turkish-tv-batch-validation.json` hedefi `enforce_write_paths` üzerinden kontrol ediliyor. Sabit M3U8 companion kendi exact-name local guard'ını kullanmaya devam ediyor. Kod commit `f5a7c080e94c550fbd741829cf117bb676a2c342`.
+- `test_protected_fixture_root_rejected_before_reports_creation` korunan `FAVORILER` kökünde işlem reddedilirken `reports/` klasörünün oluşmadığını test ediyor. Test commit `6e1916ac9f791a0441bcd9cf7eb431ff8a5c3e4a`.
+- Test run `39864659684` queued; sonuç bekleniyor.

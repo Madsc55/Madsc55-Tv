@@ -1,7 +1,7 @@
 # Madsc55-Tv — DEVAM NOTU
 
 Güncelleme: 22 Ekim 2026 (Europe/Stockholm).
-Son geliştirme commit SHA: 79ddf0e7bbec7cdb47fb1a79e285f35d5c5e9b02
+Son geliştirme commit SHA: 03fbcdb42cad69ae69641f2d4033b8537ee0f7b6
 Bu notu kaydeden commit, yukarıdaki kod commit'inin doğrudan çocuğudur; kendi SHA'sı GitHub dosya geçmişindedir.
 
 ## Her yeni sohbette ilk adım
@@ -135,3 +135,12 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Nihai python -m madsc.offline_gate: 590 test ve beş izole K kapısı success; 92+7 kapsam, 10 yardımcı komut, 22 görev envanteri geçti. Başarısız test yok; path-scoped git diff --check temiz. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET11.json.
 - Actions/live probe/production write/eski repo yazısı yok. Kabul 0/92, 0/26, 0/22.
 - Açık blocker: gerçek beşli job'larda ortak input/snapshot/side-effect sözleşmesi ve legacy 92 v1 artifactleri yok. Sıradaki güvenli adım, yalnız izole/gerçek dosya çıktısı olan K1-K5 yollarında açık opt-in marker zincirini eklemek için ortak workflow sözleşmesini tasarlamak; ağ/canlı/korunan veri yollarını bu entegrasyona dahil etmemek ve Actions çalıştırmamak.
+
+## On ikinci önemli geliştirme — K4 ve K5 gerçek dosya dilimlerinde opt-in zincir
+- Son kod commit SHA: 03fbcdb42cad69ae69641f2d4033b8537ee0f7b6; taban 3409a2c7a50ec20ae215f207c0af053a0740be05.
+- madsc-04-yedek.yml restore drill'i ve madsc-05-bakim.yml içindeki K2 handoff dilimi default false allow_parity_evidence girdisi aldı. Her iki zincir de yalnız açık opt-in ile snapshot -> manifest -> tek JSON artifact üretir; depo permissions read-only kalır.
+- K4 manifest input'u restore_drill'in gerçekten tükettiği reports/k4-source/nested/sample.txt, ölçülen output reports/k4-restore-drill.json. K5/K2 diliminde input artifact_transport'un tükettiği reports/k2-input.m3u, output reports/k2-candidates.json. Testler üretici komut < snapshot < manifest < upload sırasını zorunlu kılar.
+- K1, standalone K2 ve K3'e sahte ortak input marker'ı eklenmedi. Readiness sonucu marker kontratı 2/5, fakat runtime_origin_verified=0, real_behavior_ready=0 ve acceptance=0; workflow'lar bu tur çalıştırılmadı.
+- Nihai python -m madsc.offline_gate: 593 test, beş izole K kapısı, 92+7 kapsam, 10 yardımcı komut ve 22 görev envanteri başarılı. Başarısız test yok; değişen dosyalarda git diff --check temiz. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET12.json.
+- Actions/live probe/production write/eski repo yazısı yok. Kabul 0/92, 0/26, 0/22.
+- Açık blocker: iki opt-in zincirin gerçek run/artifact kökeni henüz yok; Actions için ayrı izin gerekir. Eski read-only 92 artifactlerinde v1 manifest yok. Sıradaki güvenli yerel iş, K1/standalone K2/K3 için gerçek ve karşılaştırılabilir input bağının bulunup bulunmadığını statik komut/veri akışıyla sınıflandırmak; yoksa blocker bırakmak.

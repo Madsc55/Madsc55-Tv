@@ -1929,3 +1929,11 @@ K2-K3 katalog raporlamasi, K3 stale three-stage ile current probe catismasi ve p
 - Güncel beş workflow sonucu marker_contract_complete=0/5, real_behavior_ready=0 ve behavioral_parity_accepted=0. Sentetik tam marker kontratı dahi statik metinden runtime kanıtı veya acceptance üretmez.
 - Tam offline_gate 590 test ve K1–K5 fixture gates success; 92+7 kapsam ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET11.json. Actions/live probe/production write yok; kabul 0/92, 0/26, 0/22.
 - Sıradaki: ortak opt-in workflow sözleşmesini yalnız gerçek izole input/output dosyası bulunan job'lara ekleyecek tasarım ve kontrat testleri. Canlı ağ/korunan listeler bu bağın dışında kalmalı; legacy v1 artifact eksikliği blocker olmaya devam eder.
+
+
+## 22 Ekim 2026 — K4 restore ve K5/K2 handoff opt-in parity bağları
+- Kod 03fbcdb42cad69ae69641f2d4033b8537ee0f7b6: madsc-04-yedek.yml ve madsc-05-bakim.yml default false allow_parity_evidence girdisiyle snapshot, manifest ve JSON artifact zinciri aldı. Repository permissions read-only; bu commit [skip ci], workflow çalıştırılmadı.
+- K4'te restore_drill'in gerçekten tükettiği sample.txt input ve ürettiği restore report output hashlenir. K5 toplu workflow'un K2 job'ında artifact_transport'un gerçekten tükettiği k2-input.m3u ve ürettiği k2-candidates.json bağlanır. Kontrat testi gerçek tüketici komutun snapshot/manifestten önce geldiğini doğrular.
+- Diğer üç merkezi workflow'da karşılaştırılabilir ortak gerçek input bulunmadığından marker eklenmedi. Readiness statik marker sonucu 2/5; runtime origin ve artifact doğrulaması 0, behavioral acceptance 0.
+- Tam offline_gate 593 test ve K1–K5 fixture gates success; 92+7 kapsam ve 22 görev envanteri geçti. Kanıt docs/K1_K5_OFFLINE_KANIT_2026-10-22_PAKET12.json. Actions/live probe/production write yok; 0/92, 0/26, 0/22.
+- Açık: iki yeni opt-in yolun gerçek run/artifact kanıtı için ayrıca Actions izni gerekir; eski read-only 92 tarafında v1 manifest yok. Sonraki yerel iş K1/standalone K2/K3 komut veri akışını sınıflandırıp gerçek input bağı olanları ayırmak, olmayanları dürüst blocker bırakmak.

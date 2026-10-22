@@ -85,7 +85,7 @@ class FixtureReportWriterTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             destination = Path(d) / "evidence.json"
             with patch.object(os, "O_NOFOLLOW", None, create=True):
-                with self.assertRaisesRegex(PermissionError, "without O_NOFOLLOW"):
+                with self.assertRaisesRegex(PermissionError, "Secure descriptor-relative output is unavailable"):
                     _exclusive_bytes(destination, b'{"ok": true}')
             self.assertFalse(destination.exists())
 

@@ -33,6 +33,14 @@ def outer(root):
         self.assertEqual(len(rows), 1)
         self.assertFalse(rows[0]["recognized_guard_precedes_write_in_scope"])
 
+    def test_lambda_guard_does_not_cover_outer_write(self):
+        source = '''\ndef outer(root):\n    deferred = lambda: enforce_write_paths(["reports/safe.json"])\n    (root / "out.json").write_text("not guarded")\n'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["api"], "write_text")
+        self.assertFalse(rows[0]["recognized_guard_precedes_write_in_scope"])
+        self.assertEqual(rows[0]["scope"], "outer")
+
     def test_conditional_guard_is_never_claimed_as_control_flow_verified(self):
         source = '''
 def maybe_guard(root, enabled):

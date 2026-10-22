@@ -131,12 +131,16 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
         raise ValueError("Ambiguous duplicate source names")
     rows = []
     rejected_count = 0
+    # Downstream classification is bounded to 20,000 rows in total.
+    max_total_candidates = 20000
     if any(not isinstance(source, str) or not source.strip() for source in sources):
         raise ValueError("Invalid source name")
     if any(not isinstance(body, str) for body in sources.values()):
         raise ValueError("M3U source bodies must be text")
     for source, body in sorted(sources.items()):
         parsed = parse_m3u(body, source)
+        if len(rows) + len(parsed["candidate_rows"]) > max_total_candidates:
+            raise ValueError("Combined sources exceed bounded candidate limit")
         rows.extend(parsed["candidate_rows"])
         rejected_count += len(parsed["rejected"]) + len(parsed["parse_errors"])
     catalog = prepare_channel_catalog(rows)

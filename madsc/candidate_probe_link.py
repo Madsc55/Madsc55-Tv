@@ -91,7 +91,7 @@ def main():
         import stat
         if not hasattr(os, "O_NOFOLLOW"):
             raise ValueError("Secure evidence opening is unavailable")
-        flags = os.O_RDONLY | os.O_NOFOLLOW
+        flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
         descriptor = os.open(path, flags)
         with os.fdopen(descriptor, "rb") as handle:
             opened = os.fstat(handle.fileno())

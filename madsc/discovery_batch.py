@@ -156,13 +156,14 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         # Labels and serialization order do not prove independence. Fingerprint
         # the parsed channel inventory so transport formatting, comments, and
         # row ordering cannot manufacture corroboration votes.
+        # Presentation-only changes (display name, logo, group for tvg-id
+        # channels) cannot turn a mirrored inventory into a second vote.
+        # Name/group remain identity fields when a tvg-id is absent.
         semantic_rows = sorted(
             (
                 entry["url_sha256"],
-                entry["name"].casefold(),
-                entry["tvg_id"].casefold(),
-                entry["tvg_logo"],
-                entry["group_title"].casefold(),
+                ("tvg", entry["tvg_id"].casefold()) if entry["tvg_id"] else
+                ("name", entry["name"].casefold(), entry["group_title"].casefold()),
             )
             for entry in report["candidates"]
         )

@@ -157,6 +157,17 @@ def mutate(fd, requested_mode):
         ])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_open_keyword_unpacking_requires_review(self):
+        source = '''
+def write(path, options):
+    open(path, **options)
+    path.open(**options)
+    open(path, "r", **options)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 3)
+        self.assertTrue(all("[dynamic mode]" in row["api"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

@@ -41,7 +41,8 @@ class FakeHTTPS(HTTPSHandler):
 class GitHubTransportTests(unittest.TestCase):
     def test_both_artifact_clients_strip_token_on_actual_redirect_dispatch(self):
         for client in ('history', 'parity'):
-            fake = FakeHTTPS(archive(FILES))
+            payload = archive(FILES)
+            fake = FakeHTTPS(payload)
             with self.subTest(client=client), tempfile.TemporaryDirectory() as tmp, fake.install():
                 if client == 'history':
                     result = download_verified_history_artifact(
@@ -52,7 +53,7 @@ class GitHubTransportTests(unittest.TestCase):
                 else:
                     self.assertEqual(download_execution_artifact(
                         {'repository': 'Madsc55/Madsc55-Tv', 'artifact': {'id': 123}},
-                        token='fixture'), archive(FILES))
+                        token='fixture'), payload)
             self.assertEqual(len(fake.requests), 2)
             self.assertEqual(fake.requests[0].get_header('Authorization'), 'Bearer fixture')
             self.assertIsNone(fake.requests[1].get_header('Authorization'))

@@ -147,6 +147,18 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     return current["entries"] == manifest["entries"]
 
 
+def _secure_regular_file_identity(root: Path, name: str) -> tuple[int, int]:
+    """Read inode identity via no-follow descriptors, never a re-opened path stat."""
+    descriptor = _open_relative_file_nofollow(root, Path(name).parts)
+    try:
+        metadata = os.fstat(descriptor)
+        if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
+            raise ValueError("Copy audit requires singly linked regular files")
+        return metadata.st_dev, metadata.st_ino
+    finally:
+        os.close(descriptor)
+
+
 def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
     """Check independent sandbox copies without changing either directory."""
     if not isinstance(names, list) or not names:
@@ -164,9 +176,9 @@ def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
     # Only access inode metadata after source paths passed manifest validation.
     for entry in first["entries"]:
         name = entry["path"]
-        left = (resolved[0] / name).stat()
-        right = (resolved[1] / name).stat()
-        if (left.st_dev, left.st_ino) == (right.st_dev, right.st_ino):
+        left = _secure_regular_file_identity(resolved[0], name)
+        right = _secure_regular_file_identity(resolved[1], name)
+        if left == right:
             raise ValueError("Copy audit requires physically independent files")
     return first["entries"] == second["entries"]
 
@@ -201,8 +213,7 @@ def verify_independent_restore(source: Path, backup: Path, restored: Path,
     recovered = snapshot_manifest(restored, names)
     for entry in original["entries"]:
         name = entry["path"]
-        stats = [(root / name).stat() for root in locations]
-        identities = [(item.st_dev, item.st_ino) for item in stats]
+        identities = [_secure_regular_file_identity(root, name) for root in locations]
         if len(set(identities)) != 3:
             raise ValueError("Independent restore trees must not share hard-linked files")
     valid = original["entries"] == backed_up["entries"] == recovered["entries"]

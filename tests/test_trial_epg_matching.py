@@ -11,6 +11,19 @@ class TrialEpgMatchingTest(unittest.TestCase):
         self.assertEqual(result[1]["matched_id"], "")
     def test_existing_id(self):
         self.assertEqual(matches('#EXTINF:-1 tvg-id="a",Other', XML)[0]["status"], "existing_valid")
+    def test_duplicate_xmltv_channel_ids_fail_closed(self):
+        duplicate = '<tv><channel id="a"><display-name>TRT 1</display-name></channel><channel id="a"><display-name>TRT 2</display-name></channel></tv>'
+        with self.assertRaisesRegex(ValueError, "Duplicate XMLTV channel id"):
+            matches('#EXTINF:-1 tvg-id="a",TRT 1', duplicate)
+
+    def test_invalid_xmltv_root_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, "root element"):
+            matches('#EXTINF:-1 tvg-id="a",TRT 1', '<playlist><channel id="a" /></playlist>')
+
+    def test_missing_xmltv_channel_id_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, "missing a nonempty id"):
+            matches('#EXTINF:-1,TRT 1', '<tv><channel><display-name>TRT 1</display-name></channel></tv>')
+
     def test_empty(self):
         self.assertEqual(playlist_entries("#EXTM3U"), [])
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ class K3SourceSnapshotTests(unittest.TestCase):
         self.assertEqual(pilot.SOURCE_MAX_BYTES, MAX_BYTES)
 
     def test_k3_hashes_full_source_and_probes_at_most_twelve(self):
-        data = b"#EXTM3U\\n" + b"#EXTINF:-1,Example\\nhttps://example.org/live\\n" * 25
+        data = b"#EXTM3U\n" + b"#EXTINF:-1,Example\nhttps://example.org/live\n" * 25
         class Response:
             def __enter__(self): return self
             def __exit__(self, *args): return False
@@ -41,7 +41,7 @@ class K3SourceSnapshotTests(unittest.TestCase):
         class Response:
             def __enter__(self): return self
             def __exit__(self, *args): return False
-            def read(self, size): return b"#EXTM3U\\n" + b"x" * (size + 1)
+            def read(self, size): return b"#EXTM3U\n" + b"x" * (size + 1)
         with patch.object(pilot, "urlopen", return_value=Response()):
             with self.assertRaises(ValueError):
                 list(pilot.candidates())

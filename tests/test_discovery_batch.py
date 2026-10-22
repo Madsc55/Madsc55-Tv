@@ -148,6 +148,14 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertIn('group-title="News, World"', result["content"])
         self.assertFalse(result["production_ready"])
 
+    def test_preview_rejects_aggregate_candidate_overflow(self):
+        first = "#EXTM3U\n" + "".join(
+            f"#EXTINF:-1,Channel {i}\nhttps://a.example/{i}\n" for i in range(10001))
+        second = "#EXTM3U\n" + "".join(
+            f"#EXTINF:-1,Channel {i}\nhttps://b.example/{i}\n" for i in range(10000))
+        with self.assertRaisesRegex(ValueError, "Combined sources exceed bounded candidate limit"):
+            build_m3u8_preview({"first": first, "second": second})
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

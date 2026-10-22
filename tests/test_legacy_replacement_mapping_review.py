@@ -195,6 +195,16 @@ class MappingReviewTests(unittest.TestCase):
                                     "legacy_behavior_workflows": 1,
                                     "source_workflows": 1})
 
+    def test_duplicate_inventory_identity_rejected(self):
+        with (patch("madsc.legacy_replacement_mapping_review.validate_inventory",
+                    return_value=[self.inventory["workflows"][0]] * 2),
+              patch("madsc.legacy_replacement_mapping_review.reconcile_legacy_scope",
+                    return_value={"legacy_paths": [LEGACY],
+                                  "legacy_behavior_workflows": 1,
+                                  "source_workflows": 2})):
+            with self.assertRaisesRegex(ValueError, "duplicate workflow identities"):
+                review_replacement_mappings(self.inventory, [self.row], ".")
+
     def test_missing_rationale_rejected(self):
         with self.assertRaises(ValueError):
             self.review([{**self.row, "review_rationale": ""}])

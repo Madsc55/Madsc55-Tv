@@ -2641,3 +2641,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Kaynak etiketindeki kontrol karakterleri ve UTF-8 surrogate kod noktaları `corroborate_sources` girişinde bilinen URL normalizasyonundan önce reddedilir. Gereksiz çift M3U ayrıştırması kaldırıldı. Son kod `eb4b3fc841852d09ede8599de2984985f710167d`; regresyon `bd0aab8bfb24596d20f9716cb7cbefcd1ce85387`.
 - Önceki kaynak etiketi regresyonunun birebir SHA `e03b92d1` Actions `39870604494` sonucu `success`. Yeni `bd0aab8b` koşusu `39870812620` eşzamanlı push nedeniyle `cancelled`; yeni regresyon için başarılı CI henüz teyit edilmedi.
 - K2-08 in_progress; K2-05/06/07 gerçek kaynak/lisans, günlük keşif eşdeğerliği ve gerçek artifact köken kanıtı açık. Cihaz doğrulaması en sona bırakıldı; IBO Player Pro denemesini kullanıcı yapacak. Üretim verisine dokunulmadı.
+
+
+## 23 Ekim 2026 — K2 kaynak etiketi uzunluk sınırı
+- `parse_m3u`, `corroborate_sources`, `build_m3u8_preview` kaynak köken etiketlerini 256 karakterle sınırlar; 257 ve üzeri reddedilir. Kod `b79ff7a8e6855911104ee5b38388a592c64b9e7f`, sınır regresyonu `91f32d6ebd7540c1bce2fb07628db6648299261b`.
+- Önceki etiket doğrulama sırası regresyonu `bd0aab8b` daha sonraki `0e2d5e6844f93f4e04970f9992018d00ad593eaf` commit'i için başarılı Actions `39870824796` ile doğrulandı (compare ahead=3, behind=0). Yeni 256 karakter sınır testinin CI sonucu ilk kontrolde bekliyordu (`39870982558`); doğrulanmadan başarılı sayma.
+- K2-08 in_progress; K2-05/06/07 gerçek kaynak/lisans, günlük keşif eşdeğerliği ve artifact köken kanıtı açık. Kullanıcı IBO Player Pro cihaz testini en son kendisi yapacak. Korunan üretim dosyaları değişmedi.

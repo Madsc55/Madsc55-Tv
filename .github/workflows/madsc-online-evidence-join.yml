@@ -19,10 +19,24 @@ jobs:
           python-version: '3.12'
       - name: K1-K5 offline regression prerequisite
         run: python -m madsc.offline_gate
+      - name: Download one bounded public source snapshot
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from madsc.live_discovery_pilot import SOURCE, MAX_BYTES
+          request = Request(SOURCE, headers={"User-Agent": "Madsc55-Tv-shared-snapshot/1.0"})
+          with urlopen(request, timeout=20) as response:
+              data = response.read(MAX_BYTES + 1)
+          if len(data) > MAX_BYTES or not data.startswith(b"#EXTM3U"):
+              raise ValueError("Invalid or oversized shared source")
+          Path("reports").mkdir(exist_ok=True)
+          Path("reports/k2-k3-source-snapshot.m3u").write_bytes(data)
+          PY
       - name: K2 real source read-only discovery
-        run: python -m madsc.live_discovery_pilot
+        run: python -m madsc.live_discovery_pilot --source-file reports/k2-k3-source-snapshot.m3u
       - name: K3 bounded HTTPS manifest probes
-        run: python -m madsc.k3_live_manifest_pilot
+        run: python -m madsc.k3_live_manifest_pilot --source-file reports/k2-k3-source-snapshot.m3u
       - name: Correlate K2 and K3 channel hashes
         run: |
           python -m madsc.online_evidence_reconcile reports/k2-live-pilot.json reports/k3-real-manifest-pilot.json > reports/k2-k3-joined-evidence.json

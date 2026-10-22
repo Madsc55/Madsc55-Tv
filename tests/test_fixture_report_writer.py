@@ -48,6 +48,26 @@ class FixtureReportWriterTests(unittest.TestCase):
             self.assertFalse((root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8").exists())
             self.assertFalse((root / "reports/turkish-tv-batch-validation.json").exists())
 
+    def test_bundle_rollback_does_not_delete_concurrent_replacement(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            module = __import__("madsc.fixture_report_writer", fromlist=["_exclusive_bytes"])
+            real_write = module._exclusive_bytes
+            playlist = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+            calls = []
+            def replace_before_second_write(path, payload):
+                calls.append(path)
+                if len(calls) == 1:
+                    return real_write(path, payload)
+                playlist.unlink()
+                playlist.write_bytes(b"concurrent replacement")
+                raise OSError("simulated second write failure")
+            with patch("madsc.fixture_report_writer._exclusive_bytes",
+                       side_effect=replace_before_second_write):
+                with self.assertRaisesRegex(OSError, "simulated"):
+                    write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}\\n")
+            self.assertEqual(playlist.read_bytes(), b"concurrent replacement")
+
     def test_exclusive_writer_fails_closed_without_nofollow(self):
         import os
         from madsc.fixture_report_writer import _exclusive_bytes

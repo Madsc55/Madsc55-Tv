@@ -24,12 +24,16 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
     workflow_rows = readiness["rows"]
     required_contract = {"workflow_path", "workflow_blob_sha", "declared_file_binding",
                          "marker_contract_complete", "static_file_binding_complete",
-                         "input_digest_binding_complete", "controlled_process_contract_complete"}
+                         "input_digest_binding_complete", "controlled_process_contract_complete",
+                         "input_classification"}
     if (len(workflow_rows) != len(CENTRAL_REPLACEMENT_WORKFLOWS)
             or any(not isinstance(row, dict)
                    or not required_contract <= row.keys()
                    or not isinstance(row["workflow_path"], str)
                    or row["workflow_path"] not in CENTRAL_REPLACEMENT_WORKFLOWS
+                   or row["input_classification"] not in (
+                       "isolated_file_bound", "isolated_file_contract_incomplete",
+                       "external_or_live_input_blocked")
                    or not isinstance(row["workflow_blob_sha"], str)
                    or len(row["workflow_blob_sha"]) != 40
                    or any(ch not in "0123456789abcdef" for ch in row["workflow_blob_sha"])
@@ -84,9 +88,7 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
             and contract["static_file_binding_complete"]
             and contract["input_digest_binding_complete"]
             and contract["controlled_process_contract_complete"]
-            and replacement_path not in (
-                ".github/workflows/madsc-02-kesif.yml",
-                ".github/workflows/madsc-03-kanal-test.yml")
+            and contract["input_classification"] == "isolated_file_bound"
         )
         results.append({
             "legacy_path": path,

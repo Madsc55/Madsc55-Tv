@@ -190,5 +190,33 @@ class CandidateProbeLinkTests(unittest.TestCase):
                 load_evidence(target)
 
 
+    def test_evidence_loader_rejects_fifo_without_waiting_for_writer(self):
+        import os
+        import tempfile
+        from pathlib import Path
+        from madsc.candidate_probe_link import load_evidence
+        if not hasattr(os, "mkfifo"):
+            self.skipTest("FIFO unsupported on this platform")
+        with tempfile.TemporaryDirectory() as directory:
+            fifo = Path(directory) / "evidence.pipe"
+            os.mkfifo(fifo)
+            with self.assertRaises(ValueError):
+                load_evidence(fifo)
+
+    def test_evidence_loader_rejects_symlink_parent(self):
+        import tempfile
+        from pathlib import Path
+        from madsc.candidate_probe_link import load_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            folder = root / "real"
+            folder.mkdir()
+            (folder / "evidence.json").write_text("{}", encoding="utf-8")
+            alias = root / "alias"
+            alias.symlink_to(folder, target_is_directory=True)
+            with self.assertRaises(ValueError):
+                load_evidence(alias / "evidence.json")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -69,6 +69,9 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
             return True, name + " [numeric flags require review]"
         if flags is None:
             return True, name + " [missing or dynamic flags require review]"
+        # Calls, conditionals, unary expressions and other AST forms can
+        # evaluate to O_CREAT/O_TRUNC; an unrecognized expression is NOT read-only.
+        return True, name + " [flags require review]"
     is_builtin_open = name in {"open", "builtins.open", "io.open"}
     is_path_open = (isinstance(node.func, ast.Attribute) and leaf == "open"
                     and name not in {"os.open", "posix.open", "builtins.open", "io.open"})

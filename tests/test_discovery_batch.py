@@ -344,6 +344,28 @@ class DiscoveryBatchTests(unittest.TestCase):
                 build_m3u8_preview({source: feed})
 
 
+
+    def test_mirrored_tvg_id_feeds_do_not_gain_votes_from_display_metadata(self):
+        feed_a = ('#EXTM3U\n#EXTINF:-1 tvg-id="shared" tvg-logo="https://img.example/a.png" '
+                  'group-title="News",First label\nhttps://example.org/live\n')
+        feed_b = ('#EXTM3U\n#EXTINF:-1 tvg-id="SHARED" tvg-logo="https://img.example/b.png" '
+                  'group-title="Sports",Different label\nhttps://example.org/live\n')
+        result = corroborate_sources({"first": feed_a, "mirror": feed_b})
+        self.assertEqual(len(result["identity_candidates"]), 1)
+        candidate = result["identity_candidates"][0]
+        self.assertEqual(candidate["source_count"], 1)
+        self.assertEqual(candidate["sources"], ["first", "mirror"])
+        self.assertFalse(candidate["source_independence_verified"])
+
+    def test_name_only_identity_changes_still_distinguish_feed_inventories(self):
+        feed_a = ('#EXTM3U\n#EXTINF:-1 group-title="News",Same\n'
+                  'https://example.org/live\n')
+        feed_b = ('#EXTM3U\n#EXTINF:-1 group-title="Sports",Same\n'
+                  'https://example.org/live\n')
+        result = corroborate_sources({"first": feed_a, "second": feed_b})
+        self.assertEqual(len(result["identity_candidates"]), 2)
+
+
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")

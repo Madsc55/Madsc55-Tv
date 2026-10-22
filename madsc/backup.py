@@ -159,6 +159,11 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     # Reject pathological names before sorting, hashing, or filesystem access.
     if any(len(path) > 4096 for path in paths):
         raise ValueError("Backup manifest path exceeds bounded length")
+    # Reject malformed Unicode and control bytes before filesystem operations.
+    if any(any(ord(char) < 32 or ord(char) == 127
+               or 0xD800 <= ord(char) <= 0xDFFF for char in path)
+           for path in paths):
+        raise ValueError("Unsafe backup manifest path characters")
     if len(set(paths)) != len(paths):
         raise ValueError("Duplicate backup manifest paths")
     # A manifest is a canonical snapshot, not an arbitrary subset or reordered list.

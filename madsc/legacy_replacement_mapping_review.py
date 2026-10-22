@@ -15,7 +15,11 @@ def review_replacement_mappings(inventory, mapping_rows, replacement_workflow_ro
     """
     scope = reconcile_legacy_scope(inventory)
     catalog = {row["path"]: row for row in validate_inventory(inventory)}
-    eligible = set(scope["legacy_paths"])
+    paths = scope["legacy_paths"]
+    if (not isinstance(paths, list) or any(not isinstance(p, str) for p in paths)
+            or len(paths) != len(set(paths))):
+        raise ValueError("Legacy scope contains invalid or duplicate paths")
+    eligible = set(paths)
     if (len(eligible) != scope["legacy_behavior_workflows"]
             or len(catalog) != scope["source_workflows"]
             or not eligible <= catalog.keys()):

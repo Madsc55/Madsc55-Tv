@@ -327,7 +327,7 @@ jobs:
     name: Genel Bakım
     needs: k4
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 45
     steps:
       - name: Kaynak kodunu al
         uses: actions/checkout@v4
@@ -427,6 +427,7 @@ jobs:
           retention-days: 14
       - name: K5 99 eski workflow kaynak bütünlüğü (explicit opt-in)
         if: ${{ inputs.allow_legacy_source_audit == true }}
+        timeout-minutes: 25
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -435,11 +436,12 @@ jobs:
           python -m madsc.legacy_99_bulk_audit --output reports/legacy-99-source-audit.json
       - name: K5 eski notları birleştir ve SHA256 doğrula (explicit opt-in)
         if: ${{ inputs.allow_legacy_notes_merge == true }}
+        timeout-minutes: 15
         run: |
           python scripts/birlestir_eski_sistem_notlari.py --include-structured
           python -m madsc.legacy_notes_integrity --merged ESKI_SISTEM_NOTLARI.md --archive docs/eski_depo_not_arsivi --report reports/eski-notlar-dogrulama.json
       - name: K5 opt-in eski kaynak raporlarını sakla
-        if: ${{ inputs.allow_legacy_source_audit == true || inputs.allow_legacy_notes_merge == true }}
+        if: ${{ always() && !cancelled() && (inputs.allow_legacy_source_audit == true || inputs.allow_legacy_notes_merge == true) }}
         uses: actions/upload-artifact@v4
         with:
           name: madsc-k5-legacy-source-evidence

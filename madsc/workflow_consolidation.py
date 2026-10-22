@@ -122,6 +122,38 @@ def consolidation_plan(root: Path) -> dict:
 
 
 
+def _command_job_timeouts(body: str, command: str) -> list[int | None]:
+    """Read job limits only where the mapped command actually runs.
+
+    An unrelated long job or step cannot supply this command's time budget.
+    Missing/dynamic limits remain unknown and cannot prove compatibility.
+    """
+    import re
+    jobs = []
+    current = None
+    in_jobs = False
+    for line in body.splitlines():
+        if line == "jobs:":
+            in_jobs = True
+            continue
+        if not in_jobs:
+            continue
+        if line and not line[0].isspace() and not line.startswith("#"):
+            break
+        if re.match(r"^  [A-Za-z0-9_-]+:\s*(?:#.*)?$", line):
+            current = []
+            jobs.append(current)
+        if current is not None:
+            current.append(line)
+    limits = []
+    for lines in jobs:
+        job = "\n".join(lines)
+        if _command_in_run_step(job, command):
+            match = re.search(r"^    timeout-minutes:\s*(\d+)\s*$", job, re.M)
+            limits.append(int(match.group(1)) if match else None)
+    return limits
+
+
 def auxiliary_behavior_matrix(root: Path) -> dict:
     """Read-only comparison of workflow operational contracts, not parity acceptance."""
     import re
@@ -140,9 +172,13 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
         src = contracts(source)
         destinations = [contracts(body) for body in main_sources]
         gaps = []
-        if src["timeout_minutes"] and not any(
-                actual >= required for required in src["timeout_minutes"]
-                for dst in destinations for actual in dst["timeout_minutes"]):
+        source_limits = _command_job_timeouts(source, command)
+        target_limits = [limit for body in main_sources
+                         for limit in _command_job_timeouts(body, command)]
+        if any(required is not None and (
+                not target_limits or any(actual is None or actual < required
+                                         for actual in target_limits))
+               for required in source_limits):
             gaps.append("timeout")
         if src["artifact_names"] and not all(
                 any(a in dst["artifact_names"] for dst in destinations)
@@ -196,6 +232,8 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
         rows.append({"source": name, "stages": stages, "command_present": any(
             _command_in_run_step(body, command) for body in main_sources),
             "source_contract": src, "main_contracts": destinations,
+            "source_command_job_timeouts": source_limits,
+            "main_command_job_timeouts": target_limits,
             "missing_artifact_paths": missing_paths,
             "artifact_paths_declared_only": True,
             "artifact_files_produced_verified": False,
@@ -213,13 +251,19 @@ def auxiliary_behavior_matrix(root: Path) -> dict:
 
 
 def contract_gate(root: Path) -> dict:
-    """Fail only on missing executable migration; keep other differences visible."""
+    """Block lost operational contracts; keep bundle renames visible for review."""
     matrix = auxiliary_behavior_matrix(root)
+    blocking = [{"source": row["source"],
+                 "gaps": [gap for gap in row["static_contract_gaps"]
+                          if gap != "artifact_name"]}
+                for row in matrix["rows"]
+                if any(gap != "artifact_name" for gap in row["static_contract_gaps"])]
     return {
         "schema": "madsc-contract-gate-v1",
         "checked": matrix["auxiliary_count"],
         "missing_commands": matrix["missing_commands"],
-        "pass": not matrix["missing_commands"],
+        "pass": not blocking,
+        "blocking_contract_gaps": blocking,
         "static_gaps_total": matrix["static_gaps_total"],
         "artifact_files_produced_verified": False,
         "behavioral_parity_verified": False,

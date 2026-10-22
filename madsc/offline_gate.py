@@ -53,15 +53,17 @@ def main():
     # A green fixture is not enough: inventory all 15 manual workflows and
     # all 22 ledger tasks in the SAME offline invocation, fail closed on drift.
     try:
-        from madsc.workflow_consolidation import consolidation_plan
+        from madsc.workflow_consolidation import consolidation_plan, contract_gate
         from madsc.k1_k5_acceptance_requirements import assess_task_evidence
         from madsc.legacy_parity_evidence import reconcile_legacy_scope
         legacy_scope = reconcile_legacy_scope(json.loads(
             (root / "docs" / "LEGACY_SOURCE_SCOPE.json").read_text(encoding="utf-8")))
         workflow_plan = consolidation_plan(root)
+        operational_contract = contract_gate(root)
         ledger = json.loads((root / "docs" / "K1_K5_KANITLI_GOREV_DEFTERI.json").read_text(encoding="utf-8"))
         acceptance_plan = assess_task_evidence(ledger)
-        inventory_passed = (workflow_plan["auxiliary_count"] == 10
+        inventory_passed = (operational_contract["pass"] is True
+                            and workflow_plan["auxiliary_count"] == 10
                             and len(workflow_plan["main_workflows"]) == 5
                             and workflow_plan["commands_integrated_in_main"] == 10
                             and workflow_plan["all_ten_commands_integrated_in_main"] is True
@@ -70,6 +72,7 @@ def main():
                             and acceptance_plan["total"] == 22
                             and acceptance_plan["production_ready"] is False)
     except Exception as exc:
+        operational_contract = {"pass": False, "error": type(exc).__name__}
         legacy_scope = {}
         workflow_plan = {"error": type(exc).__name__}
         acceptance_plan = {"error": type(exc).__name__}
@@ -127,6 +130,7 @@ def main():
         "five_report_roundtrip_passed": roundtrip_passed,
         "five_report_roundtrip": roundtrip,
         "workflow_and_task_inventory_passed": inventory_passed,
+        "operational_contract_gate": operational_contract,
         "auxiliary_workflows_mapped": workflow_plan.get("auxiliary_count"),
         "auxiliary_commands_integrated_in_main": workflow_plan.get("commands_integrated_in_main"),
         "task_requirements_inventoried": acceptance_plan.get("total"),

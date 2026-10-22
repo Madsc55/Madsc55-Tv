@@ -36,29 +36,26 @@ class ParityProcessTests(unittest.TestCase):
             self.assertFalse(written['behavioral_parity_accepted'])
 
     def test_timeout_reaps_parent_and_kills_descendant(self):
-        result = self.run_python(
-            "import os,time; p=os.fork(); s=open('/proc/self/stat').read().split()[21]; "
-            "os.write(1,(str(os.getpid())+':'+s+'\\n').encode()); time.sleep(10)",
-            timeout=.25)
+        # getpid() may belong to a nested PID namespace while /proc is mounted
+        # from its host. Identify the actual procfs entry and start time inside
+        # each child; otherwise /proc/<getpid()> can be an unrelated host job.
+        source = ("import os,time; from pathlib import Path; p=os.fork(); "
+                  "s=Path('/proc/self/stat').read_text().split(); "
+                  "os.write(1,(s[0]+' '+s[21]+'\\n').encode()); time.sleep(30)")
+        result = self.run_python(source, timeout=2)
         self.assertTrue(result['timed_out'])
-        for identity in result['stdout'].decode().splitlines():
-            pid, starttime = identity.split(':', 1)
+        identities = [line.split() for line in result['stdout'].decode().splitlines()]
+        self.assertEqual(len(identities), 2, 'Both processes must start before timeout')
+        self.assertEqual(len({pid for pid, _ in identities}), 2)
+        for pid, started in identities:
             status = Path('/proc') / pid / 'stat'
-            # The process group is killed synchronously, but a loaded host can
-            # expose the reaped/Z state in /proc slightly later.
             deadline = time.monotonic() + 5
             while True:
                 try:
-                    current = status.read_text().split()
+                    fields = status.read_text().split()
                 except FileNotFoundError:
-                    # The process can disappear between existence and read.
                     break
-                # A reused PID belongs to a different process. Linux starttime
-                # is stable for the lifetime of the process and disambiguates it.
-                if current[21] != starttime:
-                    break
-                state = current[2]
-                if state in ('Z', 'X'):
+                if fields[21] != started or fields[2] in ('Z', 'X'):
                     break
                 self.assertLess(time.monotonic(), deadline, 'Descendant survived group timeout')
                 time.sleep(.005)

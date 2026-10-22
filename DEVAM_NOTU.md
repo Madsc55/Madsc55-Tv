@@ -1,5 +1,8 @@
 # Madsc55-Tv — DEVAM NOTU
 
+**Son birleşik doğrulama:** 764 test + beş izole kapı + kurulum + beş rapor/K5 başarılı. İki süre farkı giderildi; dokuz artifact adı farkı incelemeye açık. Ayrıntı en sondaki operasyon sözleşmesi kaydında.
+
+
 **En güncel doğrulanmış paket (22 Ekim 2026):** Kod/test/kanıt SHA `e4f68c0b6bf597da1ab21c5ebd8c9480d5b85991`; güncel main üzerinde **760/760 yerel test**, beş izole K kapısı, kurulum envanteri ve beş rapor/K5 round-trip başarılı. Ayrıntı en alttaki kayıtta. Tam kabuller değişmedi: 0/92, 0/26, 0/22.
 
 **En yeni kayıt:** Yeni sohbet devri tamamlandı: SOHBET_DEVIR_2026-10-22_SON.md. Son doğrulanmış paket 757 test+5 kapı+5 rapor/K5; sonraki 3c228e7 modülü henüz test edilmedi. Önce son devir kaydını oku.
@@ -413,3 +416,15 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Kanıt: `docs/FIVE_STAGE_INSTALLATION_GATE_KANIT_2026-10-22.json`. `git diff --check` temiz. GitHub Actions, canlı stream probing, cihaz testi, üretim yazma, eski depo yazısı, merge veya PR #71 işlemi yapılmadı; korunan veri değişmedi.
 - Açık işler/engeller: gerçek 92 aynı-input çifti için bağımsız legacy ve replacement execution/artifact kökeni hâlâ yok; K2/K3 canlı/harici kaynaklar, IBO kullanıcı cihaz sonucu ve K4 bağımsız harici restore kanıtı eksik. Tam kabuller 0/92, 0/26, 0/22; fixture sonuçları bu sayaçları artırmaz.
 - Sıradaki somut adım: `five_stage_installation` raporundaki 11 statik sözleşme farkını kaynak gerekçeleriyle gözden geçir; güvenle yerel çözülebilenleri beş ana workflow sözleşmesine taşı. Gerçek aynı-input/bağımsız run-artifact bulunmadan 92 davranış kabulü verme ve mevcut kanıt zincirini sahte metadata ile doldurma.
+
+
+## 22 Ekim 2026 — Güncel kurulum ve operasyon sözleşmeleri topluca doğrulandı
+- Tek hedef Madsc55/Madsc55-Tv/main; taban 554ec5f07a10dcf81041c1cc18a2081a04dc9e4c. Sonraki kurulum modülü/kapı değişiklikleri ilk kez bu turda gerçek yerel toplu testle kapsandı.
+- İlk 760 test: 1 failure/1 error. K1 preflight alt süreç başlatması 5 saniyeyi aştı; ilgili 15 test kod gevşetilmeden 0.868 saniyede geçti. Süreç sonlandırma testi toplu koşuda tekrar başarısızdı (763 test/1 failure). Kapsayıcı getpid kimliklerinin host /proc dizininde ilgisiz sync_share.sh/sites-preview süreçlerine karşılık geldiği gerçek tanı çıktısıyla bulundu. Test artık çocukların /proc/self/stat PID ve başlangıç zamanını kullanır, iki ayrı sürecin gerçekten başladığını zorunlu doğrular; üretim süreç öldürme kodu gevşetilmedi.
+- K5 25 dakika eski kaynak audit + 15 dakika not birleştirme opt-in adımlarının 10 dakika job limiti altında kalması düzeltildi: job 45, adımlar 25/15 dakika. Bu üst sınır süre tüketimi değildir; dispatch yapılmadı. Opt-in rapor upload artık failure durumunda da always() && !cancelled() ile denenir; kaynaklar/izinler/cron/korunan veri değişmedi.
+- Sözleşme denetimi süreyi yalnız ilgili komutun bulunduğu job ile karşılaştırır; ilgisiz uzun job komutu maskeleyemez. Komut, süre, rapor yolu, actions izni veya failure-upload kaybı contract_gate ve mevcut offline_gate başarısını engeller. Artifact ad farkı ayrı inceleme olarak görünür; otomatik eşdeğerlik verilmez. Yeni kapı entegrasyon regresyonu dahil dört test eklendi. Önceki süre fixture'ı gerçek komutu içermediğinden düzeltildi; eksik komut süre uyumluluğu sayılmıyor.
+- Nihai python -m madsc.offline_gate: 764 test, beş izole K1–K5 kapısı, kurulum envanteri, 92+7 kaynak/10 yardımcı komut/22 görev ve beş gerçek yerel raporun K5 tüketimi başarılı. git diff --check temiz. Kanıt, test edilen kaynak SHA256 ve rapor hashleri: docs/FIVE_STAGE_CONTRACT_VALIDATION_2026-10-22.json.
+- 11 statik farktan iki süre farkı giderildi; dokuz artifact isim değişikliği inceleme olarak açık. Bunlar çalışma zamanı byte zinciri kabulü değildir. Davranış 0/92, runtime güvenlik 0/26, görev tam kabulü 0/22 korunur. Korunan listeler/EPG/favoriler/yedek/logo/arşiv, eski depo, PR71 ve merge işlemi yok. Actions başlatılmadı; kullanıcının ilettiği izin kotayı harcamak için gereksiz tekrar gerekçesi sayılmadı. IBO cihaz testi kullanıcıda.
+- Sıradaki bağlantılı iş: dokuz yeniden adlandırılan artifact için gerçek üretici/tüketici dosya ve byte zinciri ile bağımsız aynı-input eski/yeni run/artifact kanıtını bağlamak; eksik dış kaynağı fixture ile tamamlanmış göstermemek. K2/K3 canlı ölçüm ve bağımsız geçmiş, K4 dış backup/restore, K1 26 runtime kuralı ve K5 gerçek uçtan uca kabul açık. Kod/kanıt/notlar aynı [skip ci] commitindedir; kendi SHA'sı Git geçmişindedir.
+
+- Yayın öncesi main e4f68c0b6bf597da1ab21c5ebd8c9480d5b85991 commitine ilerledi: FIFO/receipt test süreleri ve bağımsız 760-test kanıtı okundu/korundu. Aynı process testinin starttime ve beş saniye bekleme düzeltmesi procfs PID kimliği ve iki süreç zorunluluğu ile uzlaştırıldı. Son toplu test bu birleşik kaynaklar üzerinde yeniden çalıştırıldı.

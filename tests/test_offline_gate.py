@@ -15,6 +15,23 @@ class OfflineGateTests(unittest.TestCase):
         self.assertEqual(main(), 0)
         self.assertTrue(run.call_args.kwargs["capture_output"])
         self.assertFalse(run.call_args.kwargs["check"])
+    @patch("madsc.workflow_consolidation.contract_gate")
+    @patch("madsc.offline_gate.subprocess.run")
+    def test_lost_operational_contract_blocks_green_tests(self, run, contract):
+        run.return_value.returncode = 0
+        run.return_value.stdout = ""
+        run.return_value.stderr = "Ran 73 tests in 0.123s\n\nOK"
+        contract.return_value = {"pass": False, "blocking_contract_gaps": [
+            {"source": "madsc-legacy-99-bulk-audit.yml", "gaps": ["timeout"]}]}
+        output = io.StringIO()
+        with redirect_stdout(output), redirect_stderr(io.StringIO()):
+            self.assertEqual(main(), 1)
+        report = json.loads(output.getvalue())
+        self.assertTrue(report["tests_passed"])
+        self.assertFalse(report["all_offline_gates_passed"])
+        self.assertEqual(report["test_exit_code"], 4)
+        self.assertEqual(report["operational_contract_gate"], contract.return_value)
+
     @patch("madsc.offline_five_gate.assess_all")
     @patch("madsc.offline_gate.subprocess.run")
     def test_five_stage_failure_blocks_green_unittest(self, run, five):

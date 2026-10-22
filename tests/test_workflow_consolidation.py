@@ -81,7 +81,8 @@ class WorkflowConsolidationTests(unittest.TestCase):
             source.write_text(source.read_text(encoding="utf-8") +
                               "    timeout-minutes: 5\n", encoding="utf-8")
             target = folder / MAIN["K2"]
-            target.write_text(target.read_text(encoding="utf-8") +
+            target.write_text(target.read_text(encoding="utf-8").replace(
+                              "echo fixture", AUXILIARY[source.name][1]) +
                               "    timeout-minutes: 10\n", encoding="utf-8")
             result = auxiliary_behavior_matrix(Path(d))
             row = next(x for x in result["rows"] if x["source"] == source.name)
@@ -153,6 +154,53 @@ class WorkflowConsolidationTests(unittest.TestCase):
             row = next(r for r in matrix["rows"] if r["source"] == source.name)
             self.assertIn("artifact_path", row["static_contract_gaps"])
             self.assertEqual(row["missing_artifact_paths"], ["reports/k2-live-pilot.json"])
+
+    def test_unrelated_long_job_cannot_hide_command_timeout_loss(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            source = folder / "madsc-k2-live-pilot.yml"
+            source.write_text(source.read_text() + "    timeout-minutes: 5\n")
+            command = AUXILIARY[source.name][1]
+            target = folder / MAIN["K2"]
+            target.write_text(target.read_text().replace("echo fixture", command) +
+                              "    timeout-minutes: 1\n"
+                              "  unrelated:\n    timeout-minutes: 60\n"
+                              "    steps:\n      - run: echo unrelated\n")
+            row = next(r for r in auxiliary_behavior_matrix(Path(d))["rows"]
+                       if r["source"] == source.name)
+            self.assertEqual(row["main_command_job_timeouts"], [1])
+            self.assertIn("timeout", row["static_contract_gaps"])
+            self.assertFalse(contract_gate(Path(d))["pass"])
+
+    def test_contract_gate_rejects_lost_paths_after_commands_migrate(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            for _, (stages, command, _) in AUXILIARY.items():
+                with (folder / MAIN[stages.split("+")[0]]).open("a") as out:
+                    out.write("      - run: " + command + "\n")
+            source = folder / "madsc-k2-live-pilot.yml"
+            source.write_text(source.read_text() +
+                              "      - uses: actions/upload-artifact@v4\n"
+                              "        with:\n          path: reports/lost.json\n")
+            gate = contract_gate(Path(d))
+            self.assertEqual(gate["missing_commands"], [])
+            self.assertFalse(gate["pass"])
+            self.assertEqual(gate["blocking_contract_gaps"],
+                             [{"source": source.name, "gaps": ["artifact_path"]}])
+
+    def test_real_k5_preserves_optional_job_budgets_and_failure_upload(self):
+        root = Path(__file__).resolve().parent.parent
+        matrix = auxiliary_behavior_matrix(root)
+        for source in ("madsc-legacy-99-bulk-audit.yml",
+                       "madsc-legacy-notes-bulk-merge.yml"):
+            row = next(r for r in matrix["rows"] if r["source"] == source)
+            self.assertNotIn("timeout", row["static_contract_gaps"])
+        body = (root / ".github/workflows" / MAIN["K5"]).read_text()
+        upload = body.split("- name: K5 opt-in eski kaynak raporlarını sakla", 1)[1].split("- name:", 1)[0]
+        self.assertIn("always() && !cancelled()", upload)
+        self.assertIn("inputs.allow_legacy_source_audit == true", upload)
+        self.assertIn("inputs.allow_legacy_notes_merge == true", upload)
+        self.assertTrue(contract_gate(root)["pass"])
 
     def test_contract_gate_rejects_missing_commands(self):
         with tempfile.TemporaryDirectory() as d:

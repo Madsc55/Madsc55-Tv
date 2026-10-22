@@ -33,6 +33,20 @@ def outer(root):
         self.assertEqual(len(rows), 1)
         self.assertFalse(rows[0]["recognized_guard_precedes_write_in_scope"])
 
+    def test_conditional_guard_is_never_claimed_as_control_flow_verified(self):
+        source = '''
+def maybe_guard(root, enabled):
+    if enabled:
+        enforce_write_paths(["reports/out.json"])
+    (root / "out.json").write_text("review me")
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(rows[0]["recognized_guard_precedes_write_in_scope"])
+        self.assertFalse(rows[0]["guard_control_flow_verified"])
+        self.assertIn("manual control-flow review", rows[0]["guard_assessment"])
+        self.assertTrue(rows[0]["review_required"])
+
     def test_read_only_open_is_not_a_mutation(self):
         source = '''
 def read(path):

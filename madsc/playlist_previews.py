@@ -22,18 +22,27 @@ def render_playlist_previews(catalog: dict, source_rows: list[dict]) -> dict:
     if not isinstance(entries, list):
         raise ValueError("Missing catalog channels")
     output = {bucket: ["#EXTM3U"] for bucket in BUCKETS}
+    seen_indices = set()
+    seen_digests = set()
     for entry in entries:
         if not isinstance(entry, dict) or entry.get("bucket") not in output:
             raise ValueError("Unknown channel category")
         index = entry.get("source_index")
         if type(index) is not int or not 0 <= index < len(source_rows):
             raise ValueError("Invalid source reference")
+        if index in seen_indices:
+            raise ValueError("Duplicate catalog source reference")
+        seen_indices.add(index)
         source = source_rows[index]
         if not isinstance(source, dict):
             raise ValueError("Invalid source row")
         url = normalize_url(source["url"])
-        if sha256(url.encode("utf-8")).hexdigest() != entry.get("url_sha256"):
+        digest = sha256(url.encode("utf-8")).hexdigest()
+        if digest != entry.get("url_sha256"):
             raise ValueError("Catalog and source fingerprint mismatch")
+        if digest in seen_digests:
+            raise ValueError("Duplicate stream in playlist preview")
+        seen_digests.add(digest)
         for key in ("display_name", "tvg_id", "group_title"):
             if not isinstance(entry.get(key), str):
                 raise ValueError("Invalid channel metadata")

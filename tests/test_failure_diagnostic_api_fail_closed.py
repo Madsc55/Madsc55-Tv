@@ -174,6 +174,30 @@ class DiagnosticApiFailClosedTests(unittest.TestCase):
                     origin, artifact, archive, fetch=fetch)
 
 
+    def test_boolean_run_and_artifact_identity_values_rejected(self):
+        for mismatch in ("run_id", "run_attempt", "workflow_run_id",
+                         "declared_artifact_id"):
+            origin, artifact, archive = evidence()
+            original_fetch, _ = fetcher(origin, artifact)
+            if mismatch == "declared_artifact_id":
+                artifact["id"] = True
+
+            def fetch(url, token=None):
+                data = original_fetch(url, token=token)
+                if "/artifacts?" in url and mismatch == "workflow_run_id":
+                    data["artifacts"][0]["workflow_run"]["id"] = True
+                elif "/actions/runs/" in url and "/artifacts?" not in url:
+                    if mismatch == "run_id":
+                        data["id"] = True
+                    elif mismatch == "run_attempt":
+                        data["run_attempt"] = True
+                return data
+
+            with self.subTest(mismatch=mismatch), self.assertRaises(ValueError):
+                verify_failure_diagnostic_evidence(
+                    origin, artifact, archive, fetch=fetch)
+
+
 
 if __name__ == "__main__":
     unittest.main()

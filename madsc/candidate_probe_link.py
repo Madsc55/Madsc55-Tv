@@ -70,23 +70,23 @@ def link_candidate_continuity(envelope: dict, measurements: dict,
 def load_evidence(path):
     import json
     from madsc.batch_acceptance import _unique_json_pairs
-        if (path.is_symlink() or any(parent.is_symlink() for parent in path.parents)
-                or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024):
-            raise ValueError("Invalid or oversized evidence")
-        import os
-        import stat
-        if not hasattr(os, "O_NOFOLLOW"):
-            raise ValueError("Secure evidence opening is unavailable")
-        flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
-        descriptor = os.open(path, flags)
-        with os.fdopen(descriptor, "rb") as handle:
-            opened = os.fstat(handle.fileno())
-            if not stat.S_ISREG(opened.st_mode) or opened.st_size > 16 * 1024 * 1024:
-                raise ValueError("Evidence must be a bounded regular file")
-            raw = handle.read(16 * 1024 * 1024 + 1)
-        if len(raw) > 16 * 1024 * 1024:
-            raise ValueError("Invalid or oversized evidence")
-        return json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_json_pairs)
+    if (path.is_symlink() or any(parent.is_symlink() for parent in path.parents)
+            or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024):
+        raise ValueError("Invalid or oversized evidence")
+    import os
+    import stat
+    if not hasattr(os, "O_NOFOLLOW"):
+        raise ValueError("Secure evidence opening is unavailable")
+    flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
+    descriptor = os.open(path, flags)
+    with os.fdopen(descriptor, "rb") as handle:
+        opened = os.fstat(handle.fileno())
+        if not stat.S_ISREG(opened.st_mode) or opened.st_size > 16 * 1024 * 1024:
+            raise ValueError("Evidence must be a bounded regular file")
+        raw = handle.read(16 * 1024 * 1024 + 1)
+    if len(raw) > 16 * 1024 * 1024:
+        raise ValueError("Invalid or oversized evidence")
+    return json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_json_pairs)
 
 
 def main():

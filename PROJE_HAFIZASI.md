@@ -2352,3 +2352,10 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - CI'da `bd9387ab` koşusu 956 testte 1 failure + 1 error verdi: K3 loader AST testinde `ast.Module` üzerinde doğrudan iterasyon, parity consumer testinde beklenen child exit code 1 eski kaldı. Sonraki sohbet commitleri bunları düzeltti: `tests/test_candidate_probe_link.py` artık `ast.walk(parsed)` kullanıyor; `tests/test_parity_consumer_cli.py` ölçülen exit code 2'yi bekliyor. Bu dosyalar bu turda tarafımdan değiştirilmedi.
 - En son görülen Actions koşuları `39861818906` (`057e3fe1`, in_progress) ve `39861826787` (`a4fbd233`, pending) idi. Bu koşuların yeni K1 `a2371ec`/test `d8b36ca` commitlerini kapsadığı garanti değil; K1/K2 testleri için ayrı başarılı kanıt bekleniyor.
 - Testler bu turda yerel çalıştırılmadı; Actions dispatch yapılmadı. Kabul sayaçları 0/26, 0/92, 0/22.
+
+
+## 23 Ekim 2026 — K1 Unicode normalize-before-policy düzeltmesi ve CI koordinasyonu
+- Actions run `39861826787` commit `a4fbd233` tamamlandı: success. Bu başarı eski SHA'daki 956 testlik koşudaki parity exit-code uyuşmazlığının sonraki test düzeltmesini kapsıyor; K1'in bu turdaki yeni değişikliklerini kapsamaz.
+- K1'de NFKC yalnızca duplicate-path kontrolüne uygulanıyor, protected-path ve `artifacts/` prefix denetimi ham metinle çalışıyordu. Böylece fullwidth Unicode karakterleriyle yazılan korunan hedefler politika kontrolünü aşabilirdi. `validate_manifest` artık önce NFKC normalize edilmiş yolları hem güvenli yol hem izinli kök kontrolünden geçiriyor: `5a02fd322789b3c4b6b94bbe4262b48d3a0e665c`.
+- Korunan playlist/EPG adlarının fullwidth taklitlerini ve normalize edilmemiş artifacts kökünü reddeden test: `ba46a1d3d8044f5cd5459cbf21ed888cb3bcba9f`.
+- Bu turdaki yeni K1 testleri çalıştırılmadı; Actions yeniden başlatılmadı. Güncel HEAD bu eklerden sonra ayrıca doğrulanmalı. Kabul sayaçları 0/26, 0/92, 0/22 olarak kaldı.

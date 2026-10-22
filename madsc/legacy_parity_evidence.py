@@ -289,7 +289,10 @@ def compare_provenance_bound_batch(inventory, pairs, *, replacement_workflow_roo
                 or mapping["replacement_workflow_blob_sha"] != contract["workflow_blob_sha"]
                 or contract["static_file_binding_complete"] is not True
                 or contract["marker_contract_complete"] is not True
-                or contract["input_digest_binding_complete"] is not True):
+                or contract["input_digest_binding_complete"] is not True
+                or contract.get("controlled_process_contract_complete") is not True
+                or contract.get("input_classification") != "isolated_file_bound"
+                or not isinstance(contract.get("declared_file_binding"), dict)):
             raise ValueError("Behavior mapping source or file contract mismatch")
         binding = contract["declared_file_binding"]
         if any(mapping[field] != binding[field] for field in

@@ -1,3 +1,11 @@
+# K3 EK DÜZELTME — 2026-10-23
+- `madsc/epg.py` commit `de5dd1a8ab09ff1d2ee41f2d2670397e5588bf8b`: tvg-id yalnız gerçek M3U nitelik anahtarından okunur; diğer tırnaklı niteliklerin metnindeki sahte tvg-id yok sayılır.
+- `tests/test_epg.py` commit `269416752f6ac678f9e0fa43abfef778716a266a`: bu durum için regresyon eklendi.
+- Yerel küçük ayrıştırıcı örnekleri (tırnak içi virgül, sahte tvg-id, tekrar eden tvg-id) denendi; **tam unittest/CI suite çalıştırılmadı**. Canlı HLS/6+ saat/Pages/XMLTV/logo ve en sonda kullanıcı cihaz kabulü açık.
+- Üretim verileri korunmuştur; PR #71 birleştirilmedi. [skip ci] commitleri CI sonucu olarak değerlendirme.
+
+---
+
 # K3 SON GÜNCELLEME — 2026-10-23
 - Kod commitleri: dea1d9c15f03b1f5f1833f7e3bf789d7a2a86cb8 (EXTINF ayıracı yoksa reddet), 57dad5f4c70505e59d8888c504e98d0643ccf9c8 (tırnak içindeki virgülü ayıraç sayma).
 - Test commitleri: a0da67add7764bf9c2f51ecadb45820898ac7af7 (eksik virgül regresyonu), 1d9ff2d5091e4bcf30c367a4ff046758ec7f9390 (tırnak içi virgül ve bozuk tırnak testleri). İlk test ekleme commitindeki satır sonu kaçışları sonraki committe düzeltildi.

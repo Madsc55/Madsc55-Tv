@@ -31,7 +31,16 @@ jobs:
           mkdir -p reports/k4-source/nested
           printf 'k4 fixture backup and restore\\n' > reports/k4-source/nested/sample.txt
           if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then sha256sum reports/k4-source/nested/sample.txt > reports/parity-input-before.sha256; fi
+          set +e
           python -m madsc.restore_drill --source reports/k4-source --file nested/sample.txt --output reports/k4-restore-drill.json
+          consumer_status=$?
+          set -e
+          if [[ "$consumer_status" -ne 0 ]]; then
+            if [[ "${{ inputs.allow_parity_evidence }}" == "true" && -f reports/k4-restore-drill.json ]]; then
+              python -m madsc.parity_snapshot_cli --exit-code "$consumer_status" --output restore=reports/k4-restore-drill.json --output-root .
+            fi
+            exit "$consumer_status"
+          fi
       - name: Upload K4 restore drill evidence
         uses: actions/upload-artifact@v4
         with:

@@ -55,9 +55,27 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
     leaf = name.rsplit(".", 1)[-1]
     if leaf in _MUTATING_METHODS:
         return True, name
-    if name in {"open", "builtins.open", "io.open"} or leaf == "open":
+    # os.open uses flags, not a text mode; handle it before generic *.open
+    # so the generic branch cannot swallow it and miss O_WRONLY/O_CREAT.
+    if name in {"os.open", "posix.open"}:
+        flags = node.args[1] if len(node.args) > 1 else None
+        for kw in node.keywords:
+            if kw.arg == "flags":
+                flags = kw.value
+        if isinstance(flags, (ast.BinOp, ast.Name, ast.Attribute)):
+            return True, name + " [flags require review]"
+        if isinstance(flags, ast.Constant) and isinstance(flags.value, int):
+            # Conservatively record numeric flags; platform constants vary.
+            return True, name + " [numeric flags require review]"
+        if flags is None:
+            return True, name + " [missing or dynamic flags require review]"
+    is_builtin_open = name in {"open", "builtins.open", "io.open"}
+    is_path_open = leaf == "open" and name not in {"os.open", "posix.open"}
+    if is_builtin_open or is_path_open:
         mode = None
-        mode_index = 0 if isinstance(node.func, ast.Attribute) else 1
+        # Path.open(file_mode) takes mode as its first argument; builtins.open
+        # and io.open take (file, mode), regardless of attribute-call syntax.
+        mode_index = 0 if is_path_open and name not in {"builtins.open", "io.open"} else 1
         mode_supplied = len(node.args) > mode_index
         dynamic_mode = mode_supplied and not isinstance(node.args[mode_index], ast.Constant)
         if mode_supplied and isinstance(node.args[mode_index], ast.Constant):
@@ -72,19 +90,10 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
                     dynamic_mode = True
         if isinstance(mode, str) and any(flag in mode for flag in "wax+"):
             return True, name
-        # A nonliteral positional or keyword mode can enable writing (e.g.
-        # open(path, requested_mode)); inventory it conservatively rather than
-        # silently treating it as a read-only open.
+        # A nonliteral positional or keyword mode can enable writing.
         if dynamic_mode:
             return True, name + " [dynamic mode]"
         return False, ""
-    if name in {"os.open", "posix.open"}:
-        flags = node.args[1] if len(node.args) > 1 else None
-        if isinstance(flags, ast.BinOp) or isinstance(flags, ast.Name):
-            return True, name + " [flags require review]"
-        if isinstance(flags, ast.Constant) and isinstance(flags.value, int):
-            # Conservatively record numeric flags; platform constants vary.
-            return True, name + " [numeric flags require review]"
     if name.startswith("os.") and leaf in _OS_MUTATORS:
         return True, name
     if name in _PROCESS_LAUNCHERS:

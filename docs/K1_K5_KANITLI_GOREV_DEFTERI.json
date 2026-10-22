@@ -67,9 +67,10 @@
       "39868653542: successful offline regression workflow on exact test commit 9c1c8a594849d730f75d9c050265df74b382b8ec; source independence remains explicitly unverified",
       "8d116818: bounded known-url corroboration input to 20,000 elements",
       "f82e0cb9: malformed identity metadata fail-closed matcher corrected",
-      "38d8209a: regression tests for malformed metadata and known URL upper bound; exact run cancelled due concurrent pushes, new combined CI result pending"
+      "38d8209a: regression tests for malformed metadata and known URL upper bound; exact run cancelled due concurrent pushes, new combined CI result pending",
+      "39869009399: successful offline suite at SHA 205ad1bf6f094a36600a0ad5872f228fc74fe850, descending from K2 commits 8d116818/a5d0d3b4/f82e0cb9/38d8209a"
     ],
-    "note": "Semantic feed deduplication has successful prior CI evidence; new malformed metadata and known URL bound regressions committed but their exact CI run was cancelled amid concurrent pushes. Real-source licensing and behavioral acceptance remain open."
+    "note": "Offline suite succeeded on descendant SHA 205ad1bf (run 39869009399), covering latest K2 fail-closed metadata and bounded known URL inputs. Real-source/licensing, independent origins, and behavioral acceptance still unverified."
   },
   {
     "id": "K3-09",

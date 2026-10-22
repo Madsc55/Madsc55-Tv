@@ -53,7 +53,9 @@ class ParityProcessTests(unittest.TestCase):
             while True:
                 try:
                     fields = status.read_text().split()
-                except FileNotFoundError:
+                except (FileNotFoundError, ProcessLookupError):
+                    # procfs can report ESRCH if the process exits between the
+                    # path lookup and read; that means the process is gone.
                     break
                 if fields[21] != started or fields[2] in ('Z', 'X'):
                     break

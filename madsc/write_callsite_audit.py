@@ -122,6 +122,11 @@ class _ScopeCalls(ast.NodeVisitor):
     def visit_ClassDef(self, node):
         return
 
+    def visit_Lambda(self, node):
+        # A lambda is a deferred execution scope; a guard mentioned in its
+        # body cannot be credited to the surrounding function.
+        return
+
 
 class _Scanner(ast.NodeVisitor):
     def __init__(self, path: str):
@@ -148,6 +153,15 @@ class _Scanner(ast.NodeVisitor):
 
     def visit_ClassDef(self, node):
         self._visit_scope(node, node.name)
+
+    def visit_Lambda(self, node):
+        collector = _ScopeCalls()
+        collector.visit(node.body)
+        guards = sorted(n.lineno for n in collector.calls
+                        if _call_name(n).rsplit(".", 1)[-1] in _GUARDS)
+        self.scope.append((f"<lambda@{node.lineno}>", guards))
+        self.visit(node.body)
+        self.scope.pop()
 
     def visit_Call(self, node):
         mutating, api = _is_mutating_call(node)

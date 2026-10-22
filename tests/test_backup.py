@@ -4,6 +4,34 @@ from pathlib import Path
 from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verify_sandbox_restore, verify_independent_restore
 
 class BackupTests(unittest.TestCase):
+    def test_sandbox_destination_open_rejects_symlinked_parent(self):
+        from madsc.backup import _create_relative_file_nofollow
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            root = base / "destination"
+            outside = base / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (outside / "sentinel.txt").write_text("keep")
+            (root / "nested").symlink_to(outside, target_is_directory=True)
+            st = root.stat()
+            with self.assertRaises(OSError):
+                _create_relative_file_nofollow(root, ("nested", "escaped.txt"),
+                                                (st.st_dev, st.st_ino))
+            self.assertFalse((outside / "escaped.txt").exists())
+            self.assertEqual((outside / "sentinel.txt").read_text(), "keep")
+
+    def test_sandbox_destination_open_requires_original_root_inode(self):
+        from madsc.backup import _create_relative_file_nofollow
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "safe.txt").write_text("existing")
+            st = root.stat()
+            with self.assertRaisesRegex(ValueError, "root changed"):
+                _create_relative_file_nofollow(root, ("new.txt",),
+                                                (st.st_dev + 1, st.st_ino))
+            self.assertFalse((root / "new.txt").exists())
+
     def test_manifest_detects_changes_without_writing(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

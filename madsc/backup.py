@@ -147,6 +147,9 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
            for entry in manifest["entries"]):
         raise ValueError("Invalid backup manifest entry")
     paths = [entry["path"] for entry in manifest["entries"]]
+    # Reject pathological names before sorting, hashing, or filesystem access.
+    if any(len(path) > 4096 for path in paths):
+        raise ValueError("Backup manifest path exceeds bounded length")
     if len(set(paths)) != len(paths):
         raise ValueError("Duplicate backup manifest paths")
     # A manifest is a canonical snapshot, not an arbitrary subset or reordered list.

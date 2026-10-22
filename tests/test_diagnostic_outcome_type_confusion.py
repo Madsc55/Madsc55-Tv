@@ -41,6 +41,30 @@ class DiagnosticOutcomeTypeConfusionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify_failure_diagnostic_artifact(origin, artifact, archive)
 
+    def test_float_exit_code_cannot_impersonate_integer(self):
+        origin, artifact, archive = evidence()
+        payload = {
+            "schema": "madsc-local-process-outcome-v1",
+            "consumer": "k1",
+            "exit_code": 23.0,
+            "timed_out": False,
+            "behavioral_parity_accepted": False,
+            "production_ready": False,
+        }
+        archive = replace_member(
+            origin, artifact, archive, "parity-process-outcome.json",
+            json.dumps(payload).encode("utf-8"))
+        with self.assertRaises(ValueError):
+            verify_failure_diagnostic_artifact(origin, artifact, archive)
+
+    def test_valid_measured_failure_remains_accepted_as_diagnostic_only(self):
+        origin, artifact, archive = evidence()
+        result = verify_failure_diagnostic_artifact(origin, artifact, archive)
+        self.assertTrue(result["diagnostic_artifact_bytes_verified"])
+        self.assertFalse(result["behavioral_parity_accepted"])
+        self.assertFalse(result["production_ready"])
+
+
 
 if __name__ == "__main__":
     unittest.main()

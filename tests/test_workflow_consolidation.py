@@ -368,5 +368,20 @@ class WorkflowConsolidationTests(unittest.TestCase):
                 consolidation_plan(Path(d))
 
 
+    def test_symlinked_workflow_entry_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            folder = self.make_root(root)
+            target = root / "external.yml"
+            target.write_text("name: external\\non:\\n  workflow_dispatch:\\npermissions:\\n  contents: read\\n", encoding="utf-8")
+            link = folder / "unexpected.yml"
+            try:
+                link.symlink_to(target)
+            except (OSError, NotImplementedError):
+                self.skipTest("Filesystem does not permit symlinks")
+            with self.assertRaisesRegex(ValueError, "Symlinked workflow entry"):
+                consolidation_plan(root)
+
+
 if __name__ == "__main__":
     unittest.main()

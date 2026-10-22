@@ -10,7 +10,13 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     root = Path(root)
     if root.is_symlink() or not root.is_dir():
         raise ValueError("Backup root must be a real directory")
+    # A real leaf reached through a symlinked ancestor is still an aliased root.
+    # Reject it before resolving or reading any manifest member.
+    if any(ancestor.is_symlink() for ancestor in (root, *root.parents)):
+        raise ValueError("Backup root ancestors must not be symlinks")
     base = root.resolve(strict=True)
+    if base != root.absolute():
+        raise ValueError("Backup root must resolve to its canonical absolute path")
     if (not isinstance(paths, list) or any(not isinstance(name, str) or not name for name in paths)
             or len(set(paths)) != len(paths)):
         raise ValueError("Backup paths must be unique nonempty strings")

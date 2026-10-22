@@ -2377,3 +2377,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - İnceleme, `madsc/fixture_report_writer.py::_exclusive_bytes` için bir güvenlik boşluğu buldu: `O_NOFOLLOW` mevcut değilse eski uygulama bu bayrağı atlayıp dosyayı açıyordu. K1 manifest CLI'daki fail-closed davranışı ortak kanıt yazıcısına da uygulandı; platform desteği yoksa yazma başlamadan `PermissionError`: `0d4dda4f4f87c47376989ee70701db2a3c0a4747`.
 - Negatif test, `O_NOFOLLOW` desteği yokken dosyanın oluşmadığını doğruluyor: `b4166318466967fda4d9a4543882c949f4152ce0`.
 - Önceki offline CI run `39862185213` 958 testi geçirdi; fakat HEAD daha sonra yalnız belge commitleriyle ilerledi. Bu yeni kod/test commitleri için henüz test sonucu yok. GitHub Actions bu turda başlatılmadı. Kabul: runtime K1 0/26, legacy 0/92, görev 0/22.
+
+
+## 23 Ekim 2026 — K1 izole kanıt kökünde symlink ancestor reddi
+- `madsc/fixture_report_writer.py` içindeki iki giriş noktası (`_prepare_fixture_root` ve `write_fixture_report`) artık yalnızca son kökün değil, tüm kök yolunun gerçek nonsymlink dizinlerden oluştuğunu `resolve(strict=True) == absolute_root` koşuluyla doğruluyor. Bu, son bileşeni normal görünse bile symlink parent üzerinden izole çıktı köküne erişilmesini reddeder: `1ddf9a2e4ae5b7158b2c26fefcb8ea192bb5590b`.
+- Symlink ancestor üzerinden fixture raporu oluşturmaya karşı regresyon testi eklendi; rapor dizininin oluşmadığı da kontrol ediliyor: `942cf3df4ba021ee910300562a4b9ac17245a660`.
+- Bu kod/test commitleri henüz CI'da çalıştırılmadı. Önceki doğrulanmış offline gate `39862185213` 958 testte başarılıydı ama yeni commitleri kapsamaz. Actions bu turda tetiklenmedi. Kabul: runtime K1 0/26, legacy 0/92, görev 0/22.

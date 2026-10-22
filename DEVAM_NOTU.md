@@ -652,3 +652,14 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Kabul durumu değişmedi: K4-15 pending, K4-16 in_progress (sandbox fixture only), K4-17 pending, K4-18 pending. Genel kabul: 0/92 eski workflow davranışsal parity, 0/26 bağımsız runtime güvenlik, 0/22 ana görev. Harici depolama veya kullanıcı cihazı erişimi yapılmadı; Actions dispatch/rerun, merge ve üretim yazması yapılmadı.
 - Son genel CI baseline hâlâ Actions `39865933101`, test edilen SHA `a4c70f7277be8aad73cdd95d027115b7bcab469d`, 990 test. Bu K4 belge/ledger değişiklikleri için yeni CI sonucu iddia edilmiyor; kod/test değiştirilmedi.
 - Sonraki gerçek adım: yetkili harici yedek sağlayıcısından makbuz ve bağımsız restore run kanıtı geldiğinde dosya/byte/SHA listelerini doğrula; aksi durumda K4 kabulünü açma. Korunan playlist/EPG/favori/yedek/arşiv/cihaz dosyalarına dokunma.
+
+
+## 23 Ekim 2026 — K5 legacy review batch 08
+- Yeni statik inceleme: `docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_08_2026-10-23.md`; commit `95c1aa9201c8f83b9ce8741cba2cfd2ce143c519`.
+- Üç workflow ve doğrudan çağırdığı scriptler sabitlenmiş Git blob SHA'larıyla incelendi: `kanal-kararlilik.yml`, `kaynak-puanlama-kontrol.yml`, `ibo-bagimsiz-test-listesi.yml`.
+- Önemli bulgu: IBO listesi akışı keşfi `SCAN_BATCH=-1` ile geniş yapıyor ancak medya testi `ADAY_TEST_GRUBU=0` ile yalnız ilk 30 sıralanmış adayı inceliyor. “Tüm keşfedilen adaylar test edildi” denemez.
+- Kararlılık akışında cache restore/save kaynak kodu var ama iki bağımsız run kanıtı olmadan geçmişin kalıcı olduğu kabul edilemez. Kaynak puanlama scripti `KAYNAK_GUVEN_PUANLARI.csv` yazar; izole hedef sınırı ve edge-case davranışı differential test gerektirir.
+- Kümülatif statik inceleme 24/92; 68 workflow için kaynak incelemesi bekliyor. Gerçek davranışsal kabul 0/92, runtime güvenlik kabulü 0/26, ana görev kabulü 0/22 olarak korunur.
+- Görev defteri K5-19 yeni kanıtla güncellendi: commit `826411b90f37cbe8863f966d874cb4d5925cf6ab`. Bu belge/defter değişiklikleri `[skip ci]`; yeni CI başarısı iddia edilmiyor. En son gözlenen başarılı offline run `39867301153`, test SHA `cb0a046252e1a75d119ae12e0af6c76028b3379c`; bu, daha sonraki HEAD'i veya üretim kabulünü doğrulamaz.
+- Sonraki iş: bu üç workflow için güvenli fixture tabanlı differential testleri eklemek; önce deterministik kaynak puanlama ve IBO artifact seçimini test et. Gerçek keşif/ffprobe/IBO/üretim işlemi için yetki ve bağımsız kanıt olmadan çalıştırma.
+- Korunan playlist, EPG, favori, cihaz, logo, yedek/arşiv dosyalarına dokunulmadı; eski `Madsc55/madsc-tv` deposu salt okunur kaldı; Actions dispatch/rerun ve merge yapılmadı.

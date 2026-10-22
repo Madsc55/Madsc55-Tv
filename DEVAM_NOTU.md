@@ -856,3 +856,10 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - `os.fdopen` yazma modlari ve `tempfile.NamedTemporaryFile/TemporaryFile/mkstemp/mkdtemp/TemporaryDirectory` dosya/dizin olusturmalari artik envanterde; kod `946ab465`, regresyon `3e3cc524`.
 - Bu statik aday tespiti otomatik runtime enforcement degildir. Onceki 75 aday sayisi eski tarayici kapsamindan geldigi icin yeni sayim yapilmadan guncel toplam sayilmaz. Tum adaylar manuel disposition bekler.
 - Yeni commitler GitHub main dosyalarinda dogrulandi; bu SHA'lar icin offline CI basarisi henuz dogrulanmadi. 26 runtime kural 0/26, 22 gorev 0/22, uretim kabul false. Korunan playlist, EPG, yedekler degistirilmedi.
+
+
+## 23 Ekim 2026 — K2 metadata ve kaynak liste sınırı sertleştirmesi
+- `madsc/discovery_batch.py::corroborate_sources` `known_urls` girdisini en fazla 20.000 öğeyle sınırlar (`8d116818`). Çok büyük giriş hatayla reddedilir.
+- `parse_m3u` kimlik alanları (`tvg-id`, `tvg-logo`, `group-title`) yanlış veya tırnaksız yazıldığında sessizce metadata düşürmez: `invalid_metadata_attribute` üretir ve ilişkili URL'yi aday kataloğuna almaz. Kod `a5d0d3b4`, kaçış düzeltmesi `f82e0cb9`.
+- İki regresyon testi `38d8209adce32f8d2afa964a6a32ed77c35959b8` commit'inde. Bu commitin doğrudan Actions koşusu iptal edildi; ancak onun iki commit ilerideki soyundan gelen `205ad1bf6f094a36600a0ad5872f228fc74fe850` commit'i için Actions `39869009399` başarıyla tamamlandı. GitHub compare sonucu `ahead`, ahead_by=2, behind_by=0 olarak doğrulandı.
+- K2-08 görev defteri yeni kanıtla güncellendi; tamamlandı statüsüne geçirilmedi. K2-05 gerçek kaynak/lisans, K2-06 günlük tetik davranışsal eşdeğerlik, K2-07 bağımsız gerçek artifact köken/SHA kanıtı hâlâ açık. Korunan üretim dosyalarına, eski depoya ve IBO cihazına dokunulmadı.

@@ -2315,3 +2315,9 @@ Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_
 - Güncel HEAD bu turun başında `1a949f4edf7e87f3bb0b5a693bba7f8932403213` idi; eşzamanlı değişiklikleri korumak için her yazımda hedef dosyanın güncel SHA'sı yeniden alındı.
 - `madsc/discovery_batch.py` içindeki `corroborate_sources` da çoklu feed metnini ayrıştırmadan önce toplam 8.000.000 karakterle sınırlandırıldı: `c4444956257ff5c741e402bc7624e73d6412ecac`. İki büyük kaynağın toplam limit aşımını test eden regresyon eklendi: `38668683c808159f79f1ca908173c2886f3340ec`.
 - Testler bu commitlerde çalıştırılmadı; Actions tetiklenmedi. Bu değişiklik K2'nin hem önizleme hem çapraz-kaynak oylama girişlerini ortak toplam kaynak sınırı altında tutmayı hedefler. Kabul sayaçları değişmedi: 0/92, 0/26, 0/22.
+
+
+## 22 Ekim 2026 — K1 bozuk manifest fail-closed davranışı
+- `src/madsc_guard.py` artık UTF-8/JSON ayrıştırma hatalarını ve manifest sözleşmesi ValueError durumlarını argparse hata çıkışına dönüştürüyor; kontrolsüz traceback yerine kapalı hata sonucu: `46a6e8fd802a7dd7eaa53be3fe5a0043edb13d1d`.
+- Bozuk JSON girdisinin exit code 2 ile reddedilmesini kapsayan test: `1b8e023d42b1ba0958e774f198e77fe92f809cc9`.
+- Testler çalıştırılmadı; Actions dispatch yok. Sonraki adım erişilebilir checkout'ta K1/K2 odaklı testler ve tam offline_gate. Kabul sayaçları değişmedi (0/26, 0/92, 0/22).

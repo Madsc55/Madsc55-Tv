@@ -147,3 +147,11 @@
 - Ayrı K5 kaynak deposu `Madsc55/madsc-tv`: cache-save workflow run `39863242921` başarılıydı. Tarih geçmişi normalizasyonu ve ek test kapısını içeren run `39863524500` son kontrol anında `in_progress`; run bitmeden K5 tarih düzeltmesi için CI kabulü verilmez.
 - K5 yeni testleri: gelecekteki timestamp, naive timestamp, bozuk/eski kayıt, UTC offset ve tam 7 günlük sınır; bunlar ayrı unit-test kapısı olarak workflow'da ffmpeg kurulumu ve canlı keşiften önce çalıştırılıyor.
 - Kabul sayaçları aynı kalır: legacy behavior 0/92, runtime security 0/26, independent main tasks 0/22. Production acceptance false.
+
+## K5 devam — CI doğrulaması ve Legacy Batch 06 (2026-10-23)
+- Birleşik aday raporu run `39863524500` tamamlandı: success. Job logunda cache restore `kanal-kararlilik-39863242921` anahtarından başarılı; tarih regresyon testleri 5/5 geçti; güncellenmiş `KARARLILIK_GECMISI.json` `kanal-kararlilik-39863524500` anahtarıyla kaydedildi. Bu run, bir önceki geçmişin restore edilip yeni anahtar altında kaydedildiğini doğrular; bir sonraki ayrı run'ın yeni anahtarı restore etmesi için ayrıca takip gerekir.
+- Aynı run: `tests/test_kararlilik_gecmis.py` 5 test, tümü başarılı: future/naive timestamp reddi, naive `now` reddi, malformed/old/non-mapping kayıtları dışlama, timezone offset -> UTC ve tam 7 günlük sınır.
+- Batch 06'da üç eski workflow incelendi: `besinci-zaman-asimi-test.yml`, `dokuzuncu-akilli-tekrar-test.yml`, `onikinci-hata-siniflandirma-test.yml`. Davranış sözleşmeleri `docs/LEGACY_WORKFLOW_BEHAVIOR_REVIEW_BATCH_06_2026-10-23.md` içinde. Kümülatif statik inceleme 18/92; kabul 0/92.
+- Dokuzuncu scheduler kaynağında belirsiz bir davranış riski belgelendi: naive timestamp `astimezone(UTC)` ile runner'ın yerel timezone'una göre yorumlanıyor; testlerde sabit timezone ve naive timestamp politikası eklenmeden eşdeğerlik kabul edilmemeli.
+- Batch 06 doküman commit'i `f66b1b2df807a9b71dfdb53b919395402b4f9d95`.
+- Kalan kabul sayaçları değişmedi: 92 workflow 0/92; runtime security 0/26; independent main tasks 0/22; production acceptance false. Üretim playlist/EPG/cihaz/yedekleri değiştirilmedi.

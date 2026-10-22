@@ -100,7 +100,7 @@ class SourceImportTests(unittest.TestCase):
                 '#EXTINF:-1 tvg-id="first" TVG-ID="second",Channel',
                 '#EXTINF:-1 group-title="News" group-title="Sports",Channel',
             ):
-                p.write_text("#EXTM3U\\n" + metadata + "\\nhttps://example.org/live\\n",
+                p.write_text("#EXTM3U\n" + metadata + "\nhttps://example.org/live\n",
                              encoding="utf-8")
                 with self.subTest(metadata=metadata), self.assertRaisesRegex(
                         ValueError, "Duplicate metadata attribute"):

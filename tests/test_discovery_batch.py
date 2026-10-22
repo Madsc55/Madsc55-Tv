@@ -50,6 +50,14 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertFalse(result["production_writes"])
         self.assertFalse(result["ibo_device_verified"])
 
+    def test_nfkc_equivalent_source_labels_are_ambiguous(self):
+        feed = "#EXTM3U\\n#EXTINF:-1,Test\\nhttps://example.org/live\\n"
+        sources = {"Feed": feed, "Ｆｅｅｄ": feed}
+        for entrypoint in (corroborate_sources, build_m3u8_preview):
+            with self.subTest(entrypoint=entrypoint.__name__):
+                with self.assertRaisesRegex(ValueError, "Ambiguous duplicate source names"):
+                    entrypoint(sources)
+
     def test_known_urls_requires_set(self):
         with self.assertRaises(ValueError):
             corroborate_sources({"a": "#EXTM3U"}, known_urls=["https://example.org/a"])

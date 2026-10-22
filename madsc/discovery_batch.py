@@ -149,10 +149,17 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
                        "source_count": len(row["source_fingerprints"]),
                        "sources": sorted(row["sources"]),
                        "url_variants": len(row["urls"]),
+                       # A distinct feed inventory is not proof of an
+                       # independently operated/licensed source. Keep this
+                       # explicit so downstream consumers cannot promote the
+                       # count into a verified-source claim.
+                       "source_independence_verified": False,
                        "status": "REVIEW_REQUIRED_NOT_LIVE_VERIFIED"})
     output.sort(key=lambda x: (-x["source_count"], -x["url_variants"], x["identity_sha256"]))
     return {"sources_checked": len(reports), "source_reports": reports,
             "identity_candidates": output, "known_urls_supplied": len(known),
+            "source_count_semantics": "distinct_semantic_feed_inventories_not_verified_origins",
+            "source_independence_verified": False,
             "production_writes": False, "live_verified": False}
 
 

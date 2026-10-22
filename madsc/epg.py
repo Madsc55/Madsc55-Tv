@@ -19,7 +19,12 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     root = ET.fromstring(xmltv.read_bytes())
     if root.tag != "tv":
         raise ValueError("Expected XMLTV tv root")
-    channel_ids = {node.attrib["id"] for node in root.findall("channel") if "id" in node.attrib}
+    raw_channel_ids = [node.attrib.get("id", "").strip() for node in root.findall("channel")]
+    if any(not channel_id for channel_id in raw_channel_ids):
+        raise ValueError("XMLTV channel is missing a nonempty id")
+    if len(raw_channel_ids) != len(set(raw_channel_ids)):
+        raise ValueError("Duplicate XMLTV channel id")
+    channel_ids = set(raw_channel_ids)
     program_ids = {node.attrib["channel"] for node in root.findall("programme") if "channel" in node.attrib}
     missing = sorted(set(ids) - channel_ids - {""})
     return {"playlist_channels": len(ids), "missing_tvg_id": sum(not x for x in ids),

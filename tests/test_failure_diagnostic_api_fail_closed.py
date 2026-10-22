@@ -98,6 +98,32 @@ class DiagnosticApiFailClosedTests(unittest.TestCase):
                     origin, artifact, archive, fetch=fetch)
 
 
+    def test_malformed_api_record_shapes_rejected_as_value_errors(self):
+        for mismatch in ("artifact_item", "artifact_workflow_run",
+                         "run_repository_object", "head_repository_object"):
+            origin, artifact, archive = evidence()
+            original_fetch, _ = fetcher(origin, artifact)
+
+            def fetch(url, token=None):
+                data = original_fetch(url, token=token)
+                if "/artifacts?" in url:
+                    if mismatch == "artifact_item":
+                        data["artifacts"].append(None)
+                        data["total_count"] = 2
+                    elif mismatch == "artifact_workflow_run":
+                        data["artifacts"][0]["workflow_run"] = "invalid"
+                elif "/actions/runs/" in url:
+                    if mismatch == "run_repository_object":
+                        data["repository"] = "invalid"
+                    elif mismatch == "head_repository_object":
+                        data["head_repository"] = "invalid"
+                return data
+
+            with self.subTest(mismatch=mismatch), self.assertRaises(ValueError):
+                verify_failure_diagnostic_evidence(
+                    origin, artifact, archive, fetch=fetch)
+
+
 
 if __name__ == "__main__":
     unittest.main()

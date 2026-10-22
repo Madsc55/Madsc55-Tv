@@ -340,3 +340,15 @@ class ChannelTests(unittest.TestCase):
         record = {"url_sha256": "a" * 64, "ffprobe": {"streams": [], "format": {}}}
         with self.assertRaises(ValueError):
             summarize_offline_probe_evidence([record, record])
+
+    def test_continuity_rejects_future_and_old_timestamps(self):
+        from madsc.channel_test import evaluate_three_stage_continuity
+        base = {"url_sha256": "a" * 64, "http_status": 200,
+                "video": True, "audio": True, "duration_seconds": 40}
+        for bad_time in ("2099-01-01T00:00:00Z", "2001-01-01T00:00:00Z"):
+            with self.subTest(bad_time=bad_time), self.assertRaises(ValueError):
+                evaluate_three_stage_continuity([
+                    {**base, "observed_at": bad_time},
+                    {**base, "observed_at": "2026-10-20T06:00:00Z"},
+                    {**base, "observed_at": "2026-10-20T12:00:00Z"}])
+

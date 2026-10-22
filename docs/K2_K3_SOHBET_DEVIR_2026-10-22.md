@@ -40,3 +40,16 @@
 - Bu ek commitler GitHub'a kaydedildi; bu sohbet henüz Python testlerini çalıştırmadı. Önce yeni testlerin mevcut fixture yapısına uygunluğunu ve toplu unittest/pytest çalışmasını doğrula. K2/K3 gerçek üretim kanıtı ve cihaz kabulü açık.
 - Özellikle tests/test_artifact_handoff.py içindeki yeni testlerin self.discovery ve self.envelope fixture'larının mevcut olup olmadığını kontrol et; yanlış fixture varsa düzelt. K3'te 3 ayrı >=6 saat ölçüm ve gerçek kaynak/ffprobe kanıtı olmadan üretim onayı verme.
 - Korunan dosyalara dokunma; canlı yayın veya GitHub Actions tetikleme için ayrıca izin gerekir.
+
+## Son K2/K3 ilerleme — 22 Ekim
+
+- 967e238 ve 56c6bdf: alternatif kaynakların canonical birincil kimliğe bağlanması ve ters/zincir eşleştirme regresyonları.
+- f46156a, f859671 ve ef15f5e: handoff tvg-id güvenli karakter doğrulaması ve test.
+- d69631d ve 35a4438: kanal adı, logo ve grup metadata doğrulaması ve test.
+- 8c60ccc ve 494b47a: doğrudan handoff için 20.000 aday/alternatif sınırları ve test.
+- 21bf6d1 ve 17e6299: probe, continuity ve IBO kanıt haritalarında 20.000 sınırı ve test.
+- 5b7f7e1 ve c63cb1b: kanıt haritası anahtarlarında canonical SHA-256 kontrolü ve test.
+- 7b1bac6 ve 888137f: alternatif ilişki SHA-256 kontrolü ve test.
+- 6477dc3: alternatifin ana kaynak diye kullanılmasını engelleyen ek koruma; henüz test çalıştırılmadı.
+- Diğer sohbetler aynı anda ortak kaynak snapshot, K3 evidence loader ve K1/K5 düzeltmelerini yaptı. Son görülen HEAD 65027d921d; her işlemden önce güncel HEAD ve blob SHA kontrol edilmeli.
+- Testler bu sohbet tarafından çalıştırılıp doğrulanmadı. Devir notunu gerçek yeşil test raporu yerine kullanma; yeni testler ve tüm K2/K3 paketi toplu doğrulanmalı. Üretim playlist/EPG/logo/favori/arşiv/yedek korunur; canlı probelar/Actions izinsiz başlatılmaz.

@@ -198,6 +198,52 @@ class DiagnosticApiFailClosedTests(unittest.TestCase):
                     origin, artifact, archive, fetch=fetch)
 
 
+    def test_artifact_repository_and_branch_metadata_must_match_run(self):
+        for mismatch in ("repository_id", "head_repository_id", "head_branch"):
+            origin, artifact, archive = evidence()
+            original_fetch, _ = fetcher(origin, artifact)
+
+            def fetch(url, token=None):
+                data = original_fetch(url, token=token)
+                if "/artifacts?" in url:
+                    workflow_run = data["artifacts"][0]["workflow_run"]
+                    if mismatch == "repository_id":
+                        workflow_run["repository_id"] = 999
+                    elif mismatch == "head_repository_id":
+                        workflow_run["head_repository_id"] = 999
+                    else:
+                        workflow_run["head_branch"] = "other-branch"
+                elif "/actions/runs/" in url:
+                    data["repository"]["id"] = 123
+                    data["head_repository"]["id"] = 123
+                return data
+
+            with self.subTest(mismatch=mismatch), self.assertRaises(ValueError):
+                verify_failure_diagnostic_evidence(
+                    origin, artifact, archive, fetch=fetch)
+
+    def test_matching_artifact_repository_and_branch_metadata_is_allowed(self):
+        origin, artifact, archive = evidence()
+        original_fetch, _ = fetcher(origin, artifact)
+
+        def fetch(url, token=None):
+            data = original_fetch(url, token=token)
+            if "/artifacts?" in url:
+                workflow_run = data["artifacts"][0]["workflow_run"]
+                workflow_run.update(repository_id=123,
+                                    head_repository_id=123,
+                                    head_branch=origin["branch"])
+            elif "/actions/runs/" in url:
+                data["repository"]["id"] = 123
+                data["head_repository"]["id"] = 123
+            return data
+
+        result = verify_failure_diagnostic_evidence(
+            origin, artifact, archive, fetch=fetch)
+        self.assertTrue(result["diagnostic_artifact_api_origin_verified"])
+        self.assertFalse(result["behavioral_parity_accepted"])
+
+
 
 if __name__ == "__main__":
     unittest.main()

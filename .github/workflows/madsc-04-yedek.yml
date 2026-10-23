@@ -65,6 +65,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
       - name: Upload K4 restore drill evidence
+        if: ${{ inputs.allow_parity_evidence != true }}
         uses: actions/upload-artifact@v4
         with:
           name: madsc-k4-restore-drill

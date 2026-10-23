@@ -177,7 +177,10 @@ def run():
     report = {"stage": "K3_REAL_TURKISH_TV_VIDEO_PILOT", "tested": tv_tested,
               "source_rows_scanned": min(source_rows, MAX_SOURCE_ROWS),
               "source_scan_limit": MAX_SOURCE_ROWS,
-              "video_verified": len(verified), "radio_excluded": sum(x["status"] == "radio_excluded" for x in results),
+              "video_verified": len(verified),
+              "video_audio_verified": sum(x["status"] == "video_audio_detected" for x in results),
+              "video_only_detected": sum(x["status"] == "video_detected" for x in results),
+              "radio_excluded": sum(x["status"] == "radio_excluded" for x in results),
               "playlist_modified": False, "language_confirmed_by_audio": False,
               "results": results, "verified_metadata": verified}
     out = Path("reports/k3-turkish-tv-video-pilot.json")

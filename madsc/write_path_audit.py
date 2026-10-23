@@ -148,13 +148,14 @@ def enforce_local_output_path(destination: Path, *, allowed_root: Path | None = 
                                allow_existing_regular_file=False)
 
 
-def enforce_local_append_path(destination: Path) -> dict:
-    """Validate an explicitly requested summary append, including protected ancestors.
+def enforce_local_append_path(destination: Path, *, allowed_root: Path | None = None) -> dict:
+    """Preflight a summary append, optionally confined to an explicit sandbox.
 
-    Existing targets must be regular files with a single hardlink. This does
-    not authorize appending to production files or intercept other writers.
+    Existing targets must be regular files with a single hardlink. Callers
+    should pass allowed_root for isolated writes; this is not an atomic writer
+    and does not authorize production writes or intercept other processes.
     """
-    return _enforce_local_path(destination, allowed_root=None,
+    return _enforce_local_path(destination, allowed_root=allowed_root,
                                allow_existing_regular_file=True)
 
 

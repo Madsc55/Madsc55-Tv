@@ -265,6 +265,34 @@ def _process_contract(node: ast.Call, bindings=None) -> dict | None:
           and command.elts[0].value.id == "sys"
           and command.elts[0].attr == "executable"):
         executable = "sys.executable"
+    keywords = {keyword.arg: keyword.value for keyword in node.keywords
+                if keyword.arg is not None}
+
+    def subprocess_constant(keyword, attribute):
+        value = keywords.get(keyword)
+        return (isinstance(value, ast.Attribute)
+                and isinstance(value.value, ast.Name)
+                and value.value.id == "subprocess"
+                and value.attr == attribute)
+
+    capture_output = (isinstance(keywords.get("capture_output"), ast.Constant)
+                      and keywords["capture_output"].value is True)
+    stdin_status = ("devnull" if subprocess_constant("stdin", "DEVNULL") else
+                    "inherited" if "stdin" not in keywords and not unpacked_keywords else
+                    "dynamic")
+    stdout_status = ("captured" if capture_output
+                     or subprocess_constant("stdout", "PIPE")
+                     or name == "subprocess.check_output" else
+                     "inherited" if "stdout" not in keywords and not unpacked_keywords else
+                     "dynamic")
+    stderr_status = ("captured" if capture_output
+                     or subprocess_constant("stderr", "PIPE") else
+                     "inherited" if "stderr" not in keywords and not unpacked_keywords else
+                     "dynamic")
+    stdio_bounded = (shell_status in {"default_false", "explicit_false"}
+                     and stdin_status == "devnull"
+                     and stdout_status == "captured"
+                     and stderr_status == "captured")
     return {
         "process_shell_status": shell_status,
         "process_shell_disabled_verified": shell_status in {"default_false", "explicit_false"},
@@ -272,8 +300,15 @@ def _process_contract(node: ast.Call, bindings=None) -> dict | None:
         "process_argv_container_verified": argv_container,
         "process_literal_argv_verified": literal_argv,
         "process_executable_syntax": executable,
+        "process_stdin_syntax": stdin_status,
+        "process_stdout_syntax": stdout_status,
+        "process_stderr_syntax": stderr_status,
+        "process_stdio_bounded_verified": stdio_bounded,
         "process_effect_verified_read_only": False,
-        "process_assessment": "command effects require review even when shell use is disabled",
+        "process_assessment": (
+            "stdio is source-bound and bounded; filesystem/network command effects still require review"
+            if stdio_bounded else
+            "command stdio and effects require review even when shell use is disabled"),
     }
 
 

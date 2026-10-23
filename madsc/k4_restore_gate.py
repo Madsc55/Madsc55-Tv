@@ -81,22 +81,26 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
         actual_files = set()
         actual_dirs = set()
         inspected = 0
-        for item in root.rglob("*"):
-            inspected += 1
-            if inspected > 20000:
-                inventory_matches = False
-                break
-            relative = item.relative_to(root).as_posix()
-            if item.is_symlink():
-                inventory_matches = False
-                break
-            if item.is_dir():
-                actual_dirs.add(relative)
-            elif item.is_file():
-                actual_files.add(relative)
-            else:
-                inventory_matches = False
-                break
+        try:
+            for item in root.rglob("*"):
+                inspected += 1
+                if inspected > 20000:
+                    inventory_matches = False
+                    break
+                relative = item.relative_to(root).as_posix()
+                if item.is_symlink():
+                    inventory_matches = False
+                    break
+                if item.is_dir():
+                    actual_dirs.add(relative)
+                elif item.is_file():
+                    actual_files.add(relative)
+                else:
+                    inventory_matches = False
+                    break
+        except OSError:
+            # Unreadable or disappearing entries cannot establish a complete inventory.
+            inventory_matches = False
         if actual_files != expected_files or actual_dirs != expected_dirs:
             inventory_matches = False
     accepted = result["independent_sandbox_restore_matches"] is True and inventory_matches

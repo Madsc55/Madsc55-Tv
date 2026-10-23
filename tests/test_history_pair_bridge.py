@@ -93,6 +93,18 @@ class HistoryPairBridgeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Duplicate history JSON key"):
             decode_pair(nested)
 
+    def test_nonfinite_history_numbers_are_rejected(self):
+        for value in (float("nan"), float("inf"), float("-inf")):
+            with self.subTest(value=value):
+                invalid = pair("2026-10-19T12:00:00Z", value, "PASS")
+                with self.assertRaisesRegex(ValueError, "valid JSON"):
+                    encode_pair(invalid)
+        for constant in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(constant=constant):
+                raw = '{"schema":1,"payload":' + constant + ',"sha256":"' + "0" * 64 + '"}'
+                with self.assertRaisesRegex(ValueError, "Non-finite"):
+                    decode_pair(raw)
+
     def test_symlink_legacy_input_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

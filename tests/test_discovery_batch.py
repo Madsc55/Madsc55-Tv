@@ -482,3 +482,13 @@ class DiscoveryBatchTests(unittest.TestCase):
     def test_large_source_fails_closed(self):
         with self.assertRaises(ValueError):
             parse_m3u("#EXTM3U" + "x" * 8_000_001, "a")
+
+
+    def test_malformed_extinf_rows_count_toward_source_limit(self):
+        feed = "#EXTM3U\n" + ("#EXTINF:-1,\nhttps://example.org/rejected\n" * 3)
+        with self.assertRaisesRegex(ValueError, "bounded candidate limit"):
+            parse_m3u(feed, "source", max_entries=2)
+
+    def test_valid_extinf_rows_still_fit_source_limit(self):
+        feed = "#EXTM3U\n#EXTINF:-1,One\nhttps://example.org/one\n"
+        self.assertEqual(parse_m3u(feed, "source", max_entries=1)["entries"], 1)

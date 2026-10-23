@@ -40,8 +40,7 @@ jobs:
         id: parity_consumer
         shell: bash
         run: |
-          mkdir -p reports/k4-source/nested
-          printf 'k4 fixture backup and restore\\n' > reports/k4-source/nested/sample.txt
+          python -m madsc.k4_fixture_seed
           if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then sha256sum reports/k4-source/nested/sample.txt > reports/parity-input-before.sha256; fi
           if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then
             python -m madsc.parity_consumer_cli --consumer k4 --timeout-seconds 120

@@ -18,6 +18,11 @@ class K4WorkflowSafetyContractTests(unittest.TestCase):
         self.assertIn("K4_PRODUCTION_RESTORE_ENABLED: 'false'", source)
         self.assertIn("Confirm K4 is an isolated fixture-only workflow", source)
 
+    def test_opt_in_parity_does_not_require_missing_restore_drill_artifact(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("      - name: Upload K4 restore drill evidence\n        if: ${{ inputs.allow_parity_evidence != true }}\n        uses: actions/upload-artifact@v4", source)
+        self.assertIn("      - name: Upload K4 parity manifest (explicit opt-in only)", source)
+
     def test_fixture_workflow_does_not_claim_external_acceptance(self):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("madsc.restore_drill", source)

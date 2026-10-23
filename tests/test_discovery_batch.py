@@ -142,6 +142,12 @@ class DiscoveryBatchTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_m3u8_preview(feeds)
 
+    def test_m3u_header_rejects_whitespace_aliases(self):
+        for header in (" #EXTM3U", "#EXTM3U ", "#EXTM3U\t"):
+            with self.subTest(header=repr(header)):
+                with self.assertRaisesRegex(ValueError, "Missing M3U header"):
+                    parse_m3u(header + "\n", "fixture")
+
     def test_lookalike_identity_metadata_is_rejected(self):
         for key in ("xtvg-id", "xtvg-logo", "xgroup-title"):
             with self.subTest(key=key):

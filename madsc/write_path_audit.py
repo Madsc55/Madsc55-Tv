@@ -29,6 +29,11 @@ def audit_write_paths(paths: list[str]) -> dict:
         if len(raw) > 4096:
             rejected.append(raw)
             continue
+        # The repository gate receives Git paths, not platform-specific drive
+        # paths. Reject path strings with an absolute Windows drive prefix.
+        if len(raw) >= 2 and raw[0].isalpha() and raw[1] == ":":
+            rejected.append(raw)
+            continue
         name = raw.replace(chr(92), "/")
         normalized = unicodedata.normalize("NFKC", name).casefold()
         duplicate = normalized in seen

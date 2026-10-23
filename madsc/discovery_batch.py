@@ -42,6 +42,10 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     # as line breaks. Those could hide controls inside EXTINF metadata.
     if any(ch in text for ch in ("\x0b", "\x0c", "\x1c", "\x1d", "\x1e", "\x85", "\u2028", "\u2029")):
         raise ValueError("M3U contains unsupported line separators")
+    # Bare carriage returns can also split an EXTINF row. Accept CRLF,
+    # but fail closed on standalone CR instead of silently changing records.
+    if "\r" in text.replace("\r\n", ""):
+        raise ValueError("M3U contains unsupported bare carriage returns")
     lines = text.removeprefix("\ufeff").splitlines()
     if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Missing M3U header")

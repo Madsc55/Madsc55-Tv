@@ -624,6 +624,19 @@ def mutate(path, fd):
         self.assertEqual([row["api"] for row in rows], ["shutil.copyfileobj"])
         self.assertTrue(rows[0]["review_required"])
 
+    def test_descriptor_transfer_writes_are_inventoried(self):
+        source = (
+            "import os\n"
+            "def transfer(src, dst):\n"
+            "    os.sendfile(dst, src, 0, 10)\n"
+            "    os.copy_file_range(src, dst, 10)\n"
+            "    os.splice(src, dst, 10)\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["os.sendfile", "os.copy_file_range", "os.splice"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

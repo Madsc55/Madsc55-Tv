@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timezone
-from madsc.trial_epg_matching import matches, playlist_entries, programme_coverage
+from madsc.trial_epg_matching import matches, playlist_entries, programme_coverage, coverage_summary
 
 XML = '<tv><channel id="a"><display-name>TRT 1</display-name></channel><channel id="b"><display-name>TV 8</display-name></channel><channel id="c"><display-name>TV-8</display-name></channel></tv>'
 class TrialEpgMatchingTest(unittest.TestCase):
@@ -74,6 +74,16 @@ class TrialEpgMatchingTest(unittest.TestCase):
         self.assertEqual(row["status"], "exact_unique")
         self.assertEqual(row["matched_id"], "turkish")
 
+    def test_coverage_summary_counts_unmatched_and_current_programmes(self):
+        xml = '<tv><channel id="a"/><programme channel="a" start="20261023100000 +0000" stop="20261023110000 +0000"/></tv>'
+        playlist = '#EXTINF:-1 tvg-id="a",TRT 1\n#EXTINF:-1,Unknown'
+        rows = programme_coverage(playlist, xml, datetime(2026, 10, 23, 10, 30, tzinfo=timezone.utc))
+        summary = coverage_summary(rows)
+        self.assertEqual(summary["total_channels"], 2)
+        self.assertEqual(summary["existing_valid"], 1)
+        self.assertEqual(summary["unmatched"], 1)
+        self.assertEqual(summary["with_programmes"], 1)
+        self.assertEqual(summary["with_current_programmes"], 1)
     def test_existing_id(self):
         self.assertEqual(matches('#EXTINF:-1 tvg-id="a",Other', XML)[0]["status"], "existing_valid")
     def test_duplicate_xmltv_channel_ids_fail_closed(self):

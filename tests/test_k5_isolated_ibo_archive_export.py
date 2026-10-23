@@ -180,6 +180,18 @@ class K5IboArchiveExportTests(unittest.TestCase):
                         export_6115_archive_manifest(self.urls, destination)
                     self.assertFalse(destination.exists())
 
+    def test_destination_symlink_is_rejected_without_touching_target(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            real = root / "real-directory"
+            real.mkdir()
+            destination = root / "alias-directory"
+            destination.symlink_to(real, target_is_directory=True)
+            with self.assertRaises(FileExistsError):
+                export_6115_archive_manifest(self.urls, destination)
+            self.assertEqual(list(real.iterdir()), [])
+            self.assertTrue(destination.is_symlink())
+
     def test_root_and_dot_destinations_fail_without_writing(self):
         with TemporaryDirectory() as tmp:
             with self.assertRaises((PermissionError, FileExistsError)):

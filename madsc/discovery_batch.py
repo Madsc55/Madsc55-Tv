@@ -23,7 +23,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         raise ValueError("Source and M3U text are required")
     # Source names are provenance labels, not arbitrary control sequences.
     # Reject embedded controls before they can contaminate audit reports.
-    if any(ord(ch) < 32 or ord(ch) == 127 for ch in source):
+    if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in source):
         raise ValueError("Source name contains control characters")
     # Surrogate code points cannot be represented in UTF-8 output and must
     # fail at ingestion rather than during downstream hashing or rendering.
@@ -157,7 +157,7 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Combined source text exceeds bounded input limit")
     # Validate provenance labels before URL normalization and aggregation.
     # Avoid parsing each M3U twice just to reject malformed source names.
-    if any(any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF
+    if any(any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
                for ch in source) for source in sources):
         raise ValueError("Invalid source name: control characters or UTF-8 surrogates")
     known = {normalize_url(url) for url in (known_urls or set())}

@@ -105,6 +105,18 @@ class HistoryPairBridgeTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Non-finite"):
                     decode_pair(raw)
 
+    def test_unpaired_surrogate_history_data_rejected_cleanly(self):
+        import hashlib
+        invalid = pair("2026-10-19T12:00:00Z", 2, "PASS")
+        invalid["gecmis.json"]["history"]["candidate"]["last_result"] = "\\ud800"
+        with self.assertRaisesRegex(ValueError, "valid JSON"):
+            encode_pair(invalid)
+        raw_payload = json.dumps(invalid, ensure_ascii=True)
+        # The JSON decoder accepts escaped lone surrogates, but UTF-8 hashing must not.
+        raw = json.dumps({"schema": 1, "payload": json.loads(raw_payload), "sha256": "0" * 64})
+        with self.assertRaisesRegex(ValueError, "Invalid history payload JSON"):
+            decode_pair(raw)
+
     def test_symlink_legacy_input_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

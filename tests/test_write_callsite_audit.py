@@ -773,6 +773,18 @@ def mutate(path, fd):
         self.assertTrue(all(row["process_shell_status"] == "implicit_shell"
                             for row in rows))
 
+    def test_os_startfile_external_launcher_is_reviewed(self):
+        source = (
+            "import os\n"
+            "def launch(path):\n"
+            "    os.startfile(path)\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["api"].split(" [")[0], "os.startfile")
+        self.assertTrue(rows[0]["review_required"])
+        self.assertFalse(rows[0]["process_effect_verified_read_only"])
+
     def test_os_exec_process_replacements_are_reviewed(self):
         source = (
             "import os\n"

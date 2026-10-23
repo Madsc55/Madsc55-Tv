@@ -229,6 +229,13 @@ async def async_outer(value=path.touch()):
         self.assertTrue(all(row["scope"] == "<module>" for row in rows))
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_lambda_default_mutation_is_in_outer_scope(self):
+        source = "def outer(path):\n    callback = lambda value=path.touch(): value\n"
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["api"], "path.touch")
+        self.assertEqual(rows[0]["scope"], "outer")
+
     def test_tree_scan_rejects_symlinked_python_source(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

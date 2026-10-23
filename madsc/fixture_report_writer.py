@@ -16,7 +16,7 @@ def _validated_fixture_root(root: Path) -> Path:
     raw = str(root)
     candidate = Path(root)
     normalized = unicodedata.normalize("NFKC", raw)
-    if (not candidate.is_absolute() or len(raw) > 4096
+    if (normalized != raw or not candidate.is_absolute() or len(raw) > 4096
             or "\\" in raw or "\\" in normalized
             or normalized.count("/") != raw.count("/")
             or ":" in normalized

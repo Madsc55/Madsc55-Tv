@@ -236,6 +236,22 @@ async def async_outer(value=path.touch()):
         self.assertEqual(rows[0]["api"], "path.touch")
         self.assertEqual(rows[0]["scope"], "outer")
 
+    def test_special_file_and_extended_attribute_mutations(self):
+        source = (
+            "import os\n"
+            "def change(path):\n"
+            "    os.mkfifo(path)\n"
+            "    os.mknod(path)\n"
+            "    os.setxattr(path, 'user.flag', b'1')\n"
+            "    os.removexattr(path, 'user.flag')\n"
+            "    path.chown(1, 1)\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["os.mkfifo", "os.mknod", "os.setxattr",
+                          "os.removexattr", "path.chown"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_tree_scan_rejects_symlinked_python_source(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

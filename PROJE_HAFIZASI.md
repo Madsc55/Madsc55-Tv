@@ -1202,3 +1202,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `cd9e164efe14ff2510c5bf98fdfa758d62e680f3`: manifest input ve execution snapshot okuyucularının portable `os.open` bayrakları tek kaynak-bağlı salt-okunur ifadeye alındı; iki false-positive aday `proven_read_only_descriptor` oldu.
 - Exact uzak SHA'da hedefli 90/90, tam offline 1373/1373; beş izole K kapısı ve tüm offline kapılar başarılı. Envanter 107 dosya/143 aday/15 disposition. Kabul 0/92, 0/26, 0/22, production false.
 - Sonraki yerel inceleme gerçek fixture/not-writer replace/delete yollarıdır. Gerçek bağımsız artifact/run, restore ve son kullanıcı cihaz kanıtı bekleniyor; korunan veri veya dış sistem işlemi yapılmadı.
+
+
+## 23 Ekim 2026 — K1 legacy not atomic replacement
+- `8f8251a43d005b2bcb040739a3fc1c5725f333d3`: legacy not birleştirici K1 replace guard, exclusive/no-follow temp, kimlik doğrulama ve descriptor-relative `os.replace` kullanıyor. Temp symlink dış yazması engelli; mevcut merged belge güvenli atomik yenileniyor.
+- `docs/eski_depo_not_arsivi/` açık korunan path fragment olarak eklendi ve `--remove-archived-notes` tüm mutasyonlardan önce reddediliyor. Arşive veya gerçek birleşik belgeye bu çalışmada yazılmadı.
+- Exact uzak SHA: hedefli 128/128, tam offline 1385/1385; beş izole kapı ve tüm offline kapılar başarılı. Envanter 107 dosya/142 aday/17 disposition. İlk 2 hedefli failure başarı sayılmadan düzeltildi.
+- Kabul 0/92, 0/26, 0/22, production false. Sıradaki yerel paket `core.py` izole fixture writer yollarıdır; dış kanıt ve son kullanıcı cihaz testi bekliyor.

@@ -37,8 +37,9 @@ class BackupManifestHardeningTests(unittest.TestCase):
             (root / 'good.txt').write_text('ok')
             manifest = snapshot_manifest(root, ['good.txt'])
             manifest[42] = 'invalid'
-            with self.assertRaises(ValueError):
+            with self.assertRaisesRegex(ValueError, 'field names'):
                 verify_manifest(root, manifest)
+            self.assertTrue(verify_manifest(root, snapshot_manifest(root, ['good.txt'])))
 
     def test_unknown_top_level_manifest_claims_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:

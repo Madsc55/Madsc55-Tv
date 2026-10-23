@@ -29,6 +29,12 @@ class TrialEpgMatchingTest(unittest.TestCase):
         rows = programme_coverage('#EXTINF:-1 tvg-id="a",Channel', xml)
         self.assertEqual(rows[0]["programme_count"], 0)
         self.assertFalse(rows[0]["has_programmes"])
+    def test_invalid_calendar_dates_and_offsets_do_not_count(self):
+        for timestamp in ("20260230120000 +0000", "20261023120000 +2500", "20261301120000 +0000"):
+            with self.subTest(timestamp=timestamp):
+                xml = '<tv><channel id="a"/><programme channel="a" start="' + timestamp + '"><title>Bad date</title></programme></tv>'
+                row = programme_coverage('#EXTINF:-1 tvg-id="a",Channel', xml)[0]
+                self.assertEqual(row["programme_count"], 0)
     def test_programme_coverage_rejects_entities(self):
         with self.assertRaisesRegex(ValueError, "DTD/entity"):
             programme_coverage('#EXTINF:-1,TRT 1', '<!DOCTYPE tv><tv/>')

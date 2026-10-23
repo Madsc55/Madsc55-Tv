@@ -141,6 +141,10 @@ def _classify_call(node: ast.Call) -> tuple[str, str]:
         for kw in node.keywords:
             if kw.arg == "flags":
                 flags = kw.value
+        # **options may supply or override flags, even when a literal
+        # O_RDONLY argument appears. Never certify such a call read-only.
+        if any(kw.arg is None for kw in node.keywords):
+            return "write_candidate", name + " [dynamic flags require review]"
         names = _flag_names(flags) if flags is not None else None
         if (names is not None and names and names <= _READ_ONLY_OPEN_FLAGS
                 and names & {"O_RDONLY", "O_PATH"}):

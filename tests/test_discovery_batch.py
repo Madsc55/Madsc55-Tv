@@ -677,3 +677,13 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertFalse(item["stream_license_verified"])
         self.assertFalse(item["source_independence_verified"])
         self.assertEqual(item["source_count"], 1)
+
+    def test_multibyte_m3u_exceeding_utf8_byte_limit_is_rejected(self):
+        feed = '#EXTM3U\n# ' + ('é' * 4_000_000)
+        with self.assertRaisesRegex(ValueError, "UTF-8 byte limit"):
+            parse_m3u(feed, "fixture")
+
+    def test_combined_multibyte_sources_enforce_utf8_byte_limit(self):
+        feed = '#EXTM3U\n# ' + ('é' * 2_100_000)
+        with self.assertRaisesRegex(ValueError, "bounded input limit"):
+            corroborate_sources({"one": feed, "two": feed})

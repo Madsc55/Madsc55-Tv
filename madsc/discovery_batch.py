@@ -102,6 +102,14 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 errors.append({"line": number, "reason": "invalid_metadata_attribute"})
                 discard_url_for_rejected_entry = True
                 continue
+            # Lookalike identity keys (e.g. xtvg-id) must not be treated as harmless metadata.
+            if any(name.casefold().endswith(("tvg-id", "tvg-logo", "group-title"))
+                   and name.casefold() not in {"tvg-id", "tvg-logo", "group-title"}
+                   for name, _ in attr_pairs):
+                pending = None
+                errors.append({"line": number, "reason": "invalid_metadata_attribute"})
+                discard_url_for_rejected_entry = True
+                continue
             attr_names = [name.casefold() for name, _ in attr_pairs]
             # Repeated attributes make channel identity ambiguous. Reject the
             # row instead of silently keeping the last value via dict().

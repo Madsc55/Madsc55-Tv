@@ -569,3 +569,16 @@ class DiscoveryBatchTests(unittest.TestCase):
                 self.assertEqual(report["candidate_rows"][0]["name"], "Good")
                 self.assertIn("invalid_url_control",
                               [error["reason"] for error in report["parse_errors"]])
+
+    def test_bare_carriage_return_cannot_split_extinf_metadata(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="bad\rid",Bad\n'
+                'https://example.org/bad\n')
+        with self.assertRaisesRegex(ValueError, "unsupported bare carriage returns"):
+            parse_m3u(feed, "fixture")
+
+    def test_mixed_lf_and_crlf_remains_supported(self):
+        feed = ('#EXTM3U\r\n'
+                '#EXTINF:-1,Good\n'
+                'https://example.org/good\r\n')
+        self.assertEqual(parse_m3u(feed, "fixture")["entries"], 1)

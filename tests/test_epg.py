@@ -5,6 +5,17 @@ from pathlib import Path
 from madsc.epg import check_epg_mapping
 
 class EpgTests(unittest.TestCase):
+
+    def test_malformed_tvg_id_forms_fail_closed(self):
+        for attribute in ('tvg-id=trt1.tr', 'tvg-id = "trt1.tr"', 'tvg-id="trt1.tr" tvg-id=other.tr'):
+            with self.subTest(attribute=attribute), tempfile.TemporaryDirectory() as d:
+                p = Path(d) / "playlist.m3u8"
+                e = Path(d) / "xmltv.xml"
+                p.write_text(f'#EXTM3U\n#EXTINF:-1 {attribute},TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+                e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "Malformed M3U tvg-id attribute"):
+                    check_epg_mapping(p, e)
+
     def test_malformed_extinf_directive_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "playlist.m3u8"

@@ -68,6 +68,12 @@ class TrialEpgMatchingTest(unittest.TestCase):
         row = matches('#EXTINF:-1,Cig SUO', xml)[0]
         self.assertEqual(row["status"], "exact_unique")
         self.assertEqual(row["matched_id"], "turk")
+    def test_decomposed_dotless_i_matches_turkish_channel(self):
+        xml = '<tv><channel id="turkish"><display-name>Yayın</display-name></channel></tv>'
+        row = matches('#EXTINF:-1,Yayi\u0307n', xml)[0]
+        self.assertEqual(row["status"], "exact_unique")
+        self.assertEqual(row["matched_id"], "turkish")
+
     def test_existing_id(self):
         self.assertEqual(matches('#EXTINF:-1 tvg-id="a",Other', XML)[0]["status"], "existing_valid")
     def test_duplicate_xmltv_channel_ids_fail_closed(self):

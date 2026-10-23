@@ -1,0 +1,10 @@
+# MADSC55-TV — K1–K5 ana denetim ve K3 izole EPG düzeltmesi (2026-10-23)
+
+- Başlangıç HEAD: c1d7cb12775e2aa461ef67412fb96e52a1f5c997.
+- Actions son doğrulanmış success: 39924407034; tested SHA 7f0e0187093033b5b7e7416422693581ae9b91c0. Bu çalışma sonraki commitleri test etmez. 39924305569 (34100654) failure; 39924293299 (7f3e7a49) cancelled. K4'ün 34100654 commit'ine doğrudan başarılı CI atfetme.
+- Okunan devirler: DEVAM_NOTU.md, docs/K1_DEVIR_NOTU_2026-10-23.md, docs/K5_SOHBET_DEVIR_2026-10-23.md; K4 kullanıcı devir talimatı. K2/K4/K5 kodları bu turda değiştirilmedi.
+- Kullanıcının IBO Player Pro'da yayın ve logo çalıştığı 1039 kayıtlı MADSC55_TV_IBO_CALISANLAR_TEST.m3u8 listesi salt-okunur incelendi: 1039 EXTINF, 236 boş tvg-id, 107 farklı dolu tvg-id; dolu ID'lerin 107'si birden fazla kayıtta kullanılıyor. Aynı kanalın kalite varyantları tekrar oluşturabilir; bu istatistik tek başına hata kanıtı değildir. Canlı XMLTV endpoint ve cihaz EPG kabulü doğrulanmadı.
+- K3 izole madsc/trial_epg_matching.py commit 1ba2a6be99ec5f9f456d055cdd8e2eea584e774f: quoted comma separator, duplicate tvg-id, bozuk EXTINF, XMLTV DTD/entity fail-closed, kanal adı sahte tvg-id ayrımı; mevcut ID ve kalite varyantı korunur. tests/test_trial_epg_matching.py commit 2c4a2324227c9691d7ef0838aaa4cf7bad60c640: ilgili regresyon senaryoları.
+- Bu commitler [skip ci] ile kaydedildi; yeni kod için gerçek unittest/Actions geçiş kanıtı YOK. Başarı iddiası yok; production_ready=false, device_verified=false. Testlerin gerçek çalıştırılması ve loglarının doğrulanması sıradaki zorunlu adım.
+- Açık işler: izole EPG XMLTV ID/programme/güncellik/URL denetimi, yabancı/çalışmayan/bekleyen kanalların ve geçmiş test/logo metadata'sının izole aktarımı; K1 runtime güvenlik, K2 kaynak/parity, K4 harici backup/restore ve 1/15 zamanlayıcı, K5 gerçek uçtan uca kanıt. Güncel görev defteri olmadan 92/26/22 kabul sayaçları artırılmaz. IBO cihaz testi en son kullanıcı tarafından yapılır.
+- Korunan eski IPTV sistemi, playlist/EPG/XMLTV, favoriler, kategori/sıra, logo, yedek/arşiv, PR #71 ve üretim dosyaları değiştirilmedi. GitHub Actions manuel dispatch/rerun yapılmadı.

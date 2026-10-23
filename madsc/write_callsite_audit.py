@@ -216,6 +216,49 @@ def _direct_guard_line(statement) -> int | None:
     return None
 
 
+def _process_contract(node: ast.Call) -> dict | None:
+    """Record syntactic subprocess facts without claiming command safety."""
+    name = _call_name(node)
+    if name not in _PROCESS_LAUNCHERS:
+        return None
+    unpacked_keywords = any(keyword.arg is None for keyword in node.keywords)
+    shell_value = next((keyword.value for keyword in node.keywords
+                        if keyword.arg == "shell"), None)
+    if name in {"os.system", "os.popen"}:
+        shell_status = "implicit_shell"
+    elif unpacked_keywords:
+        shell_status = "unknown_keyword_unpacking"
+    elif shell_value is None:
+        shell_status = "default_false"
+    elif isinstance(shell_value, ast.Constant) and shell_value.value is False:
+        shell_status = "explicit_false"
+    elif isinstance(shell_value, ast.Constant) and shell_value.value is True:
+        shell_status = "explicit_true"
+    else:
+        shell_status = "dynamic"
+    command = node.args[0] if node.args else None
+    literal_argv = (isinstance(command, (ast.List, ast.Tuple)) and bool(command.elts)
+                    and all(isinstance(item, ast.Constant)
+                            and isinstance(item.value, str) for item in command.elts))
+    executable = None
+    if literal_argv:
+        executable = command.elts[0].value
+    elif (isinstance(command, (ast.List, ast.Tuple)) and command.elts
+          and isinstance(command.elts[0], ast.Attribute)
+          and isinstance(command.elts[0].value, ast.Name)
+          and command.elts[0].value.id == "sys"
+          and command.elts[0].attr == "executable"):
+        executable = "sys.executable"
+    return {
+        "process_shell_status": shell_status,
+        "process_shell_disabled_verified": shell_status in {"default_false", "explicit_false"},
+        "process_literal_argv_verified": literal_argv,
+        "process_executable_syntax": executable,
+        "process_effect_verified_read_only": False,
+        "process_assessment": "command effects require review even when shell use is disabled",
+    }
+
+
 def _is_proven_text_receiver(node: ast.AST) -> bool:
     if isinstance(node, ast.Constant) and isinstance(node.value, str):
         return True
@@ -477,6 +520,9 @@ class _Scanner(ast.NodeVisitor):
                 "source_file_sha256": self.source_file_sha256,
                 "source_segment_sha256": hashlib.sha256(segment.encode("utf-8")).hexdigest(),
             }
+            process_contract = _process_contract(node)
+            if process_contract is not None:
+                base.update(process_contract)
             if classification != "write_candidate":
                 self.dispositions.append({
                     **base,

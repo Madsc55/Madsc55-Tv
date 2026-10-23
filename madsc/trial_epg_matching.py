@@ -138,6 +138,9 @@ def coverage_summary(rows):
     rows = list(rows)
     statuses = ("existing_valid", "exact_unique", "ambiguous", "unmatched")
     summary = {"total_channels": len(rows)}
+    summary["empty_tvg_id"] = sum(not (row.get("old_id") or "").strip() for row in rows)
+    summary["unresolved_tvg_id"] = sum(not row.get("matched_id") for row in rows)
+    summary["resolved_tvg_id"] = len(rows) - summary["unresolved_tvg_id"]
     for status in statuses:
         summary[status] = sum(row["status"] == status for row in rows)
     summary["with_programmes"] = sum(bool(row["has_programmes"]) for row in rows)

@@ -21,6 +21,8 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     # Directory entries also count toward the bounded traversal budget.
     if not isinstance(names, list) or any(not isinstance(name, str) for name in names):
         raise ValueError("Restore audit names must be a list of paths")
+    if not names:
+        raise ValueError("Restore audit requires at least one declared file")
     if len(names) > 20000:
         raise ValueError("Restore audit inventory exceeds safe entry limit")
     declared_dirs = set()

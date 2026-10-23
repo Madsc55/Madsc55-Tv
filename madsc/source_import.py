@@ -25,7 +25,11 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
             raise ValueError("Source exceeds 16 MiB safety limit")
     finally:
         os.close(fd)
-    lines = [x.strip() for x in raw.decode("utf-8-sig").splitlines() if x.strip()]
+    try:
+        decoded = raw.decode("utf-8-sig")
+    except UnicodeDecodeError as exc:
+        raise ValueError("Source playlist must be valid UTF-8 text") from exc
+    lines = [x.strip() for x in decoded.splitlines() if x.strip()]
     if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Invalid playlist header")
     rows = []

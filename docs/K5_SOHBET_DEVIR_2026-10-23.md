@@ -25,3 +25,5 @@ Sonraki: main HEAD ve Actions kontrolü, offline test hatalarını teşhis/düze
 - K5 regresyon testi düzeltmesi `63443de`: güvensiz hedef yol testindeki literal kaçış dizileri yerine gerçek kontrol/surrogate karakterleri `chr()` ile üretiliyor. Önceki test bu senaryoları doğru sınamıyordu. Test sonucu CI/yerel koşumla henüz doğrulanmadı.
 
 - K5 private export permissions: commit `139ed08` explicitly applies mode 0700 to the newly created isolated manifest directory and fails closed if permission adjustment fails; test `c1081d3` checks POSIX mode bits. Both commits use `[skip ci]`; no test/CI pass is claimed.
+
+- K5 symlink-destination regression test `be13cc5`: asserts an existing destination symlink is rejected and its target directory remains untouched. Commit uses `[skip ci]`; execution/CI not verified.

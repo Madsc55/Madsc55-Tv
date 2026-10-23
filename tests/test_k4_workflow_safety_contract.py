@@ -28,7 +28,8 @@ class K4WorkflowSafetyContractTests(unittest.TestCase):
         # A fixture-only workflow must not acquire provider credentials or
         # write permissions as part of routine maintenance.
         self.assertIn("persist-credentials: false", source)
-        self.assertIn("permissions:\n  contents: read", source)
+        self.assertIn("permissions:
+  contents: read", source)
         self.assertNotIn("contents: write", source)
         self.assertNotIn("id-token: write", source)
         self.assertNotIn("secrets.", source)
@@ -47,7 +48,8 @@ class K4WorkflowSafetyContractTests(unittest.TestCase):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("madsc.restore_drill", source)
         self.assertIn("reports/k4-source/nested/sample.txt", source)
-        self.assertIn("permissions:\n  contents: read", source)
+        self.assertIn("permissions:
+  contents: read", source)
         self.assertNotIn("contents: write", source)
         self.assertNotIn("id-token: write", source)
 

@@ -130,6 +130,17 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     # initial manifest verification but before the inventory was inspected.
     # A second independent read must agree with the first verified snapshot.
     if inventory_matches and result["independent_sandbox_restore_matches"] is True:
+        # Fail before the second content read if an audited root was swapped.
+        for root, identity in zip(roots, root_identities):
+            try:
+                metadata = root.lstat()
+                if not stat.S_ISDIR(metadata.st_mode) or (metadata.st_dev, metadata.st_ino) != identity:
+                    inventory_matches = False
+                    break
+            except OSError:
+                inventory_matches = False
+                break
+    if inventory_matches and result["independent_sandbox_restore_matches"] is True:
         confirmed = verify_independent_restore(source, backup, restored, names)
         inventory_matches = (confirmed["independent_sandbox_restore_matches"] is True
                              and snapshot_manifest(Path(source), names)["entries"] == initial_entries

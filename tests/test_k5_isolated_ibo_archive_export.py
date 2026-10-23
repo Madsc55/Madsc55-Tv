@@ -103,6 +103,18 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     # Inspect the valid parent instead to prove no output was made.
                     self.assertEqual(list(Path(tmp).iterdir()), [])
 
+    def test_total_multibyte_destination_length_is_bounded_in_bytes(self):
+        with TemporaryDirectory() as tmp:
+            # Each component fits within 255 UTF-8 bytes, but the complete
+            # pathname exceeds the conservative 4096-byte boundary.
+            component = "é" * 100
+            destination = Path(tmp).joinpath(*([component] * 21))
+            self.assertLess(len(str(destination)), 4096)
+            self.assertGreater(len(str(destination).encode("utf-8")), 4096)
+            with self.assertRaisesRegex(PermissionError, "Oversized destination"):
+                export_6115_archive_manifest(self.urls, destination)
+            self.assertEqual(list(Path(tmp).iterdir()), [])
+
     def test_manifest_file_has_private_permissions(self):
         if os.name != "posix":
             self.skipTest("POSIX permission bits unavailable")

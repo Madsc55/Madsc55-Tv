@@ -1,6 +1,7 @@
 """Restricted writers for isolated evidence; not a repository-wide write gate."""
 import os
 import stat
+import unicodedata
 from pathlib import Path
 from madsc.write_path_audit import (enforce_write_paths, enforce_local_output_path,
                                     enforce_local_turkish_tv_test_playlist,
@@ -14,8 +15,16 @@ def _validated_fixture_root(root: Path) -> Path:
     """Reject relative and lexical traversal roots before any normalization."""
     raw = str(root)
     candidate = Path(root)
-    if (not candidate.is_absolute() or
-            any(part in (".", "..") for part in raw.replace("\\", "/").split("/"))):
+    normalized = unicodedata.normalize("NFKC", raw)
+    if (not candidate.is_absolute() or len(raw) > 4096
+            or "\\" in raw or "\\" in normalized
+            or normalized.count("/") != raw.count("/")
+            or ":" in normalized
+            or any(part in (".", "..") for part in normalized.split("/"))
+            or any(part in (".", "..") for part in raw.split("/"))
+            or any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+                   or 0xFDD0 <= ord(ch) <= 0xFDEF
+                   or (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw)):
         raise PermissionError("Fixture root must be absolute and nontraversing")
     return candidate
 

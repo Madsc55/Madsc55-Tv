@@ -830,6 +830,13 @@ def mutate(path, fd):
                           "path.setxattr", "path.removexattr", "path.utime"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_scan_tree_rejects_regular_file_as_source_root(self):
+        with tempfile.TemporaryDirectory() as d:
+            source = Path(d) / "source.py"
+            source.write_text("value = 1\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Source root must be a directory"):
+                scan_python_tree(source)
+
     def test_scan_tree_rejects_unicode_ambiguous_source_root(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

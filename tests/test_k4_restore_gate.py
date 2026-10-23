@@ -244,6 +244,24 @@ class K4RestoreGateTests(unittest.TestCase):
                             audit_k4_restore(*trees, names)
                         verify.assert_not_called()
 
+    def test_portable_directory_aliases_rejected_before_hashing(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+            for names, error in (
+                (["Folder/one.txt", "folder/two.txt"], "directory alias"),
+                (["file", "FILE/child.txt"], "file-directory collision"),
+                (["ﬁles/a.txt", "files/b.txt"], "directory alias"),
+            ):
+                with self.subTest(names=names):
+                    with patch("madsc.k4_restore_gate.verify_independent_restore") as verify:
+                        with self.assertRaisesRegex(ValueError, error):
+                            audit_k4_restore(*roots, names)
+                        verify.assert_not_called()
+
     def test_nested_tree_rejected(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

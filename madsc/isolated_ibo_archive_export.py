@@ -32,6 +32,11 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
             raise PermissionError("Symlinked destination ancestor")
     enforce_write_paths([destination.relative_to(destination.anchor).as_posix()])
     destination.mkdir(mode=0o700)
+    try:
+        destination.chmod(0o700)
+    except OSError:
+        destination.rmdir()
+        raise
     target = destination / "ibo_6115_archive_preview.json"
     try:
         flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL

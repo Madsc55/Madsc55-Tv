@@ -128,6 +128,26 @@ class K2ArtifactPairTests(unittest.TestCase):
 
 
 class K2PinnedLegacySourceTests(unittest.TestCase):
+    def test_entire_pinned_workflow_inventory_is_well_formed(self):
+        import json
+        import re
+        scope_path = Path(__file__).resolve().parents[1] / "docs" / "LEGACY_SOURCE_SCOPE.json"
+        scope = json.loads(scope_path.read_text(encoding="utf-8"))
+        self.assertEqual(scope["source_repository"], "Madsc55/madsc-tv")
+        self.assertEqual(len(scope["workflows"]), 99)
+        paths = []
+        for entry in scope["workflows"]:
+            path = entry["path"]
+            paths.append(path)
+            with self.subTest(path=path):
+                self.assertTrue(path.startswith(".github/workflows/"))
+                self.assertTrue(path.endswith((".yml", ".yaml")))
+                self.assertNotIn("..", Path(path).parts)
+                self.assertRegex(entry["git_blob_sha"], r"^[0-9a-f]{40}$")
+                self.assertIsInstance(entry["bytes"], int)
+                self.assertGreater(entry["bytes"], 0)
+        self.assertEqual(len(set(paths)), len(paths))
+
     def test_three_reviewed_workflows_have_pinned_source_blobs(self):
         import json
         scope_path = Path(__file__).resolve().parents[1] / "docs" / "LEGACY_SOURCE_SCOPE.json"

@@ -61,6 +61,10 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         # Preserve controls until EXTINF validation: strip() would silently
         # erase leading/trailing tabs and other whitespace controls.
         line = raw.strip()
+        if line.startswith("#EXTINF:"):
+            metadata_entries += 1
+            if metadata_entries > max_entries:
+                raise ValueError("Source exceeds bounded candidate limit")
         # Permit harmless trailing ASCII spaces only on CRLF transport rows;
         # preserve the strict rejection of padding on ordinary LF rows.
         if raw.startswith("#EXTINF:") and line != raw and not any(
@@ -74,10 +78,6 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
             pending = None
             discard_url_for_rejected_entry = True
             continue
-        if line.startswith("#EXTINF:"):
-            metadata_entries += 1
-            if metadata_entries > max_entries:
-                raise ValueError("Source exceeds bounded candidate limit")
         if discard_url_for_rejected_entry:
             if line.startswith("#EXTINF:"):
                 # A new entry started before a URL; do not consume its metadata.

@@ -160,6 +160,24 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
                             audit.run(Path(temp) / "audit.json", "")
                         self.assertEqual(network.call_count, 1)
 
+    def test_blob_response_size_metadata_must_match_tree(self):
+        raw = b"name: sample\n"
+        sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        entries = [{"path": f".github/workflows/{i:03d}.yml",
+                    "type": "blob", "size": len(raw), "sha": sha}
+                   for i in range(99)]
+        for bad_size in (None, True, -1, len(raw) + 1):
+            with self.subTest(bad_size=bad_size):
+                def fake_github(url, token):
+                    if "/git/trees/" in url:
+                        return {"tree": entries, "truncated": False}
+                    return {"sha": sha, "encoding": "base64", "size": bad_size,
+                            "content": base64.b64encode(raw).decode()}
+                with tempfile.TemporaryDirectory() as temp:
+                    with patch.object(audit, "github", side_effect=fake_github):
+                        with self.assertRaisesRegex(ValueError, "size metadata mismatch"):
+                            audit.run(Path(temp) / "audit.json", "")
+
     def test_malformed_blob_responses_rejected(self):
         raw = b"name: sample\n"
         sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()

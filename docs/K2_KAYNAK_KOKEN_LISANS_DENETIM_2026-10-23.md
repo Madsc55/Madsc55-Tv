@@ -37,3 +37,23 @@ Her kaynak için aşağıdakiler bağımsız kanıt bağlantılarıyla ve kontro
 - K2→K3 canlı kabul: **BEKLİYOR**.
 
 Bu alanlar kanıtlanmadan kaynak veya kanal `verified`, `licensed`, `independent` veya `production_ready` olarak işaretlenmemelidir.
+
+
+## 23 Ekim 2026 — Kamuya açık birincil kaynak kontrolü
+
+Kaynaklar: https://github.com/iptv-org/iptv/blob/master/README.md ve https://github.com/iptv-org/iptv/blob/master/CONTRIBUTING.md ve https://github.com/iptv-org/iptv/blob/master/LICENSE
+
+| Kanıt / iddia | Doğrulanan durum | K2 kararı |
+| --- | --- | --- |
+| Playlist yayımlayıcısı | `iptv-org/iptv` deposu, kullanıcı katkılı bağlantı listesi olduğunu kendi README'sinde bildiriyor | **Liste yayımlayıcısı belirli** |
+| Tekil yayın sunucusunun işletmecisi | README, bağlantıların hedefini kontrol etmediğini açıkça bildiriyor | **Doğrulanmadı** |
+| Depo lisansı | README CC0 rozeti ve LICENSE bağlantısı gösteriyor; GitHub depo üstverisinde ayrıca Unlicense sınıflandırması görülebiliyor. Kapsam, lisans dosyası üzerinden ayrıca teyit edilmelidir | **Depo lisans beyanı mevcut; yayın lisansı değil** |
+| Tekil akış yeniden dağıtım izni | README/CONTRIBUTING, her akış için hak sahibinden yazılı izin sunmuyor | **Doğrulanmadı** |
+| Akışların çalışma durumu | CONTRIBUTING katkıcıların akış stabilitesi, coğrafi kısıt ve token kontrolü yapmasını istiyor; bu, bu denetimde bağımsız teknik örnek alındığı anlamına gelmez | **Doğrulanmadı** |
+| Farklı feed bağımsızlığı | Aynı organizasyondaki playlist, database, API ve site birbirine bağlı veri ürünleri olabilir | **Bağımsız kaynak olarak sayılamaz** |
+
+**Lisans ayrımı:** CC0/Unlicense gibi depo lisans beyanları, üçüncü taraf yayın hak sahibinin akışın yeniden dağıtımına izin verdiğini ispatlamaz. Kamuya açık erişim, hak sahipliği ve lisans uygunluğu birbirinden ayrı üç iddiadır.
+
+**Keşif kabul testi sözleşmesi:** Yerel/izinli M3U metni ile `parse_m3u` ve `corroborate_sources` çalıştırılmalı; girdinin SHA-256'sı, UTC zaman damgası, kaynak sahibi, parse_errors/rejected/duplicates ve aynı envanterin tekrar sayılmadığı kaydedilmelidir. Testte ağ isteği veya üretim playlist yazımı yapılmamalıdır. Bu çalıştırma bu denetim sırasında yapılmadı; CI yeşil veya canlı yayın çalışıyor denemez.
+
+**Sonuç:** Bu örnekte sadece liste yayımlayıcısının kamuya açık beyanı doğrulandı. Tekil yayınların kökeni, kullanım lisansı ve çalışma durumu **kanıtlanmadı**; K2 kabul kapısı kapalı kalır.

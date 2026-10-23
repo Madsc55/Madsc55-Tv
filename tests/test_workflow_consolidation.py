@@ -353,6 +353,19 @@ class WorkflowConsolidationTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 consolidation_plan(Path(d))
 
+    def test_read_only_k5_diagnostic_is_allowed_without_parity_claim(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = self.make_root(Path(d))
+            (folder / "k5-frozen-source-ci.yml").write_text(
+                "name: isolated diagnostic\non:\n  push:\n    paths: [tests/**]\n"
+                "permissions:\n  contents: read\n",
+                encoding="utf-8",
+            )
+            report = consolidation_plan(Path(d))
+            self.assertEqual(report["auxiliary_count"], 10)
+            self.assertFalse(report["legacy_behavioral_parity_verified"])
+            self.assertFalse(report["production_writes"])
+
     def test_untracked_workflow_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             folder = self.make_root(Path(d))

@@ -1,3 +1,11 @@
+# K3 M3U YAYIN ADRESİ KONTROLÜ — 2026-10-23
+- Kod commit `21939da0e88779891d23cc8ca2b501c7ba94385d`: `#EXTINF` kaydının ardından yayın URI'si yoksa veya yeni `#EXTINF` gelirse fail-closed `ValueError` verir. Yayın adresi içeriğini indirmez/değiştirmez.
+- Test commit `2497512559a354f0a2785b417563ae245fd1c002`: eksik URI ve ikinci `#EXTINF` regresyonları.
+- Güncel değişiklikler için tam unittest/CI çalıştırma kanıtı yoktur; başarı iddiası yok. K3 canlı HLS/video/ses, 6+ saat, Pages/XMLTV/logo ve en son kullanıcı IBO Player Pro kabulü açıktır.
+- Üretim playlist/XMLTV, favori, logo, arşiv ve cihaz verilerine dokunulmadı; PR #71 merge edilmedi.
+
+---
+
 # K3 SÖZDİZİMİ DÜZELTMESİ — 2026-10-23
 - Önceki `madsc/epg.py` commitinde `matches` ifadesine yanlışlıkla literal `\\n` dizisi yazılmıştı; Python sözdizimini bozuyordu. Commit `74f4710099cc3ffd3a493a502cdb1cd00b6eac61` ile gerçek satır sonları kullanılarak onarıldı.
 - `tvg-id` nitelik başlangıcının başka tırnaklı niteliğin içinde kalmadığı da kontrol ediliyor.

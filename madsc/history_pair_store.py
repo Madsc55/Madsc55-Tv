@@ -28,14 +28,17 @@ def decode_pair(raw):
     envelope = json.loads(raw)
     if not isinstance(envelope, dict) or set(envelope) != {"schema", "payload", "sha256"}:
         raise ValueError("Invalid history envelope")
-    if envelope["schema"] != 1:
+    if type(envelope["schema"]) is not int or envelope["schema"] != 1:
         raise ValueError("Unsupported history envelope")
     payload = envelope["payload"]
     if not isinstance(payload, dict):
         raise ValueError("Invalid history payload")
+    digest = envelope["sha256"]
+    if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+        raise ValueError("Invalid history digest")
     canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False,
                            separators=(",", ":"))
-    if hashlib.sha256(canonical.encode("utf-8")).hexdigest() != envelope["sha256"]:
+    if hashlib.sha256(canonical.encode("utf-8")).hexdigest() != digest:
         raise ValueError("History digest mismatch")
     encode_pair(envelope["payload"])
     return envelope["payload"]

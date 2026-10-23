@@ -1,16 +1,18 @@
-"""Read-only XMLTV/M3U identity matching for trial playlists.
-
-Never modifies production playlists, EPG or logos.
-"""
+"""Read-only, fail-closed EPG matching for isolated trial playlists."""
 import re
 import xml.etree.ElementTree as ET
+
+ATTR = re.compile(r'(?:^|\s)([A-Za-z][\w-]*)="([^"]*)"')
 
 def norm(value):
     value = (value or "").casefold().replace("ı", "i")
     return re.sub(r"[^a-z0-9]+", "", value)
 
 def xmltv_channels(xml_data):
-    root = ET.fromstring(xml_data)
+    raw = xml_data.encode("utf-8") if isinstance(xml_data, str) else xml_data
+    if b"<!DOCTYPE" in raw.upper() or b"<!ENTITY" in raw.upper():
+        raise ValueError("XMLTV DTD/entity declarations are not allowed")
+    root = ET.fromstring(raw)
     if root.tag != "tv":
         raise ValueError("XMLTV root element must be <tv>")
     result = {}
@@ -19,10 +21,8 @@ def xmltv_channels(xml_data):
         if not key:
             raise ValueError("XMLTV channel is missing a nonempty id")
         if key in result:
-            # Duplicate IDs make tvg-id validation non-deterministic. Fail closed.
             raise ValueError("Duplicate XMLTV channel id")
-        names = [n.text or "" for n in channel.findall("display-name")]
-        result[key] = names
+        result[key] = [n.text or "" for n in channel.findall("display-name")]
     return result
 
 def playlist_entries(playlist):
@@ -30,9 +30,24 @@ def playlist_entries(playlist):
     for line in playlist.splitlines():
         if not line.startswith("#EXTINF:"):
             continue
-        title = line.split(",", 1)[-1].strip()
-        match = re.search(r'\btvg-id="([^"]*)"', line)
-        entries.append((title, match.group(1) if match else ""))
+        quoted = False
+        separator = None
+        for i, char in enumerate(line):
+            if char == '"':
+                quoted = not quoted
+            elif char == "," and not quoted:
+                separator = i
+                break
+        if quoted or separator is None or not line[separator + 1:].strip():
+            raise ValueError("Malformed EXTINF channel name separator")
+        attributes = line[:separator]
+        if attributes.count('"') % 2:
+            raise ValueError("Malformed EXTINF attributes")
+        found = [m.group(2) for m in ATTR.finditer(attributes)
+                 if m.group(1) == "tvg-id" and attributes[:m.start(1)].count('"') % 2 == 0]
+        if len(found) > 1:
+            raise ValueError("Duplicate tvg-id attribute")
+        entries.append((line[separator + 1:].strip(), found[0].strip() if found else ""))
     return entries
 
 def matches(playlist, xml_data):

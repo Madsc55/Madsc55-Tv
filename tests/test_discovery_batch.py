@@ -649,3 +649,15 @@ class DiscoveryBatchTests(unittest.TestCase):
                 'https://example.org/good\n')
         with self.assertRaisesRegex(ValueError, "bounded candidate limit"):
             parse_m3u(feed, "fixture", max_entries=1)
+
+    def test_crlf_leading_space_metadata_is_rejected(self):
+        feed = ('#EXTM3U\r\n'
+                ' #EXTINF:-1,Bad\r\n'
+                'https://example.org/bad\r\n'
+                '#EXTINF:-1,Good\r\n'
+                'https://example.org/good\r\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(report["candidate_rows"][0]["name"], "Good")
+        self.assertIn("invalid_metadata_whitespace",
+                      [error["reason"] for error in report["parse_errors"]])

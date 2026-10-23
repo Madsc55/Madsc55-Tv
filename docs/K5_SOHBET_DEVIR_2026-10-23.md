@@ -27,3 +27,16 @@ Sonraki: main HEAD ve Actions kontrolü, offline test hatalarını teşhis/düze
 - K5 private export permissions: commit `139ed08` explicitly applies mode 0700 to the newly created isolated manifest directory and fails closed if permission adjustment fails; test `c1081d3` checks POSIX mode bits. Both commits use `[skip ci]`; no test/CI pass is claimed.
 
 - K5 symlink-destination regression test `be13cc5`: asserts an existing destination symlink is rejected and its target directory remains untouched. Commit uses `[skip ci]`; execution/CI not verified.
+
+
+## 23 Ekim 2026 — Yeni sohbete geçiş için son K5 devri
+
+- Kullanıcı K5'te kalan bütün işleri, hataları ve test hatalarını düzeltmemizi istiyor. Ana depo `Madsc55/Madsc55-Tv`, dal `main`. K1–K4 ayrı sohbetlerde paralel çalışıyor; diğer modüllerin dosyalarıyla çakışma yaratma.
+- K5 izole IBO 6115 kayıt iş akışı: `madsc/isolated_ibo_classification.py`, `madsc/isolated_ibo_archive_preview.py`, `madsc/isolated_ibo_archive_export.py`, `tests/test_k5_isolated_ibo_*.py`. Offline sınıflandırma, kaynak sıra SHA256, salt JSON manifest önizlemesi, yeni izole klasöre create-only export. Üretim playlisti, EPG, logo, YEDEKLER, FAVORILER ve cihaz verilerine dokunma. Kullanıcı IBO Player Pro cihaz testini en sonda kendisi yapacak.
+- Önceki K5 düzeltmesi `6912106`: `os.fdopen` başarısızlığında açılmış dosya tanıtıcısını kapatma. Regresyon `f53dcee`.
+- Manifest yazma başarısızlığı geri alma testi `64a0ac1c73a19fa3e06bda9d70562f08259f6049` ile eklendi.
+- En son bu sohbette `e27e733ae37e62aabd83088b01f5e102e24d70c7` commit'i ile aynı yazma hatası testinde açılmış dosya nesnesinin `closed` olduğunu doğrulayan ek assertion eklendi. `[skip ci]` kullanıldı; bu testin başarıyla koştuğu iddia edilmemeli.
+- GitHub connector üzerinden dosya okuma/yazma ve commit arama çalışıyor. Yerel test ortamından GitHub klonlama DNS hatası verdi; testlerin gerçek çalışması hâlâ doğrulanmadı. Yeni sohbet ilk iş `main` HEAD ve güncel Actions CI sonuçlarını kontrol etmeli, K5 testlerini gerçekten çalıştırmayı denemeli, somut başarısızlıkları düzeltmeli. Gereksiz tekrar testleri yerine gerçek hatalara öncelik ver.
+- GitHub'da daha yeni K5 entegrasyon commitleri de görüldü: `b766165` (K1–K5 offline CI doğrulaması), `61d765c` (K5 stage contract assertions), `f9846cc` (artifact kanıtı), `a597bec` (gerçek görev defteri), `7b328951` (K1–K5 sıralı orkestrasyon). Bunların sonuçları ayrıca kontrol edilmeli; eski K5 devri notu güncel olmayan CI sayılarını içeriyor.
+- Eski devirde belirtilen 48/92 statik workflow incelemesi, 0/92 davranışsal kabul, 0/26 runtime güvenlik ve 0/22 ana kabul rakamları yalnızca tarihsel nottur; güncel görev defterini kontrol etmeden aynı rakamları son durum olarak sunma.
+- Kullanıcı açıkça yeni sohbete geçmek üzere tüm notların korunmasını istedi. Bu dosya yeni sohbetin K5 devam noktasıdır.

@@ -266,7 +266,7 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
 
     def test_invalid_source_url_does_not_abort_tv_pilot(self):
         rows = [("TV Missing", None), ("TV Numeric", 17),
-                ("TV Invalid Unicode", "https://example.org/\\ud800"),
+                ("TV Invalid Unicode", "https://example.org/" + chr(0xD800)),
                 ("TV Oversized", "https://example.org/" + "x" * 4096),
                 ("TV Blank", "   "),
                 ("TV Valid", "https://example.org/live.m3u8")]

@@ -164,6 +164,9 @@ def run():
             break
         source_rows += 1
         cat = category(name)
+        if not isinstance(url, str) or not url:
+            results.append({"status": "invalid_source_url"})
+            continue
         digest = hashlib.sha256(url.encode()).hexdigest()
         if not cat:
             results.append({"sha256": digest, "status": "radio_excluded"})

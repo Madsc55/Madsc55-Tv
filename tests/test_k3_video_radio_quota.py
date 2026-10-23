@@ -26,6 +26,14 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, "cross_host_segment"))
             curl.assert_called_once()
 
+    def test_unsupported_hls_layouts_fail_before_segment_fetch(self):
+        for tag in ("#EXT-X-MAP:URI=\"init.mp4\"", "#EXT-X-I-FRAME-STREAM-INF:BANDWIDTH=100"):
+            manifest = ("#EXTM3U\n" + tag + "\n#EXTINF:4,\nsegment.ts\n").encode()
+            with self.subTest(tag=tag), patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+                self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                                 (False, False, "unsupported_hls_media_layout"))
+                curl.assert_called_once()
+
     def test_encrypted_media_playlist_fails_before_segment_download(self):
         manifest = b'#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\n#EXTINF:4,\nsegment.ts\n'
         with patch.object(pilot, 'safe_curl', return_value=manifest) as curl:

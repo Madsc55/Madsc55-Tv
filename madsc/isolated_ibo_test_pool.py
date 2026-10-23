@@ -38,7 +38,9 @@ def build_isolated_test_pool(records):
         reported = r.get("playback", "unknown")
         if not isinstance(reported, str) or reported not in STATES:
             raise ValueError("Invalid playback")
-        playback = reported if clean and clean[-1]["status"] == reported else "unknown"
+        # Legacy status and evidence identifiers are claims, not independently
+        # authenticated playback measurements. Never promote them to verified.
+        playback = "unknown"
         bucket = ("broken" if playback == "broken" else
                   "foreign" if decision.country == "YABANCI_KULLANICI_BILDIRIMI" else
                   "pending" if playback in ("pending", "unknown") else "retained")

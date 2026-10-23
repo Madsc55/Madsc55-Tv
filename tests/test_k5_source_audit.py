@@ -24,6 +24,22 @@ class K5SourceAuditTests(unittest.TestCase):
         self.assertEqual(result["yaml_signal_counts"]["push"], 21)
         self.assertEqual(result["yaml_signal_counts"]["write"], 20)
 
+    def test_changed_frozen_commit_fails_closed(self):
+        original = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            value = original(path, *args, **kwargs)
+            if str(path).endswith("LEGACY_SOURCE_SCOPE.json"):
+                data = json.loads(value)
+                data["source_commit"] = "0" * 40
+                return json.dumps(data)
+            return value
+
+        with patch.object(Path, "read_text", read_text):
+            result = audit(self.root)
+        self.assertFalse(result["source_audit_passed"])
+        self.assertIn("frozen_source_commit_mismatch", result["errors"])
+
     def test_malformed_inventory_digest_fails_closed(self):
         original = Path.read_text
 

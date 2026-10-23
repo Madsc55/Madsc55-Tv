@@ -18,7 +18,7 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
 
     def test_malformed_ffprobe_streams_fail_closed(self):
         manifest = b'#EXTM3U\\n#EXTINF:4,\\nsegment.ts\\n'
-        with patch.object(pilot, "safe_curl", side_effect=[manifest, b"x" * 188]), \\
+        with patch.object(pilot, "safe_curl", side_effect=[manifest, b"x" * 188]), \
              patch.object(pilot.subprocess, "run") as probe:
             probe.return_value.stdout = b'{"streams": [null]}'
             self.assertEqual(pilot.verify_av("https://example.org/media.m3u8"),
@@ -26,7 +26,7 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
 
     def test_ffprobe_nonzero_exit_cannot_verify_video(self):
         manifest = b'#EXTM3U\\n#EXTINF:4,\\nsegment.ts\\n'
-        with patch.object(pilot, "safe_curl", side_effect=[manifest, b"x" * 188]), \\
+        with patch.object(pilot, "safe_curl", side_effect=[manifest, b"x" * 188]), \
              patch.object(pilot.subprocess, "run") as probe:
             probe.return_value.returncode = 1
             probe.return_value.stdout = b'{"streams": [{"codec_type": "video"}, {"codec_type": "audio"}]}'

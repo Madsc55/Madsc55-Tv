@@ -14,7 +14,9 @@ def build_isolated_test_pool(records):
     for i, (r, decision) in enumerate(zip(records, classify_6115_positions()), 1):
         if not isinstance(r, Mapping) or type(r.get("position")) is not int or r["position"] != i:
             raise ValueError("Position mismatch")
-        if set(r) - {"position", "source_sha256", "logo_sha256", "history", "playback"}:\n            raise ValueError("Unexpected source metadata fields")\n        digest = r.get("source_sha256")
+        if set(r) - {"position", "source_sha256", "logo_sha256", "history", "playback"}:
+            raise ValueError("Unexpected source metadata fields")
+        digest = r.get("source_sha256")
         if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
             raise ValueError("Invalid source hash")
         logo = r.get("logo_sha256")
@@ -30,7 +32,9 @@ def build_isolated_test_pool(records):
             status, eid = h["status"], h["evidence_id"]
             if not isinstance(status, str) or status not in STATES or not isinstance(eid, str) or not 0 < len(eid) <= 256 or any(ord(c) < 32 or ord(c) == 127 or 0xD800 <= ord(c) <= 0xDFFF for c in eid):
                 raise ValueError("Invalid evidence")
-            if "://" in eid or "/" in eid or "\\\\" in eid or "@" in eid:\n                raise ValueError("Evidence identifier may not contain URLs or paths")\n            clean.append({"status": status, "evidence_id": eid})
+            if "://" in eid or "/" in eid or "\\\\" in eid or "@" in eid:
+                raise ValueError("Evidence identifier may not contain URLs or paths")
+            clean.append({"status": status, "evidence_id": eid})
         reported = r.get("playback", "unknown")
         if not isinstance(reported, str) or reported not in STATES:
             raise ValueError("Invalid playback")

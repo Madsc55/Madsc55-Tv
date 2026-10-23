@@ -196,12 +196,38 @@ def mutate(path):
         self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_bounded_process_stdio_does_not_claim_read_only_effects(self):
+        source = '''
+import subprocess
+def run_commands():
+    subprocess.run(["tool"], stdin=subprocess.DEVNULL, capture_output=True)
+    subprocess.Popen(["tool"], stdin=subprocess.DEVNULL,
+                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 2)
+        self.assertTrue(all(row["process_stdio_bounded_verified"] for row in rows))
+        self.assertTrue(all(row["process_stdin_syntax"] == "devnull" for row in rows))
+        self.assertTrue(all(row["process_stdout_syntax"] == "captured" for row in rows))
+        self.assertTrue(all(row["process_stderr_syntax"] == "captured" for row in rows))
+        self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
+
+    def test_repository_process_calls_have_bounded_stdio_but_open_effect_review(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        rows = [row for row in report["callsite_inventory"]
+                if row.get("process_shell_status") is not None]
+        self.assertEqual(len(rows), 6)
+        self.assertTrue(all(row["process_stdio_bounded_verified"] for row in rows))
+        self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
+
     def test_process_shell_keyword_unpacking_and_dynamic_values_stay_unknown(self):
         source = '''\nimport subprocess\ndef run_commands(options, dynamic):\n    subprocess.run(["tool"], **options)\n    subprocess.Popen(["tool"], shell=dynamic)\n    subprocess.call(["tool"], shell=True)\n'''
         rows = scan_python_source(source)
         self.assertEqual([row["process_shell_status"] for row in rows],
                          ["unknown_keyword_unpacking", "dynamic", "explicit_true"])
         self.assertTrue(all(not row["process_shell_disabled_verified"] for row in rows))
+        self.assertTrue(all(not row["process_stdio_bounded_verified"] for row in rows))
         self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
 
     def test_process_executable_resolves_only_safe_direct_local_argv_binding(self):

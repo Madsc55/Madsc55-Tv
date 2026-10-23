@@ -44,6 +44,10 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
                 declared_dirs.add(parent.as_posix())
                 if len(names) + len(declared_dirs) > 20000:
                     raise ValueError("Restore audit inventory exceeds safe entry limit")
+    # The underlying manifest verifier has a stricter 10,000-file ceiling.
+    # Enforce it here before touching source trees or calculating hashes.
+    if len(names) > 10000:
+        raise ValueError("Restore audit exceeds manifest entry limit")
     result = verify_independent_restore(source, backup, restored, names)
     # The restore acceptance gate requires an exact file inventory, not just
     # matching hashes for a caller-selected subset. Reject unexpected files,

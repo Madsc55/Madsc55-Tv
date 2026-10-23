@@ -47,6 +47,10 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
             matches = [match.group(2) for match in M3U_ATTRIBUTE.finditer(attribute_text)
                        if match.group(1) == "tvg-id"
                        and attribute_text[:match.start(1)].count('"') % 2 == 0]
+            declared = [match for match in re.finditer(r'(?:^|\s)tvg-id(?=\s|=)', attribute_text)
+                        if attribute_text[:match.start()].count('"') % 2 == 0]
+            if len(declared) != len(matches):
+                raise ValueError("Malformed M3U tvg-id attribute")
             if len(matches) > 1:
                 raise ValueError("Duplicate M3U tvg-id attribute")
             ids.append(matches[0].strip() if matches else "")

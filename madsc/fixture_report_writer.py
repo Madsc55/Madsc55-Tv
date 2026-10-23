@@ -56,6 +56,8 @@ def _prepare_fixture_root(root: Path) -> Path:
                     (expected.st_dev, expected.st_ino)):
                 raise PermissionError("Fixture root changed during directory creation")
             os.mkdir("reports", dir_fd=root_fd)
+            # Persist the directory entry before returning successful preflight.
+            os.fsync(root_fd)
         finally:
             os.close(root_fd)
     if reports.is_symlink() or not reports.is_dir():

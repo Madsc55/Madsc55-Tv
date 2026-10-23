@@ -1,5 +1,6 @@
 """Read-only, fail-closed EPG matching for isolated trial playlists."""
 import re
+from datetime import datetime
 import xml.etree.ElementTree as ET
 
 ATTR = re.compile(r'(?:^|\s)([A-Za-z][\w-]*)="([^"]*)"(?=\s|$)')
@@ -77,6 +78,17 @@ def matches(playlist, xml_data):
     return output
 
 
+def _valid_xmltv_time(value):
+    """Accept XMLTV timestamps only when calendar date and UTC offset are valid."""
+    if not re.fullmatch(r"\d{12}(?:\d{2})? [+-]\d{4}", value):
+        return False
+    fmt = "%Y%m%d%H%M%S %z" if len(value.split(" ")[0]) == 14 else "%Y%m%d%H%M %z"
+    try:
+        datetime.strptime(value, fmt)
+    except ValueError:
+        return False
+    return True
+
 def programme_coverage(playlist, xml_data):
     """Read-only programme counts for verified channel matches; never invent EPG."""
     raw = xml_data.encode("utf-8") if isinstance(xml_data, str) else xml_data
@@ -92,7 +104,7 @@ def programme_coverage(playlist, xml_data):
         channel = (programme.get("channel") or "").strip()
         start = (programme.get("start") or "").strip()
         stop = (programme.get("stop") or "").strip()
-        if channel in known_channels and re.fullmatch(r"\d{12}(?:\d{2})? [+-]\d{4}", start) and (not stop or re.fullmatch(r"\d{12}(?:\d{2})? [+-]\d{4}", stop)):
+        if channel in known_channels and _valid_xmltv_time(start) and (not stop or _valid_xmltv_time(stop)):
             counts[channel] = counts.get(channel, 0) + 1
     for row in results:
         channel = row["matched_id"]

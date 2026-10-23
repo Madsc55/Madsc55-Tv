@@ -241,9 +241,9 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
 
     if not isinstance(sources, dict) or not sources or len(sources) > 200:
         raise ValueError("Require 1-200 named M3U sources")
-    if len({_canonical_source_name(name) for name in sources if isinstance(name, str)}) != len(sources):
+    if len({_canonical_source_name(name) for name in sources}) != len(sources):
         raise ValueError("Ambiguous duplicate source names")
-    if any(isinstance(name, str) and len(name) > 256 for name in sources):
+    if any(len(name) > 256 for name in sources):
         raise ValueError("Source name exceeds bounded length")
     rows = []
     rejected_count = 0

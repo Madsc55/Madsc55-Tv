@@ -28,6 +28,12 @@ class TrialEpgMatchingTest(unittest.TestCase):
     def test_duplicate_tvg_id_fails_closed(self):
         with self.assertRaisesRegex(ValueError, "Duplicate tvg-id"):
             playlist_entries('#EXTINF:-1 tvg-id="a" tvg-id="b",TRT 1')
+    def test_malformed_tvg_id_fails_closed(self):
+        for entry in ('#EXTINF:-1 tvg-id=a,TRT 1', '#EXTINF:-1 tvg-id ="a",TRT 1', '#EXTINF:-1 tvg-id="a" tvg-id=b,TRT 1'):
+            with self.subTest(entry=entry), self.assertRaisesRegex(ValueError, "Malformed tvg-id"):
+                playlist_entries(entry)
+    def test_quoted_other_attribute_is_not_tvg_id(self):
+        self.assertEqual(playlist_entries('#EXTINF:-1 tvg-name="contains tvg-id=bogus",TRT 1'), [("TRT 1", "")])
     def test_malformed_separator_fails_closed(self):
         with self.assertRaisesRegex(ValueError, "Malformed EXTINF"):
             playlist_entries('#EXTINF:-1 tvg-id="a" TRT 1')

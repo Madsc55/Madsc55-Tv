@@ -26,8 +26,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     ids = []
     pending_stream = False
     header_seen = False
-    for line in text.splitlines():
-        line = line.strip()
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
         if line.startswith("#EXTM3U"):
             if header_seen or line != header:
                 raise ValueError("Duplicate or misplaced M3U header")
@@ -63,6 +63,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
                 raise ValueError("Duplicate M3U tvg-id attribute")
             ids.append(matches[0].strip() if matches else "")
         elif pending_stream and line and not line.startswith("#"):
+            if raw_line != line:
+                raise ValueError("M3U EXTINF invalid stream URI")
             try:
                 parsed_uri = urlsplit(line)
                 valid_uri = (not any(ord(char) < 0x20 or ord(char) == 0x7f for char in line)

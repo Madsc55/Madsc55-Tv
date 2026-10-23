@@ -5,7 +5,7 @@ Evidence must come from separately executed, isolated fixture runs.
 """
 import argparse
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 FIELDS = ("exit_code", "stdout_sha256", "stderr_sha256", "artifacts", "side_effects", "timed_out", "retry_count")
 DIGEST = set("0123456789abcdef")
@@ -35,7 +35,11 @@ def compare(document):
     errors = []
     if not isinstance(document, dict) or set(document) != {"workflow", "fixture_sha256", "legacy", "new", "independent_runs", "isolated_fixture"}:
         return {"accepted": False, "errors": ["invalid_evidence_schema"]}
-    if not isinstance(document["workflow"], str) or not document["workflow"].endswith((".yml", ".yaml")):
+    workflow = document["workflow"]
+    if (not isinstance(workflow, str) or not workflow.endswith((".yml", ".yaml"))
+            or PurePosixPath(workflow).is_absolute()
+            or ".." in PurePosixPath(workflow).parts
+            or not workflow.startswith(".github/workflows/")):
         errors.append("invalid_workflow")
     if not _digest(document["fixture_sha256"]):
         errors.append("invalid_fixture_digest")

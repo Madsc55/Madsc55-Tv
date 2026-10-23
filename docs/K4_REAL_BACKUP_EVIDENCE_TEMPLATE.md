@@ -73,3 +73,10 @@ Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim 
 - **K4-18:** 1 ve 15 günlerine ait gerçek zamanlayıcı run/artifact kanıtı yok; mevcut workflow'da schedule tanımı da yok — **BEKLİYOR**.
 - Sonuç: `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`, `production_writes=false`. Üretim playlist/EPG/VOD/arşiv dosyalarına yazılmadı, workflow dispatch/rerun yapılmadı.
 - Gerçek kabul için gerekli sonraki bağımlılık: kullanıcı tarafından yetkilendirilmiş bağımsız harici hedef/sağlayıcı, salt-okunur kaynak kapsamı ve gizli bilgileri ifşa etmeyen gerçek teslim makbuzu; ardından aynı harici yedekten ayrı izole restore kanıtı. Bu kanıtlar oluşmadan kabul bayrakları değiştirilemez.
+
+## 23 Ekim 2026 — Actions ilk 100 kayıt üzerinde ilave tarama
+
+- GitHub REST `actions/runs?per_page=100` yanıtında `total_count=1059` ve dönen ilk 100 çalışma içinde workflow adı veya yolu `k4`, `yedek` ya da `backup` ile eşleşen **0 çalışma** bulundu. Bu **yalnızca ilk 100 kaydın** kapsamıdır; geçmiş 1059 çalışmanın tamamı incelendiği iddia edilmez.
+- İlk 100 kayıttaki en son tamamlanmış başarılı genel CI: `40022310560`, commit `cd963633ed909bf9b8acf5e64db629cd4114055b`. Bu bir K4 dış-depolama teslim makbuzu değildir.
+- Tarama sırasında `40022533383` pending ve `40022512400` in_progress idi; sonuçları başarılı sayılmadı.
+- Harici depolama sağlayıcısı tarafından imzalanmış teslim makbuzu veya nesne kimliği ile aynı nesneden yapılmış bağımsız restore çalışması hâlâ sunulmadı. K4-15/K4-16 **BEKLİYOR**, `external_storage_proven=false`, `production_restore_approved=false`.

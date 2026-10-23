@@ -118,6 +118,13 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, "vod_playlist_not_live"))
             curl.assert_called_once()
 
+    def test_manifest_without_segment_duration_cannot_verify_tv(self):
+        manifest = b"#EXTM3U\nsegment.ts\n"
+        with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "no_segment_duration"))
+            curl.assert_called_once()
+
     def test_vod_endlist_is_not_counted_as_live_tv(self):
         manifest = b"#EXTM3U\n#EXTINF:4,\nsegment.ts\n#EXT-X-ENDLIST\n"
         with patch.object(pilot, "safe_curl", return_value=manifest) as curl:

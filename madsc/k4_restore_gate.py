@@ -71,9 +71,11 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
             raise ValueError('Ambiguous restore audit directory alias')
         if portable_directory in seen_portable_names:
             raise ValueError('Restore audit portable file-directory collision')
+    # Pin the source manifest before the first cross-tree verification.
+    # Otherwise a coordinated change to all three trees during verification
+    # can be mistaken for a valid new baseline.
+    initial_entries = snapshot_manifest(Path(source), names)["entries"]
     result = verify_independent_restore(source, backup, restored, names)
-    # Pin the initially verified source contents, not merely cross-tree equality.
-    initial_entries = snapshot_manifest(Path(source), names)["entries"] if result["independent_sandbox_restore_matches"] is True else None
     # The restore acceptance gate requires an exact file inventory, not just
     # matching hashes for a caller-selected subset. Reject unexpected files,
     # symlinks and extra directories in any of the three sandbox trees.

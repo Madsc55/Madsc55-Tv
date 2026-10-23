@@ -109,6 +109,8 @@ def verify_av(url):
                                      "#EXT-X-DISCONTINUITY", "#EXT-X-GAP"))
            for line in text.splitlines()):
         return False, False, "unsupported_hls_segment_layout"
+    if not any(line.lstrip().startswith("#EXTINF:") for line in text.splitlines()):
+        return False, False, "no_segment_duration"
     segments = [line.strip() for line in text.splitlines()
                 if line.strip() and not line.lstrip().startswith("#")]
     if not segments:
@@ -184,6 +186,9 @@ def run():
               "video_only_detected": sum(x["status"] == "video_detected" for x in results),
               "radio_excluded": sum(x["status"] == "radio_excluded" for x in results),
               "playlist_modified": False, "language_confirmed_by_audio": False,
+              "live_continuity_hours_verified": 0,
+              "device_playback_verified": False,
+              "acceptance_75_channels_met": False,
               "results": results, "verified_metadata": verified}
     out = Path("reports/k3-turkish-tv-video-pilot.json")
     report["reason_counts"] = {reason: sum(x["status"] == reason for x in results) for reason in sorted({x["status"] for x in results})}

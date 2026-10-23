@@ -92,6 +92,15 @@ class K5IboArchiveExportTests(unittest.TestCase):
                         export_6115_archive_manifest(self.urls, destination)
                     self.assertFalse(destination.exists())
 
+    def test_oversized_destination_fails_before_any_directory_creation(self):
+        with TemporaryDirectory() as tmp:
+            for name in ("a" * 256, "é" * 128):
+                with self.subTest(name_length=len(name)):
+                    destination = Path(tmp) / name
+                    with self.assertRaisesRegex(PermissionError, "Oversized destination"):
+                        export_6115_archive_manifest(self.urls, destination)
+                    self.assertFalse(destination.exists())
+
     def test_manifest_file_has_private_permissions(self):
         if os.name != "posix":
             self.skipTest("POSIX permission bits unavailable")

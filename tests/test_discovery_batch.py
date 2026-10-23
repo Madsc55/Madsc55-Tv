@@ -7,7 +7,7 @@ class DiscoveryBatchTests(unittest.TestCase):
     def test_url_padding_is_not_silently_normalized(self):
         for raw_url in (" https://example.org/live", "https://example.org/live "):
             with self.subTest(raw_url=repr(raw_url)):
-                feed = "#EXTM3U\\n#EXTINF:-1,News\\n" + raw_url + "\\n"
+                feed = "#EXTM3U\n#EXTINF:-1,News\n" + raw_url + "\n"
                 report = parse_m3u(feed, "fixture")
                 self.assertEqual(report["entries"], 0)
                 self.assertEqual(report["parse_errors"][0]["reason"], "invalid_url_whitespace")

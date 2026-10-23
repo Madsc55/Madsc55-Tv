@@ -54,8 +54,8 @@ def safe_curl(url, limit):
 
 def same_origin_https(parent, child):
     """Reject scheme downgrade, credentials, nonstandard ports and cross-origin HLS URLs."""
-    a, b = urlsplit(parent), urlsplit(child)
     try:
+        a, b = urlsplit(parent), urlsplit(child)
         return (a.scheme == b.scheme == "https" and a.hostname == b.hostname
                 and a.port in (None, 443) and b.port in (None, 443)
                 and not a.username and not a.password and not b.username and not b.password)

@@ -23,7 +23,7 @@ _MUTATING_METHODS = {
     # passed through a helper, so inventory write()/writelines() callsites.
     "write", "writelines", "write_text", "write_bytes", "unlink", "mkdir", "makedirs", "rmdir",
     "removedirs", "rename", "replace", "symlink_to", "hardlink_to", "link_to",
-    "touch", "truncate", "copy", "copy2", "copyfile", "copytree", "copymode", "copystat",
+    "touch", "truncate", "copy", "copy2", "copyfile", "copyfileobj", "copytree", "copymode", "copystat",
     "move", "rmtree", "remove", "chmod", "lchmod", "chown", "lchown",
     "extract", "extractall", "unpack_archive", "make_archive",
 }

@@ -158,7 +158,7 @@ class K4RestoreGateTests(unittest.TestCase):
             # the total inventory budget without requiring extreme path depth.
             names = [f"folder_{i}/child/file.txt" for i in range(10001)]
             with patch("madsc.k4_restore_gate.verify_independent_restore") as verify:
-                with self.assertRaisesRegex(ValueError, "safe entry limit"):
+                with self.assertRaisesRegex(ValueError, "manifest entry limit"):
                     audit_k4_restore(*trees, names)
                 verify.assert_not_called()
 

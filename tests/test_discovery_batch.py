@@ -517,3 +517,19 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual([row["reason"] for row in result["parse_errors"]],
                          ["invalid_metadata_control"])
         self.assertFalse(result["production_writes"])
+
+    def test_nonstandard_line_separators_cannot_split_extinf_metadata(self):
+        for separator in ("\x0b", "\x0c", "\x1c", "\x1d", "\x1e",
+                          "\x85", "\u2028", "\u2029"):
+            with self.subTest(separator=repr(separator)):
+                feed = ('#EXTM3U\n'
+                        '#EXTINF:-1 tvg-id="bad' + separator + 'id",Bad\n'
+                        'https://example.org/bad\n')
+                with self.assertRaisesRegex(ValueError, "unsupported line separators"):
+                    parse_m3u(feed, "fixture")
+
+    def test_crlf_line_endings_remain_supported(self):
+        feed = ('#EXTM3U\r\n'
+                '#EXTINF:-1 tvg-id="good",Good\r\n'
+                'https://example.org/good\r\n')
+        self.assertEqual(parse_m3u(feed, "fixture")["entries"], 1)

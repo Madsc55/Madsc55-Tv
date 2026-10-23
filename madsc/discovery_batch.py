@@ -39,6 +39,9 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     lines = text.removeprefix("\ufeff").splitlines()
     if not lines or lines[0].strip() != "#EXTM3U":
         raise ValueError("Missing M3U header")
+    if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+           for ch in lines[0].strip()):
+        raise ValueError("Invalid M3U header controls")
     candidates, errors = [], []
     pending = None
     discard_url_for_rejected_entry = False

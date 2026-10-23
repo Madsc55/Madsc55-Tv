@@ -46,3 +46,10 @@ Dört bölümün tamamı bağımsız ve doğrulanabilir kanıtla tamamlanana kad
 - IBO Player Pro cihaz kabulü: kullanıcı tarafından en son yapılacak
 
 Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim verisi aktarımı veya zamanlayıcı etkinleştirilmez.
+
+## K4 kabulünde otomasyon ve test kanıtının sınırı (23 Ekim 2026)
+
+- Başarılı genel offline CI: [39945650886](https://github.com/Madsc55/Madsc55-Tv/actions/runs/39945650886), commit `fcfe7ea4ae26fa13ce33088e69739460dc2fb8da`. Bu yalnızca ilgili commit'in test sonucudur; daha sonraki HEAD için ayrı doğrulama gerekir.
+- Gerçek harici yedek makbuzu, bağımsız harici restore ve 1/15 gerçek scheduler run kanıtı halen yoktur. CI veya yerel fixture bunların yerine geçmez.
+- Harici hedef onaylanmadan gerçek veri aktarımı ve üretim zamanlayıcısı açılmaz.
+

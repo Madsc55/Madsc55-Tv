@@ -15,6 +15,8 @@ ATTR = re.compile(r'([\w-]+)="([^"]*)"')
 
 
 def _canonical_source_name(name: str) -> str:
+    if not isinstance(name, str):
+        raise ValueError("Invalid source name")
     return unicodedata.normalize("NFKC", name.strip()).casefold()
 
 

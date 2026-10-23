@@ -25,6 +25,10 @@ def audit_write_paths(paths: list[str]) -> dict:
     for raw in paths:
         if not isinstance(raw, str):
             raise ValueError("Invalid repository path")
+        # Bound normalization and path-component processing on untrusted input.
+        if len(raw) > 4096:
+            rejected.append(raw)
+            continue
         name = raw.replace(chr(92), "/")
         normalized = unicodedata.normalize("NFKC", name).casefold()
         duplicate = normalized in seen

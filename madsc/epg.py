@@ -54,7 +54,7 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
             pending_stream = False
     if pending_stream:
         raise ValueError("M3U EXTINF missing stream URI")
-    if not ids and any(line.strip().startswith("#EXTINF") for line in text.splitlines()):
+    if any(line.strip().startswith("#EXTINF") and not line.strip().startswith("#EXTINF:") for line in text.splitlines()):
         raise ValueError("Malformed M3U EXTINF directive")
 
     xmltv_raw = xmltv.read_bytes()

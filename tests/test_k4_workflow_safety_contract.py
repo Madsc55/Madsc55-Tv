@@ -22,7 +22,7 @@ class K4WorkflowSafetyContractTests(unittest.TestCase):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("madsc.restore_drill", source)
         self.assertIn("reports/k4-source/nested/sample.txt", source)
-        self.assertIn("permissions:\\n  contents: read", source)
+        self.assertIn("permissions:\n  contents: read", source)
         self.assertNotIn("contents: write", source)
         self.assertNotIn("id-token: write", source)
 

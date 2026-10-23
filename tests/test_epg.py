@@ -5,6 +5,15 @@ from pathlib import Path
 from madsc.epg import check_epg_mapping
 
 class EpgTests(unittest.TestCase):
+    def test_malformed_extinf_directive_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text("#EXTM3U\n#EXTINF -1,TRT 1\nhttps://example.org/live\n", encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Malformed M3U EXTINF directive"):
+                check_epg_mapping(p, e)
+
     def test_empty_playlist_is_not_reported_as_matching(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "playlist.m3u8"

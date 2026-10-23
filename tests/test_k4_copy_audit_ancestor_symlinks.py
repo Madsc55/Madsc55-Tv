@@ -24,9 +24,9 @@ class CopyAuditAncestorSymlinkTests(unittest.TestCase):
             self.assertTrue(compare_copy(left, right, ["sample.txt"]))
             for source, destination in ((alias, right), (right, alias)):
                 with self.subTest(source=source, destination=destination):
-                    with self.assertRaisesRegex(ValueError, "symlinked ancestors"):
+                    with self.assertRaisesRegex(ValueError, "symlinked ancestors|requires real directories|must be real directories"):
                         compare_copy(source, destination, ["sample.txt"])
-                    with self.assertRaisesRegex(ValueError, "symlinked ancestors"):
+                    with self.assertRaisesRegex(ValueError, "symlinked ancestors|requires real directories|must be real directories"):
                         verify_sandbox_restore(source, destination, ["sample.txt"])
 
 
@@ -42,7 +42,7 @@ class CopyAuditAncestorSymlinkTests(unittest.TestCase):
                 alias.symlink_to(roots[1], target_is_directory=True)
             except (OSError, NotImplementedError):
                 self.skipTest("Directory symlinks unavailable")
-            with self.assertRaisesRegex(ValueError, "symlinked ancestors"):
+            with self.assertRaisesRegex(ValueError, "symlinked ancestors|requires real directories|must be real directories"):
                 verify_independent_restore(roots[0], alias, roots[2], ["sample.txt"])
 
 

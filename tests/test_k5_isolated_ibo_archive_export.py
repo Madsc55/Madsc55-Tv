@@ -69,6 +69,24 @@ class K5IboArchiveExportTests(unittest.TestCase):
             manifest = destination / "ibo_6115_archive_preview.json"
             self.assertEqual(manifest.stat().st_mode & 0o777, 0o600)
 
+    def test_manifest_open_uses_exclusive_creation_and_nofollow(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            original_open = os.open
+            observed = []
+            def inspect_open(path, flags, *args, **kwargs):
+                if Path(path).name == "ibo_6115_archive_preview.json":
+                    observed.append(flags)
+                return original_open(path, flags, *args, **kwargs)
+            with patch("madsc.isolated_ibo_archive_export.os.open",
+                       side_effect=inspect_open):
+                export_6115_archive_manifest(self.urls, destination)
+            self.assertEqual(len(observed), 1)
+            self.assertTrue(observed[0] & os.O_EXCL)
+            self.assertTrue(observed[0] & os.O_CREAT)
+            if hasattr(os, "O_NOFOLLOW"):
+                self.assertTrue(observed[0] & os.O_NOFOLLOW)
+
     def test_directory_sync_failure_rolls_back(self):
         if not hasattr(os, "O_DIRECTORY"):
             self.skipTest("Directory fsync unsupported")

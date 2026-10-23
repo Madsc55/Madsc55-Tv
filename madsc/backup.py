@@ -201,6 +201,10 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     if any(unicodedata.category(character) == 'Cf'
            for path in paths for character in path):
         raise ValueError('Invisible formatting character in backup manifest path')
+    declared = set(paths)
+    if any('/'.join(path.split('/')[:depth]) in declared
+           for path in paths for depth in range(1, len(path.split('/')))):
+        raise ValueError('Backup manifest file conflicts with declared directory')
     # A manifest is a canonical snapshot, not an arbitrary subset or reordered list.
     if paths != sorted(paths):
         return False

@@ -32,7 +32,9 @@ def build_legacy_m3u8_preview(source_dir: Path, snapshot: Path | None = None) ->
         lines = [line.strip() for line in content.splitlines() if line.strip()]
         if not lines or not (lines[0] == "#EXTM3U" or lines[0].startswith("#EXTM3U ")):
             raise ValueError("Invalid M3U header: " + filename)
-        if not drafts:\n            drafts.append(lines[0])\n        entries = []
+        if not drafts:
+            drafts.append(lines[0])
+        entries = []
         pending = None
         for line in lines[1:]:
             if line.startswith("#EXTINF:"):

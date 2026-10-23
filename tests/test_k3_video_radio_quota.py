@@ -19,6 +19,12 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                 self.assertFalse(pilot.same_origin_https(base, target))
         self.assertTrue(pilot.same_origin_https(base, "https://example.org/segment.ts"))
 
+    def test_nonbyte_manifest_fails_closed(self):
+        with patch.object(pilot, "safe_curl", return_value="#EXTM3U") as curl:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "no_manifest"))
+            curl.assert_called_once()
+
     def test_oversized_manifest_rejected_even_when_fetch_is_mocked(self):
         manifest = b"#EXTM3U\n" + b"#" * 65536
         with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
@@ -34,6 +40,12 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, "segment_unreachable"))
             self.assertEqual(curl.call_count, 2)
             probe.assert_not_called()
+
+    def test_malformed_nested_url_is_rejected_without_exception(self):
+        self.assertFalse(pilot.same_origin_https("https://example.org/master.m3u8",
+                                                  "https://[broken/segment.ts"))
+        self.assertFalse(pilot.same_origin_https("https://[broken/master.m3u8",
+                                                  "https://example.org/segment.ts"))
 
     def test_http_segment_rejected_without_download(self):
         manifest = b"#EXTM3U\n#EXTINF:4,\nhttp://example.org/segment.ts\n"

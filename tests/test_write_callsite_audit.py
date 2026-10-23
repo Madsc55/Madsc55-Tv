@@ -880,7 +880,39 @@ def mutate(path, fd):
                 with original_open(path, *args, **kwargs) as handle:
                     yield handle
                 if path == source:
-                    source.write_text("value = 123456789\n", encoding="utf-8")
+                    with original_open(source, "w", encoding="utf-8") as replacement:
+                        replacement.write("value = 123456789\n")
+
+            with patch.object(Path, "open", changing_open):
+                with self.assertRaisesRegex(ValueError, "changed during audit"):
+                    scan_python_tree(root)
+
+    def test_scan_tree_rejects_source_modified_during_descriptor_read(self):
+        from contextlib import contextmanager
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source = root / "safe.py"
+            source.write_text("value = 1\\n", encoding="utf-8")
+            original_open = Path.open
+
+            class ChangingHandle:
+                def __init__(self, handle):
+                    self.handle = handle
+
+                def fileno(self):
+                    return self.handle.fileno()
+
+                def read(self):
+                    data = self.handle.read()
+                    with original_open(source, "w", encoding="utf-8") as writer:
+                        writer.write("value = 123456789\\n")
+                    return data
+
+            @contextmanager
+            def changing_open(path, *args, **kwargs):
+                with original_open(path, *args, **kwargs) as handle:
+                    yield ChangingHandle(handle) if path == source else handle
 
             with patch.object(Path, "open", changing_open):
                 with self.assertRaisesRegex(ValueError, "changed during audit"):

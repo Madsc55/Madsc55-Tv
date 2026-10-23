@@ -1,4 +1,5 @@
 import unittest
+from collections.abc import Sequence
 from madsc.k5_archive_preview import classify_archive_positions
 
 class K5ArchivePreviewTests(unittest.TestCase):
@@ -51,7 +52,7 @@ class K5ArchivePreviewTests(unittest.TestCase):
         self.assertFalse(set(preview.kept_positions) & (unverified | foreign))
 
     def test_wrong_count_does_not_iterate_or_mutate_entries(self):
-        class LengthOnly:
+        class LengthOnly(Sequence):
             def __init__(self, count):
                 self.count = count
                 self.reads = 0

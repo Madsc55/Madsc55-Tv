@@ -243,7 +243,8 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         total_entries += report["metadata_entries"]
         if total_entries > 20000:
             raise ValueError("Combined sources exceed bounded candidate limit")
-        reports[source] = {"entries": report["entries"], "rejected": len(report["rejected"]),
+        reports[source] = {"entries": report["entries"], "metadata_entries": report["metadata_entries"],
+                           "rejected": len(report["rejected"]),
                            "parse_errors": len(report["parse_errors"])}
         # Labels and serialization order do not prove independence. Fingerprint
         # the parsed channel inventory so transport formatting, comments, and

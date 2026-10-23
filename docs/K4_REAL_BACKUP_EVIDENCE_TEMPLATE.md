@@ -87,3 +87,12 @@ Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim 
 - İlk 100 Actions çalışmasında K4/yedek/backup workflow ad/yol eşleşmesi **0**; bu sonuç toplam `1059` kaydın tümü için genellenemez.
 - Bağımsız harici hedef, gerçek yedek nesne kimliği, sağlayıcı teslim makbuzu ve aynı nesneden temiz hedefe geri yükleme kanıtı bulunamadı. K4-15/16/17/18 **BEKLİYOR**; `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.
 - Yalnızca kanıt defteri güncellendi; gerçek harici yedek, gerçek restore, workflow dispatch veya üretim yazması yapılmadı.
+
+## 23 Ekim 2026 — Kullanıcı onaylı GitHub yedek hedefi
+
+- Kullanıcı **ayrı ve özel** `Madsc55/Madsc55-Tv-Backup` GitHub deposunu K4 harici yedek hedefi olarak onayladı; K1–K5 sisteminin diğer uygun yedeklerinin de burada tutulmasını istedi.
+- Mevcut GitHub bağlantısında **yeni repository oluşturma yeteneği sunulmadığı** için bu depo bu oturumda oluşturulamadı; **var olduğu doğrulanmadı**. Yedek yükleme, senkronizasyon, harici teslim makbuzu veya restore yapılmadı.
+- Planlanan bölümler: `k1/`, `k2/`, `k3/`, `k4/`, `k5/`, `manifests/`, `restore-evidence/`. Bu yollar yalnız taslaktır; GitHub'da oluşturulmuş oldukları iddia edilmez.
+- Yedek kapsamı öncesinde veri sınıflandırması, erişim denetimi, şifreleme ve boyut/kota kontrolü zorunludur. Sırlar, tokenlar, kullanıcı kimlik bilgileri, özel kaynak URL'leri, yetkisiz VOD/arşiv içeriği veya hassas üretim verileri şifresiz olarak commit edilmez. GitHub Git deposu büyük ikili arşivler için sınırsız depolama değildir.
+- Kabul sırası: (1) `Madsc55-Tv-Backup` özel repo oluşturulup erişim doğrulanır; (2) izinli verilerden gerçek yedek ve SHA-256 manifesti yüklenir; (3) GitHub commit/nesne SHA'sı ve zaman damgası kaydedilir; (4) **aynı nesne** temiz ve bağımsız geçici hedefe çekilip yeniden hash'lenir; (5) kaynak/yedek/restore eşitliği ve kapsam kanıtı kaydedilir; (6) gerçek 1/15 takvim çalışmaları ayrıca kanıtlanır.
+- Şu an `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`; yalnızca hedef seçimi onaylandı.

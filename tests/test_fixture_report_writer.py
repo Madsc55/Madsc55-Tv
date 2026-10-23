@@ -191,6 +191,19 @@ class FixtureReportWriterTests(unittest.TestCase):
                         write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}")
                     self.assertFalse(root.exists())
 
+    def test_fixture_root_rejects_nfkc_alias_without_creating_reports(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            for alias in ("fixture\\uff41", "fixture\\u212a", "fixture\\ufb01"):
+                root = base / alias
+                root.mkdir()
+                with self.subTest(alias=repr(alias)):
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_fixture_report(root, "reports/evidence.json", "{}")
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}")
+                    self.assertFalse((root / "reports").exists())
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

@@ -44,7 +44,8 @@ def summarize_blockers(rows):
         if not isinstance(row, dict) or row.get("behavioral_parity_verified") is not False:
             raise ValueError("Unexpected accepted workflow")
         missing = row.get("evidence_missing")
-        if not isinstance(missing, list) or len(set(missing)) != len(missing) or set(missing) != set(required):
+        if (not isinstance(missing, list) or any(not isinstance(item, str) for item in missing)
+                or len(missing) != len(required) or set(missing) != set(required)):
             raise ValueError("Invalid evidence blocker set")
         for name in missing:
             counts[name] += 1

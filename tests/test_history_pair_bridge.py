@@ -69,6 +69,17 @@ class HistoryPairBridgeTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     decode_pair(raw)
 
+    def test_history_envelope_rejects_boolean_schema_and_bad_digests(self):
+        import hashlib
+        payload = pair("2026-10-19T12:00:00Z", 2, "PASS")
+        canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+        digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+        for schema, checksum in ((True, digest), (1, None), (1, 123), (1, "x" * 64), (1, digest.upper())):
+            with self.subTest(schema=schema, checksum=checksum):
+                raw = json.dumps({"schema": schema, "payload": payload, "sha256": checksum})
+                with self.assertRaises(ValueError):
+                    decode_pair(raw)
+
     def test_symlink_legacy_input_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

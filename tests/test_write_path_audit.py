@@ -18,6 +18,13 @@ class WritePathAuditTests(unittest.TestCase):
                 with self.assertRaises(ProtectedWriteRejected):
                     enforce_write_paths([path])
 
+    def test_write_path_audit_rejects_excessive_batch(self):
+        paths = ["reports/evidence.json"] * 10001
+        with self.assertRaisesRegex(ValueError, "Too many paths"):
+            audit_write_paths(paths)
+        with self.assertRaisesRegex(ValueError, "Too many paths"):
+            enforce_write_paths(paths)
+
     def test_protected_paths_blocked(self):
         report = audit_write_paths(["CALISANLAR.m3u", "epg/sample.xml", "logolar/a.png"])
         self.assertTrue(report["blocked"])

@@ -18,6 +18,8 @@ PROTECTED_PREFIXES = ("yedekler/", "YEDEKLER/", "FAVORILER/", "HEPSI/",
 def audit_write_paths(paths: list[str]) -> dict:
     if not isinstance(paths, list) or not paths:
         raise ValueError("Paths must be a nonempty list")
+    if len(paths) > 10000:
+        raise ValueError("Too many paths for one write audit")
     rejected = []
     seen = set()
     for raw in paths:

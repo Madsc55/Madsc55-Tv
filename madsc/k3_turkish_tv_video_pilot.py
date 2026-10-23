@@ -119,7 +119,7 @@ def verify_av(url):
     if not same_origin_https(url, segment_url):
         return False, False, "cross_host_segment"
     payload = safe_curl(segment_url, MAX_SEGMENT)
-    if not payload or len(payload) < 188 or len(payload) > MAX_SEGMENT:
+    if not isinstance(payload, bytes) or len(payload) < 188 or len(payload) > MAX_SEGMENT:
         return False, False, "segment_unreachable"
     with tempfile.TemporaryDirectory() as folder:
         segment = Path(folder) / "sample.ts"

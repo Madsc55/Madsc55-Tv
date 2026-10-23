@@ -241,16 +241,16 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
 
     if not isinstance(sources, dict) or not sources or len(sources) > 200:
         raise ValueError("Require 1-200 named M3U sources")
-    if len({_canonical_source_name(name) for name in sources if isinstance(name, str)}) != len(sources):
+    if any(not isinstance(source, str) or not source.strip() for source in sources):
+        raise ValueError("Invalid source name")
+    if len({_canonical_source_name(name) for name in sources}) != len(sources):
         raise ValueError("Ambiguous duplicate source names")
-    if any(isinstance(name, str) and len(name) > 256 for name in sources):
+    if any(len(name) > 256 for name in sources):
         raise ValueError("Source name exceeds bounded length")
     rows = []
     rejected_count = 0
     # Downstream classification is bounded to 20,000 rows in total.
     max_total_candidates = 20000
-    if any(not isinstance(source, str) or not source.strip() for source in sources):
-        raise ValueError("Invalid source name")
     if any(not isinstance(body, str) for body in sources.values()):
         raise ValueError("M3U source bodies must be text")
     # Bound total input size before parsing any feed; each feed is already

@@ -38,6 +38,10 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         raise ValueError("Source name exceeds bounded length")
     if type(max_entries) is not int or not 1 <= max_entries <= 20000:
         raise ValueError("Invalid candidate limit")
+    # splitlines() also treats vertical-tab, form-feed and Unicode separators
+    # as line breaks. Those could hide controls inside EXTINF metadata.
+    if any(ch in text for ch in ("\x0b", "\x0c", "\x1c", "\x1d", "\x1e", "\x85", "\u2028", "\u2029")):
+        raise ValueError("M3U contains unsupported line separators")
     lines = text.removeprefix("\ufeff").splitlines()
     if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Missing M3U header")

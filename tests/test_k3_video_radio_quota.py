@@ -111,6 +111,13 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, "alternate_media_unsupported"))
             curl.assert_called_once()
 
+    def test_vod_endlist_is_not_counted_as_live_tv(self):
+        manifest = b"#EXTM3U\n#EXTINF:4,\nsegment.ts\n#EXT-X-ENDLIST\n"
+        with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "vod_playlist_not_live"))
+            curl.assert_called_once()
+
     def test_encrypted_media_playlist_fails_before_segment_download(self):
         manifest = b'#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\n#EXTINF:4,\nsegment.ts\n'
         with patch.object(pilot, 'safe_curl', return_value=manifest) as curl:

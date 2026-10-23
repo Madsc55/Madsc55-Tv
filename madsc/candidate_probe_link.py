@@ -96,9 +96,15 @@ def load_evidence(path):
             dir_fd=descriptor)
         with os.fdopen(file_descriptor, "rb") as handle:
             opened = os.fstat(handle.fileno())
-            if not stat.S_ISREG(opened.st_mode) or opened.st_size > 16 * 1024 * 1024:
-                raise ValueError("Evidence must be a bounded regular file")
+            if (not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1
+                    or opened.st_size > 16 * 1024 * 1024):
+                raise ValueError("Evidence must be a bounded singly linked regular file")
             raw = handle.read(16 * 1024 * 1024 + 1)
+            after = os.fstat(handle.fileno())
+            if (opened.st_dev, opened.st_ino, opened.st_size, opened.st_mtime_ns,
+                    opened.st_ctime_ns) != (after.st_dev, after.st_ino, after.st_size,
+                                           after.st_mtime_ns, after.st_ctime_ns):
+                raise ValueError("Evidence changed during reading")
     except OSError as exc:
         raise ValueError("Evidence path cannot be opened securely") from exc
     finally:

@@ -187,6 +187,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         errors.append({"line": len(lines), "reason": "missing_url"})
     classified = classify_candidates(candidates)
     return {"source": source, "entries": len(candidates),
+            "metadata_entries": metadata_entries,
             "candidate_rows": [candidates[item["source_index"]] for item in classified["candidates"]],
             "candidates": classified["candidates"],
             "duplicates": classified["duplicates"],
@@ -239,7 +240,7 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
     total_entries = 0
     for source, text in sorted(sources.items()):
         report = parse_m3u(text, source)
-        total_entries += report["entries"]
+        total_entries += report["metadata_entries"]
         if total_entries > 20000:
             raise ValueError("Combined sources exceed bounded candidate limit")
         reports[source] = {"entries": report["entries"], "rejected": len(report["rejected"]),
@@ -310,6 +311,7 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
         raise ValueError("Source name exceeds bounded length")
     rows = []
     rejected_count = 0
+    total_metadata_entries = 0
     # Downstream classification is bounded to 20,000 rows in total.
     max_total_candidates = 20000
     if any(not isinstance(body, str) for body in sources.values()):
@@ -324,6 +326,9 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
         raise ValueError("Combined source text exceeds bounded input limit")
     for source, body in sorted(sources.items()):
         parsed = parse_m3u(body, source)
+        total_metadata_entries += parsed["metadata_entries"]
+        if total_metadata_entries > max_total_candidates:
+            raise ValueError("Combined sources exceed bounded candidate limit")
         if len(rows) + len(parsed["candidate_rows"]) > max_total_candidates:
             raise ValueError("Combined sources exceed bounded candidate limit")
         rows.extend(parsed["candidate_rows"])

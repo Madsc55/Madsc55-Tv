@@ -84,6 +84,41 @@ def guarded(root, enabled):
         self.assertTrue(rows[0]["guard_control_flow_verified"])
         self.assertEqual(rows[0]["dominating_guard_lines_in_scope"], [3])
 
+    def test_direct_local_callers_are_source_bound_without_claiming_closure(self):
+        source = '''
+def writer(path):
+    path.write_text("data")
+
+def guarded(path):
+    enforce_write_paths(["reports/out.json"])
+    writer(path)
+
+def unguarded(path):
+    writer(path)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        callers = rows[0]["direct_local_callers"]
+        self.assertEqual([row["caller_scope"] for row in callers],
+                         ["guarded", "unguarded"])
+        self.assertTrue(callers[0]["guard_control_flow_verified"])
+        self.assertFalse(callers[1]["guard_control_flow_verified"])
+        self.assertTrue(rows[0]["direct_local_callers_source_bound"])
+        self.assertFalse(rows[0]["caller_closure_verified"])
+
+    def test_rebound_or_dynamic_module_function_has_no_local_caller_claim(self):
+        source = '''
+def writer(path):
+    path.write_text("data")
+writer = decorate(writer)
+writer(target)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["direct_local_callers"], [])
+        self.assertFalse(rows[0]["direct_local_callers_source_bound"])
+        self.assertFalse(rows[0]["caller_closure_verified"])
+
     def test_guard_in_try_does_not_claim_control_flow_dominance(self):
         source = '''
 def uncertain(root):

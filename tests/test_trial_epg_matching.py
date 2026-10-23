@@ -35,6 +35,14 @@ class TrialEpgMatchingTest(unittest.TestCase):
                 xml = '<tv><channel id="a"/><programme channel="a" start="' + timestamp + '"><title>Bad date</title></programme></tv>'
                 row = programme_coverage('#EXTINF:-1 tvg-id="a",Channel', xml)[0]
                 self.assertEqual(row["programme_count"], 0)
+    def test_zero_and_negative_programme_intervals_do_not_count(self):
+        for stop in ("20261023100000 +0000", "20261023090000 +0000"):
+            with self.subTest(stop=stop):
+                xml = '<tv><channel id="a"/><programme channel="a" start="20261023100000 +0000" stop="' + stop + '"><title>Invalid interval</title></programme></tv>'
+                row = programme_coverage('#EXTINF:-1 tvg-id="a",Channel', xml)[0]
+                self.assertEqual(row["programme_count"], 0)
+                self.assertFalse(row["has_programmes"])
+
     def test_programme_coverage_rejects_entities(self):
         with self.assertRaisesRegex(ValueError, "DTD/entity"):
             programme_coverage('#EXTINF:-1,TRT 1', '<!DOCTYPE tv><tv/>')

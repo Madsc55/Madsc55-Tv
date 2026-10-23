@@ -21,8 +21,16 @@ def audit(root):
     inventory_paths = [r.get("path") for r in source_rows if isinstance(r, dict)]
     if len(inventory_paths) != len(source_rows) or len(set(inventory_paths)) != len(inventory_paths):
         errors.append("invalid_or_duplicate_inventory_paths")
+    for row in source_rows:
+        if (not isinstance(row, dict)
+                or not isinstance(row.get("path"), str)
+                or not isinstance(row.get("git_blob_sha"), str)
+                or len(row["git_blob_sha"]) != 40
+                or any(c not in "0123456789abcdef" for c in row["git_blob_sha"])):
+            errors.append("invalid_inventory_row")
     expected = {r["path"]: r["git_blob_sha"] for r in source_rows
                 if isinstance(r, dict) and isinstance(r.get("path"), str)
+                and isinstance(r.get("git_blob_sha"), str)
                 and Path(r["path"]).name not in EXCLUDED}
     rows = []
     for part in PARTS:

@@ -42,3 +42,27 @@ class TestK5Acceptance(unittest.TestCase):
         unrelated_pool = build_isolated_test_pool(records)
         with self.assertRaises(ValueError):
             assess_k5_acceptance(self.urls, self.archive, records, unrelated_pool)
+
+    def test_same_count_swapped_url_order_rejected(self):
+        urls = list(self.urls)
+        urls[0], urls[1] = urls[1], urls[0]
+        archive = build_6115_archive_preview(urls)
+        with self.assertRaises(ValueError):
+            assess_k5_acceptance(urls, archive, self.records, self.pool)
+
+    def test_same_count_swapped_metadata_rejected(self):
+        records = [dict(record) for record in self.records]
+        records[0]["source_sha256"], records[1]["source_sha256"] = (
+            records[1]["source_sha256"], records[0]["source_sha256"])
+        pool = build_isolated_test_pool(records)
+        with self.assertRaises(ValueError):
+            assess_k5_acceptance(self.urls, self.archive, records, pool)
+
+    def test_reported_failure_does_not_approve_production(self):
+        records = [dict(record) for record in self.records]
+        records[0]["playback"] = "broken"
+        pool = build_isolated_test_pool(records)
+        report = assess_k5_acceptance(self.urls, self.archive, records, pool)
+        self.assertFalse(report["production_ready"])
+        self.assertEqual(pool["entries"][0]["reported_playback"], "broken")
+        self.assertEqual(pool["entries"][0]["playback"], "unknown")

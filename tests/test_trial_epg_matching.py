@@ -1,5 +1,5 @@
 import unittest
-from madsc.trial_epg_matching import matches, playlist_entries
+from madsc.trial_epg_matching import matches, playlist_entries, programme_coverage
 
 XML = '<tv><channel id="a"><display-name>TRT 1</display-name></channel><channel id="b"><display-name>TV 8</display-name></channel><channel id="c"><display-name>TV-8</display-name></channel></tv>'
 class TrialEpgMatchingTest(unittest.TestCase):
@@ -9,6 +9,14 @@ class TrialEpgMatchingTest(unittest.TestCase):
         self.assertEqual([x["status"] for x in result], ["exact_unique", "ambiguous", "unmatched"])
         self.assertEqual(result[0]["matched_id"], "a")
         self.assertEqual(result[1]["matched_id"], "")
+    def test_programme_coverage_distinguishes_matching_from_actual_guide(self):
+        xml = '<tv><channel id="a"><display-name>TRT 1</display-name></channel><channel id="b"><display-name>TV 8</display-name></channel><programme channel="a" start="20261023100000 +0000" stop="20261023110000 +0000"><title>News</title></programme></tv>'
+        rows = programme_coverage('#EXTINF:-1 tvg-id="a",TRT 1\\n#EXTINF:-1 tvg-id="b",TV 8\\n#EXTINF:-1,Unknown', xml)
+        self.assertEqual([r["programme_count"] for r in rows], [1, 0, 0])
+        self.assertEqual([r["has_programmes"] for r in rows], [True, False, False])
+    def test_programme_coverage_rejects_entities(self):
+        with self.assertRaisesRegex(ValueError, "DTD/entity"):
+            programme_coverage('#EXTINF:-1,TRT 1', '<!DOCTYPE tv><tv/>')
     def test_existing_id(self):
         self.assertEqual(matches('#EXTINF:-1 tvg-id="a",Other', XML)[0]["status"], "existing_valid")
     def test_duplicate_xmltv_channel_ids_fail_closed(self):

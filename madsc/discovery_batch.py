@@ -59,9 +59,12 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         # Preserve controls until EXTINF validation: strip() would silently
         # erase leading/trailing tabs and other whitespace controls.
         line = raw.strip()
+        # Permit harmless trailing ASCII spaces only on CRLF transport rows;
+        # preserve the strict rejection of padding on ordinary LF rows.
+        transport_crlf = "\r\n" in text and "\n" not in text.replace("\r\n", "")
         if raw.startswith("#EXTINF:") and line != raw and not any(
             unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw
-        ) and not ("," in raw and not raw.rsplit(",", 1)[1].strip()):
+        ) and not ("," in raw and not raw.rsplit(",", 1)[1].strip()) and not transport_crlf:
             # Whitespace padding that is not a control must not silently
             # change the declared channel identity.
             errors.append({"line": number, "reason": "invalid_metadata_whitespace"})

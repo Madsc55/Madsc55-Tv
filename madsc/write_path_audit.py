@@ -110,6 +110,8 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
     """
     # Validate the caller's lexical path before pathlib normalizes dot segments.
     raw = str(destination)
+    if len(raw) > 4096:
+        raise ProtectedWriteRejected("Output path exceeds size limit")
     normalized_raw = unicodedata.normalize("NFKC", raw)
     raw_parts = raw.replace(chr(92), "/").split("/")
     if (chr(92) in raw or chr(92) in normalized_raw
@@ -143,6 +145,8 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
         # Validate the root before Path normalizes dot components. A caller
         # must not smuggle traversal or control characters through the boundary.
         raw_root = str(allowed_root)
+        if len(raw_root) > 4096:
+            raise ProtectedWriteRejected("Allowed output root exceeds size limit")
         normalized_root = unicodedata.normalize("NFKC", raw_root)
         if (chr(92) in raw_root or chr(92) in normalized_root or
                 any(part in (".", "..") for part in normalized_root.split("/")) or

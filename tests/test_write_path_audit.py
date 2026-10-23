@@ -67,6 +67,14 @@ class WritePathAuditTests(unittest.TestCase):
         with self.assertRaises(ProtectedWriteRejected):
             enforce_write_paths(["reports/．．/safe.json"])
 
+    def test_unicode_compatibility_backslash_is_rejected(self):
+        paths = ["reports／safe.json", "reports＼safe.json",
+                 "reports/ＥＰＧ＼guide.xml"]
+        report = audit_write_paths(paths)
+        self.assertEqual(report["rejected"], paths)
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths(["reports＼safe.json"])
+
     def test_nul_and_control_characters_are_rejected(self):
         paths = ["reports/bad" + chr(0) + ".json",
                  "reports/bad" + chr(10) + ".json",

@@ -1,5 +1,4 @@
 """Regression tests for independent K5 workflow evidence comparison."""
-import copy
 import hashlib
 import unittest
 
@@ -29,7 +28,10 @@ def evidence():
 
 class BehavioralCompareTests(unittest.TestCase):
     def test_identical_independent_fixture_evidence(self):
-        self.assertTrue(compare(evidence())["accepted"])
+        result = compare(evidence())
+        self.assertTrue(result["matched_evidence"])
+        self.assertFalse(result["accepted"])
+        self.assertTrue(result["requires_independent_execution_verification"])
 
     def test_output_mismatch_fails_closed(self):
         doc = evidence()

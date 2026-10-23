@@ -168,6 +168,17 @@ class FixtureReportWriterTests(unittest.TestCase):
                     with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
                         write_turkish_tv_test_bundle(Path(raw), b"#EXTM3U\\n", "{}")
 
+    def test_fixture_root_rejects_oversized_and_noncharacter_names(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            for raw in (str(base) + "/" + "a" * 4097,
+                        str(base) + "/bad\\ufdd0",
+                        str(base) + "/bad\\u0085"):
+                with self.subTest(root_length=len(raw)):
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_fixture_report(Path(raw), "reports/evidence.json", "{}")
+            self.assertFalse((base / "reports").exists())
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

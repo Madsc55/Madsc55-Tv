@@ -92,7 +92,7 @@ def programme_coverage(playlist, xml_data):
         channel = (programme.get("channel") or "").strip()
         start = (programme.get("start") or "").strip()
         stop = (programme.get("stop") or "").strip()
-        if channel in known_channels and re.fullmatch(r"\\d{12}(?:\\d{2})? [+-]\\d{4}", start) and (not stop or re.fullmatch(r"\\d{12}(?:\\d{2})? [+-]\\d{4}", stop)):
+        if channel in known_channels and re.fullmatch(r"\d{12}(?:\d{2})? [+-]\d{4}", start) and (not stop or re.fullmatch(r"\d{12}(?:\d{2})? [+-]\d{4}", stop)):
             counts[channel] = counts.get(channel, 0) + 1
     for row in results:
         channel = row["matched_id"]

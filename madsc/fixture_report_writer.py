@@ -10,8 +10,18 @@ from madsc.write_path_audit import (enforce_write_paths, enforce_local_output_pa
 _TURKISH_TV_PLAYLIST = "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
 
 
+def _validated_fixture_root(root: Path) -> Path:
+    """Reject relative and lexical traversal roots before any normalization."""
+    raw = str(root)
+    candidate = Path(root)
+    if (not candidate.is_absolute() or
+            any(part in (".", "..") for part in raw.replace("\\", "/").split("/"))):
+        raise PermissionError("Fixture root must be absolute and nontraversing")
+    return candidate
+
+
 def _prepare_fixture_root(root: Path) -> Path:
-    root = Path(root).absolute()
+    root = _validated_fixture_root(root)
     if root.is_symlink() or not root.is_dir() or root.resolve(strict=True) != root:
         raise PermissionError("Fixture root and its ancestors must be real, nonsymlink directories")
     reports = root / "reports"
@@ -189,7 +199,7 @@ def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
     if not isinstance(content, str):
         raise TypeError("Report content must be text")
     enforce_write_paths([relative_path])
-    root = Path(root).absolute()
+    root = _validated_fixture_root(root)
     if root.is_symlink() or not root.is_dir() or root.resolve(strict=True) != root:
         raise PermissionError("Fixture root and its ancestors must be real, nonsymlink directories")
     destination = root.joinpath(*relative_path.split("/"))

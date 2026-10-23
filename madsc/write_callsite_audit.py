@@ -100,6 +100,15 @@ def _flag_names(node: ast.AST) -> set[str] | None:
     return None
 
 
+def _is_proven_text_receiver(node: ast.AST) -> bool:
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return True
+    return (isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr in _TEXT_METHODS
+            and _is_proven_text_receiver(node.func.value))
+
+
 def _is_proven_text_replace(node: ast.Call) -> bool:
     """Recognize only receivers whose expression proves string semantics."""
     if not isinstance(node.func, ast.Attribute) or node.func.attr != "replace":
@@ -107,8 +116,12 @@ def _is_proven_text_replace(node: ast.Call) -> bool:
     receiver = node.func.value
     if isinstance(receiver, ast.Constant) and isinstance(receiver.value, str):
         return True
+    # A method name alone does not prove a string receiver: user-defined
+    # objects can implement lower()/strip() and return a pathlib-like writer.
+    # Only a chain rooted in a literal string is safe to exclude.
     if isinstance(receiver, ast.Call) and isinstance(receiver.func, ast.Attribute):
-        return receiver.func.attr in _TEXT_METHODS
+        return (receiver.func.attr in _TEXT_METHODS
+                and _is_proven_text_receiver(receiver.func.value))
     return False
 
 

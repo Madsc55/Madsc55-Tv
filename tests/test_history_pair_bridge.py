@@ -80,6 +80,19 @@ class HistoryPairBridgeTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     decode_pair(raw)
 
+    def test_duplicate_json_keys_rejected_even_when_digest_is_valid(self):
+        import hashlib
+        payload = pair("2026-10-19T12:00:00Z", 2, "PASS")
+        canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+        digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+        envelope = json.dumps({"schema": 1, "payload": payload, "sha256": digest})
+        duplicated = envelope.replace('"schema": 1', '"schema": 1, "schema": 1', 1)
+        with self.assertRaisesRegex(ValueError, "Duplicate history JSON key"):
+            decode_pair(duplicated)
+        nested = envelope.replace('"history": {', '"history": {}, "history": {', 1)
+        with self.assertRaisesRegex(ValueError, "Duplicate history JSON key"):
+            decode_pair(nested)
+
     def test_symlink_legacy_input_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

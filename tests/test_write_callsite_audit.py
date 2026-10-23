@@ -22,6 +22,8 @@ def unguarded(root):
         rows = scan_python_source(source, "sample.py")
         self.assertEqual([row["api"] for row in rows], ["write_text", "write_bytes"])
         self.assertTrue(rows[0]["recognized_guard_precedes_write_in_scope"])
+        self.assertTrue(rows[0]["guard_control_flow_verified"])
+        self.assertEqual(rows[0]["dominating_guard_lines_in_scope"], [6])
         self.assertFalse(rows[1]["recognized_guard_precedes_write_in_scope"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
@@ -57,6 +59,33 @@ def maybe_guard(root, enabled):
         self.assertFalse(rows[0]["guard_control_flow_verified"])
         self.assertIn("manual control-flow review", rows[0]["guard_assessment"])
         self.assertTrue(rows[0]["review_required"])
+
+    def test_direct_guard_dominates_write_nested_in_later_statement(self):
+        source = '''
+def guarded(root, enabled):
+    enforce_write_paths(["reports/out.json"])
+    if enabled:
+        (root / "out.json").write_text("ok")
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(rows[0]["guard_control_flow_verified"])
+        self.assertEqual(rows[0]["dominating_guard_lines_in_scope"], [3])
+
+    def test_guard_in_try_does_not_claim_control_flow_dominance(self):
+        source = '''
+def uncertain(root):
+    try:
+        enforce_write_paths(["reports/out.json"])
+    except Exception:
+        pass
+    (root / "out.json").write_text("review")
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(rows[0]["recognized_guard_precedes_write_in_scope"])
+        self.assertFalse(rows[0]["guard_control_flow_verified"])
+        self.assertEqual(rows[0]["dominating_guard_lines_in_scope"], [])
 
     def test_read_only_open_is_not_a_mutation(self):
         source = '''

@@ -65,3 +65,7 @@
 ## 7. Altı ek workflow'un doğrudan YAML sözleşmesi
 
 `docs/K5_LEGACY_ALTI_WORKFLOW_KARSILASTIRMA_2026-10-23.md` ile aday önceliklendirme, teknik aday yedek taslağı, akıllı puanlama, altıncı tekrar testi, otomatik PNG logo hazırlığı ve beşinci zaman aşımı testinin eski sabit commit'teki workflow YAML'ları doğrudan okundu. 65 saniye teknik timeout, `RETEST_LIMIT=5`, gerçek ffprobe ve logo playlist değişmezliği gibi **eşdeğerlik için zorunlu** sınırlar kaydedildi. Eski-yeni ayrı koşu ve artifact kanıtları olmadığından üretim kabul kararı değişmedi; önceki 45/92 statik inceleme sayısı mükerrerlik denetlenmeden artırılmadı.
+
+## 8. On ek sabit workflow'un kaynak doğrulaması ve EPG yayın riski
+
+`docs/K5_LEGACY_ON_WORKFLOW_KARSILASTIRMA_2026-10-23.md` dosyasında 10 eski YAML doğrudan sabit commit'ten okunarak karşılaştırıldı. `epg-gunluk.yml` içindeki **contents: write + korunan kapı + git push** ve `epg-pages.yml` içindeki **Pages deploy + yayın SHA256 doğrulaması** üretim yan etkisi olan kritik zincirdir; bu çalışma sırasında çalıştırılmadı. Kaynak-temelli inceleme ve belge güncellemesi, gerçek yayın eşdeğerliği, başarılı CI veya bağımsız eski/yeni artifact kanıtı anlamına gelmez. **Kabul 0/92; üretim geçişi bloke.** Önceki statik 45/92 sayısı mükerrerlik kontrolü olmadan artırılmadı.

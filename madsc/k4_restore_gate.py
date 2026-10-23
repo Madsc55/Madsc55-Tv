@@ -134,7 +134,9 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
         for root, identity in zip(roots, root_identities):
             try:
                 metadata = root.lstat()
-                if not stat.S_ISDIR(metadata.st_mode) or (metadata.st_dev, metadata.st_ino) != identity:
+                if (not stat.S_ISDIR(metadata.st_mode)
+                        or (metadata.st_dev, metadata.st_ino) != identity
+                        or any(ancestor.is_symlink() for ancestor in (root, *root.parents))):
                     inventory_matches = False
                     break
             except OSError:

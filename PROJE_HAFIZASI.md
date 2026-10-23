@@ -1196,3 +1196,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Fixture bundle rollback descriptor-relative/no-follow yapıldı ve yalnız dev/inode/size/mtime/ctime kimliği aynıysa siler. Concurrent replacement testi geçer. Düşük-seviye create/rollback kapsamındaki audit sonucu 9/9 doğrudan guarded.
 - Exact uzak SHA doğrulaması: hedefli 161/161, tam offline 1372/1372, beş izole K kapısı ve tüm offline kapılar başarılı; envanter 107 dosya/145 aday. İlk yanlış modül adlı komut ve eski `Path.unlink` audit failure'ı başarı sayılmadan düzeltildi.
 - Kabul sabit: 0/92 parity, 0/26 runtime güvenlik, 0/22 görev, production false. Sıradaki yerel iş kalan gerçek writer/rollback helper'ları; dış bağımsız run/artifact, restore ve en son kullanıcı cihaz kanıtı bekliyor. Actions/canlı probe/üretim/korunan veri/eski repo/PR71/merge işlemi yapılmadı.
+
+
+## 23 Ekim 2026 — K1 parity salt-okunur descriptor bağı
+- `cd9e164efe14ff2510c5bf98fdfa758d62e680f3`: manifest input ve execution snapshot okuyucularının portable `os.open` bayrakları tek kaynak-bağlı salt-okunur ifadeye alındı; iki false-positive aday `proven_read_only_descriptor` oldu.
+- Exact uzak SHA'da hedefli 90/90, tam offline 1373/1373; beş izole K kapısı ve tüm offline kapılar başarılı. Envanter 107 dosya/143 aday/15 disposition. Kabul 0/92, 0/26, 0/22, production false.
+- Sonraki yerel inceleme gerçek fixture/not-writer replace/delete yollarıdır. Gerçek bağımsız artifact/run, restore ve son kullanıcı cihaz kanıtı bekleniyor; korunan veri veya dış sistem işlemi yapılmadı.

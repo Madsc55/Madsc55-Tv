@@ -390,6 +390,18 @@ def mutate(path, fd):
             with self.assertRaisesRegex(ValueError, "Symlinked source root"):
                 scan_python_tree(parent / "linked_root")
 
+    def test_starred_modes_are_reviewed(self):
+        source = (
+            'def check(path, fd, args):\n'
+            '    open(path, *args)\n'
+            '    path.open(*args)\n'
+            '    os.fdopen(fd, *args)\n'
+        )
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 3)
+        self.assertTrue(all('dynamic mode' in row['api'] for row in rows))
+        self.assertTrue(all(row['review_required'] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

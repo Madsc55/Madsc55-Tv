@@ -1,3 +1,10 @@
+# K3 SÖZDİZİMİ DÜZELTMESİ — 2026-10-23
+- Önceki `madsc/epg.py` commitinde `matches` ifadesine yanlışlıkla literal `\\n` dizisi yazılmıştı; Python sözdizimini bozuyordu. Commit `74f4710099cc3ffd3a493a502cdb1cd00b6eac61` ile gerçek satır sonları kullanılarak onarıldı.
+- `tvg-id` nitelik başlangıcının başka tırnaklı niteliğin içinde kalmadığı da kontrol ediliyor.
+- Bu turda GitHub'a erişen ortamdan tam repo clone veya test çalıştırması yapılamadı (ağ DNS kısıtı); CI başarılı diye işaretlenmedi. Canlı kabul ve cihaz kabulü açık.
+
+---
+
 # K3 EK DÜZELTME — 2026-10-23
 - `madsc/epg.py` commit `de5dd1a8ab09ff1d2ee41f2d2670397e5588bf8b`: tvg-id yalnız gerçek M3U nitelik anahtarından okunur; diğer tırnaklı niteliklerin metnindeki sahte tvg-id yok sayılır.
 - `tests/test_epg.py` commit `269416752f6ac678f9e0fa43abfef778716a266a`: bu durum için regresyon eklendi.

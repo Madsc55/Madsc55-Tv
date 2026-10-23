@@ -17,10 +17,10 @@ class WorkflowWriteBoundaryTests(unittest.TestCase):
             source = workflow.read_text(encoding="utf-8")
             with self.subTest(workflow=workflow.name):
                 self.assertRegex(source, r"(?m)^permissions:[ \t]*\n(?:[ \t]+[^\n]*\n)*?[ \t]+contents:[ \t]*read[ \t]*$")
-                self.assertNotRegex(source, r"(?m)^\\s*contents:\\s*write\\s*$")
+                self.assertNotRegex(source, r"(?m)^[ \t]*contents:[ \t]*write[ \t]*$")
                 self.assertIn("persist-credentials: false", source)
-                self.assertNotRegex(source, r"(?m)\\bgit\\s+push\\b")
-                self.assertNotRegex(source, r"(?m)^\\s*pull_request_target\\s*:")
+                self.assertNotRegex(source, r"(?m)\bgit\s+push\b")
+                self.assertNotRegex(source, r"(?m)^[ \t]*pull_request_target[ \t]*:")
 
 class WriteCallsiteAuditTests(unittest.TestCase):
     def test_artifact_transport_writes_have_direct_k1_guard_dominance(self):

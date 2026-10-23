@@ -13,7 +13,10 @@ class PortableDirectoryAliasTests(unittest.TestCase):
             root = Path(directory)
             for names in (["Folder/a.txt", "folder/b.txt"],
                           ["ﬁles/a.txt", "files/b.txt"],
-                          ["file", "FILE/child.txt"]):
+                          ["root/Folder/a.txt", "root/folder/b.txt"],
+                          ["root/ﬁles/a.txt", "root/files/b.txt"],
+                          ["file", "FILE/child.txt"],
+                          ["root/file", "root/FILE/child.txt"]):
                 with self.subTest(names=names):
                     with patch("madsc.backup._open_relative_file_nofollow") as opener:
                         with self.assertRaisesRegex(ValueError, "directory alias|file-directory collision"):

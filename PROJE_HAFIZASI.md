@@ -1150,3 +1150,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Doğrudan koşulsuz guard deyiminin sonraki yazma adayına lexical gövde içinde baskınlığı ayrı alanlarla kaydediliyor; koşullu/try içi guard baskın sayılmıyor. Kod/test: `97ecba41f2bc89462f40dd4e88533e06b3c00ce3` / `08aa6447dae79cfacca058f534bcb0cbd912a1c4`.
 - Temiz uzak main doğrulaması: 1151/1151 test ve tüm offline/K1–K5 fixture kapıları başarılı; 100 dosya, 142 aday, 9 non-write disposition, 75 yapısal baskınlık. Bu statik sonuç çağrı zinciri, 0/26 runtime, 0/92 parity veya 0/22 görev kabulünü değiştirmez.
 - Sıradaki K1 işi gerçek writer/subprocess satırlarının callee/caller sözleşmesini kaynak-hash-bağlı incelemek. Gerçek bağımsız execution/artifact, harici restore ve kullanıcı cihaz kanıtı gelmeden kabul verilmez; korunan üretim verisi değiştirilmedi.
+
+
+## 23 Ekim 2026 — K1 artifact yazıcısı ve subprocess kanıt sınırı
+- `artifact_transport` yazmaları koşulsuz iki K1 preflight'ı olan tek exclusive yardımcıya taşındı: `1d347f79173870b2313b6ec9ce9ed466569418ae`; regresyonlar `6aee0d5a70a72ac19fa0087fb08821700d7435da` ve `6cf0c3932bf521dbafff18787cec4ba034a2465b`.
+- Subprocess adayları için shell/argv sözdizimi kaynak-bağlı kaydediliyor (`039826136d99fa9bf4a7d44b6b7661d1566209da`, `ff946c3b35f2efde1972dac64f09663e2d98e14e`). Altı aday shell-disabled görünse de komut etkisi 0/6 doğrulandı; tümü açık/fail-closed kaldı.
+- Temiz son kod SHA'sında 1154/1154 test ve bütün offline K1–K5 kapıları başarılı; 140 aday, 9 disposition, 77 yapısal guard baskınlığı. İlk hedefli testteki yanlış exception beklentisi başarı sayılmadan düzeltildi.
+- Kabul değişmedi: 0/92, 0/26, 0/22. Sıradaki iş gerçek subprocess etkileri ve writer caller/callee sözleşmeleri; dış kanıt ve en son kullanıcı cihaz testi bekleniyor.

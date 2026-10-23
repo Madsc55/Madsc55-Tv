@@ -63,6 +63,11 @@ class TrialEpgMatchingTest(unittest.TestCase):
     def test_programme_coverage_rejects_entities(self):
         with self.assertRaisesRegex(ValueError, "DTD/entity"):
             programme_coverage('#EXTINF:-1,TRT 1', '<!DOCTYPE tv><tv/>')
+    def test_turkish_diacritics_exact_match(self):
+        xml = '<tv><channel id="turk"><display-name>Çığ ŞÜÖ</display-name></channel></tv>'
+        row = matches('#EXTINF:-1,Cig SUO', xml)[0]
+        self.assertEqual(row["status"], "exact_unique")
+        self.assertEqual(row["matched_id"], "turk")
     def test_existing_id(self):
         self.assertEqual(matches('#EXTINF:-1 tvg-id="a",Other', XML)[0]["status"], "existing_valid")
     def test_duplicate_xmltv_channel_ids_fail_closed(self):

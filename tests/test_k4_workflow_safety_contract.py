@@ -28,7 +28,7 @@ class K4WorkflowSafetyContractTests(unittest.TestCase):
         # A fixture-only workflow must not acquire provider credentials or
         # write permissions as part of routine maintenance.
         self.assertIn("persist-credentials: false", source)
-        self.assertIn("permissions:\\n  contents: read", source)
+        self.assertIn("permissions:\n  contents: read", source)
         self.assertNotIn("contents: write", source)
         self.assertNotIn("id-token: write", source)
         self.assertNotIn("secrets.", source)

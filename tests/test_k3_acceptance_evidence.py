@@ -42,8 +42,6 @@ class K3EvidenceTests(unittest.TestCase):
                 rows = [{"url_sha256": format(i, "064x"), "hls_manifest_seen": True,
                          "https_reachable": True, "status": "manifest_only"}
                         for i in range(75)]
-                if hour == 3:
-                    rows[0]["https_reachable"] = False
                 report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
                           "measured_at_utc": f"2026-10-23T{hour:02d}:00:00+00:00",
                           "candidate_limit": 75, "candidate_shortfall": 0,
@@ -52,6 +50,9 @@ class K3EvidenceTests(unittest.TestCase):
                 file = Path(folder) / f"{hour}.json"
                 file.write_text(json.dumps(report), encoding="utf-8")
                 files.append(file)
+            middle = json.loads(files[1].read_text(encoding="utf-8"))
+            middle["results"][0]["https_reachable"] = False
+            files[1].write_text(json.dumps(middle), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "Inconsistent successful"):
                 assess(files)
 

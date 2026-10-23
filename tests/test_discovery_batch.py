@@ -542,3 +542,17 @@ class DiscoveryBatchTests(unittest.TestCase):
             with self.subTest(entrypoint=entrypoint.__name__):
                 with self.assertRaisesRegex(ValueError, "unsupported line separators"):
                     entrypoint({"fixture": feed})
+
+    def test_extinf_controls_stripped_at_edges_are_still_rejected(self):
+        for malformed in ('#EXTINF:-1,Bad\t',
+                          '\t#EXTINF:-1,Bad',
+                          '#EXTINF:-1,Bad\x00'):
+            with self.subTest(malformed=repr(malformed)):
+                feed = ('#EXTM3U\n' + malformed + '\n'
+                        'https://example.org/bad\n'
+                        '#EXTINF:-1,Good\nhttps://example.org/good\n')
+                report = parse_m3u(feed, "fixture")
+                self.assertEqual(report["entries"], 1)
+                self.assertEqual(report["candidate_rows"][0]["name"], "Good")
+                self.assertIn("invalid_metadata_control",
+                              [error["reason"] for error in report["parse_errors"]])

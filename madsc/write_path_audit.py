@@ -136,7 +136,10 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
         # Validate the root before Path normalizes dot components. A caller
         # must not smuggle traversal or control characters through the boundary.
         raw_root = str(allowed_root)
-        if (chr(92) in raw_root or
+        normalized_root = unicodedata.normalize("NFKC", raw_root)
+        if (chr(92) in raw_root or chr(92) in normalized_root or
+                normalized_root.count("/") != raw_root.count("/") or
+                ":" in normalized_root or
                 any(part in (".", "..") for part in raw_root.split("/")) or
                 any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
                     or 0xFDD0 <= ord(ch) <= 0xFDEF

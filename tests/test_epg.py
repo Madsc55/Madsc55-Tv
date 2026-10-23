@@ -6,6 +6,18 @@ from madsc.epg import check_epg_mapping
 
 class EpgTests(unittest.TestCase):
 
+    def test_nonstandard_unicode_line_separators_fail_closed(self):
+        for separator in ("\\u0085", "\\u2028", "\\u2029"):
+            with self.subTest(separator=separator), tempfile.TemporaryDirectory() as d:
+                p = Path(d) / "playlist.m3u8"
+                e = Path(d) / "xmltv.xml"
+                p.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1'
+                             + separator.encode("ascii").decode("unicode_escape")
+                             + 'https://example.org/a.m3u8\\n', encoding="utf-8")
+                e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "Nonstandard line separator"):
+                    check_epg_mapping(p, e)
+
     def test_malformed_tvg_id_forms_fail_closed(self):
         for attribute in ('tvg-id=trt1.tr', 'tvg-id = "trt1.tr"', 'tvg-id="trt1.tr" tvg-id=other.tr'):
             with self.subTest(attribute=attribute), tempfile.TemporaryDirectory() as d:

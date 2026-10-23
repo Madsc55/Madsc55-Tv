@@ -30,6 +30,12 @@ def assess(paths):
         count = sum(r.get("hls_manifest_seen") is True for r in rows)
         if data.get("manifest_seen") != count:
             raise ValueError("Manifest count mismatch")
+        for row in rows:
+            if row.get("hls_manifest_seen") is True:
+                if row.get("status") != "manifest_only" or row.get("https_reachable") is not True:
+                    raise ValueError("Inconsistent successful probe evidence")
+            elif row.get("status") == "manifest_only":
+                raise ValueError("Unverified probe marked as manifest-only")
         snapshots.append((stamp.astimezone(timezone.utc), set(ids), count))
     snapshots.sort(key=lambda s: s[0])
     elapsed = (snapshots[-1][0] - snapshots[0][0]).total_seconds()

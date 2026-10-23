@@ -45,7 +45,8 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
             self.assertEqual(curl.call_count, 2)
 
     def test_byte_range_and_low_latency_parts_are_not_misprobed(self):
-        for tag in ("#EXT-X-BYTERANGE:1024@0", "#EXT-X-SKIP:SKIPPED-SEGMENTS=2",
+        for tag in ("#EXT-X-BYTERANGE:1024@0", "#EXT-X-DISCONTINUITY",
+                    "#EXT-X-GAP", "#EXT-X-SKIP:SKIPPED-SEGMENTS=2",
                     "#EXT-X-RENDITION-REPORT:URI=\"other.m3u8\"",
                     "#EXT-X-PART:DURATION=0.5,URI=\"part.ts\"",
                     "#EXT-X-PRELOAD-HINT:TYPE=PART,URI=\"next.ts\""):
@@ -65,6 +66,22 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, "probe_error"))
             self.assertEqual(curl.call_args_list[1].args[0],
                              "https://example.org/segment.ts")
+
+    def test_alternate_audio_rendition_is_not_claimed_as_verified(self):
+        manifest = (b'#EXTM3U\n#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio",'
+                    b'NAME="Turkish",URI="audio.m3u8"\n#EXTINF:4,\nsegment.ts\n')
+        with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "alternate_media_unsupported"))
+            curl.assert_called_once()
+
+    def test_external_session_metadata_is_not_silently_ignored(self):
+        manifest = (b'#EXTM3U\n#EXT-X-SESSION-DATA:DATA-ID="example",'
+                    b'URI="metadata.json"\n#EXTINF:4,\nsegment.ts\n')
+        with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "alternate_media_unsupported"))
+            curl.assert_called_once()
 
     def test_encrypted_media_playlist_fails_before_segment_download(self):
         manifest = b'#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\n#EXTINF:4,\nsegment.ts\n'

@@ -58,6 +58,16 @@ class DiscoveryBatchTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Ambiguous duplicate source names"):
                     entrypoint(sources)
 
+    def test_invisible_unicode_source_labels_rejected(self):
+        feed = "#EXTM3U\n#EXTINF:-1,News\nhttps://example.org/live\n"
+        for bad_label in ("feed\u202e", "feed\u200b", "feed\u2028"):
+            with self.subTest(label=repr(bad_label)):
+                with self.assertRaises(ValueError):
+                    parse_m3u(feed, bad_label)
+                for entrypoint in (corroborate_sources, build_m3u8_preview):
+                    with self.assertRaises(ValueError):
+                        entrypoint({bad_label: feed})
+
     def test_known_urls_requires_set(self):
         with self.assertRaises(ValueError):
             corroborate_sources({"a": "#EXTM3U"}, known_urls=["https://example.org/a"])
@@ -116,6 +126,15 @@ class DiscoveryBatchTests(unittest.TestCase):
         feeds = {"Feed": "#EXTM3U", " feed ": "#EXTM3U"}
         with self.assertRaises(ValueError):
             build_m3u8_preview(feeds)
+
+    def test_metadata_attributes_require_token_boundaries(self):
+        feed = ("#EXTM3U\n"
+                '#EXTINF:-1 xtvg-id="forged" tvg-id="real",Channel\n'
+                "https://example.org/live\n")
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 0)
+        self.assertEqual(report["parse_errors"][0]["reason"], "invalid_metadata_attribute")
+        self.assertEqual(report["candidates"], [])
 
     def test_extinf_quoted_commas_preserve_channel_identity(self):
         feed = ('#EXTM3U\n#EXTINF:-1 tvg-id="news,tr" group-title="News, World",News, HD\n'

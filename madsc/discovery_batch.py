@@ -23,7 +23,9 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         raise ValueError("Source and M3U text are required")
     # Source names are provenance labels, not arbitrary control sequences.
     # Reject embedded controls before they can contaminate audit reports.
-    if any(ord(ch) < 32 or ord(ch) == 127 for ch in source):
+    if any(unicodedata.category(ch) in ("Cs",) for ch in source):
+        raise ValueError("M3U source and text must be valid UTF-8")
+    if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in source):
         raise ValueError("Source name contains control characters")
     # Surrogate code points cannot be represented in UTF-8 output and must
     # fail at ingestion rather than during downstream hashing or rendering.
@@ -83,11 +85,27 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 discard_url_for_rejected_entry = True
                 continue
             attr_pairs = ATTR.findall(meta)
+            # Attributes must start at a whitespace boundary; otherwise a
+            # quoted-looking substring inside an attribute name is ambiguous.
+            if any(match.start() == 0 or not meta[match.start() - 1].isspace()
+                   for match in ATTR.finditer(meta)):
+                pending = None
+                errors.append({"line": number, "reason": "invalid_metadata_attribute"})
+                discard_url_for_rejected_entry = True
+                continue
             # Do not silently discard malformed identity-related attributes.
             # A bare or unquoted tvg-id could otherwise turn a channel into a
             # misleading name-only match instead of a rejected candidate.
             remainder = ATTR.sub("", meta)
             if re.search(r'(?i)(?:^|\s)(?:tvg-id|tvg-logo|group-title)\s*=', remainder):
+                pending = None
+                errors.append({"line": number, "reason": "invalid_metadata_attribute"})
+                discard_url_for_rejected_entry = True
+                continue
+            # Lookalike identity keys (e.g. xtvg-id) must not be treated as harmless metadata.
+            if any(name.casefold().endswith(("tvg-id", "tvg-logo", "group-title"))
+                   and name.casefold() not in {"tvg-id", "tvg-logo", "group-title"}
+                   for name, _ in attr_pairs):
                 pending = None
                 errors.append({"line": number, "reason": "invalid_metadata_attribute"})
                 discard_url_for_rejected_entry = True
@@ -157,7 +175,7 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Combined source text exceeds bounded input limit")
     # Validate provenance labels before URL normalization and aggregation.
     # Avoid parsing each M3U twice just to reject malformed source names.
-    if any(any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF
+    if any(any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
                for ch in source) for source in sources):
         raise ValueError("Invalid source name: control characters or UTF-8 surrogates")
     known = {normalize_url(url) for url in (known_urls or set())}
@@ -225,6 +243,9 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
         raise ValueError("Ambiguous duplicate source names")
     if any(isinstance(name, str) and len(name) > 256 for name in sources):
         raise ValueError("Source name exceeds bounded length")
+    if any(any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+               for ch in name) for name in sources):
+        raise ValueError("Invalid source name: control characters or UTF-8 surrogates")
     rows = []
     rejected_count = 0
     # Downstream classification is bounded to 20,000 rows in total.

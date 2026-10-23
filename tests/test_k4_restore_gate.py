@@ -66,6 +66,33 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertFalse(result["sandbox_restore_accepted"])
             self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
 
+    def test_inventory_symlink_never_uses_following_type_checks(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ("source", "backup", "restored")]
+            for root in trees:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            (trees[2] / "alias").symlink_to(trees[2] / "file.txt")
+            original_is_file = Path.is_file
+            original_is_dir = Path.is_dir
+
+            def forbid_alias_follow(path):
+                if path.name == "alias":
+                    raise AssertionError("Inventory must not follow symlink type checks")
+                return original_is_file(path)
+
+            def forbid_alias_dir(path):
+                if path.name == "alias":
+                    raise AssertionError("Inventory must not follow symlink type checks")
+                return original_is_dir(path)
+
+            with patch.object(Path, "is_file", autospec=True, side_effect=forbid_alias_follow), \
+                 patch.object(Path, "is_dir", autospec=True, side_effect=forbid_alias_dir):
+                result = audit_k4_restore(*trees, ["file.txt"])
+            self.assertFalse(result["sandbox_restore_accepted"])
+
     def test_mismatch_fails_closed(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

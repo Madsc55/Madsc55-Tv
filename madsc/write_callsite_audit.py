@@ -43,7 +43,7 @@ _PROCESS_LAUNCHERS = {
     "subprocess.run", "subprocess.call", "subprocess.Popen",
     "subprocess.check_call", "subprocess.check_output",
     "subprocess.getoutput", "subprocess.getstatusoutput",
-    "os.system", "os.popen", "os.startfile", "os.spawnl", "os.spawnle", "os.spawnlp", "os.spawnlpe",
+    "os.system", "os.popen", "os.startfile", "os.fork", "os.forkpty", "os.spawnl", "os.spawnle", "os.spawnlp", "os.spawnlpe",
     "os.spawnv", "os.spawnve", "os.spawnvp", "os.spawnvpe", "os.posix_spawn", "os.posix_spawnp",
     "os.execv", "os.execve", "os.execvp", "os.execvpe", "os.execl", "os.execle", "os.execlp", "os.execlpe",
 }
@@ -750,7 +750,8 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
     if any(ancestor.is_symlink() for ancestor in (requested_root, *requested_root.parents)):
         raise ValueError("Symlinked source root or ancestor requires review")
     root = requested_root.resolve(strict=True)
-    if not root.is_dir():
+    root_stat = root.stat(follow_symlinks=False)
+    if not stat.S_ISDIR(root_stat.st_mode) or root_stat.st_nlink < 1:
         raise ValueError("Source root must be a directory")
     # pathlib.rglob("*.py") may not descend into symlinked directories.
     # Reject linked directories before enumerating sources, rather than
@@ -779,8 +780,14 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
             raise ValueError(f"Non-regular Python source requires review: {relative}")
         if source_stat.st_nlink != 1:
             raise ValueError(f"Hardlinked Python source requires review: {relative}")
-        scanned.append(relative)
         source = file.read_text(encoding="utf-8")
+        after_stat = file.stat(follow_symlinks=False)
+        identity = lambda metadata: (metadata.st_dev, metadata.st_ino, metadata.st_mode,
+                                     metadata.st_nlink, metadata.st_size,
+                                     metadata.st_mtime_ns, metadata.st_ctime_ns)
+        if identity(source_stat) != identity(after_stat):
+            raise ValueError(f"Python source changed during audit: {relative}")
+        scanned.append(relative)
         tree = ast.parse(source, filename=relative)
         scanner = _Scanner(relative, source)
         scanner.visit(tree)

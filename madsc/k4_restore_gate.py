@@ -5,6 +5,7 @@ Only inspects three already-existing independent directories. Never restores fil
 from __future__ import annotations
 
 from pathlib import Path
+import stat
 
 from madsc.backup import verify_independent_restore
 
@@ -88,12 +89,15 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
                     inventory_matches = False
                     break
                 relative = item.relative_to(root).as_posix()
-                if item.is_symlink():
+                # One no-follow metadata read avoids classifying a replaced
+                # symlink by following it in a subsequent is_dir/is_file call.
+                mode = item.lstat().st_mode
+                if stat.S_ISLNK(mode):
                     inventory_matches = False
                     break
-                if item.is_dir():
+                if stat.S_ISDIR(mode):
                     actual_dirs.add(relative)
-                elif item.is_file():
+                elif stat.S_ISREG(mode):
                     actual_files.add(relative)
                 else:
                     inventory_matches = False

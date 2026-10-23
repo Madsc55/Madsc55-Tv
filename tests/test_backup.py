@@ -716,6 +716,20 @@ class BackupTests(unittest.TestCase):
             self.assertEqual((destination / "keep.txt").read_text(encoding="utf-8"), "concurrent")
             self.assertEqual((backup / "file.txt").read_text(encoding="utf-8"), "original")
 
+    def test_rollback_helper_blocks_protected_tree_before_filesystem_access(self):
+        from unittest.mock import patch
+        from madsc.backup import _remove_created_tree_if_same
+        from madsc.write_path_audit import ProtectedWriteRejected
+        with tempfile.TemporaryDirectory() as d:
+            destination = Path(d) / "FAVORILER"
+            destination.mkdir()
+            with patch.object(Path, "lstat") as inspected, patch("shutil.rmtree") as removed:
+                with self.assertRaises(ProtectedWriteRejected):
+                    _remove_created_tree_if_same(destination, (1, 2))
+            inspected.assert_not_called()
+            removed.assert_not_called()
+            self.assertTrue(destination.is_dir())
+
     def test_manifest_openat_rejects_symlinked_final_component(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

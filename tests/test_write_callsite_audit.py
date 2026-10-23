@@ -251,6 +251,19 @@ def run_commands():
         self.assertTrue(all(row["guard_control_flow_verified"]
                             for row in destination_mutations))
 
+    def test_backup_rollback_delete_has_direct_k1_guard_dominance(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        rollback = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/backup.py"
+            and row["scope"] == "_remove_created_tree_if_same"
+            and row["api"] == "shutil.rmtree"
+        ]
+        self.assertEqual(len(rollback), 1)
+        self.assertTrue(rollback[0]["guard_control_flow_verified"])
+        self.assertTrue(rollback[0]["review_required"])
+
     def test_process_literal_file_output_switches_are_recorded_fail_closed(self):
         source = '''
 import subprocess
@@ -773,6 +786,22 @@ def mutate(path, fd):
         self.assertTrue(all(row["process_shell_status"] == "implicit_shell"
                             for row in rows))
 
+    def test_fork_process_launchers_are_reviewed(self):
+        source = (
+            "import os\n"
+            "def spawn():\n"
+            "    os.fork()\n"
+            "    os.forkpty()\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(
+            {row["api"].split(" [")[0] for row in rows},
+            {"os.fork", "os.forkpty"},
+        )
+        self.assertTrue(all(row["review_required"] for row in rows))
+        self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
+
     def test_os_startfile_external_launcher_is_reviewed(self):
         source = (
             "import os\n"
@@ -813,6 +842,31 @@ def mutate(path, fd):
                          ["writer.writeheader", "writer.writerow", "writer.writerows",
                           "path.setxattr", "path.removexattr", "path.utime"])
         self.assertTrue(all(row["review_required"] for row in rows))
+
+    def test_scan_tree_rejects_source_modified_while_reading(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source = root / "safe.py"
+            source.write_text("value = 1\n", encoding="utf-8")
+            original_read = Path.read_text
+
+            def changing_read(path, *args, **kwargs):
+                content = original_read(path, *args, **kwargs)
+                if path == source:
+                    source.write_text("value = 123456789\n", encoding="utf-8")
+                return content
+
+            with patch.object(Path, "read_text", changing_read):
+                with self.assertRaisesRegex(ValueError, "changed during audit"):
+                    scan_python_tree(root)
+
+    def test_scan_tree_rejects_regular_file_as_source_root(self):
+        with tempfile.TemporaryDirectory() as d:
+            source = Path(d) / "source.py"
+            source.write_text("value = 1\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Source root must be a directory"):
+                scan_python_tree(source)
 
     def test_scan_tree_rejects_unicode_ambiguous_source_root(self):
         with tempfile.TemporaryDirectory() as d:

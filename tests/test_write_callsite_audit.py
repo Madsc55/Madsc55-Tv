@@ -26,9 +26,9 @@ class WorkflowWriteBoundaryRegressionTests(unittest.TestCase):
     def test_forbidden_workflow_patterns_are_detected(self):
         import re
         forbidden = (
-            (r"(?m)^[ \\t]*contents:[ \\t]*write[ \\t]*$", "permissions:\\n  contents: write\\n"),
-            (r"(?m)\\bgit\\s+push\\b", "git push origin main"),
-            (r"(?m)^[ \\t]*pull_request_target[ \\t]*:", "pull_request_target:\\n"),
+            (r"(?m)^[ \t]*contents:[ \t]*write[ \t]*$", "permissions:\n  contents: write\n"),
+            (r"(?m)\bgit\s+push\b", "git push origin main"),
+            (r"(?m)^[ \t]*pull_request_target[ \t]*:", "pull_request_target:\n"),
         )
         for pattern, sample in forbidden:
             with self.subTest(pattern=pattern):

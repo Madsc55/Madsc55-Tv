@@ -70,10 +70,12 @@ def run(output, token):
         if (not isinstance(item, dict) or not isinstance(item.get("path"), str)
                 or not isinstance(item.get("type"), str)):
             raise ValueError("Malformed legacy tree entry")
-    entries = sorted((item for item in tree["tree"]
-                      if item["path"].startswith(".github/workflows/")
-                      and item["path"].endswith((".yml", ".yaml"))
-                      and item["type"] == "blob"), key=lambda item: item["path"])
+    workflow_entries = [item for item in tree["tree"]
+                        if item["path"].startswith(".github/workflows/")
+                        and item["path"].endswith((".yml", ".yaml"))]
+    if any(item["type"] != "blob" for item in workflow_entries):
+        raise ValueError("Legacy workflow source is not a blob")
+    entries = sorted(workflow_entries, key=lambda item: item["path"])
     if len(entries) != 99:
         raise ValueError(f"Expected 99 original workflows, got {len(entries)}")
     if len({item["path"] for item in entries}) != len(entries):

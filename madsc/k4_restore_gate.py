@@ -19,7 +19,9 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
             raise ValueError("Restore audit paths must not contain symlink ancestors")
     # Reject ambiguous aliases before any hashing or inventory traversal.
     roots = [Path(source), Path(backup), Path(restored)]
-    if any(str(root) != str(root.absolute()) for root in roots):
+    if any(not root.is_absolute() or str(root) != str(root.absolute())
+           or any(part in ('.', '..') for part in root.parts)
+           for root in roots):
         raise ValueError('Restore audit roots must be canonical absolute paths')
     # Reject oversized declared inventories before performing any file hashing.
     # Directory entries also count toward the bounded traversal budget.

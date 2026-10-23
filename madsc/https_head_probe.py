@@ -49,6 +49,7 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
             completed = subprocess.run(
                 [sys.executable, "-I", "-c", resolver, host],
                 capture_output=True, text=True, timeout=budget, check=True,
+                stdin=subprocess.DEVNULL,
                 env={"PYTHONIOENCODING": "utf-8"})
             if len(completed.stdout) > 16384:
                 raise ValueError("Oversized DNS response")

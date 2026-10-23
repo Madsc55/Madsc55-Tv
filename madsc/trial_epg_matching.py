@@ -1,6 +1,6 @@
 """Read-only, fail-closed EPG matching for isolated trial playlists."""
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 import xml.etree.ElementTree as ET
 
 ATTR = re.compile(r'(?:^|\s)([A-Za-z][\w-]*)="([^"]*)"(?=\s|$)')
@@ -115,8 +115,7 @@ def programme_coverage(playlist, xml_data, reference_time=None):
                     continue
             counts[channel] = counts.get(channel, 0) + 1
             if reference_time is not None:
-                effective_stop = stop_dt if stop else start_dt + timedelta(hours=1)
-                if start_dt <= reference_time < effective_stop:
+                if stop and start_dt <= reference_time < stop_dt:
                     current_counts[channel] = current_counts.get(channel, 0) + 1
     for row in results:
         channel = row["matched_id"]

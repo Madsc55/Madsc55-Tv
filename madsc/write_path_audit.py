@@ -104,8 +104,12 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
     """
     # Validate the caller's lexical path before pathlib normalizes dot segments.
     raw = str(destination)
+    normalized_raw = unicodedata.normalize("NFKC", raw)
     raw_parts = raw.replace(chr(92), "/").split("/")
-    if (chr(92) in raw or any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw)
+    if (chr(92) in raw or chr(92) in normalized_raw
+            or normalized_raw.count("/") != raw.count("/")
+            or ":" in normalized_raw
+            or any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw)
             or any(0xFDD0 <= ord(ch) <= 0xFDEF or
                    (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw)
             or any(part in (".", "..") for part in raw_parts)):

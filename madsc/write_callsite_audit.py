@@ -782,6 +782,8 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
             raise ValueError(f"Hardlinked Python source requires review: {relative}")
         source = file.read_text(encoding="utf-8")
         after_stat = file.stat(follow_symlinks=False)
+        if not stat.S_ISREG(after_stat.st_mode) or after_stat.st_nlink != 1:
+            raise ValueError(f"Python source changed to unsafe file type during audit: {relative}")
         identity = lambda metadata: (metadata.st_dev, metadata.st_ino, metadata.st_mode,
                                      metadata.st_nlink, metadata.st_size,
                                      metadata.st_mtime_ns, metadata.st_ctime_ns)

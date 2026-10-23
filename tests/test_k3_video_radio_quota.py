@@ -19,6 +19,13 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                 self.assertFalse(pilot.same_origin_https(base, target))
         self.assertTrue(pilot.same_origin_https(base, "https://example.org/segment.ts"))
 
+    def test_oversized_manifest_rejected_even_when_fetch_is_mocked(self):
+        manifest = b"#EXTM3U\n" + b"#" * 65536
+        with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "no_manifest"))
+            curl.assert_called_once()
+
     def test_http_segment_rejected_without_download(self):
         manifest = b"#EXTM3U\n#EXTINF:4,\nhttp://example.org/segment.ts\n"
         with patch.object(pilot, "safe_curl", return_value=manifest) as curl:

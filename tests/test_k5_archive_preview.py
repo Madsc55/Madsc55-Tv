@@ -17,6 +17,26 @@ class K5ArchivePreviewTests(unittest.TestCase):
                 self.assertEqual(sorted(result.kept_positions + result.archived_positions),
                                  list(range(1, count + 1)))
 
+    def test_exact_position_boundaries_and_input_immutability(self):
+        cases = (
+            ("354", 354, (1, 2), (3, 334, 335, 354)),
+            ("364", 364, (1, 354), (355, 364)),
+            ("398", 398, (1, 15, 50, 398), (16, 49)),
+        )
+        for scenario, count, kept_edges, archive_edges in cases:
+            with self.subTest(scenario=scenario):
+                entries = list(range(count))
+                original = entries.copy()
+                preview = classify_archive_positions(scenario, entries)
+                self.assertEqual(entries, original)
+                for position in kept_edges:
+                    self.assertIn(position, preview.kept_positions)
+                    self.assertNotIn(position, preview.archived_positions)
+                for position in archive_edges:
+                    self.assertIn(position, preview.archived_positions)
+                    self.assertNotIn(position, preview.kept_positions)
+                self.assertEqual(len(set(preview.kept_positions + preview.archived_positions)), count)
+
     def test_classification_is_not_playback_proof(self):
         result = classify_archive_positions("354", tuple(range(354)))
         self.assertEqual(result.user_reported_unverified_positions, tuple(range(3, 335)))

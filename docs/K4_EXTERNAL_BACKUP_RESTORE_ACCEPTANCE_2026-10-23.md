@@ -112,3 +112,10 @@ K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen
 - `madsc/backup.py` commit `192ccc0c4ac3f75a168dd5fe68ea198e63b86e23`: `verify_manifest`, NUL, ASCII kontrol karakterleri ve geçersiz UTF-16 surrogate kod noktalarını kaynak dosya okunmadan reddediyor.
 - `tests/test_backup_manifest_hardening.py` commit `a93c60e54b369b9c5caa7326f24de617daaa338f`: gerçek Python kaçış dizileriyle NUL, newline, DEL ve iki surrogate örneği için regresyon; geçerli yerel manifest olumlu kontrolü.
 - Yeni CI sonucunun doğrulanması bekleniyor. Gerçek harici yedek ve bağımsız geri yükleme kabulü açık; IBO Player Pro gerçek cihaz testi en son kullanıcı tarafından yapılacak.
+
+## 23 Ekim — Ek manifest şema sertleştirmesi
+- Dosya düzeyi bilinmeyen alanlar reddediliyor: kod `5caf1545`, test `7ffc732c`.
+- Manifest üst düzeyi bilinmeyen alanlar reddediliyor: kod `fc61f67b`, test `650c77d1`.
+- Metin olmayan manifest alan adları reddediliyor: kod `f24a7284`, test `ca5dc622`.
+- Bunlar yerel güvenlik kontrolleridir; CI başarısı ve dış yedek kabulü kanıtı yerine geçmez.
+- K4-15 harici teslim kanıtı, K4-16 bağımsız harici restore, K4-17 korumalı VOD/arşiv ve K4-18 ayın 1/15 gerçek zamanlama kanıtı açık. Üretim hazır değil. IBO Player Pro gerçek cihaz doğrulaması kullanıcı tarafından en son yapılacak.

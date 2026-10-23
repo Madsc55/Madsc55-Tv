@@ -141,7 +141,8 @@ class K5IboArchiveExportTests(unittest.TestCase):
 
     def test_unsafe_destination_characters_fail_before_write(self):
         with TemporaryDirectory() as tmp:
-            for suffix in ("bad\\nname", "bad\\x7fname", "bad\\ud800name"):
+            for suffix in ("bad" + chr(10) + "name", "bad" + chr(127) + "name",
+                           "bad" + chr(0xD800) + "name"):
                 destination = Path(tmp) / suffix
                 with self.subTest(suffix=repr(suffix)):
                     with self.assertRaises(PermissionError):

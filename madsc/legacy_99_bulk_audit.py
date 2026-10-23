@@ -93,6 +93,9 @@ def run(output, token):
                 or not isinstance(blob.get("content"), str)
                 or not isinstance(blob.get("sha"), str)):
             raise ValueError("Invalid legacy workflow blob response")
+        if ("size" in blob and
+                (type(blob["size"]) is not int or blob["size"] != item["size"])):
+            raise ValueError("GitHub blob size metadata mismatch")
         encoded = "".join(blob["content"].split())
         if len(encoded) > ((item["size"] + 2) // 3) * 4:
             raise ValueError("Oversized encoded workflow blob")

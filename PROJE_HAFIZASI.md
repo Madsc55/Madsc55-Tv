@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50368)
+Total output lines: 1180
+
 Warning: truncated output (original token count: 50357)
 Total output lines: 1176
 
@@ -608,12 +611,7 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 
 ## 19 Ekim 2026 — YENİ SOHBETE DEVİR (GÜNCEL ANA REFERANS)
 - Kullanıcı açıkça 99 otomasyonun her birinin gerçek kaynak davranışını çözmeyi, YAPILACAK/YAPILMAYACAK/KANIT BEKLEYEN kararlarını saklamayı ve K1–K5 sistemini kanıtla bitirmeyi istedi. Yeni sohbetten aynı yerden devam edilecek.
-- **İLK OKUNACAK DOSYA:** `docs/YENI_SOHBET_DEVIR_2026-10-19.md` (commit `6d1c8dde40d0a7020eee9f6b650ea483140ae925`). Bu dosya repo ayrımı, yasaklar, önceki CI/test commitleri, derin incelenen 23 YAML adı, 32 Python, kritik korunan liste yazma risk…357 tokens truncated…olar, arşiv, yedek, workflow ve cron değiştirilmedi.
-
-## 22 Ekim 2026 — Beşli sistem toplu rapor üretimi ve K5 uçtan uca yerel kapısı
-- Yalnız Madsc55/Madsc55-Tv/main; taban 2ea58e800156e3c99eb63f882f838045fc0714eb. Güncel diğer sohbet kodu korundu. Önceki yerel ortam kaybolduğu için yeni checkout alındı; geçmiş 707 testi güncel kodun kanıtı sayılmadı. Birleşik kaynakta ilk toplu test: 754 test, 1 failure/4 error. Eksik EXT M3U başlıklı üç test girdisi ve literal backslash-n içeren iki fixture düzeltildi. Preview testi mevcut büyük harfli ad sözleşmesiyle, virgüllü id/grup korunumu da doğrulanarak güncellendi. Üretim parser'ları gevşetilmedi.
-- Mevcut offline_five_gate içine assess_report_roundtrip eklendi: gerçek core.run beş kategorinin raporlarını ayrı geçici artifact dizinlerine yazar; gerçek batch_acceptance.collect bunları K5 olarak okur; bütün dosya SHA256'ları tüketim öncesi/sonrası aynı olmalıdır. Mevcut offline_gate bu aşamayı artık zorunlu kılar; eksik/bozuk çıktı veya exception exit_code=5 ile yeşil unit test sonucunu engeller. Yeni workflow/zamanlayıcı/üretim yazıcısı yok.
-- K1 korumalı rapor yazısı, K2 keşif ve geçmiş fixture'ı, K3 teknik/IBO/EPG fixture'ı, K4 izole restore ve K5 toplu tüketim aynı pakette yürütüldü. Üç yeni regresyon: gerçek beş rapor tüketimi ve byte korunumu; eksik üretici çıktısının reddi; başarılı unit testin bozuk roundtrip'i örtememesi. Geliştirme sırasında eksik dosya testinde yanlış exception beklentisi bir hata verdi; FileNotFoundError beklentisiyle düzeltildi.
+- **İLK OKUNACAK DOSYA:** `docs/YENI_SOHBET_DEVIR_2026-10-19.md` (commit `6d1c8dde40d0a7020eee9f6b650ea483140ae925`). Bu dosya repo ayrımı, yasaklar, önceki CI/test co…368 tokens truncated…gerçek beş rapor tüketimi ve byte korunumu; eksik üretici çıktısının reddi; başarılı unit testin bozuk roundtrip'i örtememesi. Geliştirme sırasında eksik dosya testinde yanlış exception beklentisi bir hata verdi; FileNotFoundError beklentisiyle düzeltildi.
 - Nihai python -m madsc.offline_gate **757 test, beş izole K1–K5 kapısı, beş gerçek yerel rapor/K5 roundtrip ve 92+7/10 komut/22 görev envanteri başarılı**. git diff --check temiz. Kaynak hashleri, rapor hashleri, bütün görevlerin açık kanıt listesi ve yardımcı sözleşme farkları docs/FIVE_SYSTEM_BULK_VALIDATION_2026-10-22.json içinde.
 - Tam bitmiş değildir: kurulumda 16 YAML vardır (beş ana + ekler); on yardımcı komut ana sisteme bağlıdır fakat 11 statik sözleşme farkı açık. 125 statik yazıcı çağrı adayı tümü runtime denetlendi sayılmaz. Defter 0 completed/7 in_progress/15 pending; kabul 0/92, 0/26, 0/22. Eski bağımsız aynı-input execution/artifact, canlı/zaman aralıklı K3, kullanıcının IBO cihaz testi, harici yedek/restore ve gerçek uçtan uca güvenlik kanıtları eksik. Gerçek kabul olmadan eski otomasyonları kapatma veya defteri completed yapma.
 - Actions/merge/PR71/canlı probing/korunan IPTV-EPG-yedek-favori-logo-arşiv ve eski repo yazısı yapılmadı. Bu [skip ci] paketinin SHA'sı Git geçmişindedir. Sonraki iş rapordaki bağımsız dış kanıt engellerini ve 11 kaynak sözleşme farkını ana beşli sistem içinde çözmek; küçük fixture testlerini gerçek 92 davranış tamamlandı gibi sunmamak.
@@ -1170,3 +1168,11 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Altı çağrı argv/dinamik argüman, literal seçenek, gerçek `curl` dosya çıktı seçeneği, cwd/env kökeni ve komut sınıfıyla kaynak-bağlı kaydedildi: 2 network client, 1 media inspector, 1 Python inline, 1 Python module, 1 caller-controlled. Hepsi fail-closed; `process_effect_verified_read_only=0/6`.
 - Sonradan gelen K3 commitleri korunarak güncel uzak `dc354863e8a70a555a744dbd42e19f09fd6e31a0` içeriğinde 109 hedefli ve 1275 tam offline test başarılı; başarısız test yok. Beş izole kapı ve pinned 92 envanteri geçti fakat kabul 0/92, 0/26, 0/22 olarak kaldı. Bir yanlış blob SHA yazması 409 ile durdu ve güncel blobla güvenle tekrarlandı; başka commit ezilmedi. Actions/canlı probe/üretim veya korunan veri yazması yapılmadı.
 - Sıradaki yerel K1 işi, kısmi guard'lı helper girişlerini okuma/yazma etkisine göre kaynak-hash-bağlı ayırmak ve caller closure kanıtı olmadan disposition vermemek. Gerçek bağımsız execution/artifact, harici restore ve en son kullanıcı cihaz kanıtı dış engel olarak açık.
+
+
+## 23 Ekim 2026 — K1/K4 backup helper etki ayrımı
+- Güncel çalışma tabanı `f11a7f31a5d714ca595e1836402d74c06b0db93c`. Kod/test zinciri: `adb358e3dbef94c21121ece7a7e34083cba91356`, `20616331cff3f6621f6ac685533f5ac20306464e`, `9680bfc660d026b5b2a66993fc73e9fea1fa4413`.
+- Üç backup kaynak `os.open` çağrısı kaynak-bağlı salt-okunur disposition oldu. Hedef yardımcısındaki 3 `os.open` + 1 `os.mkdir` açık yazma adayı kaldı ancak 4/4 doğrudan K1 guard baskınlığı kazandı; korunan canlı kökler descriptor açılmadan engelleniyor, izole yedek içindeki `.m3u` fixture korunuyor.
+- Eşzamanlı K4 symlink-ancestor testlerinin gösterdiği `compare_copy` ve üç-ağaç restore kontrol-sırası hataları düzeltildi. Fazla geniş ilk guard 1 full-suite error; yeni HEAD'deki erken genel hata kontrolleri 2 ve sonra 1 hedefli failure üretti. Hiçbiri başarı sayılmadı; son yeniden koşuda 163 hedefli ve 1299 tam offline test geçti.
+- Son envanter: 107 dosya, 142 açık aday, 13 non-write disposition. Kabul 0/92, 0/26, 0/22; Actions/canlı probe/cihaz/üretim veya korunan veri yazması yapılmadı.
+- Sıradaki yerel iş gerçek unguarded writer helper'larını ayırıp güvenle iç guard eklemek. Gerçek aynı-input bağımsız execution/artifact, harici restore ve son kullanıcı cihaz kabulü dış engel olarak açık.

@@ -663,6 +663,22 @@ def mutate(path, fd):
                          ["os.execv", "os.execve", "os.execl"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_serializer_and_metadata_methods_are_reviewed(self):
+        source = (
+            "def emit(writer, path):\n"
+            "    writer.writeheader()\n"
+            "    writer.writerow(['a'])\n"
+            "    writer.writerows([['b']])\n"
+            "    path.setxattr('key', b'value')\n"
+            "    path.removexattr('key')\n"
+            "    path.utime(None)\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["writer.writeheader", "writer.writerow", "writer.writerows",
+                          "path.setxattr", "path.removexattr", "path.utime"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

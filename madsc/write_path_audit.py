@@ -48,6 +48,10 @@ def audit_write_paths(paths: list[str]) -> dict:
             # Format controls (bidi overrides, zero-width joins) can disguise
             # protected filenames in reviews and logs; reject them outright.
             or any(unicodedata.category(ch) in ("Cf", "Cs") for ch in raw)
+            # Unicode noncharacters have no interchange meaning; fail closed
+            # before paths reach filesystems or external Git APIs.
+            or any(0xFDD0 <= ord(ch) <= 0xFDEF or
+                   (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw)
             or any(part.endswith((" ", ".")) for part in parts)
             # Never allow the guarded writer to alter Git internals or
             # repository automation configuration via a proposed data path.

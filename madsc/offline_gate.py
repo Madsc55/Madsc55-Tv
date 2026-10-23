@@ -13,7 +13,7 @@ def main():
     cmd = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"]
     try:
         result = subprocess.run(cmd, cwd=root, capture_output=True, text=True,
-                                timeout=180, check=False)
+                                timeout=180, check=False, stdin=subprocess.DEVNULL)
         exit_code = result.returncode
         stdout, stderr = result.stdout or "", result.stderr or ""
         timed_out = False

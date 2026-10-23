@@ -103,3 +103,7 @@ Bu bölüm önceki parça parça kaynak incelemelerinden farklıdır: `docs/K5_K
 ## 16. K5 bağımsız CI komutu ve bozuk envanter düzeltmesi
 
 K5 bağımsız CI testi `python -m unittest discover -s tests -p 'test_k5_source_audit.py' -v` olarak değiştirildi; `tests` klasörünün Python paketi olması gerekmiyor. `madsc/k5_source_audit.py` kaynak envanterindeki eksik/yanlış Git blob SHA alanlarını kontrollü `invalid_inventory_row` hatasıyla reddediyor; regresyon testi eklendi. Bu düzeltmelerin GitHub Actions üzerinde başarılı olduğu henüz kanıtlanmadı. **92/92 kaynak kimliği denetimi ile 0/92 bağımsız davranışsal kabul ayrımı geçerlidir.**
+
+## 17. Kaynak kapsamı ve JSON tür güvenliği
+
+`madsc/k5_source_audit.py` donmuş 99 kayıtlık envanterde kapsam dışı tutulan yedi workflow'un adlarının **tam olarak** bulunmasını da zorunlu tutar; kaynak satırları silinerek veya yer değiştirilerek 92 sayısının yanıltıcı biçimde korunması `excluded_scope_mismatch` üretir. Eksik/bozuk envanter ve JSON nesnesi olmayan parça kontrollü reddedilir. İki negatif regresyon testi eklendi. Kapsam dışı yedi adın 99 kayıt içinde mevcut olduğu GitHub kaynağından doğrulandı. Bu kontroller **statik kaynak bütünlüğü** içindir; davranışsal eşdeğerlik 0/92 ve üretim kabulü RED olmaya devam eder. Güncel CI başarısı henüz doğrulanmadı.

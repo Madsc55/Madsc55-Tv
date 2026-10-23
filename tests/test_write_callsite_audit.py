@@ -927,6 +927,35 @@ def mutate(path, fd):
             with self.assertRaisesRegex(ValueError, "exceeds audit size limit"):
                 scan_python_tree(root)
 
+    def test_scan_tree_rejects_oversized_descriptor_read(self):
+        from contextlib import contextmanager
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source = root / "safe.py"
+            source.write_text("value = 1\n", encoding="utf-8")
+            original_open = Path.open
+
+            class OversizedReadHandle:
+                def __init__(self, handle):
+                    self.handle = handle
+
+                def fileno(self):
+                    return self.handle.fileno()
+
+                def read(self):
+                    self.handle.read()
+                    return b"x" * (16 * 1024 * 1024 + 1)
+
+            @contextmanager
+            def oversized_open(path, *args, **kwargs):
+                with original_open(path, *args, **kwargs) as handle:
+                    yield OversizedReadHandle(handle) if path == source else handle
+
+            with patch.object(Path, "open", oversized_open):
+                with self.assertRaisesRegex(ValueError, "source length changed during audit"):
+                    scan_python_tree(root)
+
     def test_scan_tree_rejects_truncated_source_read(self):
         from contextlib import contextmanager
         from unittest.mock import patch

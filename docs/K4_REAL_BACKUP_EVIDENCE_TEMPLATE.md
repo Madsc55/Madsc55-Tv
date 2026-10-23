@@ -96,3 +96,10 @@ Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim 
 - Yedek kapsamı öncesinde veri sınıflandırması, erişim denetimi, şifreleme ve boyut/kota kontrolü zorunludur. Sırlar, tokenlar, kullanıcı kimlik bilgileri, özel kaynak URL'leri, yetkisiz VOD/arşiv içeriği veya hassas üretim verileri şifresiz olarak commit edilmez. GitHub Git deposu büyük ikili arşivler için sınırsız depolama değildir.
 - Kabul sırası: (1) `Madsc55-Tv-Backup` özel repo oluşturulup erişim doğrulanır; (2) izinli verilerden gerçek yedek ve SHA-256 manifesti yüklenir; (3) GitHub commit/nesne SHA'sı ve zaman damgası kaydedilir; (4) **aynı nesne** temiz ve bağımsız geçici hedefe çekilip yeniden hash'lenir; (5) kaynak/yedek/restore eşitliği ve kapsam kanıtı kaydedilir; (6) gerçek 1/15 takvim çalışmaları ayrıca kanıtlanır.
 - Şu an `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`; yalnızca hedef seçimi onaylandı.
+
+## 23 Ekim 2026 — Özel GitHub hedefi doğrulandı
+
+- `GET /repos/Madsc55/Madsc55-Tv-Backup`: `private=true`, `default_branch=main`, mevcut bağlantıda `push=true` doğrulandı. Önceki 404 erişim engeli kalktı.
+- Boş özel depoya güvenlik/kabul yönergelerini içeren `README.md` eklendi: commit `af40e0da1d4eb55f3a5a5321132773818ef18d25`.
+- **Bu commit gerçek yedek değildir.** Henüz kaynak dosya aktarımı, SHA-256 gerçek içerik manifesti, GitHub'a yedek teslim makbuzu veya temiz hedefte restore doğrulaması yapılmadı.
+- K4-15/16/17/18 bekliyor; `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.

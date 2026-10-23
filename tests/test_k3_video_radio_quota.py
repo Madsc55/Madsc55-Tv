@@ -19,6 +19,21 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                 self.assertFalse(pilot.same_origin_https(base, target))
         self.assertTrue(pilot.same_origin_https(base, "https://example.org/segment.ts"))
 
+    def test_unicode_probe_error_does_not_abort_remaining_channels(self):
+        rows = [("TV Broken", "https://example.org/broken.m3u8"),
+                ("TV Working", "https://example.org/working.m3u8")]
+        with tempfile.TemporaryDirectory() as d:
+            with patch.object(pilot, "candidates", return_value=iter(rows)), \
+                 patch.object(pilot, "verify_video", side_effect=[UnicodeError("bad encoding"), (True, "video_detected")]) as verify, \
+                 patch.object(pilot, "write_fixture_report") as write, \
+                 patch.object(pilot.Path, "cwd", return_value=Path(d)):
+                pilot.run()
+        report = json.loads(write.call_args.args[2])
+        self.assertEqual(report["tested"], 2)
+        self.assertEqual(report["video_verified"], 1)
+        self.assertEqual(report["reason_counts"]["blocked_or_unreachable"], 1)
+        self.assertEqual(verify.call_count, 2)
+
     def test_nonbyte_manifest_fails_closed(self):
         with patch.object(pilot, "safe_curl", return_value="#EXTM3U") as curl:
             self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),

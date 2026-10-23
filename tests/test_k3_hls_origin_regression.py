@@ -61,7 +61,7 @@ class K3HlsOriginRegressionTests(unittest.TestCase):
 
     def test_raw_hls_segment_trailing_space_is_rejected(self):
         from madsc.k3_turkish_tv_video_pilot import verify_av
-        manifest = b'#EXTM3U\\n#EXTINF:6,\\nsegment.ts \\n'
+        manifest = b'#EXTM3U\n#EXTINF:6,\nsegment.ts \n'
         with patch("madsc.k3_turkish_tv_video_pilot.safe_curl", return_value=manifest) as fetch:
             self.assertEqual(verify_av("https://media.example.org/live.m3u8"),
                              (False, False, "unsafe_segment_reference"))

@@ -8,6 +8,7 @@ and cross-function control flow require human review.
 from __future__ import annotations
 
 import ast
+import os
 import unicodedata
 import hashlib
 import stat
@@ -780,7 +781,15 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
             raise ValueError(f"Non-regular Python source requires review: {relative}")
         if source_stat.st_nlink != 1:
             raise ValueError(f"Hardlinked Python source requires review: {relative}")
-        source = file.read_text(encoding="utf-8")
+        # Bind the read to the validated file descriptor instead of reopening
+        # the path after lstat; reject a replacement between those operations.
+        with file.open("rb") as handle:
+            descriptor_stat = os.fstat(handle.fileno())
+            if (descriptor_stat.st_dev, descriptor_stat.st_ino) != (source_stat.st_dev, source_stat.st_ino):
+                raise ValueError(f"Python source replaced before audit read: {relative}")
+            if not stat.S_ISREG(descriptor_stat.st_mode) or descriptor_stat.st_nlink != 1:
+                raise ValueError(f"Unsafe Python source descriptor during audit: {relative}")
+            source = handle.read().decode("utf-8")
         after_stat = file.stat(follow_symlinks=False)
         if not stat.S_ISREG(after_stat.st_mode) or after_stat.st_nlink != 1:
             raise ValueError(f"Python source changed to unsafe file type during audit: {relative}")

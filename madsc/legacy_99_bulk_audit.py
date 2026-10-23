@@ -76,6 +76,12 @@ def run(output, token):
                       and item["type"] == "blob"), key=lambda item: item["path"])
     if len(entries) != 99:
         raise ValueError(f"Expected 99 original workflows, got {len(entries)}")
+    for item in entries:
+        if (not isinstance(item.get("sha"), str)
+                or re.fullmatch(r"[0-9a-f]{40}", item["sha"]) is None
+                or type(item.get("size")) is not int
+                or not 0 <= item["size"] <= 250000):
+            raise ValueError("Invalid legacy workflow blob metadata")
     rows = []
     for item in entries:
         if item.get("size", 0) > 250000:

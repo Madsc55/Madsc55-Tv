@@ -1157,3 +1157,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Subprocess adayları için shell/argv sözdizimi kaynak-bağlı kaydediliyor (`039826136d99fa9bf4a7d44b6b7661d1566209da`, `ff946c3b35f2efde1972dac64f09663e2d98e14e`). Altı aday shell-disabled görünse de komut etkisi 0/6 doğrulandı; tümü açık/fail-closed kaldı.
 - Temiz son kod SHA'sında 1154/1154 test ve bütün offline K1–K5 kapıları başarılı; 140 aday, 9 disposition, 77 yapısal guard baskınlığı. İlk hedefli testteki yanlış exception beklentisi başarı sayılmadan düzeltildi.
 - Kabul değişmedi: 0/92, 0/26, 0/22. Sıradaki iş gerçek subprocess etkileri ve writer caller/callee sözleşmeleri; dış kanıt ve en son kullanıcı cihaz testi bekleniyor.
+
+
+## 23 Ekim 2026 — K1 subprocess argv ve doğrudan yerel çağıran bağı
+- Güvenli tek-atamalı yerel subprocess argv çözümlemesi `5b79da4e60e89c098bf5416e2162ab53f5648467`, regresyonu `d1707ae589d56a36a600bf4a47ef84bcce28cc93`. Altı executable'ın beşi tanındı; gerçek komut etkisi 0/6 doğrulandı ve hiçbir aday kapatılmadı.
+- Writer helper doğrudan çağıranları ve çağrı-noktası guard baskınlığı `1bc73b2abd6b0f9dc20d3d4636e0f7e6cd23dfdd`, fail-closed testleri `c16f25d230b411ac100411a113a125b0b8f6b3fa`. 104/140 adayda yerel çağıran, 16/140 adayda guarded çağıran var; tüm çağıranların kapandığı kanıt 0.
+- Temiz son kod SHA'sında 1157/1157 test ve bütün offline K1–K5 kapıları başarılı. İlk argv testi gerçek bir çıkarım hatası yakaladı ve düzeltildikten sonra tam paket yeniden geçti.
+- Kabul 0/92, 0/26, 0/22. Sonraki iş kısmi guarded çağıranların gerçek giriş yolları ile altı subprocess etkisini incelemek; statik kayıtları runtime/production kanıtı saymamak.

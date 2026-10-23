@@ -24,8 +24,17 @@ def encode_pair(pair):
                       ensure_ascii=False, sort_keys=True) + "\n"
 
 
+def _unique_json_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Duplicate history JSON key")
+        result[key] = value
+    return result
+
+
 def decode_pair(raw):
-    envelope = json.loads(raw)
+    envelope = json.loads(raw, object_pairs_hook=_unique_json_object)
     if not isinstance(envelope, dict) or set(envelope) != {"schema", "payload", "sha256"}:
         raise ValueError("Invalid history envelope")
     if type(envelope["schema"]) is not int or envelope["schema"] != 1:

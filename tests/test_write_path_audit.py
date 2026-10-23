@@ -3,6 +3,7 @@ import tempfile
 from pathlib import Path
 from madsc.write_path_audit import (audit_write_paths, enforce_write_paths,
                                     enforce_local_output_path,
+                                    enforce_local_append_path,
                                     enforce_local_turkish_tv_test_playlist,
                                     ProtectedWriteRejected)
 
@@ -211,6 +212,23 @@ class LocalOutputGuardTests(unittest.TestCase):
             with self.assertRaises(ProtectedWriteRejected):
                 enforce_local_output_path(target, allowed_root=linked / "reports")
             self.assertFalse((actual / "reports" / "evidence.json").exists())
+
+    def test_append_preflight_can_be_confined_to_sandbox(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            sandbox = base / "sandbox"
+            sandbox.mkdir()
+            outside = base / "outside.json"
+            outside.write_text("original", encoding="utf-8")
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_append_path(outside, allowed_root=sandbox)
+            inside = sandbox / "summary.json"
+            inside.write_text("safe", encoding="utf-8")
+            result = enforce_local_append_path(inside, allowed_root=sandbox)
+            self.assertTrue(result["path_checked"])
+            self.assertFalse(result["production_write_allowed"])
+            self.assertEqual(outside.read_text(encoding="utf-8"), "original")
+            self.assertEqual(inside.read_text(encoding="utf-8"), "safe")
 
     def test_symlinked_parent_and_root_boundary_blocked(self):
         with tempfile.TemporaryDirectory() as d:

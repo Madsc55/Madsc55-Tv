@@ -59,3 +59,29 @@ def verify_artifact_bytes(path: str | Path, expected_sha256: str, *, max_bytes: 
         "behavioral_parity_accepted": False,
         "production_writes": False,
     }
+
+
+def compare_artifact_pair(legacy_path: str | Path, replacement_path: str | Path,
+                          legacy_sha256: str, replacement_sha256: str,
+                          *, max_bytes: int = 64_000_000) -> dict:
+    """Compare two local artifact files, without asserting independent run origin.
+
+    Both supplied expected hashes must match actual bytes. No path may be reused.
+    This is an integrity prerequisite, NOT behavioral equivalence approval.
+    """
+    if Path(legacy_path).absolute() == Path(replacement_path).absolute():
+        raise ValueError("Legacy and replacement artifacts must be separate paths")
+    legacy = verify_artifact_bytes(legacy_path, legacy_sha256, max_bytes=max_bytes)
+    replacement = verify_artifact_bytes(
+        replacement_path, replacement_sha256, max_bytes=max_bytes
+    )
+    if not legacy["digest_matches"] or not replacement["digest_matches"]:
+        raise ValueError("At least one artifact does not match its expected SHA-256")
+    return {
+        "legacy": legacy,
+        "replacement": replacement,
+        "artifact_bytes_match": legacy["sha256"] == replacement["sha256"],
+        "independent_origin_api_verified": False,
+        "behavioral_parity_accepted": False,
+        "production_ready": False,
+    }

@@ -192,7 +192,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
 
 
 def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = None) -> dict:
-    """Rank independent feed corroboration without treating it as playback proof."""
+    """Group feed inventories; neither source ownership nor playback is verified."""
     if not isinstance(sources, dict) or not sources or len(sources) > 200:
         raise ValueError("Require 1-200 named M3U sources")
     if any(not isinstance(name, str) or not name.strip() for name in sources):

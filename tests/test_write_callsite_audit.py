@@ -264,6 +264,18 @@ def run_commands():
         self.assertTrue(rollback[0]["guard_control_flow_verified"])
         self.assertTrue(rollback[0]["review_required"])
 
+    def test_fixture_descriptor_writes_and_rollbacks_have_direct_k1_guards(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        mutations = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/fixture_report_writer.py"
+            and row["scope"] in {"write_exclusive_bytes", "_unlink_evidence_if_same"}
+        ]
+        self.assertGreaterEqual(len(mutations), 7)
+        self.assertTrue(all(row["guard_control_flow_verified"] for row in mutations))
+        self.assertTrue(all(row["review_required"] for row in mutations))
+
     def test_process_literal_file_output_switches_are_recorded_fail_closed(self):
         source = '''
 import subprocess

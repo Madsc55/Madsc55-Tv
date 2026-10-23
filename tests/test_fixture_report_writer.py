@@ -3,7 +3,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 from madsc.fixture_report_writer import (write_fixture_report, write_stage_report,
-                                         write_turkish_tv_test_bundle)
+                                         write_turkish_tv_test_bundle,
+                                         write_exclusive_bytes)
 from madsc.history_pair_store import write_isolated_history_pair, decode_pair
 
 
@@ -39,6 +40,18 @@ class FixtureReportWriterTests(unittest.TestCase):
             self.assertFalse((root / "reports").exists(),
                              "protected fixture root must fail before mkdir")
 
+    def test_direct_exclusive_writer_rejects_protected_path_before_os_open(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            protected = root / "FAVORILER"
+            protected.mkdir()
+            target = protected / "evidence.json"
+            with patch("madsc.fixture_report_writer.os.open") as open_call:
+                with self.assertRaises(PermissionError):
+                    write_exclusive_bytes(target, b"blocked", allowed_root=root)
+            open_call.assert_not_called()
+            self.assertFalse(target.exists())
+
     def test_turkish_tv_bundle_rejects_symlinked_reports_before_write(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
@@ -55,11 +68,11 @@ class FixtureReportWriterTests(unittest.TestCase):
             original = __import__("madsc.fixture_report_writer", fromlist=["_exclusive_bytes"])
             real_write = original._exclusive_bytes
             calls = []
-            def fail_second(path, payload):
+            def fail_second(path, payload, **policy):
                 calls.append(path)
                 if len(calls) == 2:
                     raise OSError("report write failed")
-                return real_write(path, payload)
+                return real_write(path, payload, **policy)
             with patch("madsc.fixture_report_writer._exclusive_bytes", side_effect=fail_second):
                 with self.assertRaises(OSError):
                     write_turkish_tv_test_bundle(root, b"#EXTM3U\n", "{}\n")
@@ -73,10 +86,10 @@ class FixtureReportWriterTests(unittest.TestCase):
             real_write = module._exclusive_bytes
             playlist = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
             calls = []
-            def replace_before_second_write(path, payload):
+            def replace_before_second_write(path, payload, **policy):
                 calls.append(path)
                 if len(calls) == 1:
-                    return real_write(path, payload)
+                    return real_write(path, payload, **policy)
                 held = root / "concurrent-replacement-held-inode"
                 playlist.rename(held)
                 playlist.write_bytes(b"concurrent replacement")

@@ -204,6 +204,25 @@ def enforce_local_append_path(destination: Path, *, allowed_root: Path | None = 
 
 def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: Path) -> dict:
     """Permit one isolated K3 artifact without weakening the general M3U ban."""
+    return enforce_local_evidence_path(
+        destination, allowed_root=allowed_root, isolated_turkish_playlist=True
+    )
+
+
+def enforce_local_evidence_path(destination: Path, *, allowed_root: Path | None = None,
+                                allow_existing_regular_file: bool = False,
+                                isolated_turkish_playlist: bool = False) -> dict:
+    """Guard exclusive evidence writes and identity-bound rollback targets."""
+    if (type(allow_existing_regular_file) is not bool or
+            type(isolated_turkish_playlist) is not bool):
+        raise ProtectedWriteRejected("Invalid evidence path policy")
+    if not isolated_turkish_playlist:
+        return _enforce_local_path(
+            destination, allowed_root=allowed_root,
+            allow_existing_regular_file=allow_existing_regular_file,
+        )
+    if allowed_root is None:
+        raise ProtectedWriteRejected("Isolated playlist requires an allowed root")
     # Do not normalize a relative or traversing caller-supplied root before
     # checking it: the isolated exception must obey the same root policy.
     raw_root = str(allowed_root)
@@ -248,5 +267,8 @@ def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: P
         if ancestor.is_symlink():
             raise ProtectedWriteRejected("Symlinked isolated playlist ancestor")
     if expected.exists() or expected.is_symlink():
-        raise ProtectedWriteRejected("Existing test playlist evidence")
+        metadata = expected.lstat()
+        if (not allow_existing_regular_file or expected.is_symlink()
+                or not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1):
+            raise ProtectedWriteRejected("Existing test playlist evidence")
     return {**result, "path_checked": True, "isolated_test_playlist": True}

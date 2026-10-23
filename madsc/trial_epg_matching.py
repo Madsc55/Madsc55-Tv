@@ -75,3 +75,24 @@ def matches(playlist, xml_data):
             status, matched = "unmatched", ""
         output.append({"title": title, "old_id": old_id, "matched_id": matched, "status": status})
     return output
+
+
+def programme_coverage(playlist, xml_data):
+    """Read-only programme counts for verified channel matches; never invent EPG."""
+    raw = xml_data.encode("utf-8") if isinstance(xml_data, str) else xml_data
+    if b"<!DOCTYPE" in raw.upper() or b"<!ENTITY" in raw.upper():
+        raise ValueError("XMLTV DTD/entity declarations are not allowed")
+    root = ET.fromstring(raw)
+    if root.tag != "tv":
+        raise ValueError("XMLTV root element must be <tv>")
+    results = matches(playlist, raw)
+    counts = {}
+    for programme in root.findall("programme"):
+        channel = (programme.get("channel") or "").strip()
+        if channel:
+            counts[channel] = counts.get(channel, 0) + 1
+    for row in results:
+        channel = row["matched_id"]
+        row["programme_count"] = counts.get(channel, 0) if channel else 0
+        row["has_programmes"] = row["programme_count"] > 0
+    return results

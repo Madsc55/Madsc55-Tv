@@ -40,6 +40,36 @@ class K5SourceAuditTests(unittest.TestCase):
         self.assertFalse(result["source_audit_passed"])
         self.assertIn("invalid_inventory_row", result["errors"])
 
+    def test_missing_excluded_workflow_fails_closed(self):
+        original = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            value = original(path, *args, **kwargs)
+            if str(path).endswith("LEGACY_SOURCE_SCOPE.json"):
+                data = json.loads(value)
+                data["workflows"] = [r for r in data["workflows"]
+                                     if not r["path"].endswith("/madsc-01-guvenlik.yml")]
+                return json.dumps(data)
+            return value
+
+        with patch.object(Path, "read_text", read_text):
+            result = audit(self.root)
+        self.assertFalse(result["source_audit_passed"])
+        self.assertIn("excluded_scope_mismatch", result["errors"])
+
+    def test_invalid_part_json_type_fails_closed(self):
+        original = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            if str(path).endswith("K5_KAYNAK_DOGRULAMA_91_92.json"):
+                return "[]"
+            return original(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", read_text):
+            result = audit(self.root)
+        self.assertFalse(result["source_audit_passed"])
+        self.assertIn("invalid_part_object:91_92", result["errors"])
+
     def test_missing_batch_fails_closed(self):
         original = Path.read_text
 

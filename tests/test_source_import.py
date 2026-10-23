@@ -156,7 +156,7 @@ class SourceImportTests(unittest.TestCase):
     def test_invalid_utf8_source_rejected_cleanly(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"
-            p.write_bytes(b"#EXTM3U\\n#EXTINF:-1,Channel\\nhttps://example.org/live\\n\\xff")
+            p.write_bytes(b"#EXTM3U\n#EXTINF:-1,Channel\nhttps://example.org/live\n\xff")
             with self.assertRaisesRegex(ValueError, "valid UTF-8"):
                 extract_candidates(p)
 

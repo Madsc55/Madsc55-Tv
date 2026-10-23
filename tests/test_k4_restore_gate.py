@@ -6,6 +6,15 @@ from madsc.k4_restore_gate import audit_k4_restore
 
 
 class K4RestoreGateTests(unittest.TestCase):
+    def test_empty_restore_inventory_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ('source', 'backup', 'restored')]
+            for root in trees:
+                root.mkdir()
+            with self.assertRaisesRegex(ValueError, 'at least one declared file'):
+                audit_k4_restore(*trees, [])
+
     def test_independent_matching_trees_pass_sandbox_only(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

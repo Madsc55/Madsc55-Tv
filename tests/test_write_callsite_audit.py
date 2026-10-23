@@ -918,6 +918,15 @@ def mutate(path, fd):
                 with self.assertRaisesRegex(ValueError, "changed during audit"):
                     scan_python_tree(root)
 
+    def test_scan_tree_rejects_oversized_python_source(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source = root / "oversized.py"
+            with source.open("wb") as handle:
+                handle.truncate(16 * 1024 * 1024 + 1)
+            with self.assertRaisesRegex(ValueError, "exceeds audit size limit"):
+                scan_python_tree(root)
+
     def test_scan_tree_rejects_truncated_source_read(self):
         from contextlib import contextmanager
         from unittest.mock import patch

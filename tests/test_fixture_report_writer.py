@@ -142,6 +142,18 @@ class FixtureReportWriterTests(unittest.TestCase):
                 write_fixture_report(root_through_alias, "reports/result.json", "{}")
             self.assertFalse((fixture / "reports").exists())
 
+    def test_fixture_roots_reject_relative_and_traversing_inputs(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            for root in (Path("relative-fixture"), base / "child/../fixture"):
+                with self.subTest(root=str(root)):
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_fixture_report(root, "reports/evidence.json", "{}")
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}")
+            self.assertFalse((base / "child").exists())
+            self.assertFalse((base / "fixture").exists())
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

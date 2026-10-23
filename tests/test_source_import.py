@@ -137,7 +137,7 @@ class SourceImportTests(unittest.TestCase):
     def test_string_path_supported_without_mutating_source(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"
-            p.write_text("#EXTM3U\\n#EXTINF:-1,One\\nhttps://example.org/one\\n", encoding="utf-8")
+            p.write_text("#EXTM3U\n#EXTINF:-1,One\nhttps://example.org/one\n", encoding="utf-8")
             before = p.read_bytes()
             result = extract_candidates(str(p))
             self.assertEqual(len(result["candidates"]), 1)

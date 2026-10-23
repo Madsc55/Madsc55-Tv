@@ -99,7 +99,7 @@ def verify_av(url):
            for line in text.splitlines()):
         return False, False, "unsupported_hls_segment_layout"
     segments = [line.strip() for line in text.splitlines()
-                if line.strip() and not line.startswith("#")]
+                if line.strip() and not line.lstrip().startswith("#")]
     if not segments:
         return False, False, "no_segments"
     segment_url = urljoin(url, segments[0])

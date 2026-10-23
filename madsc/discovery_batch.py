@@ -55,12 +55,6 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         # Preserve controls until EXTINF validation: strip() would silently
         # erase leading/trailing tabs and other whitespace controls.
         line = raw.strip()
-        if line.startswith("#EXTINF:") and any(
-            unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
-            for ch in raw if ch not in ("\\r", "\\n")
-        ):
-            # Retain the raw row for the metadata control check below.
-            line = raw
         if line.startswith("#EXTINF:"):
             metadata_entries += 1
             if metadata_entries > max_entries:
@@ -77,7 +71,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         if line.startswith("#EXTINF:"):
             # Metadata is copied into candidate identities and later previews.
             # Reject embedded controls rather than propagating them into reports.
-            if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in line):
+            if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw):
                 if pending is not None:
                     errors.append({"line": number, "reason": "missing_url"})
                 pending = None

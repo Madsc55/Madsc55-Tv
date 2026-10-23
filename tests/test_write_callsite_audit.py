@@ -598,6 +598,18 @@ def mutate(path, fd):
         self.assertTrue(all('dynamic mode' in row['api'] for row in rows))
         self.assertTrue(all(row['review_required'] for row in rows))
 
+    def test_tree_scan_rejects_hardlinked_python_source(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            original = root / "original.py"
+            original.write_text("print(1)\n", encoding="utf-8")
+            try:
+                os.link(original, root / "alias.py")
+            except (OSError, NotImplementedError):
+                self.skipTest("Hardlinks unavailable on this filesystem")
+            with self.assertRaisesRegex(ValueError, "Hardlinked Python source"):
+                scan_python_tree(root)
+
     def test_tree_scan_rejects_fifo_python_source(self):
         if not hasattr(os, "mkfifo"):
             self.skipTest("FIFO is unavailable on this platform")

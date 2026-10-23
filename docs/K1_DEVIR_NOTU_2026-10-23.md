@@ -91,3 +91,34 @@ Kullanıcının topluca bitirme talebi üzerine güncel K1 kodu, korunan yazma k
 5. Güncel main CI yeşil, K1 regresyonları yeşil, K2–K5 kabul kanıtları ayrı ayrı tamamlanmadan production_ready=false olarak tut.
 
 Bu denetim yeni bir runtime kabulü gerçekleştirmedi; bitmiş sayısını artırmaz. Kodun gerçek üretim yazma yollarına müdahale edilmedi.
+
+
+## YENİ SOHBETE DEVİR — 23 Ekim 2026 (K1)
+
+Kullanıcı K1'in eksiklerini topluca giderip beşli K1–K5 sistemi tamamlamak istiyor. Bu not sonraki sohbette devam noktasıdır; yalnızca denetlenmiş kanıtları tamamlandı say.
+
+### Bu sohbetlerde K1'e eklenen son değişiklikler
+
+- `b201fa88c9cae95d3231d8d6d639456c120565a1` / `6d3b5f76272416d9ef7b921dccbca1882f289654`: Unicode uyumluluk karakterleriyle Windows sürücü öneklerini reddetme ve test.
+- `52aca2ffc0aac12da69020bf8f884e774ec315a3` / `5250b206756ca692b2835f4cfc0a8e7ce441bf99`: izole test listesi hedefinde sembolik bağlantılı üst dizin reddi ve test.
+- `a0b557067d0fc7a2ccfa74c82d2b2e7abbb33c9a` / `b746f1aabd8854ed3a2aa433c1603665023800c8`: K3–K5 izole JSON raporlarında NaN/Infinity reddi ve test.
+- `5cba6b711bd119446050a122038df66829621249` / `e03c2fa471b69c5dbc8891889872c5c613460d60`: `madsc/fixture_report_writer.py` içinde dosya `fsync` ardından üst dizin `fsync`, ilgili test.
+
+Değişiklikler `main` üzerine GitHub içerik API'siyle commit edildi; eşzamanlı K2–K5 çalışmaları nedeniyle her zaman güncel dalı yeniden oku. Bu commit mesajlarında `[skip ci]` kullanıldı; yeni değişiklikler için CI başarısını varsayma. Son kontrol edilen `main` SHA: `0174334f4ed30d94286d4ccd81f0faa6e1725229` (son iki K1 commit'inden **önce**). CI `40002259614` beklemede, `40002212175` çalışıyordu; durumları yeniden kontrol et. Daha önce `40000262336` SHA `108af1a007e8038134e067910a5a29de7dde4008` başarılıydı, ancak yeni K1 commit'lerini doğrulamaz.
+
+### Değişmez güvenlik koşulları ve gerçek eksikler
+
+- `production_ready=false`; K1'in 26 runtime kabulü için kanıtlanmış sonuç **0/26** olarak kalır. Önceki 0/92 davranışsal eşdeğerlik ve 0/22 genel kabul sonuçlarını güncel kanıt olmadan değiştirme.
+- 1.039 çalışan kanal, korunan M3U/M3U8 listeleri, EPG, favoriler, yedekler ve diğer üretim varlıklarına dokunma. `tools/protected_write_gate.py` kurallarını gevşetme; PR #71'i birleştirme; legacy depo salt-okuma.
+- K1 `madsc/write_callsite_audit.py` statik envanterdir, gerçek runtime kapısı değildir. Python/shell/Actions tüm yazma noktalarının zorunlu güvenlik kapısına alınması henüz kanıtlanmadı.
+- İzole raporlar için no-follow/özel dosya oluşturma yazıcısı mevcut; son `fsync(parent_fd)` değişikliği dahil, güncel `main` üzerinde testleri çalıştır ve başarısızlık varsa düzelt.
+- Üretim yayın akışı: taslak -> insan incelemesi/onayı -> kontrollü yayın. Korunan canlı dosyalara doğrudan yazma yok.
+- 26/26 gerçek runtime güvenlik kabul kanıtı, en güncel `main` CI ve K2–K5 ayrı kabulleri olmadan tamamlandı deme.
+
+### Sonraki sohbetin ilk adımları
+
+1. GitHub `main` HEAD ve son Actions durumlarını sorgula; önceki K1 commit'lerinin güncel `main` içinde bulunup bulunmadığını kontrol et.
+2. K1 güvenli yazıcı regresyonlarını ve `fsync` testini güncel kaynak üzerinde doğrula; hataları düzelt.
+3. Yüzeysel tekil yol kontrolleri yerine gerçek Python/shell/Actions yazma çağrılarının güvenlik entegrasyonunu ve 26 kabul kanıtını topluca ilerlet.
+4. K2–K5 ile eşzamanlı commit çatışmalarından kaçın; her yazmadan önce dosya blob SHA'sını yeniden al. Üretim dosyası değiştirme.
+

@@ -46,3 +46,21 @@ class TestK5PoolVerifier(unittest.TestCase):
         altered["device_verified"] = True
         with self.assertRaises(ValueError):
             verify_isolated_test_pool(self.records, altered)
+
+    def test_changed_legacy_history_rejected(self):
+        altered = copy.deepcopy(self.pool)
+        altered["entries"][0]["history"] = [{"status": "broken", "evidence_id": "fabricated"}]
+        with self.assertRaises(ValueError):
+            verify_isolated_test_pool(self.records, altered)
+
+    def test_changed_reported_playback_rejected(self):
+        altered = copy.deepcopy(self.pool)
+        altered["entries"][0]["reported_playback"] = "working"
+        with self.assertRaises(ValueError):
+            verify_isolated_test_pool(self.records, altered)
+
+    def test_forged_digest_rejected(self):
+        altered = copy.deepcopy(self.pool)
+        altered["entries_sha256"] = "0" * 64
+        with self.assertRaises(ValueError):
+            verify_isolated_test_pool(self.records, altered)

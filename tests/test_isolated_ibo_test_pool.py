@@ -37,3 +37,8 @@ class TestK5Pool(unittest.TestCase):
         self.records[0]["history"] = [{"status": "broken", "evidence_id": "https://private.example"}]
         with self.assertRaises(ValueError):
             build_isolated_test_pool(self.records)
+
+    def test_single_backslash_evidence_rejected(self):
+        self.records[0]["history"] = [{"status": "broken", "evidence_id": "legacy\\\\test"}]
+        with self.assertRaises(ValueError):
+            build_isolated_test_pool(self.records)

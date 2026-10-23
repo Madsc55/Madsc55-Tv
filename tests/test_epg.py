@@ -11,9 +11,9 @@ class EpgTests(unittest.TestCase):
             with self.subTest(separator=separator), tempfile.TemporaryDirectory() as d:
                 p = Path(d) / "playlist.m3u8"
                 e = Path(d) / "xmltv.xml"
-                p.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1'
+                p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1'
                              + separator
-                             + 'https://example.org/a.m3u8\\n', encoding="utf-8")
+                             + 'https://example.org/a.m3u8\n', encoding="utf-8")
                 e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "Nonstandard line separator"):
                     check_epg_mapping(p, e)

@@ -40,6 +40,14 @@ class K3HlsOriginRegressionTests(unittest.TestCase):
                              (False, False, "unsafe_segment_reference"))
             self.assertEqual(fetch.call_count, 1)
 
+    def test_raw_hls_segment_trailing_space_is_rejected(self):
+        from madsc.k3_turkish_tv_video_pilot import verify_av
+        manifest = b'#EXTM3U\\n#EXTINF:6,\\nsegment.ts \\n'
+        with patch("madsc.k3_turkish_tv_video_pilot.safe_curl", return_value=manifest) as fetch:
+            self.assertEqual(verify_av("https://media.example.org/live.m3u8"),
+                             (False, False, "unsafe_segment_reference"))
+            self.assertEqual(fetch.call_count, 1)
+
     def test_raw_hls_variant_reference_is_rejected_before_download(self):
         from madsc.k3_turkish_tv_video_pilot import verify_av
         manifest = b'#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=500000\nvariant.m3u8#bad\n'

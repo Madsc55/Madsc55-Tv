@@ -1189,3 +1189,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Önceki kayıttaki `72b20cf… / 1340` eşlemesi exact checkout kanıtı olarak kullanılmamalı: komut yeni worktree oluşturduktan sonra eski, yerel preview düzeltmesi taşıyan çalışma dizininde çalışmıştı. Bu etiketleme hatası burada açıkça geri çekildi; başarı sayacı olarak kullanılmayacak.
 - Gerçek güncel `37b9d1f12082ea6c480ee3c94bb9d38ae7e474f0` checkout'u 1341 testte K2 provenance hata metni nedeniyle 4 failure ve K1 mutasyon testindeki recursive patch nedeniyle 1 error verdi; bu koşu başarısızdır. K2 düzeltmesi `d60aadb5c01cab20965e6527bc87fc28104f0e81`, K1 test düzeltmesi `f6bc48f478ecabb5a254b4d0eb6dfd47e83ea950`.
 - Yetkili son temiz kanıt: uzak `main` exact SHA `f6bc48f478ecabb5a254b4d0eb6dfd47e83ea950` üzerinde `python -m madsc.offline_gate` **1342/1342**, beş izole K kapısı ve tüm offline kapılar başarılı; stderr boş. Envanter 107 dosya / 143 aday. Kabul yine 0/92, 0/26, 0/22 ve production acceptance false.
+
+
+## 23 Ekim 2026 — K1 low-level evidence create/rollback koruması
+- Kaynak `main` `538851d6776268355389af5dbf68673fff1b6a9b`; kod/test `67d1c183540ff28ed5c532887d71ac21b854f687` (`[skip ci]`). `write_exclusive_bytes` genel `enforce_local_evidence_path` guard'ına ve açık allowed-root aktarımına bağlandı; exact-name izole M3U8 istisnası genişletilmedi.
+- Fixture bundle rollback descriptor-relative/no-follow yapıldı ve yalnız dev/inode/size/mtime/ctime kimliği aynıysa siler. Concurrent replacement testi geçer. Düşük-seviye create/rollback kapsamındaki audit sonucu 9/9 doğrudan guarded.
+- Exact uzak SHA doğrulaması: hedefli 161/161, tam offline 1372/1372, beş izole K kapısı ve tüm offline kapılar başarılı; envanter 107 dosya/145 aday. İlk yanlış modül adlı komut ve eski `Path.unlink` audit failure'ı başarı sayılmadan düzeltildi.
+- Kabul sabit: 0/92 parity, 0/26 runtime güvenlik, 0/22 görev, production false. Sıradaki yerel iş kalan gerçek writer/rollback helper'ları; dış bağımsız run/artifact, restore ve en son kullanıcı cihaz kanıtı bekliyor. Actions/canlı probe/üretim/korunan veri/eski repo/PR71/merge işlemi yapılmadı.

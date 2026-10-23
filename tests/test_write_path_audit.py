@@ -273,6 +273,18 @@ class LocalOutputGuardTests(unittest.TestCase):
                         enforce_local_turkish_tv_test_playlist(target, allowed_root=bad_root)
             self.assertFalse(target.exists())
 
+    def test_isolated_playlist_rejects_lexical_destination_traversal(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            expected = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+            for candidate in (str(root) + "/reports/./MADSC55_TURKCE_TV_ADAY_DENEME.m3u8",
+                              str(root) + "/reports/nested/../MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"):
+                with self.subTest(candidate=candidate):
+                    with self.assertRaises(ProtectedWriteRejected):
+                        enforce_local_turkish_tv_test_playlist(candidate, allowed_root=root)
+            self.assertFalse(expected.exists())
+
     def test_symlinked_parent_and_root_boundary_blocked(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

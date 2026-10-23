@@ -42,6 +42,7 @@ _PROCESS_LAUNCHERS = {
     "subprocess.check_call", "subprocess.check_output",
     "os.system", "os.popen", "os.spawnl", "os.spawnle", "os.spawnlp", "os.spawnlpe",
     "os.spawnv", "os.spawnve", "os.spawnvp", "os.spawnvpe", "os.posix_spawn", "os.posix_spawnp",
+    "os.execv", "os.execve", "os.execvp", "os.execvpe", "os.execl", "os.execle", "os.execlp", "os.execlpe",
 }
 _GUARDED_OPEN_FLAGS = {"O_WRONLY", "O_RDWR", "O_CREAT", "O_TRUNC", "O_APPEND"}
 _READ_ONLY_OPEN_FLAGS = {

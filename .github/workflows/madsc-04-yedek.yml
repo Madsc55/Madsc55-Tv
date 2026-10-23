@@ -43,11 +43,12 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           from madsc.fixture_report_writer import write_exclusive_bytes
-          from madsc.write_path_audit import enforce_local_evidence_path
+          from madsc.write_path_audit import enforce_local_evidence_path, enforce_write_paths
           root = Path.cwd().resolve(strict=True)
           target = root / "reports/k4-source/nested/sample.txt"
-          enforce_local_evidence_path(target, allowed_root=root)
+          enforce_write_paths(["reports/k4-source/nested/sample.txt"])
           target.parent.mkdir(parents=True, exist_ok=True)
+          enforce_local_evidence_path(target, allowed_root=root)
           write_exclusive_bytes(target, b"k4 fixture backup and restore\\n", allowed_root=root)
           PY
           if [[ "${{ inputs.allow_parity_evidence }}" == "true" ]]; then sha256sum reports/k4-source/nested/sample.txt > reports/parity-input-before.sha256; fi

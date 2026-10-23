@@ -19,7 +19,7 @@ class EpgTests(unittest.TestCase):
                     check_epg_mapping(p, e)
 
     def test_malformed_tvg_id_forms_fail_closed(self):
-        for attribute in ('tvg-id=trt1.tr', 'tvg-id = "trt1.tr"', 'tvg-id="trt1.tr" tvg-id=other.tr'):
+        for attribute in ('tvg-id=trt1.tr', 'tvg-id = "trt1.tr"', 'tvg-id="trt1.tr" tvg-id=other.tr', 'tvg-id="trt1.tr"junk'):
             with self.subTest(attribute=attribute), tempfile.TemporaryDirectory() as d:
                 p = Path(d) / "playlist.m3u8"
                 e = Path(d) / "xmltv.xml"

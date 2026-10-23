@@ -62,6 +62,9 @@ def write_exclusive_bytes(destination: Path, payload: bytes, *,
             handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
+        # Persist the new directory entry as well as the file contents.
+        # Failure remains inside the rollback window (completed is still False).
+        os.fsync(parent_fd)
         completed = True
     finally:
         if descriptor is not None:

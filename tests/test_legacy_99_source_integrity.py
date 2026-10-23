@@ -92,6 +92,16 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
         self.assertEqual(audit.candidate_stages("madsc-tum-sistem-yedek.yml"), ["K4"])
         self.assertEqual(audit.candidate_stages("unmapped.yml"), ["UNCLASSIFIED"])
 
+    def test_incomplete_legacy_tree_rejected_before_blob_fetch(self):
+        with tempfile.TemporaryDirectory() as temp:
+            for tree in ({"tree": [], "truncated": True},
+                         {"tree": []}, {"tree": None, "truncated": False},
+                         None):
+                with self.subTest(tree=repr(tree)), patch.object(audit, "github", return_value=tree) as network:
+                    with self.assertRaises(ValueError):
+                        audit.run(Path(temp) / "audit.json", "")
+                    self.assertEqual(network.call_count, 1)
+
     def test_forged_blob_is_rejected(self):
         raw = b"name: sample\n"
         sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()

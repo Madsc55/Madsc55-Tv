@@ -63,3 +63,8 @@ class TestK5Pool(unittest.TestCase):
         self.assertEqual(pool["counts"]["broken"], 0)
         self.assertEqual(sum(pool["reported_playback_counts"].values()), 6115)
         self.assertEqual(pool["entries"][0]["playback"], "unknown")
+
+    def test_duplicate_source_hash_rejected(self):
+        self.records[1]["source_sha256"] = self.records[0]["source_sha256"]
+        with self.assertRaises(ValueError):
+            build_isolated_test_pool(self.records)

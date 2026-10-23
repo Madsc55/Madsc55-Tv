@@ -75,6 +75,8 @@ def verify_av(url):
         text = manifest.decode("utf-8-sig", errors="strict")
     except UnicodeDecodeError:
         return False, False, "invalid_manifest_encoding"
+    if "\x00" in text or any(ch in text for ch in ("\u0085", "\u2028", "\u2029")):
+        return False, False, "invalid_manifest_characters"
     if any(line.strip().startswith("#EXT-X-STREAM-INF:") for line in text.splitlines()):
         if any(line.lstrip().startswith(("#EXT-X-MEDIA:", "#EXT-X-SESSION-DATA:",
                                          "#EXT-X-SESSION-KEY:")) for line in text.splitlines()):
@@ -100,6 +102,8 @@ def verify_av(url):
         text = manifest.decode("utf-8-sig", errors="strict")
     except UnicodeDecodeError:
         return False, False, "invalid_manifest_encoding"
+    if "\x00" in text or any(ch in text for ch in ("\u0085", "\u2028", "\u2029")):
+        return False, False, "invalid_manifest_characters"
     if any(line.strip().startswith("#EXT-X-PLAYLIST-TYPE:VOD") for line in text.splitlines()):
         return False, False, "vod_playlist_not_live"
     if any(line.lstrip().startswith("#EXT-X-ENDLIST") for line in text.splitlines()):

@@ -23,6 +23,17 @@ class PortableDirectoryAliasTests(unittest.TestCase):
                             snapshot_manifest(root, names)
                         opener.assert_not_called()
 
+    def test_snapshot_accepts_unambiguous_nested_names(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name, payload in (("Folder/a.txt", b"a"), ("Other/b.txt", b"b")):
+                target = root / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(payload)
+            manifest = snapshot_manifest(root, ["Folder/a.txt", "Other/b.txt"])
+            self.assertEqual(len(manifest["entries"]), 2)
+            self.assertTrue(verify_manifest(root, manifest))
+
     def test_manifest_rejects_directory_alias_before_snapshot(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

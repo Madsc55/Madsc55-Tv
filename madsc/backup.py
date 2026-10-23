@@ -93,6 +93,15 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
         raise ValueError("Backup source exceeds bounded entry limit")
     if any(len(name) > 4096 for name in paths):
         raise ValueError("Backup source path exceeds bounded length")
+    import unicodedata
+    # Portable restore destinations may collapse case or Unicode compatibility
+    # variants into one path; refuse ambiguous snapshots before reading bytes.
+    portable = [unicodedata.normalize('NFKC', name).casefold() for name in paths]
+    if len(set(portable)) != len(paths):
+        raise ValueError('Ambiguous portable backup source path alias')
+    if any(unicodedata.category(character) == 'Cf'
+           for name in paths for character in name):
+        raise ValueError('Invisible formatting character in backup source path')
     # Reject impossible file/directory inventories before opening source files.
     declared = set(paths)
     if any('/'.join(name.split('/')[:depth]) in declared

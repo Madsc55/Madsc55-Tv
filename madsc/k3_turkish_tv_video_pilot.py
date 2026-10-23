@@ -69,6 +69,9 @@ def verify_av(url):
     if not isinstance(manifest, bytes) or not manifest.lstrip().startswith(b"#EXTM3U") or len(manifest) > 65536:
         return False, False, "no_manifest"
     text = manifest.decode("utf-8-sig", errors="replace")
+    if any(line.lstrip().startswith(("#EXT-X-MEDIA:", "#EXT-X-SESSION-DATA:",
+                                     "#EXT-X-SESSION-KEY:")) for line in text.splitlines()):
+        return False, False, "unsupported_master_metadata"
     if any(line.strip().startswith("#EXT-X-STREAM-INF:") for line in text.splitlines()):
         lines = [line.strip() for line in text.splitlines()]
         variants = [lines[i + 1] for i, line in enumerate(lines[:-1])

@@ -3,7 +3,8 @@ import os
 import stat
 from pathlib import Path
 from madsc.write_path_audit import (enforce_write_paths, enforce_local_output_path,
-                                    enforce_local_turkish_tv_test_playlist)
+                                    enforce_local_turkish_tv_test_playlist,
+                                    enforce_local_evidence_path)
 
 
 _TURKISH_TV_PLAYLIST = "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
@@ -25,13 +26,21 @@ def _prepare_fixture_root(root: Path) -> Path:
     return root
 
 
-def write_exclusive_bytes(destination: Path, payload: bytes) -> None:
+def write_exclusive_bytes(destination: Path, payload: bytes, *,
+                          allowed_root: Path | None = None,
+                          isolated_turkish_playlist: bool = False) -> None:
     """Create an exclusive evidence file through no-follow directory descriptors."""
+    if not isinstance(payload, bytes):
+        raise TypeError("Evidence payload must be bytes")
+    destination = Path(destination)
+    enforce_local_evidence_path(
+        destination, allowed_root=allowed_root,
+        isolated_turkish_playlist=isolated_turkish_playlist,
+    )
     nofollow = getattr(os, "O_NOFOLLOW", None)
     directory_flag = getattr(os, "O_DIRECTORY", None)
     if not isinstance(nofollow, int) or not isinstance(directory_flag, int):
         raise PermissionError("Secure descriptor-relative output is unavailable")
-    destination = Path(destination)
     if not destination.is_absolute() or any(part in ("", ".", "..") for part in destination.parts[1:]):
         raise PermissionError("Evidence output must be an unambiguous absolute path")
     directory_flags = os.O_RDONLY | directory_flag | nofollow
@@ -76,9 +85,43 @@ def write_exclusive_bytes(destination: Path, payload: bytes) -> None:
         os.close(parent_fd)
 
 
-def _exclusive_bytes(destination: Path, payload: bytes) -> None:
+def _exclusive_bytes(destination: Path, payload: bytes, **policy) -> None:
     """Compatibility wrapper for existing fixture-writer callers and tests."""
-    write_exclusive_bytes(destination, payload)
+    write_exclusive_bytes(destination, payload, **policy)
+
+
+def _unlink_evidence_if_same(destination: Path, identity, *, allowed_root: Path,
+                             isolated_turkish_playlist: bool = False) -> None:
+    """Remove only the same evidence inode through no-follow descriptors."""
+    enforce_local_evidence_path(
+        destination, allowed_root=allowed_root,
+        allow_existing_regular_file=True,
+        isolated_turkish_playlist=isolated_turkish_playlist,
+    )
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    if not isinstance(nofollow, int) or not isinstance(directory_flag, int):
+        raise PermissionError("Secure descriptor-relative rollback is unavailable")
+    destination = Path(destination)
+    directory_flags = os.O_RDONLY | directory_flag | nofollow
+    parent_fd = os.open(destination.anchor, directory_flags)
+    try:
+        for part in destination.parent.parts[1:]:
+            next_fd = os.open(part, directory_flags, dir_fd=parent_fd)
+            os.close(parent_fd)
+            parent_fd = next_fd
+        try:
+            current = os.stat(destination.name, dir_fd=parent_fd,
+                              follow_symlinks=False)
+        except FileNotFoundError:
+            return
+        if (current.st_dev, current.st_ino, current.st_size,
+                current.st_mtime_ns, current.st_ctime_ns) == (
+                identity.st_dev, identity.st_ino, identity.st_size,
+                identity.st_mtime_ns, identity.st_ctime_ns):
+            os.unlink(destination.name, dir_fd=parent_fd)
+    finally:
+        os.close(parent_fd)
 
 
 
@@ -115,23 +158,19 @@ def write_turkish_tv_test_bundle(root: Path, playlist: bytes, report: str) -> di
             raise PermissionError("Evidence output outside reports directory")
     created = []
     try:
-        _exclusive_bytes(playlist_path, playlist)
+        _exclusive_bytes(playlist_path, playlist, allowed_root=root,
+                         isolated_turkish_playlist=True)
         created.append((playlist_path, playlist_path.lstat()))
-        _exclusive_bytes(report_path, report.encode("utf-8"))
+        _exclusive_bytes(report_path, report.encode("utf-8"), allowed_root=root)
         created.append((report_path, report_path.lstat()))
     except Exception:
         # Roll back only the exact inodes this call created. A concurrent
         # replacement must not be removed as if it were our own evidence.
         for path, identity in reversed(created):
-            try:
-                current = path.lstat()
-            except FileNotFoundError:
-                continue
-            if (current.st_dev, current.st_ino, current.st_size,
-                    current.st_mtime_ns, current.st_ctime_ns) == (
-                    identity.st_dev, identity.st_ino, identity.st_size,
-                    identity.st_mtime_ns, identity.st_ctime_ns):
-                path.unlink(missing_ok=True)
+            _unlink_evidence_if_same(
+                path, identity, allowed_root=root,
+                isolated_turkish_playlist=path == playlist_path,
+            )
         raise
     return {
         "isolated_bundle_written": True,
@@ -178,7 +217,7 @@ def write_fixture_report(root: Path, relative_path: str, content: str) -> dict:
     if destination.exists():
         raise FileExistsError("Refusing to overwrite existing report evidence")
     enforce_local_output_path(destination, allowed_root=root)
-    _exclusive_bytes(destination, content.encode("utf-8"))
+    _exclusive_bytes(destination, content.encode("utf-8"), allowed_root=root)
     return {"isolated_report_written": True, "production_write_allowed": False}
 
 

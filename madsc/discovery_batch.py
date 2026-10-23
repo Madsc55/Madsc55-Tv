@@ -46,8 +46,13 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     candidates, errors = [], []
     pending = None
     discard_url_for_rejected_entry = False
+    metadata_entries = 0
     for number, raw in enumerate(lines[1:], 2):
         line = raw.strip()
+        if line.startswith("#EXTINF:"):
+            metadata_entries += 1
+            if metadata_entries > max_entries:
+                raise ValueError("Source exceeds bounded candidate limit")
         if discard_url_for_rejected_entry:
             if line.startswith("#EXTINF:"):
                 # A new entry started before a URL; do not consume its metadata.

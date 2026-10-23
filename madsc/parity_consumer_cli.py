@@ -52,15 +52,16 @@ def run_consumer(consumer, *, root, timeout_seconds=120):
     code = result['exit_code']
     shell_code = code if code >= 0 else 128 - code
     try:
-        _exclusive_bytes(root / DIAGNOSTICS['process_stdout'], result['stdout'])
-        _exclusive_bytes(root / DIAGNOSTICS['process_stderr'], result['stderr'])
+        _exclusive_bytes(root / DIAGNOSTICS['process_stdout'], result['stdout'], allowed_root=root)
+        _exclusive_bytes(root / DIAGNOSTICS['process_stderr'], result['stderr'], allowed_root=root)
         outcome = {'schema': 'madsc-local-process-outcome-v1', 'consumer': consumer,
                    'exit_code': code, 'timed_out': result['timed_out'],
                    'behavioral_parity_accepted': False, 'production_ready': False}
         _exclusive_bytes(root / DIAGNOSTICS['process_outcome'],
-                         (json.dumps(outcome, sort_keys=True) + '\n').encode())
+                         (json.dumps(outcome, sort_keys=True) + '\n').encode(),
+                         allowed_root=root)
         if consumer == 'k1':
-            _exclusive_bytes(root / output_path, result['stdout'])
+            _exclusive_bytes(root / output_path, result['stdout'], allowed_root=root)
         if code != 0 or result['timed_out']:
             write_execution_snapshot(root, exit_code=code, timed_out=result['timed_out'],
                 outputs=[(label, root / path) for label, path in DIAGNOSTICS.items()],

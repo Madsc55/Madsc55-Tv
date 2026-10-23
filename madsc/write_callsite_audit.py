@@ -19,6 +19,7 @@ _GUARDS = {
     "enforce_local_output_path",
     "enforce_local_append_path",
     "enforce_local_turkish_tv_test_playlist",
+    "enforce_local_evidence_path",
 }
 _MUTATING_METHODS = {
     # File-object writes matter too: an open(..., "w") may be wrapped or

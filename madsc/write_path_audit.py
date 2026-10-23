@@ -242,6 +242,11 @@ def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: P
     policy_probe = root / "reports/turkish-tv-test-playlist-boundary.json"
     result = _enforce_local_path(policy_probe, allowed_root=root,
                                  allow_existing_regular_file=False)
+    # The special-case target must obey the same no-follow ancestor policy
+    # as the JSON probe; otherwise a symlinked reports directory can escape.
+    for ancestor in (expected.parent, *expected.parent.parents):
+        if ancestor.is_symlink():
+            raise ProtectedWriteRejected("Symlinked isolated playlist ancestor")
     if expected.exists() or expected.is_symlink():
         raise ProtectedWriteRejected("Existing test playlist evidence")
     return {**result, "path_checked": True, "isolated_test_playlist": True}

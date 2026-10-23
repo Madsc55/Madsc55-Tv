@@ -618,6 +618,12 @@ def mutate(path, fd):
                          ["shutil.copymode", "shutil.copystat"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_shutil_copyfileobj_write_is_inventoried(self):
+        source = "import shutil\ndef transfer(source, target):\n    shutil.copyfileobj(source, target)\n"
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows], ["shutil.copyfileobj"])
+        self.assertTrue(rows[0]["review_required"])
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

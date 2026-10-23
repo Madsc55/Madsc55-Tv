@@ -20,6 +20,10 @@ class K5SourceAuditTests(unittest.TestCase):
         self.assertTrue(result["source_audit_passed"], result["errors"])
         self.assertFalse(result["production_accepted"])
         self.assertEqual(result["behavioral_parity_accepted"], 0)
+        self.assertEqual(result["behavioral_evidence_missing"], 92)
+        self.assertEqual(result["independent_old_new_execution_pairs"], 0)
+        self.assertEqual(result["yaml_signal_counts"]["push"], 21)
+        self.assertEqual(result["yaml_signal_counts"]["write"], 20)
 
     def test_missing_batch_fails_closed(self):
         original = Path.read_text

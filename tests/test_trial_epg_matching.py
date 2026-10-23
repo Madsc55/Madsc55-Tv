@@ -36,6 +36,11 @@ class TrialEpgMatchingTest(unittest.TestCase):
                 xml = '<tv><channel id="a"/><programme channel="a" start="' + timestamp + '"><title>Bad date</title></programme></tv>'
                 row = programme_coverage('#EXTINF:-1 tvg-id="a",Channel', xml)[0]
                 self.assertEqual(row["programme_count"], 0)
+    def test_impossible_utc_offset_does_not_count_as_guide(self):
+        xml = '<tv><channel id="a"/><programme channel="a" start="20261023100000 +1500" stop="20261023110000 +1500"/></tv>'
+        row = programme_coverage('#EXTINF:-1 tvg-id="a",Channel', xml)[0]
+        self.assertEqual(row["programme_count"], 0)
+
     def test_zero_and_negative_programme_intervals_do_not_count(self):
         for stop in ("20261023100000 +0000", "20261023090000 +0000"):
             with self.subTest(stop=stop):

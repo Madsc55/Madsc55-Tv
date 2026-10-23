@@ -59,7 +59,12 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
             ids.append(matches[0].strip() if matches else "")
         elif pending_stream and line and not line.startswith("#"):
             try:
-                valid_uri = line.startswith(("https://", "http://")) and bool(urlsplit(line).hostname)
+                parsed_uri = urlsplit(line)
+                valid_uri = (parsed_uri.scheme in ("https", "http")
+                             and bool(parsed_uri.hostname)
+                             and parsed_uri.username is None
+                             and parsed_uri.password is None
+                             and (parsed_uri.port is None or parsed_uri.port > 0))
             except ValueError:
                 valid_uri = False
             if not valid_uri:

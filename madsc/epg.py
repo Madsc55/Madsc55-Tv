@@ -27,6 +27,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     pending_stream = False
     for line in text.splitlines():
         line = line.strip()
+        if line.startswith("#EXTM3U") and line != header:
+            raise ValueError("Duplicate or misplaced M3U header")
         if line.startswith("#EXTINF:"):
             if pending_stream:
                 raise ValueError("M3U EXTINF missing stream URI")
@@ -60,7 +62,9 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
         elif pending_stream and line and not line.startswith("#"):
             try:
                 parsed_uri = urlsplit(line)
-                valid_uri = (not any(char.isspace() for char in line)
+                valid_uri = (not any(ord(char) < 0x20 or ord(char) == 0x7f for char in line)
+                             and not any(char.isspace() for char in line)
+                             and not parsed_uri.fragment
                              and parsed_uri.scheme in ("https", "http")
                              and bool(parsed_uri.hostname)
                              and parsed_uri.username is None

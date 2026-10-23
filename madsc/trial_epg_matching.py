@@ -105,6 +105,11 @@ def programme_coverage(playlist, xml_data):
         start = (programme.get("start") or "").strip()
         stop = (programme.get("stop") or "").strip()
         if channel in known_channels and _valid_xmltv_time(start) and (not stop or _valid_xmltv_time(stop)):
+            start_dt = datetime.strptime(start, "%Y%m%d%H%M%S %z" if len(start.split(" ")[0]) == 14 else "%Y%m%d%H%M %z")
+            if stop:
+                stop_dt = datetime.strptime(stop, "%Y%m%d%H%M%S %z" if len(stop.split(" ")[0]) == 14 else "%Y%m%d%H%M %z")
+                if stop_dt <= start_dt:
+                    continue
             counts[channel] = counts.get(channel, 0) + 1
     for row in results:
         channel = row["matched_id"]

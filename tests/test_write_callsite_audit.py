@@ -251,6 +251,19 @@ def run_commands():
         self.assertTrue(all(row["guard_control_flow_verified"]
                             for row in destination_mutations))
 
+    def test_backup_rollback_delete_has_direct_k1_guard_dominance(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        rollback = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/backup.py"
+            and row["scope"] == "_remove_created_tree_if_same"
+            and row["api"] == "shutil.rmtree"
+        ]
+        self.assertEqual(len(rollback), 1)
+        self.assertTrue(rollback[0]["guard_control_flow_verified"])
+        self.assertTrue(rollback[0]["review_required"])
+
     def test_process_literal_file_output_switches_are_recorded_fail_closed(self):
         source = '''
 import subprocess

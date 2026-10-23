@@ -47,7 +47,7 @@ class EpgTests(unittest.TestCase):
                 check_epg_mapping(p, e)
 
     def test_http_stream_uri_requires_hostname(self):
-        for uri in ("https://", "http:///stream.m3u8"):
+        for uri in ("https://", "http:///stream.m3u8", "https://[broken-ipv6/stream.m3u8"):
             with self.subTest(uri=uri), tempfile.TemporaryDirectory() as d:
                 p = Path(d) / "playlist.m3u8"
                 e = Path(d) / "xmltv.xml"

@@ -783,7 +783,11 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
             raise ValueError(f"Hardlinked Python source requires review: {relative}")
         # Bind the read to the validated file descriptor instead of reopening
         # the path after lstat; reject a replacement between those operations.
-        with file.open("rb") as handle:
+        flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+        if not hasattr(os, "O_NOFOLLOW"):
+            raise ValueError("Safe no-follow source reads are unavailable on this platform")
+        descriptor = os.open(file, flags)
+        with os.fdopen(descriptor, "rb") as handle:
             descriptor_stat = os.fstat(handle.fileno())
             if (descriptor_stat.st_dev, descriptor_stat.st_ino) != (source_stat.st_dev, source_stat.st_ino):
                 raise ValueError(f"Python source replaced before audit read: {relative}")

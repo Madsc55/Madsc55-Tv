@@ -10,14 +10,14 @@ from madsc import k3_turkish_tv_video_pilot as pilot
 
 class K3VideoRadioQuotaTests(unittest.TestCase):
     def test_nested_variant_must_be_an_hls_manifest(self):
-        master = b'#EXTM3U\\n#EXT-X-STREAM-INF:BANDWIDTH=500000\\nchild.m3u8\\n'
+        master = b'#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=500000\nchild.m3u8\n'
         with patch.object(pilot, "safe_curl", side_effect=[master, b"not an HLS playlist"]) as curl:
             self.assertEqual(pilot.verify_av("https://example.org/master.m3u8"),
                              (False, False, "invalid_variant_manifest"))
         self.assertEqual(curl.call_count, 2)
 
     def test_malformed_ffprobe_streams_fail_closed(self):
-        manifest = b'#EXTM3U\\n#EXTINF:4,\\nsegment.ts\\n'
+        manifest = b'#EXTM3U\n#EXTINF:4,\nsegment.ts\n'
         with patch.object(pilot, "safe_curl", side_effect=[manifest, b"x" * 188]), \
              patch.object(pilot.subprocess, "run") as probe:
             probe.return_value.stdout = b'{"streams": [null]}'
@@ -25,7 +25,7 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, "probe_error"))
 
     def test_ffprobe_nonzero_exit_cannot_verify_video(self):
-        manifest = b'#EXTM3U\\n#EXTINF:4,\\nsegment.ts\\n'
+        manifest = b'#EXTM3U\n#EXTINF:4,\nsegment.ts\n'
         with patch.object(pilot, "safe_curl", side_effect=[manifest, b"x" * 188]), \
              patch.object(pilot.subprocess, "run") as probe:
             probe.return_value.returncode = 1

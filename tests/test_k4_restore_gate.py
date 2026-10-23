@@ -6,6 +6,13 @@ from madsc.k4_restore_gate import audit_k4_restore
 
 
 class K4RestoreGateTests(unittest.TestCase):
+    def test_relative_roots_do_not_probe_filesystem_before_rejection(self):
+        from unittest.mock import patch
+        with patch.object(Path, "is_symlink", side_effect=AssertionError("filesystem probe")):
+            with self.assertRaisesRegex(ValueError, "canonical absolute paths"):
+                audit_k4_restore(Path("relative/source"), Path("/tmp/backup"),
+                                 Path("/tmp/restored"), ["file.txt"])
+
     def test_restore_roots_with_traversal_segments_are_rejected(self):
         from unittest.mock import patch
         with patch('madsc.k4_restore_gate.verify_independent_restore') as verify:

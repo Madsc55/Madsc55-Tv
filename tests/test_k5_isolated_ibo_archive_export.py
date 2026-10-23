@@ -115,6 +115,15 @@ class K5IboArchiveExportTests(unittest.TestCase):
                 export_6115_archive_manifest(self.urls, destination)
             self.assertEqual(list(Path(tmp).iterdir()), [])
 
+    def test_unsafe_destination_rejected_before_manifest_build(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "unsafe\u202ename"
+            with patch("madsc.isolated_ibo_archive_export.build_6115_archive_preview",
+                       side_effect=AssertionError("manifest must not be built")):
+                with self.assertRaisesRegex(PermissionError, "Unsafe destination"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertEqual(list(Path(tmp).iterdir()), [])
+
     def test_manifest_file_has_private_permissions(self):
         if os.name != "posix":
             self.skipTest("POSIX permission bits unavailable")

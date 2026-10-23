@@ -16,7 +16,7 @@ class WorkflowWriteBoundaryTests(unittest.TestCase):
         for workflow in workflows:
             source = workflow.read_text(encoding="utf-8")
             with self.subTest(workflow=workflow.name):
-                self.assertRegex(source, r"(?m)^permissions:\\s*\\n(?:[ \\t]+[^\\n]+\\n)*?[ \\t]+contents:\\s*read\\s*$")
+                self.assertRegex(source, r"(?m)^permissions:[ \t]*\n(?:[ \t]+[^\n]*\n)*?[ \t]+contents:[ \t]*read[ \t]*$")
                 self.assertNotRegex(source, r"(?m)^\\s*contents:\\s*write\\s*$")
                 self.assertIn("persist-credentials: false", source)
                 self.assertNotRegex(source, r"(?m)\\bgit\\s+push\\b")

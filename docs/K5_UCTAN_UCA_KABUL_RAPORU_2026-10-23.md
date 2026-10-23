@@ -57,3 +57,7 @@
 Öncelik sırası: (i) eksik 47 eski workflow'un doğrudan script'leriyle salt-okunur ayrıntılı incelemesi; (ii) 92 davranış için K1–K5 tüketici/komut/girdi/çıktı haritası; (iii) güvenli izole, aynı-girdili eski/yeni koşular ve SHA kanıtları; (iv) timeout/retry/yan etki karşılaştırması ve bağımsız gözden geçirme; (v) K1–K4 gerçek kabulü ve güncel main CI; (vi) en son IBO Player Pro cihaz testi; (vii) açık onayla üretim geçişi.
 
 **Değişmezlik:** Bu karşılaştırma ve rapor yalnızca dokümantasyondur. `CALISANLAR.m3u`, `FAVORILER`, `YENILER`, `YEDEKLER`, `HEPSI`, EPG/XMLTV, logolar, harici yedekler ve cihazlara yazma yapılmadı. Eski workflow'lar devre dışı bırakılmadı, üretim değişikliği ve canlı test başlatılmadı.
+
+## 6. Sabit kaynakta doğrudan doğrulanan örnekler (ek kontrol)
+
+`docs/K5_LEGACY_KAYNAK_DOGRULAMASI_2026-10-23.md` dosyasında `390-aday-tekrar-test.yml`, `aday-bekletme.yml` ve `aday-logo-epg-test.yml` eski sabit commit'ten **doğrudan okunarak** tetik, komut, timeout, artifact ve beşli sistem karşılıkları karşılaştırıldı. Bu örnekler, sırasıyla K3/K5, K2/K3/K5 ve K1/K3/K5 arasında çok-aşamalı davranışların bulunduğunu gösterir. Kaynak incelemesi, çağrılan script'lerin bağımsız yürütme sonuçlarını ve artifact SHA eşitliğini doğrulamadığından **davranışsal kabul 0/92** kalır. Önceki 45/92 ayrıntılı inceleme sayısı bu üç örneğin daha önce sayılmış olabilmesi nedeniyle artırılmadı.

@@ -734,8 +734,8 @@ def scan_python_source(source: str, path: str = "<memory>") -> list[dict]:
 def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
     """Scan repository Python sources without executing or changing any file."""
     requested_root = Path(root)
-    if requested_root.is_symlink():
-        raise ValueError("Symlinked source root requires review")
+    if any(ancestor.is_symlink() for ancestor in (requested_root, *requested_root.parents)):
+        raise ValueError("Symlinked source root or ancestor requires review")
     root = requested_root.resolve(strict=True)
     if not root.is_dir():
         raise ValueError("Source root must be a directory")

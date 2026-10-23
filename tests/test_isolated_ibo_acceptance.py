@@ -1,5 +1,5 @@
 """Offline acceptance gate must never claim production readiness."""
-import unittest
+import hashlib\nimport unittest
 
 from madsc.isolated_ibo_archive_preview import build_6115_archive_preview
 from madsc.isolated_ibo_test_pool import build_isolated_test_pool
@@ -10,7 +10,7 @@ class TestK5Acceptance(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.urls = [f"https://example.invalid/channel/{i}" for i in range(1, 6116)]
-        cls.records = [{"position": i, "source_sha256": f"{i:064x}"}
+        cls.records = [{"position": i, "source_sha256": hashlib.sha256(cls.urls[i - 1].encode("utf-8")).hexdigest()}
                        for i in range(1, 6116)]
         cls.archive = build_6115_archive_preview(cls.urls)
         cls.pool = build_isolated_test_pool(cls.records)
@@ -21,7 +21,7 @@ class TestK5Acceptance(unittest.TestCase):
         self.assertTrue(report["pool_integrity_verified"])
         self.assertFalse(report["production_ready"])
         self.assertFalse(report["production_writes"])
-        self.assertIn("source_identity_not_verified", report["blockers"])
+        self.assertIn("external_source_provenance_not_verified", report["blockers"])
 
     def test_tampered_archive_fails_closed(self):
         archive = dict(self.archive)
@@ -34,3 +34,10 @@ class TestK5Acceptance(unittest.TestCase):
         pool["device_verified"] = True
         with self.assertRaises(ValueError):
             assess_k5_acceptance(self.urls, self.archive, self.records, pool)
+
+    def test_unrelated_source_hashes_rejected(self):
+        records = [dict(record) for record in self.records]
+        records[0]["source_sha256"] = "0" * 64
+        unrelated_pool = build_isolated_test_pool(records)
+        with self.assertRaises(ValueError):
+            assess_k5_acceptance(self.urls, self.archive, records, unrelated_pool)

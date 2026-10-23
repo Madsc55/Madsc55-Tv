@@ -9,6 +9,14 @@ from madsc.write_path_audit import ProtectedWriteRejected
 
 
 class CoreFixtureWriterTests(unittest.TestCase):
+    def test_new_fixture_fsyncs_file_and_parent_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with mock.patch("madsc.core_fixture_writer.os.fsync", wraps=os.fsync) as sync:
+                write_core_fixture(root, "fixture.txt", b"durable")
+            self.assertEqual(sync.call_count, 2)
+            self.assertEqual((root / "fixture.txt").read_bytes(), b"durable")
+
     def test_allowlisted_fixture_is_created_and_explicitly_overwritten(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

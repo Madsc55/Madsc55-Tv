@@ -10,6 +10,7 @@ def norm(value):
     value = (value or "").casefold().replace("ı", "i")
     value = unicodedata.normalize("NFKD", value)
     value = "".join(char for char in value if not unicodedata.combining(char))
+    value = value.replace("ı", "i")
     return re.sub(r"[^a-z0-9]+", "", value)
 
 def xmltv_channels(xml_data):

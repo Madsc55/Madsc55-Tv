@@ -1,6 +1,6 @@
 """Read-only, fail-closed EPG matching for isolated trial playlists."""
 import re
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import xml.etree.ElementTree as ET
 
 ATTR = re.compile(r'(?:^|\s)([A-Za-z][\w-]*)="([^"]*)"(?=\s|$)')
@@ -89,8 +89,10 @@ def _valid_xmltv_time(value):
         return False
     return True
 
-def programme_coverage(playlist, xml_data):
-    """Read-only programme counts for verified channel matches; never invent EPG."""
+def programme_coverage(playlist, xml_data, reference_time=None):
+    """Read-only counts; optional aware reference_time measures current guide coverage."""
+    if reference_time is not None and (reference_time.tzinfo is None or reference_time.utcoffset() is None):
+        raise ValueError("reference_time must be timezone-aware")
     raw = xml_data.encode("utf-8") if isinstance(xml_data, str) else xml_data
     if b"<!DOCTYPE" in raw.upper() or b"<!ENTITY" in raw.upper():
         raise ValueError("XMLTV DTD/entity declarations are not allowed")
@@ -100,6 +102,7 @@ def programme_coverage(playlist, xml_data):
     results = matches(playlist, raw)
     known_channels = xmltv_channels(raw)
     counts = {}
+    current_counts = {}
     for programme in root.findall("programme"):
         channel = (programme.get("channel") or "").strip()
         start = (programme.get("start") or "").strip()
@@ -111,8 +114,15 @@ def programme_coverage(playlist, xml_data):
                 if stop_dt <= start_dt:
                     continue
             counts[channel] = counts.get(channel, 0) + 1
+            if reference_time is not None:
+                effective_stop = stop_dt if stop else start_dt + timedelta(hours=1)
+                if start_dt <= reference_time < effective_stop:
+                    current_counts[channel] = current_counts.get(channel, 0) + 1
     for row in results:
         channel = row["matched_id"]
         row["programme_count"] = counts.get(channel, 0) if channel else 0
         row["has_programmes"] = row["programme_count"] > 0
+        if reference_time is not None:
+            row["current_programme_count"] = current_counts.get(channel, 0) if channel else 0
+            row["has_current_programmes"] = row["current_programme_count"] > 0
     return results

@@ -109,6 +109,8 @@ def verify_av(url):
                                      "#EXT-X-DISCONTINUITY", "#EXT-X-GAP"))
            for line in text.splitlines()):
         return False, False, "unsupported_hls_segment_layout"
+    if not any(line.lstrip().startswith("#EXTINF:") for line in text.splitlines()):
+        return False, False, "no_segment_duration"
     segments = [line.strip() for line in text.splitlines()
                 if line.strip() and not line.lstrip().startswith("#")]
     if not segments:

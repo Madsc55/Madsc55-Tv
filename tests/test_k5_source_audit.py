@@ -34,6 +34,22 @@ class K5SourceAuditTests(unittest.TestCase):
         self.assertFalse(result["source_audit_passed"])
         self.assertTrue(any("missing_or_invalid_part:91_92" in x for x in result["errors"]))
 
+    def test_malformed_stage_mapping_fails_closed(self):
+        original = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            value = original(path, *args, **kwargs)
+            if str(path).endswith("K5_KAYNAK_DOGRULAMA_91_92.json"):
+                data = json.loads(value)
+                data["rows"][0]["candidate_stages"] = ["K6"]
+                return json.dumps(data)
+            return value
+
+        with patch.object(Path, "read_text", read_text):
+            result = audit(self.root)
+        self.assertFalse(result["source_audit_passed"])
+        self.assertTrue(any(x.startswith("invalid_signals:") for x in result["errors"]))
+
     def test_tampered_source_sha_fails_closed(self):
         original = Path.read_text
 

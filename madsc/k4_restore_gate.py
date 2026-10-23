@@ -60,6 +60,16 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
                     raise ValueError("Restore audit inventory exceeds safe entry limit")
     if seen_names.intersection(declared_dirs):
         raise ValueError('Restore audit file conflicts with declared directory')
+    # Check directory aliases too: distinct file names may share a portable
+    # directory name after Unicode normalization and case folding.
+    portable_dirs = {}
+    for directory_name in declared_dirs:
+        portable_directory = unicodedata.normalize('NFKC', directory_name).casefold()
+        previous = portable_dirs.setdefault(portable_directory, directory_name)
+        if previous != directory_name:
+            raise ValueError('Ambiguous restore audit directory alias')
+        if portable_directory in seen_portable_names:
+            raise ValueError('Restore audit portable file-directory collision')
     result = verify_independent_restore(source, backup, restored, names)
     # The restore acceptance gate requires an exact file inventory, not just
     # matching hashes for a caller-selected subset. Reject unexpected files,

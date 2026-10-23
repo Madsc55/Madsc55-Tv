@@ -594,3 +594,15 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(report["candidate_rows"][0]["name"], "Good")
         self.assertIn("invalid_metadata_whitespace",
                       [error["reason"] for error in report["parse_errors"]])
+
+    def test_crlf_does_not_exempt_non_ascii_metadata_padding(self):
+        feed = ('#EXTM3U\r\n'
+                '#EXTINF:-1,Bad\u00a0\r\n'
+                'https://example.org/bad\r\n'
+                '#EXTINF:-1,Good\r\n'
+                'https://example.org/good\r\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(report["candidate_rows"][0]["name"], "Good")
+        self.assertIn("invalid_metadata_whitespace",
+                      [error["reason"] for error in report["parse_errors"]])

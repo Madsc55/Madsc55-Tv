@@ -15,6 +15,7 @@ from madsc.discovery import normalize_url
 
 SOURCE = "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/tr.m3u"
 LIMIT = 12
+MAX_LIMIT = 75
 SOURCE_MAX_BYTES = 2_000_000  # Same cap as K2 discovery
 
 
@@ -63,14 +64,16 @@ def probe(url):
             "response_bytes": len(body), "curl_exit_code": result.returncode}
 
 
-def run(source_file=None):
+def run(source_file=None, limit=LIMIT):
+    if not isinstance(limit, int) or not 1 <= limit <= MAX_LIMIT:
+        raise ValueError("Candidate limit must be between 1 and 75")
     results = []
     seen_hashes = set()
     source_evidence = {}
     # Keep the first LIMIT candidates while still exhausting the generator:
     # the source SHA-256 must describe the complete downloaded snapshot.
     for name, url in candidates(source_evidence, source_file):
-        if len(results) >= LIMIT:
+        if len(results) >= limit:
             continue
         try:
             normalized_url = normalize_url(url)
@@ -104,4 +107,6 @@ def run(source_file=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Bounded K3 HTTPS manifest pilot")
     parser.add_argument("--source-file", type=Path)
-    run(parser.parse_args().source_file)
+    parser.add_argument("--limit", type=int, default=LIMIT, help="HTTPS candidates to probe (1-75)")
+    args = parser.parse_args()
+    run(args.source_file, limit=args.limit)

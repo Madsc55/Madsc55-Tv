@@ -285,6 +285,16 @@ class LocalOutputGuardTests(unittest.TestCase):
                         enforce_local_turkish_tv_test_playlist(candidate, allowed_root=root)
             self.assertFalse(expected.exists())
 
+    def test_allowed_root_rejects_nfkc_separator_aliases(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            target = root / "evidence.json"
+            for suffix in ("／nested", "＼nested", "：stream"):
+                with self.subTest(suffix=suffix):
+                    with self.assertRaises(ProtectedWriteRejected):
+                        enforce_local_output_path(target, allowed_root=str(root) + suffix)
+            self.assertFalse(target.exists())
+
     def test_local_output_rejects_nfkc_separator_aliases(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

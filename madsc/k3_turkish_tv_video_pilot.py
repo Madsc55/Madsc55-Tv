@@ -91,7 +91,8 @@ def verify_av(url):
     if any(line.lstrip().startswith(('#EXT-X-KEY:', '#EXT-X-SESSION-KEY:'))
            for line in text.splitlines()):
         return False, False, 'encrypted_hls_unsupported'
-    if any(line.lstrip().startswith("#EXT-X-MEDIA:") for line in text.splitlines()):
+    if any(line.lstrip().startswith(("#EXT-X-MEDIA:", "#EXT-X-SESSION-DATA:"))
+           for line in text.splitlines()):
         return False, False, "alternate_media_unsupported"
     if any(line.lstrip().startswith(("#EXT-X-MAP:", "#EXT-X-I-FRAME-STREAM-INF:"))
            for line in text.splitlines()):

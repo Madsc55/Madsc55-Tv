@@ -32,7 +32,7 @@ def build_isolated_test_pool(records):
             status, eid = h["status"], h["evidence_id"]
             if not isinstance(status, str) or status not in STATES or not isinstance(eid, str) or not 0 < len(eid) <= 256 or any(ord(c) < 32 or ord(c) == 127 or 0xD800 <= ord(c) <= 0xDFFF for c in eid):
                 raise ValueError("Invalid evidence")
-            if "://" in eid or "/" in eid or "\\\\" in eid or "@" in eid:
+            if "://" in eid or "/" in eid or "\\" in eid or "@" in eid:
                 raise ValueError("Evidence identifier may not contain URLs or paths")
             clean.append({"status": status, "evidence_id": eid})
         reported = r.get("playback", "unknown")

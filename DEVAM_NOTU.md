@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50702)
+Total output lines: 1070
+
 Warning: truncated output (original token count: 50616)
 Total output lines: 1066
 
@@ -544,12 +547,7 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 
 
 ## 22 Ekim 2026 — Bu sohbetin son devri
-Kullanıcı tüm ilerlemenin kaydedilip yeni sohbete geçilmesini istedi. Ayrıntılı toplu devir: SOHBET_DEVIR_2026-10-22_SON.md. Yanlış esk…616 tokens truncated… çiftini eski tüketicinin beklediği ad ve iki kök ZIP üyesiyle saklar. Kaynak üretimi allow_history_source_publish, bağımsız eski kaynağı doğrulama allow_verified_history ile ayrı default-false izinlerdir; kaynak üretmek için zorunlu olarak eski manifest doğrulatılmaz. Hassas komutların açık izin regresyonu bu yeni iki ayrı flag'i zorunlu denetler.
-- history_verified_pipeline/CLI açık source_workflow_path/--source-workflow seçeneği alır; yalnız eski gerçek-kaynak yardımcı workflow'u veya ana K2 kabul edilir. Varsayılan eski kaynak uyumluluğunu korur. Seçim API run.path ile birebir doğrulanır; K5 fixture CI ve keyfi workflow, doğrulamadan önce reddedilir. Manifest şeması, token zorunluluğu, repo/dal/başarı/ancestor/artifact kökeni ve bayt hash denetimleri gevşetilmedi.
-- Gerçek yerel zincir testi publish_source → iki dosyalı ZIP → gerçek provenance client (API fixture) → gerçek downloader/extractor → gerçek verified pipeline → mevcut-run handoff çalıştırır; kaynak/paket baytları aynı kalır. Generic paket adı, yanlış workflow ve bozuk ZIP baytı çıktı üretmeden reddedilir; izinsiz workflow ağdan önce durur. Dokuz kaynak upload sözleşmesi birebir karşılaştırılır; source artifact adı kaldırıldığında contract gate kırmızı olur. Beş yeni test eklendi.
-- Odaklı ilk set 38/38 geçti. İlk toplu 769 testte 1 failure: eski opt-in testi yayın komutunu eski doğrulama flag'inde bekliyordu. Test, yeni default-false yayın flag'ini ayrıca zorunlu kılacak biçimde güncellendi. Nihai python -m madsc.offline_gate: 769 test + beş izole K1–K5 kapısı + kurulum + beş gerçek yerel rapor/K5 + 92+7 kaynak/10 komut/22 görev envanteri başarılı; contract gaps=0; git diff --check temiz. Kanıt: docs/MAIN_ARTIFACT_CHAIN_KANIT_2026-10-22.json.
-- Sınırlar: API cevapları ve geçmiş girdileri fixture'dır; gerçek Actions upload/download kökeni bu tur ölçülmedi. Statik 0 fark, eski 92 otomasyonun aynı-input bağımsız runtime kabulü değildir. Tam kabul 0/92, 0/26, 0/22 kalır. Korunan kanal/EPG/favori/logo/arşiv/yedek ve eski depo değiştirilmedi; Actions, canlı probe, merge/PR71 veya IBO cihaz işlemi yok. IBO kullanıcıdadır.
-- Sıradaki gerçek engeller: bağımsız eski/yeni aynı-input yürütme ve artifact çiftleri; 26 kuralın gerçek writer yollarında runtime kanıtı; K2/K3 harici geçmiş ve zaman aralıklı medya ölçümleri; kullanıcı IBO testi; K4 bağımsız harici backup/restore. Bunlar fixture veya yeni test sayısı artırılarak tamamlanmış gösterilmeyecek. İzinli gerçek koşu için kaynak girdileri/manifest ve harici kanıt sağlanmadan genel sistem bitti denmeyecek.
+Kullanıcı tüm ilerlemenin kaydedilip yeni sohbete geçilmes…702 tokens truncated…anmadan genel sistem bitti denmeyecek.
 
 
 ## 22 Ekim 2026 — Gerçek pair toplama için API ve ZIP bayt zinciri mevcut toplu CLI'ye bağlandı
@@ -1057,3 +1055,14 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Sonradan gelen K3 commitleri korunarak güncel uzak `dc354863e8a70a555a744dbd42e19f09fd6e31a0` içeriğinde hedefli **109/109** ve tam `python -m madsc.offline_gate` **1275/1275** test başarılı; beş izole K kapısı, write-callsite audit, kurulum/contract/rapor round-trip ve pinned 92 kapsam kapısı geçti. Başarısız test yok. İlk GitHub yazma denemesi yanlış blob SHA nedeniyle 409 ile güvenle durdu; doğru güncel blob yeniden okunarak başka commit ezilmeden yazıldı.
 - Kabul değişmedi: gerçek davranış parity **0/92**, runtime güvenlik **0/26**, ana görev **0/22**, production acceptance false. Fixture/statik sınıflandırma kabul değildir. Actions tetiklenmedi; canlı probing, cihaz testi, üretim yazısı, korunan playlist/EPG/favori/logo/yedek/arşiv ve eski depo değiştirilmedi.
 - Açık iş/engel: gerçek aynı-input bağımsız execution/artifact çiftleri, harici restore ve en son kullanıcı cihaz kanıtı dış kanıt bekliyor. Sıradaki somut yerel iş, `_open_relative_file_nofollow` gibi hem guarded hem unguarded çağıranı bulunan yardımcıların okuma/yazma etkilerini ayırıp gerçek giriş yollarını kaynak-hash-bağlı incelemek; çağrı grafiği kapanmadan kabul vermemek.
+
+
+## 23 Ekim 2026 — K1/K4 yedek okuma-yazma etkisi ayrımı
+- Çalışma güncel `main` commitleri korunarak `f11a7f31a5d714ca595e1836402d74c06b0db93c` tabanına taşındı. Kod `adb358e3dbef94c21121ece7a7e34083cba91356`; davranış regresyonu `20616331cff3f6621f6ac685533f5ac20306464e`; audit regresyonu `9680bfc660d026b5b2a66993fc73e9fea1fa4413`.
+- `_open_relative_file_nofollow` içindeki üç `os.open`, yalnız `O_RDONLY/O_DIRECTORY/O_NOFOLLOW/O_NONBLOCK` adlarıyla kaynak-bağlı hale getirildi ve `proven_read_only_descriptor` olarak ayrıldı. `_create_relative_file_nofollow` içindeki üç `os.open` ile bir `os.mkdir` gerçek yazma adayı kaldı; yardımcının kendisi sandbox kökünü koşulsuz `enforce_write_paths` ile yeniden denetliyor. Korunan `FAVORILER`, `EPG` ve `logos` kökleri descriptor açılmadan reddediliyor.
+- İzole K4 yedeğinin içeride `channels.m3u` saklaması korunuyor: K1 denetimi canlı/sandbox köküne uygulanıyor, sandbox içeriği yanlışlıkla üretim playlist'i sayılmıyor. Descriptor-relative `O_NOFOLLOW|O_EXCL`, root inode bağı ve üst seviye `enforce_local_output_path` kontrolleri değişmedi.
+- Eşzamanlı K4 commitlerinde bulunan kontrol-sırası hataları da kapatıldı: `compare_copy` ve `verify_independent_restore`, symlink kökü genel dizin hatasına düşürmeden önce açıkça “symlinked ancestors” olarak reddediyor.
+- İlk tam koşu, fazla geniş hedef-dosya guard'ının izole `channels.m3u` restore fixture'ını reddetmesiyle 1 error verdi; başarı sayılmadı ve guard köke daraltıldı. Daha yeni K4 testleri ardından aynı erken genel hata nedeniyle önce 2, sonra 1 hedefli failure yakaladı; her ikisi kontrol sırası düzeltilip yeniden çalıştırıldı.
+- Güncel uzak içerikte hedefli **163/163**, tam `python -m madsc.offline_gate` **1299/1299** başarılı. Envanter 107 Python dosyası / 142 açık aday / 13 non-write disposition; hedef oluşturma yardımcısı 4/4 doğrudan guard baskınlığı taşıyor. Beş izole K kapısı, write-callsite audit, workflow/task ve pinned 92 kapsam kapıları başarılı.
+- Kabul değişmedi: parity **0/92**, runtime güvenlik **0/26**, ana görev **0/22**. Bu statik/fixture kanıt production kabulü değildir. Actions, canlı probe, cihaz, üretim/korunan veri, eski depo, PR #71 ve merge işlemi yapılmadı.
+- Sıradaki somut yerel iş: kalan unguarded gerçek writer adaylarını helper bazında ayırıp doğrudan K1 guard eklenebilenleri kapatmak; dış/import/callback çağrı grafiği kapanmadan `caller_closure_verified` verme. Gerçek bağımsız execution/artifact, harici restore ve son kullanıcı cihaz kanıtı dış engel olarak açık.

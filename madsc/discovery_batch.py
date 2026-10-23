@@ -46,6 +46,8 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     # but fail closed on standalone CR instead of silently changing records.
     if "\r" in text.replace("\r\n", ""):
         raise ValueError("M3U contains unsupported bare carriage returns")
+    # A consistent CRLF feed may include transport padding around rows.
+    transport_crlf = "\r\n" in text and "\n" not in text.replace("\r\n", "")
     lines = text.removeprefix("\ufeff").splitlines()
     if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Missing M3U header")
@@ -61,7 +63,6 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         line = raw.strip()
         # Permit harmless trailing ASCII spaces only on CRLF transport rows;
         # preserve the strict rejection of padding on ordinary LF rows.
-        transport_crlf = "\r\n" in text and "\n" not in text.replace("\r\n", "")
         if raw.startswith("#EXTINF:") and line != raw and not any(
             unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw
         ) and not ("," in raw and not raw.rsplit(",", 1)[1].strip()) and not transport_crlf:

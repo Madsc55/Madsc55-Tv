@@ -14,7 +14,7 @@ def normalize_url(value: str) -> str:
     if any(token in value.lower() for token in ("%0a", "%0d", "%00", "%250a", "%250d", "%2500")):
         raise ValueError("Encoded newline or NUL is forbidden in candidate URLs")
     parts = urlsplit(value)
-    if parts.scheme.lower() not in ("http", "https") or not parts.netloc or parts.username or parts.password:
+    if parts.scheme.lower() not in ("http", "https") or not parts.netloc or "@" in parts.netloc:
         raise ValueError("Candidate must use HTTP(S) without embedded credentials")
     try:
         host = parts.hostname

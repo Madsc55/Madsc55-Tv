@@ -1,5 +1,6 @@
 """Offline K3 HLS origin security regressions (no network calls)."""
 import unittest
+from unittest.mock import patch
 from madsc.k3_turkish_tv_video_pilot import same_origin_https
 
 
@@ -30,3 +31,19 @@ class K3HlsOriginRegressionTests(unittest.TestCase):
         ):
             with self.subTest(child=child):
                 self.assertFalse(same_origin_https(parent, child))
+
+    def test_raw_hls_segment_reference_is_rejected_before_download(self):
+        from madsc.k3_turkish_tv_video_pilot import verify_av
+        manifest = b'#EXTM3U\\n#EXTINF:6,\\n segment.ts\\n'
+        with patch("madsc.k3_turkish_tv_video_pilot.safe_curl", return_value=manifest) as fetch:
+            self.assertEqual(verify_av("https://media.example.org/live.m3u8"),
+                             (False, False, "unsafe_segment_reference"))
+            self.assertEqual(fetch.call_count, 1)
+
+    def test_raw_hls_variant_reference_is_rejected_before_download(self):
+        from madsc.k3_turkish_tv_video_pilot import verify_av
+        manifest = b'#EXTM3U\\n#EXT-X-STREAM-INF:BANDWIDTH=500000\\nvariant.m3u8#bad\\n'
+        with patch("madsc.k3_turkish_tv_video_pilot.safe_curl", return_value=manifest) as fetch:
+            self.assertEqual(verify_av("https://media.example.org/live.m3u8"),
+                             (False, False, "unsafe_variant_reference"))
+            self.assertEqual(fetch.call_count, 1)

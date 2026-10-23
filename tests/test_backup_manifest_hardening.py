@@ -7,6 +7,15 @@ from madsc.backup import snapshot_manifest, verify_manifest
 
 
 class BackupManifestHardeningTests(unittest.TestCase):
+    def test_file_directory_collision_rejected_before_source_read(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch('madsc.backup._open_relative_file_nofollow') as opener:
+                with self.assertRaisesRegex(ValueError, 'file conflicts with declared directory'):
+                    snapshot_manifest(root, ['folder', 'folder/child.txt'])
+                opener.assert_not_called()
+
     def test_control_character_in_path_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

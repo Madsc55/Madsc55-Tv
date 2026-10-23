@@ -556,3 +556,16 @@ class DiscoveryBatchTests(unittest.TestCase):
                 self.assertEqual(report["candidate_rows"][0]["name"], "Good")
                 self.assertIn("invalid_metadata_control",
                               [error["reason"] for error in report["parse_errors"]])
+
+    def test_url_controls_are_rejected_before_strip(self):
+        for url in ('https://example.org/bad\t',
+                    '\thttps://example.org/bad',
+                    'https://example.org/bad\x00'):
+            with self.subTest(url=repr(url)):
+                feed = ('#EXTM3U\n#EXTINF:-1,Bad\n' + url + '\n'
+                        '#EXTINF:-1,Good\nhttps://example.org/good\n')
+                report = parse_m3u(feed, "fixture")
+                self.assertEqual(report["entries"], 1)
+                self.assertEqual(report["candidate_rows"][0]["name"], "Good")
+                self.assertIn("invalid_url_control",
+                              [error["reason"] for error in report["parse_errors"]])

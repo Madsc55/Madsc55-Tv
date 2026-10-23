@@ -9,6 +9,20 @@ from madsc import k3_turkish_tv_video_pilot as pilot
 
 
 class K3VideoRadioQuotaTests(unittest.TestCase):
+    def test_encrypted_media_playlist_fails_before_segment_download(self):
+        manifest = b'#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\n#EXTINF:4,\nsegment.ts\n'
+        with patch.object(pilot, 'safe_curl', return_value=manifest) as curl:
+            self.assertEqual(pilot.verify_av('https://example.org/live.m3u8'),
+                             (False, False, 'encrypted_hls_unsupported'))
+            curl.assert_called_once()
+
+    def test_nested_master_fails_before_variant_download(self):
+        master = b'#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=100\nchild.m3u8\n'
+        with patch.object(pilot, 'safe_curl', side_effect=[master, master]) as curl:
+            self.assertEqual(pilot.verify_av('https://example.org/live.m3u8'),
+                             (False, False, 'nested_master_manifest'))
+            self.assertEqual(curl.call_count, 2)
+
     def test_nested_variant_must_be_an_hls_manifest(self):
         master = b'#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=500000\nchild.m3u8\n'
         with patch.object(pilot, "safe_curl", side_effect=[master, b"not an HLS playlist"]) as curl:

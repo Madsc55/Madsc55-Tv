@@ -154,6 +154,20 @@ class FixtureReportWriterTests(unittest.TestCase):
             self.assertFalse((base / "child").exists())
             self.assertFalse((base / "fixture").exists())
 
+    def test_fixture_roots_reject_ambiguous_unicode_and_controls(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            invalid = (str(base) + "/bad\\u202e", str(base) + "/bad\\n",
+                       str(base) + "/bad\\uff0falias",
+                       str(base) + "/bad\\\\alias",
+                       str(base) + "/bad\\uff1aalias")
+            for raw in invalid:
+                with self.subTest(root=repr(raw)):
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_fixture_report(Path(raw), "reports/evidence.json", "{}")
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_turkish_tv_test_bundle(Path(raw), b"#EXTM3U\\n", "{}")
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

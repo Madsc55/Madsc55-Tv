@@ -47,7 +47,8 @@ def safe_curl(url, limit):
     resolver = f"{p.hostname}:443:{'[' + pin + ']' if ':' in pin else pin}"
     cmd = ["curl", "-q", "-fsS", "--noproxy", "*", "--proto", "=https", "--max-time", "9",
            "--connect-timeout", "4", "--max-filesize", str(limit), "--resolve", resolver, url]
-    result = subprocess.run(cmd, capture_output=True, timeout=11)
+    result = subprocess.run(cmd, capture_output=True, timeout=11,
+                            stdin=subprocess.DEVNULL)
     return result.stdout if result.returncode == 0 and len(result.stdout) <= limit else None
 
 
@@ -95,7 +96,8 @@ def verify_av(url):
         try:
             result = subprocess.run(
                 ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
-                 "-of", "json", str(segment)], capture_output=True, timeout=8)
+                 "-of", "json", str(segment)], capture_output=True, timeout=8,
+                stdin=subprocess.DEVNULL)
             if result.returncode != 0:
                 return False, False, "probe_error"
             decoded = json.loads(result.stdout or b"{}")

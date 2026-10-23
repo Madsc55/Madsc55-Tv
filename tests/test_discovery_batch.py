@@ -687,3 +687,12 @@ class DiscoveryBatchTests(unittest.TestCase):
         feed = '#EXTM3U\n# ' + ('é' * 2_100_000)
         with self.assertRaisesRegex(ValueError, "bounded input limit"):
             corroborate_sources({"one": feed, "two": feed})
+
+    def test_preview_combined_multibyte_sources_enforce_utf8_byte_limit(self):
+        feed = '#EXTM3U\n# ' + ('é' * 2_100_000)
+        with self.assertRaisesRegex(ValueError, "bounded input limit"):
+            build_m3u8_preview({"one": feed, "two": feed})
+
+    def test_preview_rejects_invalid_utf8_surrogates(self):
+        with self.assertRaisesRegex(ValueError, "valid UTF-8"):
+            build_m3u8_preview({"one": '#EXTM3U\n# \ud800\n'})

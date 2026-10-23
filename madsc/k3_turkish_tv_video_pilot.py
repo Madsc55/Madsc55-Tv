@@ -95,7 +95,8 @@ def verify_av(url):
            for line in text.splitlines()):
         return False, False, "unsupported_hls_media_layout"
     if any(line.lstrip().startswith(("#EXT-X-BYTERANGE:", "#EXT-X-PART:", "#EXT-X-PRELOAD-HINT:",
-                                     "#EXT-X-SKIP:", "#EXT-X-RENDITION-REPORT:"))
+                                     "#EXT-X-SKIP:", "#EXT-X-RENDITION-REPORT:",
+                                     "#EXT-X-DISCONTINUITY", "#EXT-X-GAP"))
            for line in text.splitlines()):
         return False, False, "unsupported_hls_segment_layout"
     segments = [line.strip() for line in text.splitlines()

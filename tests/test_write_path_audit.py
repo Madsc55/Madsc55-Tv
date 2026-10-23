@@ -39,6 +39,16 @@ class WritePathAuditTests(unittest.TestCase):
                 enforce_local_output_path(root / "evidence.json",
                                           allowed_root=root / long_name)
 
+    def test_rejected_path_exception_diagnostics_are_bounded(self):
+        paths = ["reports/" + "x" * 5000 + str(i) for i in range(10)]
+        with self.assertRaises(ProtectedWriteRejected) as captured:
+            enforce_write_paths(paths)
+        message = str(captured.exception)
+        self.assertLess(len(message), 900)
+        self.assertIn("rejected (10)", message)
+        self.assertIn("additional paths omitted", message)
+        self.assertNotIn("x" * 500, message)
+
     def test_oversized_path_is_rejected_before_normalization(self):
         long_path = "reports/" + "x" * 4090 + ".json"
         report = audit_write_paths([long_path])

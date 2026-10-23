@@ -234,6 +234,34 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
         self.assertFalse(report["playlist_modified"])
 
 
+    def test_nonstring_channel_name_does_not_abort_pilot(self):
+        rows = [(None, "https://example.org/unnamed.m3u8"),
+                ("TV Valid", "https://example.org/live.m3u8")]
+        with tempfile.TemporaryDirectory() as d:
+            with patch.object(pilot, "candidates", return_value=iter(rows)), \
+                 patch.object(pilot, "verify_video", return_value=(False, "no_manifest")) as verify, \
+                 patch.object(pilot, "write_fixture_report") as write, \
+                 patch.object(pilot.Path, "cwd", return_value=Path(d)):
+                pilot.run()
+        report = json.loads(write.call_args.args[2])
+        self.assertEqual(report["tested"], 1)
+        self.assertEqual(report["radio_excluded"], 1)
+        verify.assert_called_once_with("https://example.org/live.m3u8")
+
+    def test_invalid_source_url_does_not_abort_tv_pilot(self):
+        rows = [("TV Missing", None), ("TV Numeric", 17),
+                ("TV Valid", "https://example.org/live.m3u8")]
+        with tempfile.TemporaryDirectory() as d:
+            with patch.object(pilot, "candidates", return_value=iter(rows)), \
+                 patch.object(pilot, "verify_video", return_value=(False, "no_manifest")) as verify, \
+                 patch.object(pilot, "write_fixture_report") as write, \
+                 patch.object(pilot.Path, "cwd", return_value=Path(d)):
+                pilot.run()
+        report = json.loads(write.call_args.args[2])
+        self.assertEqual(report["tested"], 1)
+        self.assertEqual(report["reason_counts"]["invalid_source_url"], 2)
+        verify.assert_called_once_with("https://example.org/live.m3u8")
+
     def test_radio_only_source_scan_is_bounded(self):
         rows = [("Radyo FM", f"https://example.org/r{i}.m3u8") for i in range(pilot.MAX_SOURCE_ROWS + 10)]
         with tempfile.TemporaryDirectory() as d:

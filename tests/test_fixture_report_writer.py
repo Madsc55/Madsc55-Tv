@@ -9,6 +9,24 @@ from madsc.history_pair_store import write_isolated_history_pair, decode_pair
 
 
 class FixtureReportWriterTests(unittest.TestCase):
+    def test_exclusive_evidence_syncs_file_and_parent_directory(self):
+        import os
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            destination = root / "reports/synced.json"
+            real_fsync = os.fsync
+            descriptors = []
+            def observe_fsync(fd):
+                descriptors.append(os.fstat(fd).st_mode)
+                return real_fsync(fd)
+            with patch("madsc.fixture_report_writer.os.fsync", side_effect=observe_fsync):
+                write_exclusive_bytes(destination, b"{}", allowed_root=root)
+            import stat
+            self.assertTrue(any(stat.S_ISREG(mode) for mode in descriptors))
+            self.assertTrue(any(stat.S_ISDIR(mode) for mode in descriptors))
+            self.assertEqual(destination.read_bytes(), b"{}")
+
     def test_stage_report_rejects_nonfinite_json_without_creating_file(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

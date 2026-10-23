@@ -79,6 +79,10 @@ class DiscoveryTests(unittest.TestCase):
             with self.subTest(url=url), self.assertRaises(ValueError):
                 normalize_url(url)
 
+    def test_valid_percent_encoding_is_preserved(self):
+        url = "https://example.org/live%20hd?token=a%2Fb"
+        self.assertEqual(normalize_url(url), url)
+
     def test_malformed_percent_encoding_rejected(self):
         for url in ("https://example.org/live%zz", "https://example.org/live%",
                     "https://example.org/live%2", "https://example.org/live?x=%GG"):

@@ -59,6 +59,21 @@ class OfflineFiveGateTests(unittest.TestCase):
         self.assertIs(checks["k4_corruption_blocks_k5_review"], True)
         self.assertIs(checks["k1_guards_k5_report_write"], True)
 
+    def test_real_k5_archive_preview_is_checked_by_gate(self):
+        from madsc.core import execute
+        checks = execute("k5")
+        self.assertIs(checks["archive_classification_preview_read_only"], True)
+
+    def test_k5_archive_preview_failure_blocks_five_stage_gate(self):
+        from unittest.mock import patch
+        with patch("madsc.core.classify_archive_positions", side_effect=ValueError("bad fixture")):
+            result = assess_all()
+        self.assertFalse(result["fixture_gate_passed"])
+        self.assertEqual(result["categories"]["k5"], "failure")
+        self.assertEqual(result["errors"]["k5"], "ValueError")
+        self.assertFalse(result["production_ready"])
+        self.assertFalse(result["production_writes"])
+
     def test_stage_inventory_is_exact_five(self):
         from unittest.mock import patch
         with patch("madsc.offline_five_gate.CATEGORIES", ("k1", "k2", "k3", "k4", "k4")):

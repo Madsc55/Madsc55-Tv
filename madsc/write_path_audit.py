@@ -126,6 +126,10 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
         root = Path(allowed_root)
         if not root.is_absolute() or not root.is_dir() or root.is_symlink():
             raise ProtectedWriteRejected("Invalid allowed output root")
+        # An allowed root nested below a symlink must not bypass the
+        # ancestor check merely because the root itself is not a link.
+        if any(ancestor.is_symlink() for ancestor in root.parents):
+            raise ProtectedWriteRejected("Symlinked allowed output root ancestor")
         if not path.is_relative_to(root) or path == root:
             raise ProtectedWriteRejected("Output outside allowed root")
         relative = path.relative_to(root).as_posix()

@@ -4,7 +4,6 @@ This tool never runs workflows, accesses the network, or writes production data.
 Evidence must come from separately executed, isolated fixture runs.
 """
 import argparse
-import hashlib
 import json
 from pathlib import Path
 
@@ -49,7 +48,7 @@ def compare(document):
         for field in FIELDS:
             if document["legacy"][field] != document["new"][field]:
                 errors.append("mismatch:" + field)
-    return {"accepted": not errors, "errors": errors}
+    # A JSON claim cannot attest that two executions were actually independent.\n    # Only a separately verified execution harness may grant behavioral acceptance.\n    return {"matched_evidence": not errors, "accepted": False,\n            "requires_independent_execution_verification": not errors, "errors": errors}
 
 
 def main():

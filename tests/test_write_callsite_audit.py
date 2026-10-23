@@ -814,6 +814,18 @@ def mutate(path, fd):
                           "path.setxattr", "path.removexattr", "path.utime"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_scan_tree_rejects_symlinked_source_root_ancestor(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            real = base / "real"
+            source = real / "src"
+            source.mkdir(parents=True)
+            (source / "safe.py").write_text("value = 1\n", encoding="utf-8")
+            alias = base / "alias"
+            alias.symlink_to(real, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "Symlinked source root or ancestor"):
+                scan_python_tree(alias / "src")
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

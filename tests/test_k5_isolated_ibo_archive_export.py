@@ -139,6 +139,15 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     export_6115_archive_manifest(self.urls, destination)
             self.assertFalse(destination.exists())
 
+    def test_unsafe_destination_characters_fail_before_write(self):
+        with TemporaryDirectory() as tmp:
+            for suffix in ("bad\\nname", "bad\\x7fname", "bad\\ud800name"):
+                destination = Path(tmp) / suffix
+                with self.subTest(suffix=repr(suffix)):
+                    with self.assertRaises(PermissionError):
+                        export_6115_archive_manifest(self.urls, destination)
+                    self.assertFalse(destination.exists())
+
     def test_root_and_dot_destinations_fail_without_writing(self):
         with TemporaryDirectory() as tmp:
             with self.assertRaises((PermissionError, FileExistsError)):

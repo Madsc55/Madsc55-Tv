@@ -15,7 +15,7 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
     """Export one JSON preview to a fresh directory; no M3U or network writes."""
     manifest = build_6115_archive_preview(urls)
     raw = str(destination)
-    if len(raw) > 4096 or any(len(part.encode("utf-8", "surrogatepass")) > 255
+    if len(raw.encode("utf-8", "surrogatepass")) > 4096 or any(len(part.encode("utf-8", "surrogatepass")) > 255
                               for part in raw.replace(chr(92), "/").split("/") if part):
         raise PermissionError("Oversized destination path")
     if any(part in (".", "..") for part in raw.replace(chr(92), "/").split("/")):

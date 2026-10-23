@@ -70,6 +70,9 @@ def verify_av(url):
         return False, False, "no_manifest"
     text = manifest.decode("utf-8-sig", errors="replace")
     if any(line.strip().startswith("#EXT-X-STREAM-INF:") for line in text.splitlines()):
+        if any(line.lstrip().startswith(("#EXT-X-MEDIA:", "#EXT-X-SESSION-DATA:",
+                                         "#EXT-X-SESSION-KEY:")) for line in text.splitlines()):
+            return False, False, "unsupported_master_metadata"
         lines = [line.strip() for line in text.splitlines()]
         variants = [lines[i + 1] for i, line in enumerate(lines[:-1])
                     if line.startswith("#EXT-X-STREAM-INF") and lines[i + 1]

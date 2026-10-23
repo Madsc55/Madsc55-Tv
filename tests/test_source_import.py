@@ -178,7 +178,7 @@ class SourceImportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"
             p.write_text("#EXTM3U\\n", encoding="utf-8")
-            with patch("madsc.source_import.os.open", side_effect=FileNotFoundError("removed")):
+            with patch("os.open", side_effect=FileNotFoundError("removed")):
                 with self.assertRaisesRegex(ValueError, "opened safely"):
                     extract_candidates(p)
 

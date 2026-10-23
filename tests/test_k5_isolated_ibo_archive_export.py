@@ -24,6 +24,20 @@ class K5IboArchiveExportTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 export_6115_archive_manifest(self.urls, destination)
 
+    def test_manifest_open_failure_removes_created_directory(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            real_open = os.open
+            def fail_manifest_open(path, flags, *args, **kwargs):
+                if Path(path).name == "ibo_6115_archive_preview.json":
+                    raise OSError("fixture manifest open failure")
+                return real_open(path, flags, *args, **kwargs)
+            with patch("madsc.isolated_ibo_archive_export.os.open",
+                       side_effect=fail_manifest_open):
+                with self.assertRaisesRegex(OSError, "manifest open failure"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(destination.exists())
+
     def test_directory_sync_failure_rolls_back(self):
         if not hasattr(os, "O_DIRECTORY"):
             self.skipTest("Directory fsync unsupported")

@@ -91,3 +91,7 @@ Bu bölüm önceki parça parça kaynak incelemelerinden farklıdır: `docs/K5_K
 ## 13. K5 gerçek CI kapısı ve şema sıkılaştırması
 
 `main` dalındaki `.github/workflows/madsc-05-bakim.yml` K5 job'una `python -m madsc.k5_source_audit --output reports/k5-source-audit.json` komutu eklendi. Başarısız kaynak SHA kapsam denetimi job'u başarısız kılar; rapor `madsc-k5-frozen-source-audit` artifact'ı olarak `always()` koşulunda saklanır. Denetleyici artık geçersiz yol, eksik/ekstra sinyal anahtarı, bool olmayan sinyal, mükerrer/uygunsuz K1–K5 aşama işaretlerini de fail-closed reddeder. `tests/test_k5_source_audit.py` içinde dördüncü bozuk aşama regresyonu eklendi. **CI'nin yeni commit'te geçtiği henüz doğrulanmadı**. 92/92 kaynak kimliği doğrulaması davranışsal eşdeğerlik veya üretim onayı değildir. **Kabul: RED, 0/92 davranışsal kanıt.**
+
+## 14. K5 bağımsız salt-okunur CI otomasyonu
+
+`.github/workflows/k5-frozen-source-ci.yml` yeni `push` (`main`, ilgili dosyalar), `pull_request` ve manuel tetiklemeler için ayrı bir 10 dakikalık salt-okunur doğrulama zinciridir. `persist-credentials: false`, `permissions: contents: read`, kaynak SHA denetimi, `tests.test_k5_source_audit` regresyonları ve başarısızlıkta da artifact saklama içerir. Üretim playlist, EPG, Pages veya gerçek cihaz workflow'u dispatch edilmez. **GitHub Actions sonuçları bu güncelleme sırasında doğrulanmış değildir; eklenen workflow'un geçtiği iddia edilmez.** 92/92 kaynak kimliği kontrolü tamam, davranışsal eşdeğerlik ve bağımsız uçtan uca üretim kabulü eksiktir.

@@ -142,6 +142,8 @@ def coverage_summary(rows):
         summary[status] = sum(row["status"] == status for row in rows)
     summary["with_programmes"] = sum(bool(row["has_programmes"]) for row in rows)
     summary["without_programmes"] = len(rows) - summary["with_programmes"]
+    if any("has_current_programmes" in row for row in rows) and not all("has_current_programmes" in row for row in rows):
+        raise ValueError("Mixed current-guide coverage rows are not comparable")
     if rows and all("has_current_programmes" in row for row in rows):
         summary["with_current_programmes"] = sum(bool(row["has_current_programmes"]) for row in rows)
         summary["without_current_programmes"] = len(rows) - summary["with_current_programmes"]

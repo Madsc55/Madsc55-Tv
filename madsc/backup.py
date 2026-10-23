@@ -252,6 +252,8 @@ def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
     roots = [Path(source), Path(destination)]
     if any(root.is_symlink() or not root.is_dir() for root in roots):
         raise ValueError("Copy audit requires real directories")
+    if any(ancestor.is_symlink() for root in roots for ancestor in (root, *root.parents)):
+        raise ValueError("Copy audit roots must have no symlinked ancestors")
     resolved = [root.resolve(strict=True) for root in roots]
     if (resolved[0] == resolved[1] or
             resolved[0].is_relative_to(resolved[1]) or

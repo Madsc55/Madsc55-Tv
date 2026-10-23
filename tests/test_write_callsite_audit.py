@@ -22,6 +22,19 @@ class WorkflowWriteBoundaryTests(unittest.TestCase):
                 self.assertNotRegex(source, r"(?m)\bgit\s+push\b")
                 self.assertNotRegex(source, r"(?m)^[ \t]*pull_request_target[ \t]*:")
 
+class WorkflowWriteBoundaryRegressionTests(unittest.TestCase):
+    def test_forbidden_workflow_patterns_are_detected(self):
+        import re
+        forbidden = (
+            (r"(?m)^[ \\t]*contents:[ \\t]*write[ \\t]*$", "permissions:\\n  contents: write\\n"),
+            (r"(?m)\\bgit\\s+push\\b", "git push origin main"),
+            (r"(?m)^[ \\t]*pull_request_target[ \\t]*:", "pull_request_target:\\n"),
+        )
+        for pattern, sample in forbidden:
+            with self.subTest(pattern=pattern):
+                self.assertIsNotNone(re.search(pattern, sample))
+
+
 class WriteCallsiteAuditTests(unittest.TestCase):
     def test_artifact_transport_writes_have_direct_k1_guard_dominance(self):
         source = (Path(__file__).resolve().parents[1] / "madsc" /

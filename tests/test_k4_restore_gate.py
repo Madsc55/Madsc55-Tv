@@ -186,6 +186,20 @@ class K4RestoreGateTests(unittest.TestCase):
                             audit_k4_restore(*trees, [name])
                         verify.assert_not_called()
 
+    def test_portable_path_aliases_rejected_before_hashing(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ('source', 'backup', 'restored')]
+            for root in trees:
+                root.mkdir()
+            for names in (["A.txt", "a.TXT"], ["file.txt", "ﬁle.txt"]):
+                with self.subTest(names=names):
+                    with patch('madsc.k4_restore_gate.verify_independent_restore') as verify:
+                        with self.assertRaisesRegex(ValueError, 'Ambiguous restore audit path alias'):
+                            audit_k4_restore(*trees, names)
+                        verify.assert_not_called()
+
     def test_duplicate_oversized_and_surrogate_paths_fail_before_hashing(self):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as directory:

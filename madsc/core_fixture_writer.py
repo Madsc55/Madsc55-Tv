@@ -94,6 +94,9 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
             handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
+        # Persist the directory entry as well as the file contents before
+        # reporting success. This is required for durable fixture evidence.
+        os.fsync(parent_fd)
     finally:
         if descriptor is not None:
             os.close(descriptor)

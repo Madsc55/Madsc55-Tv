@@ -115,6 +115,20 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     export_6115_archive_manifest(self.urls, destination)
             self.assertFalse(destination.exists())
 
+    def test_invalid_json_readback_is_rejected_by_byte_integrity_first(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            original = Path.read_bytes
+            def invalid_readback(path):
+                if path.name == "ibo_6115_archive_preview.json":
+                    return b"{invalid-json"
+                return original(path)
+            with patch("madsc.isolated_ibo_archive_export.Path.read_bytes",
+                       autospec=True, side_effect=invalid_readback):
+                with self.assertRaisesRegex(OSError, "byte integrity mismatch"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(destination.exists())
+
     def test_partial_serialization_failure_rolls_back(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"

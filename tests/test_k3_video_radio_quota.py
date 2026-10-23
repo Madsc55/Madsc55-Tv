@@ -75,6 +75,14 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, "alternate_media_unsupported"))
             curl.assert_called_once()
 
+    def test_external_session_metadata_is_not_silently_ignored(self):
+        manifest = (b'#EXTM3U\n#EXT-X-SESSION-DATA:DATA-ID="example",'
+                    b'URI="metadata.json"\n#EXTINF:4,\nsegment.ts\n')
+        with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "alternate_media_unsupported"))
+            curl.assert_called_once()
+
     def test_encrypted_media_playlist_fails_before_segment_download(self):
         manifest = b'#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\n#EXTINF:4,\nsegment.ts\n'
         with patch.object(pilot, 'safe_curl', return_value=manifest) as curl:

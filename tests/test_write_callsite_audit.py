@@ -650,6 +650,19 @@ def mutate(path, fd):
                          ["os.posix_spawn", "os.posix_spawnp", "os.spawnv"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_os_exec_process_replacements_are_reviewed(self):
+        source = (
+            "import os\n"
+            "def replace_process(program, argv, env):\n"
+            "    os.execv(program, argv)\n"
+            "    os.execve(program, argv, env)\n"
+            "    os.execl(program, program)\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"].split(" [")[0] for row in rows],
+                         ["os.execv", "os.execve", "os.execl"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

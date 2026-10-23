@@ -11,6 +11,20 @@ class DiscoveryTests(unittest.TestCase):
         self.assertFalse(result["production_playlist_modified"])
         self.assertFalse(result["device_verified"])
         self.assertNotIn("https://example.org/live", str(result))
+    def test_invalid_known_urls_fail_with_clear_error(self):
+        for known in ({"file:///etc/passwd"}, {None}):
+            with self.subTest(known=known), self.assertRaisesRegex(
+                    ValueError, "Known URLs contain an invalid candidate URL"):
+                classify_candidates([], known)
+
+    def test_known_url_duplicate_is_classified_as_existing(self):
+        result = classify_candidates(
+            [{"name": "A", "url": "https://example.org/live"}],
+            {"https://EXAMPLE.org/live"})
+        self.assertEqual(result["candidates"], [])
+        self.assertEqual(len(result["duplicates"]), 1)
+        self.assertEqual(result["duplicates"][0]["duplicate_reason"], "already_known")
+
     def test_credentials_rejected(self):
         with self.assertRaises(ValueError):
             normalize_url("https://user:pass@example.org/live")

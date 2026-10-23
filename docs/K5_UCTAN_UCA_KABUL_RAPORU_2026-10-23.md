@@ -95,3 +95,7 @@ Bu bölüm önceki parça parça kaynak incelemelerinden farklıdır: `docs/K5_K
 ## 14. K5 bağımsız salt-okunur CI otomasyonu
 
 `.github/workflows/k5-frozen-source-ci.yml` yeni `push` (`main`, ilgili dosyalar), `pull_request` ve manuel tetiklemeler için ayrı bir 10 dakikalık salt-okunur doğrulama zinciridir. `persist-credentials: false`, `permissions: contents: read`, kaynak SHA denetimi, `tests.test_k5_source_audit` regresyonları ve başarısızlıkta da artifact saklama içerir. Üretim playlist, EPG, Pages veya gerçek cihaz workflow'u dispatch edilmez. **GitHub Actions sonuçları bu güncelleme sırasında doğrulanmış değildir; eklenen workflow'un geçtiği iddia edilmez.** 92/92 kaynak kimliği kontrolü tamam, davranışsal eşdeğerlik ve bağımsız uçtan uca üretim kabulü eksiktir.
+
+## 15. CI kanıt görünürlüğü ve risk sayacı (2026-10-23)
+
+`madsc/k5_source_audit.py` kaynak SHA kapsamına ek olarak YAML sinyal sayılarını ve **0 bağımsız eski/yeni koşu çifti, 92 eksik davranışsal kanıt** durumunu JSON rapora yazar. Beklenen statik işaret sayıları: `contents: write` 20, `git push` 21, `CALISANLAR.m3u` 34 ve aşağı akış dispatch 2. `tests/test_k5_source_audit.py` risk sayacı ve kanıt yokluğu regresyonlarını da içerir. Bu sayılar çalıştırma sırasında oluşan gerçek yan etkileri ispatlamaz. GitHub Actions'ın güncel sonucu bu turda bağımsız doğrulanamadı; mevcut commit için CI başarısı iddia edilmez. **Üretim kabulü halen RED.**

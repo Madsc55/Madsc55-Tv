@@ -7,6 +7,18 @@ from madsc.write_callsite_audit import scan_python_source, scan_python_tree
 
 
 class WriteCallsiteAuditTests(unittest.TestCase):
+    def test_artifact_transport_writes_have_direct_k1_guard_dominance(self):
+        source = (Path(__file__).resolve().parents[1] / "madsc" /
+                  "artifact_transport.py").read_text(encoding="utf-8")
+        rows = scan_python_source(source, "madsc/artifact_transport.py")
+        writes = [row for row in rows if row["api"] in {"destination.open", "handle.write"}]
+        self.assertEqual([row["api"] for row in writes],
+                         ["destination.open", "handle.write"])
+        self.assertTrue(all(row["scope"] == "_write_json_exclusive" for row in writes))
+        self.assertTrue(all(row["guard_control_flow_verified"] for row in writes))
+        self.assertTrue(all(len(row["dominating_guard_lines_in_scope"]) == 2
+                            for row in writes))
+
     def test_detects_mutations_and_marks_earlier_guard(self):
         source = '''
 from pathlib import Path

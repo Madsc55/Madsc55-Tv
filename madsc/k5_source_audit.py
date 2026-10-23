@@ -31,11 +31,17 @@ def audit(root):
             continue
         rows.extend(doc["rows"])
     seen = set()
+    allowed_stages = {"K1", "K2", "K3", "K4", "K5"}
+    required_signals = {"write", "push", "dispatch", "playlist", "epg",
+                        "live", "backup", "artifact", "gate"}
     for row in rows:
         if not isinstance(row, dict):
             errors.append("invalid_row")
             continue
         path = row.get("path")
+        if not isinstance(path, str):
+            errors.append("invalid_path")
+            continue
         if path in seen:
             errors.append("duplicate:" + str(path))
         seen.add(path)
@@ -45,7 +51,13 @@ def audit(root):
               or row.get("expected_sha") != expected[path]
               or row.get("verified") is not True):
             errors.append("sha_mismatch:" + path)
-        if not isinstance(row.get("signals"), dict) or not isinstance(row.get("candidate_stages"), list):
+        signals = row.get("signals")
+        stages = row.get("candidate_stages")
+        if (not isinstance(signals, dict) or set(signals) != required_signals
+                or any(type(value) is not bool for value in signals.values())
+                or not isinstance(stages, list) or not stages
+                or len(set(map(str, stages))) != len(stages)
+                or any(type(stage) is not str or stage not in allowed_stages for stage in stages)):
             errors.append("invalid_signals:" + str(path))
     for path in sorted(set(expected) - seen):
         errors.append("missing:" + path)

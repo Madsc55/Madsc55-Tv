@@ -696,3 +696,15 @@ class DiscoveryBatchTests(unittest.TestCase):
     def test_preview_rejects_invalid_utf8_surrogates(self):
         with self.assertRaisesRegex(ValueError, "valid UTF-8"):
             build_m3u8_preview({"one": '#EXTM3U\n# \ud800\n'})
+
+    def test_preview_never_claims_source_license_or_live_verification(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="fixture.test",Fixture\n'
+                'https://example.org/fixture.m3u8\n')
+        report = build_m3u8_preview({"fixture": feed})
+        self.assertFalse(report["source_origin_verified"])
+        self.assertFalse(report["stream_license_verified"])
+        self.assertFalse(report["source_independence_verified"])
+        self.assertFalse(report["live_verified"])
+        self.assertFalse(report["production_ready"])
+        self.assertFalse(report["production_writes"])

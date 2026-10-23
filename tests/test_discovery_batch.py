@@ -142,6 +142,21 @@ class DiscoveryBatchTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_m3u8_preview(feeds)
 
+    def test_lookalike_identity_metadata_is_rejected(self):
+        for key in ("xtvg-id", "xtvg-logo", "xgroup-title"):
+            with self.subTest(key=key):
+                feed = (
+                    '#EXTM3U\n#EXTINF:-1 ' + key +
+                    '="forged" tvg-id="real",Channel\n'
+                    'https://example.org/live\n'
+                )
+                report = parse_m3u(feed, "fixture")
+                self.assertEqual(report["entries"], 0)
+                self.assertEqual(
+                    report["parse_errors"][0]["reason"],
+                    "invalid_metadata_attribute",
+                )
+
     def test_metadata_attributes_require_token_boundaries(self):
         feed = ("#EXTM3U\n"
                 '#EXTINF:-1 xtvg-id="forged" tvg-id="real",Channel\n'

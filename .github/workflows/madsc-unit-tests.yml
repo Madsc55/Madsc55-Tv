@@ -38,3 +38,5 @@ jobs:
           path: reports/offline-gate.log
           if-no-files-found: warn
           retention-days: 14
+
+# CI audit: revalidate current K1-K5 main snapshot after skipped commits.

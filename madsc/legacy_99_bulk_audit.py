@@ -63,8 +63,9 @@ def run(output, token):
         raise ValueError("Will not overwrite evidence")
     ref = urllib.parse.quote(BRANCH, safe="")
     tree = github(f"https://api.github.com/repos/{REPO}/git/trees/{ref}?recursive=1", token)
-    if tree.get("truncated"):
-        raise ValueError("Incomplete legacy tree")
+    if (not isinstance(tree, dict) or tree.get("truncated") is not False
+            or not isinstance(tree.get("tree"), list)):
+        raise ValueError("Incomplete or invalid legacy tree")
     entries = sorted((item for item in tree["tree"]
                       if item["path"].startswith(".github/workflows/")
                       and item["path"].endswith((".yml", ".yaml"))

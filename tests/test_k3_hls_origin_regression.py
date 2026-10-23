@@ -34,8 +34,8 @@ class K3HlsOriginRegressionTests(unittest.TestCase):
 
     def test_manifest_nul_and_unicode_line_separators_rejected(self):
         from madsc.k3_turkish_tv_video_pilot import verify_av
-        for bad in (b"\\x00", b"\\xc2\\x85", b"\\xe2\\x80\\xa8", b"\\xe2\\x80\\xa9"):
-            manifest = b"#EXTM3U\\n#EXTINF:6,\\nsegment" + bad + b".ts\\n"
+        for bad in (b"\x00", b"\xc2\x85", b"\xe2\x80\xa8", b"\xe2\x80\xa9"):
+            manifest = b"#EXTM3U\n#EXTINF:6,\nsegment" + bad + b".ts\n"
             with self.subTest(bad=bad), patch(
                 "madsc.k3_turkish_tv_video_pilot.safe_curl", return_value=manifest
             ) as fetch:
@@ -45,7 +45,7 @@ class K3HlsOriginRegressionTests(unittest.TestCase):
 
     def test_invalid_utf8_hls_manifest_is_rejected(self):
         from madsc.k3_turkish_tv_video_pilot import verify_av
-        manifest = b'#EXTM3U\\n#EXTINF:6,\\nsegment-\\xff.ts\\n'
+        manifest = b'#EXTM3U\n#EXTINF:6,\nsegment-\xff.ts\n'
         with patch("madsc.k3_turkish_tv_video_pilot.safe_curl", return_value=manifest) as fetch:
             self.assertEqual(verify_av("https://media.example.org/live.m3u8"),
                              (False, False, "invalid_manifest_encoding"))

@@ -843,6 +843,24 @@ def mutate(path, fd):
                           "path.setxattr", "path.removexattr", "path.utime"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_scan_tree_rejects_source_modified_while_reading(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source = root / "safe.py"
+            source.write_text("value = 1\n", encoding="utf-8")
+            original_read = Path.read_text
+
+            def changing_read(path, *args, **kwargs):
+                content = original_read(path, *args, **kwargs)
+                if path == source:
+                    source.write_text("value = 123456789\n", encoding="utf-8")
+                return content
+
+            with patch.object(Path, "read_text", changing_read):
+                with self.assertRaisesRegex(ValueError, "changed during audit"):
+                    scan_python_tree(root)
+
     def test_scan_tree_rejects_regular_file_as_source_root(self):
         with tempfile.TemporaryDirectory() as d:
             source = Path(d) / "source.py"

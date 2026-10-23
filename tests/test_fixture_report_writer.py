@@ -182,7 +182,7 @@ class FixtureReportWriterTests(unittest.TestCase):
     def test_fixture_root_rejects_trailing_dot_and_space_aliases(self):
         with tempfile.TemporaryDirectory() as d:
             base = Path(d)
-            for suffix in ("alias.", "alias ", "alias\\uff0e", "alias\\u3000"):
+            for suffix in ("alias.", "alias ", "alias\uff0e", "alias\u3000"):
                 root = base / suffix
                 with self.subTest(suffix=repr(suffix)):
                     with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
@@ -194,7 +194,7 @@ class FixtureReportWriterTests(unittest.TestCase):
     def test_fixture_root_rejects_nfkc_alias_without_creating_reports(self):
         with tempfile.TemporaryDirectory() as d:
             base = Path(d)
-            for alias in ("fixture\\uff41", "fixture\\u212a", "fixture\\ufb01"):
+            for alias in ("fixture\uff41", "fixture\u212a", "fixture\ufb01"):
                 root = base / alias
                 root.mkdir()
                 with self.subTest(alias=repr(alias)):

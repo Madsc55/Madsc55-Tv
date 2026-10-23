@@ -200,6 +200,18 @@ class LocalOutputGuardTests(unittest.TestCase):
                 enforce_local_output_path(root / "nested" / ".." / "evidence.json")
             self.assertFalse((root / "evidence.json").exists())
 
+    def test_allowed_root_beneath_symlink_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            actual = base / "actual"
+            (actual / "reports").mkdir(parents=True)
+            linked = base / "linked"
+            linked.symlink_to(actual, target_is_directory=True)
+            target = linked / "reports" / "evidence.json"
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_output_path(target, allowed_root=linked / "reports")
+            self.assertFalse((actual / "reports" / "evidence.json").exists())
+
     def test_symlinked_parent_and_root_boundary_blocked(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

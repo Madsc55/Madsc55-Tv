@@ -63,6 +63,15 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 discard_url_for_rejected_entry = False
                 continue
         if line.startswith("#EXTINF:"):
+            # Metadata is copied into candidate identities and later previews.
+            # Reject embedded controls rather than propagating them into reports.
+            if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in line):
+                if pending is not None:
+                    errors.append({"line": number, "reason": "missing_url"})
+                pending = None
+                errors.append({"line": number, "reason": "invalid_metadata_control"})
+                discard_url_for_rejected_entry = True
+                continue
             if pending is not None:
                 errors.append({"line": number, "reason": "missing_url"})
             # EXTINF attributes may contain commas inside quoted values.

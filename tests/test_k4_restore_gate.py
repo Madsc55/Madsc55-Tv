@@ -186,6 +186,20 @@ class K4RestoreGateTests(unittest.TestCase):
                             audit_k4_restore(*trees, [name])
                         verify.assert_not_called()
 
+    def test_invisible_format_controls_rejected_before_hashing(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ('source', 'backup', 'restored')]
+            for root in trees:
+                root.mkdir()
+            for name in ('bad\\u202ename.txt', 'bad\\u200bname.txt'):
+                with self.subTest(name=name):
+                    with patch('madsc.k4_restore_gate.verify_independent_restore') as verify:
+                        with self.assertRaisesRegex(ValueError, 'Unsafe restore audit path'):
+                            audit_k4_restore(*trees, [name])
+                        verify.assert_not_called()
+
     def test_portable_path_aliases_rejected_before_hashing(self):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as directory:

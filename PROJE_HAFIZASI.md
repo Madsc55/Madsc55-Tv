@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50279)
+Total output lines: 1170
+
 Warning: truncated output (original token count: 50803)
 Total output lines: 1172
 
@@ -602,11 +605,7 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 
 ## 19 Ekim 2026 — YENİ SOHBETE DEVİR (GÜNCEL ANA REFERANS)
 - Kullanıcı açıkça 99 otomasyonun her birinin gerçek kaynak davranışını çözmeyi, YAPILACAK/YAPILMAYACAK/KANIT BEKLEYEN kararlarını saklamayı ve K1–K5 sistemini kanıtla bitirmeyi istedi. Yeni sohbetten aynı yerden devam edilecek.
-- **İLK OKUNACAK DOSYA:** `docs/YENI_SOHBET_DEVIR_2026-10-19.md` (commit `6d1c8dde40d0a7020eee9f6b650ea483140ae925`). Bu dosya repo ayrımı, yasaklar, önceki CI/test commitleri, derin incelenen 23 YAML adı, 32 Python, kritik korunan liste yazma riskleri, 76 bekleyen YAML ve 92 parity kabul planını ayrıntılı içerir. Kelimesi kelimesine sohbet transkripti değil, uygulanabilir teknik devir notudur.
-- Son d…803 tokens truncated…22 Ekim 2026 — K5 sayfalı hata geçmişi sıra doğrulaması
-- Tek hedef Madsc55/Madsc55-Tv/main, taban 37e52ab3647e9198e4ed2d207f47aaf81b87f59d. Eksik ve sırası bozuk supplied history eski success sınırını kullanarak RETRY_LATER verebiliyordu. Mevcut assess_failure_history artık filtrelemeden önce bütün aktif/tamamlanmış satırların timestamp/id sırasını sayfa içinde ve sayfalar arasında azalan olarak doğrular; bozuk aktif timestamp de reddedilir. Varsayılan üç hata eşiği ve sıralı prefix success sınırı politikası değişmedi.
-- Beş regresyonun dördü düzeltme öncesi beklenen ValueError oluşmadığı için başarısızdı. Düzeltme sonrası toplu python -m madsc.offline_gate: **707 test + beş izole K1–K5 kapısı başarılı**; 92+7 kaynak, 10 yardımcı komut, 22 görev envanteri geçti. git diff --check temiz. Kanıt docs/FAILURE_HISTORY_ORDER_KANIT_2026-10-22.json.
-- K5 retry kararı sıkılaştırıldı; K1 çıktı kapısı, K2/K3 keşif/kanal ve K4 yedek yolları değişmedi, beş izole kapı birlikte geçti. Actions/production/eski repo/workflow/cron/izin/PR değişikliği yok. Kod/test/kanıt/notlar aynı [skip ci] commitinde; SHA geçmiştedir. Sıra doğrulaması tek başına API kökenini veya atlanmış satır bulunmadığını kanıtlamaz; authenticated history ve gerçek bağımsız yürütme kanıtı hâlâ eksiktir. Kabul 0/92, 0/26, 0/22 korunur.
+- **İLK OKUNACAK DOSYA:** `docs/YENI_SOHBET_DEVIR_2026-10-19.md` (commit `6d1c8dde40d0a7020eee9f6b650ea483140ae925`). Bu dosya repo ayrımı, yasaklar, önceki CI/test commitleri, derin incelenen 23 YAML adı, 32 Python, kritik korunan liste yazma riskleri, 76 bekleyen YAML ve 92 parity kabul planını ayrıntılı içerir. Kelimesi…279 tokens truncated… K4 yedek yolları değişmedi, beş izole kapı birlikte geçti. Actions/production/eski repo/workflow/cron/izin/PR değişikliği yok. Kod/test/kanıt/notlar aynı [skip ci] commitinde; SHA geçmiştedir. Sıra doğrulaması tek başına API kökenini veya atlanmış satır bulunmadığını kanıtlamaz; authenticated history ve gerçek bağımsız yürütme kanıtı hâlâ eksiktir. Kabul 0/92, 0/26, 0/22 korunur.
 
 
 ## 22 Ekim 2026 — mapping negatif regresyon ve CI doğrulaması
@@ -1162,3 +1161,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `artifact_transport` K1 preflight ile gerçek create arasında `Path.open` kullanmıyor; ortak descriptor-relative `O_NOFOLLOW|O_EXCL` yazıcıya bağlı. Kod zinciri `ce830b31d3fde66ebd63c853de54c4268a304ebd` + `083ef2dd1e98d3ff8ccfbc708391d73365ac09d1`, yarış/audit testleri `40c58fbbb6ea4c7a14ed76b0e4f154b726f538bf` + `f8c32a3a2bdf278ac627571e4118dd5bc07821e7`.
 - Temiz son `main` checkout'unda 83 hedefli ve 1190 tam offline test, beş izole kapı ve write-callsite audit başarılı. Parent dizini preflight sonrasında symlink ile değiştirilse bile dış hedefte dosya oluşmadı.
 - Kabul sayaçları değişmedi: 0/92 parity, 0/26 runtime, 0/22 ana görev; fixture/statik testler production kanıtı değildir. Sıradaki K1 paketi kısmi guarded caller kapanışı ve altı subprocess gerçek etkisinin kaynak-bağlı/fail-closed disposition'ıdır. Gerçek bağımsız artifact/run, harici restore ve en son kullanıcı cihaz testi dış kanıt bekler.
+
+
+## 23 Ekim 2026 — K1 subprocess stdio izolasyonu
+- Altı subprocess çağrısının altısında stdin kapatıldı ve stdout/stderr capture/pipe sözleşmesi kaynak-bağlı audit alanlarıyla doğrulandı. Kod commitleri `869a5405056dc6c86c6fcf4b1055e7efab8987ef`, `509ae57ed135106a6988f12d68422c9215c74102`, `7c639daed7a0210c760e42c03172bd60c097295f`, `3dea21b0b6a44decca1f4020c248c053bd1a8c86`, `818d67a8b12a989667fd6271aa0d79397aca32ae`; test `fbb4b6a23ff044803723999eb98b6e396b21abe0`.
+- Temiz uzak checkout: 95 hedefli ve 1220 tam offline test, beş izole K kapısı ve audit başarılı. `process_stdio_bounded_verified=6/6`; gerçek dış-komut read-only etki kanıtı `0/6`, dolayısıyla adaylar kapanmadı ve runtime kabulü verilmedi.
+- Kabul 0/92, 0/26, 0/22. Sıradaki iş argv/cwd/env ve çıktı argümanlarının kaynak-hash-bağlı etki sınıflandırmasıdır; arbitrary parity komutu fail-closed kalır. Canlı EPG/cihaz, bağımsız artifact/run ve harici restore dış kanıt bekler.

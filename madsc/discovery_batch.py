@@ -59,6 +59,13 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         # Preserve controls until EXTINF validation: strip() would silently
         # erase leading/trailing tabs and other whitespace controls.
         line = raw.strip()
+        if raw.startswith("#EXTINF:") and line != raw:
+            # Whitespace padding on metadata is ambiguous and must not be
+            # normalized into a valid channel declaration.
+            errors.append({"line": number, "reason": "invalid_metadata_whitespace"})
+            pending = None
+            discard_url_for_rejected_entry = True
+            continue
         if line.startswith("#EXTINF:"):
             metadata_entries += 1
             if metadata_entries > max_entries:

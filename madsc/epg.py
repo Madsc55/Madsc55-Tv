@@ -17,6 +17,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     text = raw.decode("utf-8-sig")
     if "\x00" in text:
         raise ValueError("NUL byte in M3U8 playlist")
+    if any(char in text for char in ("\u0085", "\u2028", "\u2029")):
+        raise ValueError("Nonstandard line separator in M3U8 playlist")
     header = next((line.strip() for line in text.splitlines() if line.strip()), "")
     if header != "#EXTM3U" and not header.startswith("#EXTM3U "):
         raise ValueError("Invalid M3U8 playlist")

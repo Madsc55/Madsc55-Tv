@@ -55,7 +55,9 @@ def audit_write_paths(paths: list[str]) -> dict:
             or any(part.split(".", 1)[0].rstrip(" ") in
                    ({"con", "prn", "aux", "nul"} |
                     {f"com{i}" for i in range(1, 10)} |
-                    {f"lpt{i}" for i in range(1, 10)})
+                    {f"lpt{i}" for i in range(1, 10)} |
+                    {f"{prefix}{digit}" for prefix in ("com", "lpt")
+                     for digit in ("¹", "²", "³")})
                    for part in normalized_parts)
             or any(unicodedata.category(ch) in ("Cc", "Zl", "Zp") for ch in raw)
             # Format controls (bidi overrides, zero-width joins) can disguise

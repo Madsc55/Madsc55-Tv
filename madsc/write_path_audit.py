@@ -187,6 +187,13 @@ def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: P
                 or (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw_root)):
         raise ProtectedWriteRejected("Invalid isolated test playlist root")
     expected = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+    raw_destination = str(destination)
+    if (chr(92) in raw_destination or
+            any(part in (".", "..") for part in raw_destination.split("/")) or
+            any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+                or 0xFDD0 <= ord(ch) <= 0xFDEF
+                or (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw_destination)):
+        raise ProtectedWriteRejected("Ambiguous isolated test playlist destination")
     if Path(destination) != expected:
         raise ProtectedWriteRejected("Only the fixed isolated K3 test playlist is permitted")
     # Reuse all local boundary checks, substituting a harmless JSON name solely

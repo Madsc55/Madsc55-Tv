@@ -98,6 +98,10 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     expected_dirs = declared_dirs
     inventory_matches = True
     for root in (Path(source), Path(backup), Path(restored)):
+        if not inventory_matches:
+            # A rejected tree invalidates the whole audit. Avoid reading any
+            # additional trees after the first unsafe inventory observation.
+            break
         # Never start an inventory walk through an ancestor that was swapped
         # into a symlink after the initial root validation.
         try:

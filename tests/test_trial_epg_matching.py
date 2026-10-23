@@ -14,6 +14,11 @@ class TrialEpgMatchingTest(unittest.TestCase):
         rows = programme_coverage('#EXTINF:-1 tvg-id="a",TRT 1\n#EXTINF:-1 tvg-id="b",TV 8\n#EXTINF:-1,Unknown', xml)
         self.assertEqual([r["programme_count"] for r in rows], [1, 0, 0])
         self.assertEqual([r["has_programmes"] for r in rows], [True, False, False])
+    def test_orphan_xmltv_programme_does_not_create_guide_coverage(self):
+        xml = '<tv><channel id="a"><display-name>TRT 1</display-name></channel><programme channel="missing" start="20261023100000 +0000"><title>Orphan</title></programme></tv>'
+        rows = programme_coverage('#EXTINF:-1 tvg-id="a",TRT 1', xml)
+        self.assertEqual(rows[0]["programme_count"], 0)
+        self.assertFalse(rows[0]["has_programmes"])
     def test_programme_coverage_rejects_entities(self):
         with self.assertRaisesRegex(ValueError, "DTD/entity"):
             programme_coverage('#EXTINF:-1,TRT 1', '<!DOCTYPE tv><tv/>')

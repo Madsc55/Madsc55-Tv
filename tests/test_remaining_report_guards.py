@@ -45,6 +45,30 @@ class RemainingReportGuardsTests(unittest.TestCase):
                 _write_json_exclusive(protected / "handoff.json", {"verified": True})
             self.assertFalse((protected / "handoff.json").exists())
 
+    def test_artifact_transport_refuses_parent_swap_after_k1_preflight(self):
+        from madsc import artifact_transport
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            reports = root / "reports"
+            reports.mkdir()
+            outside = root / "outside"
+            outside.mkdir()
+            output = reports / "handoff.json"
+            real_preflight = artifact_transport.enforce_local_output_path
+
+            def swap_parent(path):
+                result = real_preflight(path)
+                reports.rename(root / "reports-original")
+                reports.symlink_to(outside, target_is_directory=True)
+                return result
+
+            with patch.object(artifact_transport, "enforce_local_output_path",
+                              side_effect=swap_parent):
+                with self.assertRaises(OSError):
+                    artifact_transport._write_json_exclusive(
+                        output, {"verified": True})
+            self.assertEqual(list(outside.iterdir()), [])
+
     def diagnostic(self, root, output, summary=None):
         args = ['diagnostics', '--log', str(root / 'missing.log'), '--output', str(output)]
         if summary is not None:

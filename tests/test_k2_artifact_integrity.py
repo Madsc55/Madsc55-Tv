@@ -88,3 +88,34 @@ class K2ArtifactParentPathTests(unittest.TestCase):
             alias.symlink_to(actual, target_is_directory=True)
             with self.assertRaises(ValueError):
                 verify_artifact_bytes(alias / "artifact", hashlib.sha256(b"sample").hexdigest())
+
+
+class K2ArtifactPairTests(unittest.TestCase):
+    def test_equal_bytes_still_not_behavioral_acceptance(self):
+        from madsc.k2_artifact_integrity import compare_artifact_pair
+        with tempfile.TemporaryDirectory() as folder:
+            first = Path(folder) / "legacy"
+            second = Path(folder) / "replacement"
+            first.write_bytes(b"evidence")
+            second.write_bytes(b"evidence")
+            digest = hashlib.sha256(b"evidence").hexdigest()
+            result = compare_artifact_pair(first, second, digest, digest)
+            self.assertTrue(result["artifact_bytes_match"])
+            self.assertFalse(result["independent_origin_api_verified"])
+            self.assertFalse(result["behavioral_parity_accepted"])
+            self.assertFalse(result["production_ready"])
+
+    def test_mismatch_and_forged_expected_hash_rejected(self):
+        from madsc.k2_artifact_integrity import compare_artifact_pair
+        with tempfile.TemporaryDirectory() as folder:
+            first = Path(folder) / "legacy"
+            second = Path(folder) / "replacement"
+            first.write_bytes(b"a")
+            second.write_bytes(b"b")
+            a = hashlib.sha256(b"a").hexdigest()
+            b = hashlib.sha256(b"b").hexdigest()
+            self.assertFalse(compare_artifact_pair(first, second, a, b)["artifact_bytes_match"])
+            with self.assertRaises(ValueError):
+                compare_artifact_pair(first, second, a, a)
+            with self.assertRaises(ValueError):
+                compare_artifact_pair(first, first, a, a)

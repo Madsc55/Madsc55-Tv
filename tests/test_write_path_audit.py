@@ -18,6 +18,17 @@ class WritePathAuditTests(unittest.TestCase):
                 with self.assertRaises(ProtectedWriteRejected):
                     enforce_write_paths([path])
 
+    def test_isolated_playlist_rejects_oversized_inputs(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            destination = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+            huge_root = root / ("x" * 4100)
+            with self.assertRaisesRegex(ProtectedWriteRejected, "root exceeds size limit"):
+                enforce_local_turkish_tv_test_playlist(destination, allowed_root=huge_root)
+            huge_destination = root / ("x" * 4100)
+            with self.assertRaisesRegex(ProtectedWriteRejected, "destination exceeds size limit"):
+                enforce_local_turkish_tv_test_playlist(huge_destination, allowed_root=root)
+
     def test_oversized_local_destination_and_root_fail_closed(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

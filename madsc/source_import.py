@@ -11,8 +11,11 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
         raise ValueError("Source must be a filesystem path") from exc
     if source.suffix.lower() not in (".m3u", ".m3u8"):
         raise ValueError("Only M3U and M3U8 playlists are supported")
-    if source.is_symlink() or not source.is_file():
-        raise ValueError("Invalid source file")
+    try:
+        if source.is_symlink() or not source.is_file():
+            raise ValueError("Invalid source file")
+    except OSError as exc:
+        raise ValueError("Invalid source file") from exc
     import os
     import stat
     if not hasattr(os, "O_NOFOLLOW") or any(parent.is_symlink() for parent in source.absolute().parents):

@@ -63,6 +63,12 @@ _TEMPFILE_CREATORS = {
     "tempfile.SpooledTemporaryFile",
 }
 
+_CURL_FILE_OUTPUT_OPTIONS = {
+    "-o", "--output", "-O", "--remote-name", "--output-dir",
+    "-c", "--cookie-jar", "--trace", "--trace-ascii",
+    "-D", "--dump-header", "-K", "--config",
+}
+
 
 def _call_name(node: ast.Call) -> str:
     func = node.func
@@ -268,6 +274,62 @@ def _process_contract(node: ast.Call, bindings=None) -> dict | None:
     keywords = {keyword.arg: keyword.value for keyword in node.keywords
                 if keyword.arg is not None}
 
+    argv_tokens = []
+    if argv_container:
+        for item in command.elts:
+            if isinstance(item, ast.Constant) and isinstance(item.value, str):
+                argv_tokens.append(item.value)
+            elif (isinstance(item, ast.Attribute)
+                  and isinstance(item.value, ast.Name)
+                  and item.value.id == "sys" and item.attr == "executable"):
+                argv_tokens.append("sys.executable")
+            else:
+                argv_tokens.append(None)
+    literal_options = [token for token in argv_tokens
+                       if isinstance(token, str) and token.startswith("-")]
+    literal_file_output_switches = []
+    if executable == "curl":
+        for option in literal_options:
+            matched = next((candidate for candidate in _CURL_FILE_OUTPUT_OPTIONS
+                            if option == candidate
+                            or candidate.startswith("--")
+                            and option.startswith(candidate + "=")), None)
+            if matched and matched not in literal_file_output_switches:
+                literal_file_output_switches.append(matched)
+
+    if executable == "curl":
+        effect_classification = "network_client"
+    elif executable == "ffprobe":
+        effect_classification = "media_inspector"
+    elif executable == "sys.executable" and "-c" in literal_options:
+        effect_classification = "python_inline_payload"
+    elif executable == "sys.executable" and "-m" in literal_options:
+        effect_classification = "python_module_payload"
+    elif executable is None:
+        effect_classification = "caller_controlled_command"
+    else:
+        effect_classification = "other_command"
+
+    def keyword_source(keyword, literal_mapping=False):
+        if unpacked_keywords:
+            return "dynamic_keyword_unpacking"
+        if keyword not in keywords:
+            return "inherited"
+        value = keywords[keyword]
+        if literal_mapping:
+            if (isinstance(value, ast.Dict)
+                    and all(key is not None
+                            and isinstance(key, ast.Constant)
+                            and isinstance(key.value, str)
+                            and isinstance(item, ast.Constant)
+                            and isinstance(item.value, str)
+                            for key, item in zip(value.keys, value.values))):
+                return "explicit_literal_mapping"
+            return "explicit_expression"
+        if isinstance(value, ast.Constant) and isinstance(value.value, str):
+            return "explicit_literal"
+        return "explicit_expression"
+
     def subprocess_constant(keyword, attribute):
         value = keywords.get(keyword)
         return (isinstance(value, ast.Attribute)
@@ -300,6 +362,16 @@ def _process_contract(node: ast.Call, bindings=None) -> dict | None:
         "process_argv_container_verified": argv_container,
         "process_literal_argv_verified": literal_argv,
         "process_executable_syntax": executable,
+        "process_argv_argument_count": len(argv_tokens) if argv_container else None,
+        "process_argv_dynamic_argument_count": (
+            sum(token is None for token in argv_tokens) if argv_container else None),
+        "process_literal_options": literal_options,
+        "process_literal_file_output_switches": literal_file_output_switches,
+        "process_dynamic_arguments_require_review": (
+            not argv_container or any(token is None for token in argv_tokens)),
+        "process_command_effect_classification": effect_classification,
+        "process_cwd_syntax": keyword_source("cwd"),
+        "process_env_syntax": keyword_source("env", literal_mapping=True),
         "process_stdin_syntax": stdin_status,
         "process_stdout_syntax": stdout_status,
         "process_stderr_syntax": stderr_status,

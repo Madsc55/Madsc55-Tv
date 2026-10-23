@@ -12,7 +12,7 @@ class BackupManifestHardeningTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             with patch('madsc.backup._open_relative_file_nofollow') as opener:
-                with self.assertRaisesRegex(ValueError, 'file conflicts with declared directory'):
+                with self.assertRaisesRegex(ValueError, '(?:file conflicts with declared directory|Portable backup file-directory collision)'):
                     snapshot_manifest(root, ['folder', 'folder/child.txt'])
                 opener.assert_not_called()
 
@@ -22,7 +22,7 @@ class BackupManifestHardeningTests(unittest.TestCase):
             entries = [{'path': name, 'bytes': 0, 'sha256': '0' * 64}
                        for name in ('folder', 'folder/child.txt')]
             with patch('madsc.backup.snapshot_manifest') as snapshot:
-                with self.assertRaisesRegex(ValueError, 'file conflicts with declared directory'):
+                with self.assertRaisesRegex(ValueError, '(?:file conflicts with declared directory|Portable backup file-directory collision)'):
                     verify_manifest(Path(directory), {'entries': entries})
                 snapshot.assert_not_called()
 

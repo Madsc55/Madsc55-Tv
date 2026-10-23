@@ -59,9 +59,11 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         # Preserve controls until EXTINF validation: strip() would silently
         # erase leading/trailing tabs and other whitespace controls.
         line = raw.strip()
-        if raw.startswith("#EXTINF:") and line != raw:
-            # Whitespace padding on metadata is ambiguous and must not be
-            # normalized into a valid channel declaration.
+        if raw.startswith("#EXTINF:") and line != raw and not any(
+            unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw
+        ):
+            # Whitespace padding that is not a control must not silently
+            # change the declared channel identity.
             errors.append({"line": number, "reason": "invalid_metadata_whitespace"})
             pending = None
             discard_url_for_rejected_entry = True

@@ -42,7 +42,19 @@ def _prepare_fixture_root(root: Path) -> Path:
     if reports.is_symlink() or (reports.exists() and not reports.is_dir()):
         raise PermissionError("Invalid reports directory")
     if not reports.exists():
-        reports.mkdir()
+        # Anchor directory creation to the verified root descriptor, not a
+        # separately resolved path that may be redirected by a symlink swap.
+        nofollow = getattr(os, "O_NOFOLLOW", None)
+        directory_flag = getattr(os, "O_DIRECTORY", None)
+        if not isinstance(nofollow, int) or not isinstance(directory_flag, int):
+            raise PermissionError("Secure descriptor-relative directory creation is unavailable")
+        root_fd = os.open(root, os.O_RDONLY | directory_flag | nofollow)
+        try:
+            os.mkdir("reports", dir_fd=root_fd)
+        finally:
+            os.close(root_fd)
+    if reports.is_symlink() or not reports.is_dir():
+        raise PermissionError("Invalid reports directory")
     return root
 
 

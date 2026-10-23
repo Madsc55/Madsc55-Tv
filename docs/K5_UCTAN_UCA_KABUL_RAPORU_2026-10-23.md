@@ -73,3 +73,7 @@
 ## 9. On ek sabit workflow ve kritik main yazma yolu
 
 `docs/K5_LEGACY_EK_ON_WORKFLOW_2026-10-23.md` ile 10 ek eski workflow YAML'ı sabit commit'ten doğrudan incelendi. `madsc-birlesik-kesif.yml` `contents: write`, `actions: write`, korunan kapı ve 10 denemelik `main` push döngüsü içerir. `iptv-test.yml` korunan `CALISANLAR.m3u` dosyasını artifact olarak taşır; salt-okunur GitHub izni yerel dosya değişmezliğini tek başına kanıtlamaz. İlgili script yan etkileri ve yeni sistemdeki gerçek koruma kapısı bağımsız olarak doğrulanmadan üretim kabulü verilmez. Statik inceleme sayısı mükerrerlik kontrolü yapılmadan artırılmadı; **davranışsal kabul 0/92**.
+
+## 10. Eski workflow'larda korunan yazma ve güvenli no-op ayrımı
+
+`docs/K5_LEGACY_YAZMA_NOOP_ON_WORKFLOW_2026-10-23.md` dosyasında 10 sabit eski workflow doğrudan YAML içeriği üzerinden karşılaştırıldı. IBO 530/6115/ilk 239/grup1/ikinci sesli işlerinde `CALISANLAR.m3u` üzerinde commit/push sözleşmeleri bulundu. Buna karşılık IBO 3–5281 ve otomatik devam işleri yalnızca güvenli no-op/echo davranışında. 399–530 arşiv konumları ve 239/6115 karar senaryoları için 354/364/398 önizlemesinden **ayrı** kanıt gerekir. Bu yazma yolları çalıştırılmadı. Önceki statik 45/92 sayısı mükerrerlik kontrolü olmadan artırılmadı; **davranışsal kabul 0/92** ve üretim geçişi bloke.

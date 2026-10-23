@@ -94,6 +94,15 @@ class K5IboArchiveExportTests(unittest.TestCase):
                         export_6115_archive_manifest(urls, destination)
                     self.assertFalse(destination.exists())
 
+    def test_missing_parent_fails_closed_without_creating_anything(self):
+        with TemporaryDirectory() as tmp:
+            parent = Path(tmp) / "missing-parent"
+            destination = parent / "isolated-ibo"
+            with self.assertRaisesRegex(PermissionError, "parent missing"):
+                export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(parent.exists())
+            self.assertFalse(destination.exists())
+
     def test_bad_input_creates_no_directory(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"

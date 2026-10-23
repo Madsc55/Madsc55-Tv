@@ -661,3 +661,19 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(report["candidate_rows"][0]["name"], "Good")
         self.assertIn("invalid_metadata_whitespace",
                       [error["reason"] for error in report["parse_errors"]])
+
+    def test_corroboration_never_certifies_source_origin_or_stream_license(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="fixture.test",Fixture\n'
+                'https://example.org/fixture.m3u8\n')
+        report = corroborate_sources({"alpha": feed, "beta": feed})
+        self.assertFalse(report["source_origin_verified"])
+        self.assertFalse(report["stream_license_verified"])
+        self.assertFalse(report["source_independence_verified"])
+        self.assertFalse(report["production_ready"])
+        self.assertEqual(len(report["identity_candidates"]), 1)
+        item = report["identity_candidates"][0]
+        self.assertFalse(item["source_origin_verified"])
+        self.assertFalse(item["stream_license_verified"])
+        self.assertFalse(item["source_independence_verified"])
+        self.assertEqual(item["source_count"], 1)

@@ -83,6 +83,14 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 discard_url_for_rejected_entry = True
                 continue
             attr_pairs = ATTR.findall(meta)
+            # Attributes must start at a whitespace boundary; otherwise a
+            # quoted-looking substring inside an attribute name is ambiguous.
+            if any(match.start() == 0 or not meta[match.start() - 1].isspace()
+                   for match in ATTR.finditer(meta)):
+                pending = None
+                errors.append({"line": number, "reason": "invalid_metadata_attribute"})
+                discard_url_for_rejected_entry = True
+                continue
             # Do not silently discard malformed identity-related attributes.
             # A bare or unquoted tvg-id could otherwise turn a channel into a
             # misleading name-only match instead of a rejected candidate.

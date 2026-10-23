@@ -111,3 +111,12 @@ Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim 
 - Özel depoda kanıt notu `restore-evidence/K4_READBACK.md`: commit `746eeda6dac807d54ecbbbd0edcee66bfb02e5cc`.
 - Bu **tek bir kaynak kodu dosyasının** gerçek depo-dışı kopyası ve geri okumasıdır; SHA-256 manifesti, tam K1–K5 yedeği, bağımsız temiz hedef restore'u, gerçek VOD/arşiv veya zamanlayıcı kanıtı değildir. İki depo aynı GitHub sağlayıcısında olduğu için sağlayıcıdan bağımsız felaket kurtarma sayılmaz.
 - K4-15 tam kapsam **BEKLİYOR**; K4-16/17/18 **BEKLİYOR**. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.
+
+## 23 Ekim 2026 — K4 özel depoya gerçek kod/test/workflow kopyaları
+
+- Özel hedef: `Madsc55/Madsc55-Tv-Backup` (`private=true`). Her dosya kaynak `main` üzerinden okunup özel depoya yazıldı; hedef tekrar okunarak Git blob SHA ve içerik eşitliği doğrulandı.
+- `madsc/backup.py` -> `k4/madsc/backup.py`: commit `4a6a326d18ef44219848843fd048c032180f2756`, blob/content eşit.
+- `tests/test_k4_restore_gate.py` -> `k4/tests/test_k4_restore_gate.py`: commit `4b22390c5e6b3f62e2fd24702332832764745506`, blob/content eşit.
+- `.github/workflows/madsc-04-yedek.yml` -> `k4/.github/workflows/madsc-04-yedek.yml`: commit `5d7960ff4ace80d6d33738bcb6bb7eae77acb132`, blob/content eşit.
+- Önceki `madsc/k4_restore_gate.py` kopyası dahil **dört K4 dosyası** yedeklendi. Git blob SHA-1, ayrıca talep edilen SHA-256 manifestinin yerine geçmez.
+- Eksikler: atomik tam kaynak snapshot ve kapsam manifesti, SHA-256, bağımsız temiz ortam restore, gerçek VOD/arşiv kapsamı, gerçek 1/15 scheduler, K1–K5 diğer uygun dosyaları. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false` korunur.

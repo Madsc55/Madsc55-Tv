@@ -114,6 +114,19 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
             self.assertFalse(result["production_restore_approved"])
 
+    def test_manifest_file_ceiling_rejected_before_hashing(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ('source', 'backup', 'restored')]
+            for root in trees:
+                root.mkdir()
+            names = [f'file_{index}.txt' for index in range(10001)]
+            with patch('madsc.k4_restore_gate.verify_independent_restore') as verify:
+                with self.assertRaisesRegex(ValueError, 'manifest entry limit'):
+                    audit_k4_restore(*trees, names)
+                verify.assert_not_called()
+
     def test_declared_inventory_limit_rejected_before_hashing(self):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as directory:

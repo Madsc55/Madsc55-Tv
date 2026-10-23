@@ -25,6 +25,17 @@ jobs:
           python-version: '3.12'
       - name: Unit tests
         run: python -m unittest discover -s tests -v
+      - name: Confirm K4 is an isolated fixture-only workflow
+        shell: bash
+        env:
+          K4_EXTERNAL_BACKUP_ENABLED: 'false'
+          K4_PRODUCTION_RESTORE_ENABLED: 'false'
+        run: |
+          test "$K4_EXTERNAL_BACKUP_ENABLED" = false
+          test "$K4_PRODUCTION_RESTORE_ENABLED" = false
+          test ! -e reports/k4-source
+          echo "K4 acceptance: fixture-only; no external delivery or production restore"
+
       - name: K4 temporary backup and restore drill
         id: parity_consumer
         shell: bash

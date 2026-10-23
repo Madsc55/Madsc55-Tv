@@ -11,7 +11,7 @@ class TrialEpgMatchingTest(unittest.TestCase):
         self.assertEqual(result[1]["matched_id"], "")
     def test_programme_coverage_distinguishes_matching_from_actual_guide(self):
         xml = '<tv><channel id="a"><display-name>TRT 1</display-name></channel><channel id="b"><display-name>TV 8</display-name></channel><programme channel="a" start="20261023100000 +0000" stop="20261023110000 +0000"><title>News</title></programme></tv>'
-        rows = programme_coverage('#EXTINF:-1 tvg-id="a",TRT 1\\n#EXTINF:-1 tvg-id="b",TV 8\\n#EXTINF:-1,Unknown', xml)
+        rows = programme_coverage('#EXTINF:-1 tvg-id="a",TRT 1\n#EXTINF:-1 tvg-id="b",TV 8\n#EXTINF:-1,Unknown', xml)
         self.assertEqual([r["programme_count"] for r in rows], [1, 0, 0])
         self.assertEqual([r["has_programmes"] for r in rows], [True, False, False])
     def test_programme_coverage_rejects_entities(self):

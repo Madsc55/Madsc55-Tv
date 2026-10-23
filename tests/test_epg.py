@@ -6,6 +6,23 @@ from madsc.epg import check_epg_mapping
 
 class EpgTests(unittest.TestCase):
 
+    def test_duplicate_m3u_header_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            p, e = Path(d) / "playlist.m3u8", Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/live\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Duplicate or misplaced M3U header"):
+                check_epg_mapping(p, e)
+
+    def test_stream_uri_fragments_and_controls_rejected(self):
+        for uri in ("https://example.org/live#fragment", "https://example.org/li" + chr(0x7f) + "ve"):
+            with self.subTest(uri=uri), tempfile.TemporaryDirectory() as d:
+                p, e = Path(d) / "playlist.m3u8", Path(d) / "xmltv.xml"
+                p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\n' + uri + '\n', encoding="utf-8")
+                e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "invalid stream URI"):
+                    check_epg_mapping(p, e)
+
     def test_nonstandard_unicode_line_separators_fail_closed(self):
         for separator in (chr(0x85), chr(0x2028), chr(0x2029)):
             with self.subTest(separator=separator), tempfile.TemporaryDirectory() as d:

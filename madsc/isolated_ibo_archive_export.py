@@ -17,7 +17,9 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
     raw = str(destination)
     if any(part in (".", "..") for part in raw.replace(chr(92), "/").split("/")):
         raise PermissionError("Ambiguous destination")
-    if any(unicodedata.category(ch) in ('Cc', 'Cf', 'Cs', 'Zl', 'Zp') for ch in raw):
+    if any(unicodedata.category(ch) in ('Cc', 'Cf', 'Cs', 'Zl', 'Zp')
+           or 0xFDD0 <= ord(ch) <= 0xFDEF
+           or (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw):
         raise PermissionError("Unsafe destination characters")
     destination = Path(destination).absolute()
     if destination.parent == destination:

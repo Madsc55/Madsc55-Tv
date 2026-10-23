@@ -8,6 +8,7 @@ and cross-function control flow require human review.
 from __future__ import annotations
 
 import ast
+import hashlib
 from pathlib import Path
 
 _GUARDS = {
@@ -41,6 +42,16 @@ _PROCESS_LAUNCHERS = {
     "os.system", "os.popen",
 }
 _GUARDED_OPEN_FLAGS = {"O_WRONLY", "O_RDWR", "O_CREAT", "O_TRUNC", "O_APPEND"}
+_READ_ONLY_OPEN_FLAGS = {
+    "O_RDONLY", "O_NOFOLLOW", "O_NONBLOCK", "O_CLOEXEC", "O_DIRECTORY",
+    "O_PATH", "O_BINARY", "O_TEXT", "O_NOINHERIT", "O_NOCTTY",
+}
+_TEXT_METHODS = {
+    "casefold", "capitalize", "center", "expandtabs", "format", "format_map",
+    "join", "ljust", "lower", "lstrip", "removeprefix", "removesuffix",
+    "replace", "rjust", "rstrip", "strip", "swapcase", "title", "translate",
+    "upper", "zfill",
+}
 # These helpers create files even without an explicit writable open() mode.
 _TEMPFILE_CREATORS = {
     "tempfile.NamedTemporaryFile", "tempfile.TemporaryFile",
@@ -61,13 +72,55 @@ def _call_name(node: ast.Call) -> str:
     return ""
 
 
-def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
+def _flag_names(node: ast.AST) -> set[str] | None:
+    """Return statically-known os.open flag names, or None for uncertainty."""
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+        left = _flag_names(node.left)
+        right = _flag_names(node.right)
+        return None if left is None or right is None else left | right
+    if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
+        if node.value.id in {"os", "posix"} and node.attr.startswith("O_"):
+            return {node.attr}
+        return None
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+        # getattr(os, "O_NONBLOCK", 0) is a common portable, read-only modifier.
+        if (node.func.id == "getattr" and len(node.args) in {2, 3}
+                and isinstance(node.args[0], ast.Name)
+                and node.args[0].id in {"os", "posix"}
+                and isinstance(node.args[1], ast.Constant)
+                and isinstance(node.args[1].value, str)
+                and node.args[1].value.startswith("O_")
+                and (len(node.args) == 2
+                     or isinstance(node.args[2], ast.Constant)
+                     and node.args[2].value == 0)):
+            return {node.args[1].value}
+        return None
+    if isinstance(node, ast.Constant) and type(node.value) is int and node.value == 0:
+        return set()
+    return None
+
+
+def _is_proven_text_replace(node: ast.Call) -> bool:
+    """Recognize only receivers whose expression proves string semantics."""
+    if not isinstance(node.func, ast.Attribute) or node.func.attr != "replace":
+        return False
+    receiver = node.func.value
+    if isinstance(receiver, ast.Constant) and isinstance(receiver.value, str):
+        return True
+    if isinstance(receiver, ast.Call) and isinstance(receiver.func, ast.Attribute):
+        return receiver.func.attr in _TEXT_METHODS
+    return False
+
+
+def _classify_call(node: ast.Call) -> tuple[str, str]:
     name = _call_name(node)
     leaf = name.rsplit(".", 1)[-1]
+    if leaf == "replace" and _is_proven_text_replace(node):
+        return "proven_non_filesystem_text_transform", name
     if leaf in _MUTATING_METHODS:
-        return True, name
+        return "write_candidate", name
     if name in _TEMPFILE_CREATORS:
-        return True, name + " [temporary filesystem creation requires review]"
+        return "write_candidate", name + " [temporary filesystem creation requires review]"
     # os.open uses flags, not a text mode; handle it before generic *.open
     # so the generic branch cannot swallow it and miss O_WRONLY/O_CREAT.
     if name in {"os.open", "posix.open"}:
@@ -75,16 +128,22 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
         for kw in node.keywords:
             if kw.arg == "flags":
                 flags = kw.value
+        names = _flag_names(flags) if flags is not None else None
+        if (names is not None and names and names <= _READ_ONLY_OPEN_FLAGS
+                and names & {"O_RDONLY", "O_PATH"}):
+            return "proven_read_only_descriptor", name
+        if names is not None and names & _GUARDED_OPEN_FLAGS:
+            return "write_candidate", name + " [flags require review]"
         if isinstance(flags, (ast.BinOp, ast.Name, ast.Attribute)):
-            return True, name + " [flags require review]"
+            return "write_candidate", name + " [flags require review]"
         if isinstance(flags, ast.Constant) and isinstance(flags.value, int):
             # Conservatively record numeric flags; platform constants vary.
-            return True, name + " [numeric flags require review]"
+            return "write_candidate", name + " [numeric flags require review]"
         if flags is None:
-            return True, name + " [missing or dynamic flags require review]"
+            return "write_candidate", name + " [missing or dynamic flags require review]"
         # Calls, conditionals, unary expressions and other AST forms can
         # evaluate to O_CREAT/O_TRUNC; an unrecognized expression is NOT read-only.
-        return True, name + " [flags require review]"
+        return "write_candidate", name + " [flags require review]"
     # os.fdopen wraps a descriptor and may expose a writable file object.
     # Include the wrapper's mode even if its later write() is in a helper.
     if name == "os.fdopen":
@@ -94,12 +153,14 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
                 mode = kw.value
         if any(kw.arg is None for kw in node.keywords):
             # Unpacked keywords may provide/override the descriptor mode.
-            return True, name + " [dynamic mode]"
+            return "write_candidate", name + " [dynamic mode]"
         if mode is None:
-            return False, ""
+            return "not_relevant", ""
         if not isinstance(mode, ast.Constant) or not isinstance(mode.value, str):
-            return True, name + " [dynamic mode]"
-        return (True, name) if any(flag in mode.value for flag in "wax+") else (False, "")
+            return "write_candidate", name + " [dynamic mode]"
+        if any(flag in mode.value for flag in "wax+"):
+            return "write_candidate", name
+        return "not_relevant", ""
     is_builtin_open = name in {"open", "builtins.open", "io.open"}
     is_path_open = (isinstance(node.func, ast.Attribute) and leaf == "open"
                     and name not in {"os.open", "posix.open", "builtins.open", "io.open"})
@@ -126,16 +187,22 @@ def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
         if any(kw.arg is None for kw in node.keywords):
             dynamic_mode = True
         if isinstance(mode, str) and any(flag in mode for flag in "wax+"):
-            return True, name
+            return "write_candidate", name
         # A nonliteral positional or keyword mode can enable writing.
         if dynamic_mode:
-            return True, name + " [dynamic mode]"
-        return False, ""
+            return "write_candidate", name + " [dynamic mode]"
+        return "not_relevant", ""
     if name.startswith("os.") and leaf in _OS_MUTATORS:
-        return True, name
+        return "write_candidate", name
     if name in _PROCESS_LAUNCHERS:
-        return True, name + " [process command requires review]"
-    return False, ""
+        return "write_candidate", name + " [process command requires review]"
+    return "not_relevant", ""
+
+
+def _is_mutating_call(node: ast.Call) -> tuple[bool, str]:
+    """Backward-compatible predicate used by earlier callers/tests."""
+    classification, api = _classify_call(node)
+    return classification == "write_candidate", api
 
 
 
@@ -165,10 +232,13 @@ class _ScopeCalls(ast.NodeVisitor):
 
 
 class _Scanner(ast.NodeVisitor):
-    def __init__(self, path: str):
+    def __init__(self, path: str, source: str):
         self.path = path
+        self.source = source
+        self.source_file_sha256 = hashlib.sha256(source.encode("utf-8")).hexdigest()
         self.scope: list[tuple[str, list[int]]] = []
         self.rows: list[dict] = []
+        self.dispositions: list[dict] = []
 
     def _visit_scope(self, node, name: str):
         collector = _ScopeCalls()
@@ -233,23 +303,37 @@ class _Scanner(ast.NodeVisitor):
         self.scope.pop()
 
     def visit_Call(self, node):
-        mutating, api = _is_mutating_call(node)
-        if mutating:
+        classification, api = _classify_call(node)
+        if classification in {"write_candidate", "proven_non_filesystem_text_transform",
+                              "proven_read_only_descriptor"}:
             function, guards = self.scope[-1] if self.scope else ("<module>", [])
             earlier = any(line < node.lineno for line in guards)
-            self.rows.append({
+            segment = ast.get_source_segment(self.source, node) or ""
+            base = {
                 "path": self.path,
                 "line": node.lineno,
                 "scope": function,
                 "api": api,
-                "recognized_guard_precedes_write_in_scope": earlier,
-                "guard_lines_in_scope": guards,
-                # Lexical order is not proof that a guard dominates a write:
-                # it may live in a conditional, loop, or exception branch.
-                "guard_control_flow_verified": False,
-                "guard_assessment": "lexical-only; manual control-flow review required",
-                "review_required": True,
-            })
+                "source_file_sha256": self.source_file_sha256,
+                "source_segment_sha256": hashlib.sha256(segment.encode("utf-8")).hexdigest(),
+            }
+            if classification != "write_candidate":
+                self.dispositions.append({
+                    **base,
+                    "disposition": classification,
+                    "review_required": False,
+                })
+            else:
+                self.rows.append({
+                    **base,
+                    "recognized_guard_precedes_write_in_scope": earlier,
+                    "guard_lines_in_scope": guards,
+                    # Lexical order is not proof that a guard dominates a write:
+                    # it may live in a conditional, loop, or exception branch.
+                    "guard_control_flow_verified": False,
+                    "guard_assessment": "lexical-only; manual control-flow review required",
+                    "review_required": True,
+                })
         self.generic_visit(node)
 
 
@@ -258,7 +342,7 @@ def scan_python_source(source: str, path: str = "<memory>") -> list[dict]:
     if not isinstance(source, str):
         raise TypeError("Python source must be text")
     tree = ast.parse(source, filename=path)
-    scanner = _Scanner(path)
+    scanner = _Scanner(path, source)
     scanner.visit(tree)
     return sorted(scanner.rows, key=lambda row: (row["line"], row["api"]))
 
@@ -281,6 +365,7 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
             raise ValueError(f"Symlinked source entry requires review: {entry.relative_to(root)}")
     files = sorted(root.rglob("*.py"))
     rows = []
+    dispositions = []
     scanned = []
     for file in files:
         relative = file.relative_to(root).as_posix()
@@ -293,18 +378,27 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
         if file.is_symlink():
             raise ValueError(f"Symlinked Python source requires review: {relative}")
         scanned.append(relative)
-        rows.extend(scan_python_source(file.read_text(encoding="utf-8"), relative))
+        source = file.read_text(encoding="utf-8")
+        tree = ast.parse(source, filename=relative)
+        scanner = _Scanner(relative, source)
+        scanner.visit(tree)
+        rows.extend(scanner.rows)
+        dispositions.extend(scanner.dispositions)
     return {
-        "schema": "madsc-k1-write-callsite-inventory-v1",
+        "schema": "madsc-k1-write-callsite-inventory-v2",
         "source_root": ".",
         "files_scanned": len(scanned),
         "candidate_callsite_count": len(rows),
         "callsite_inventory": rows,
+        "non_write_disposition_count": len(dispositions),
+        "non_write_dispositions": sorted(
+            dispositions, key=lambda row: (row["path"], row["line"], row["api"])),
         "limitations": [
             "Static AST candidates only; not a runtime enforcement proof.",
             "Guard ordering is lexical and does not prove branch dominance or caller contracts.",
             "Dynamic aliases, subprocess/shell writes, generated code and non-Python writers need separate review.",
-            "Every candidate remains review_required until individually dispositioned."
+            "Every candidate remains review_required until individually dispositioned.",
+            "Non-write dispositions are limited to source-hash-bound syntactic proofs.",
         ],
         "runtime_gate_enforced": False,
         "production_writes": False,

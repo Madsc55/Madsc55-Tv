@@ -146,6 +146,26 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
                             audit.run(Path(temp) / "audit.json", "")
                         self.assertEqual(network.call_count, 1)
 
+    def test_malformed_blob_responses_rejected(self):
+        raw = b"name: sample\n"
+        sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        entries = [{"path": f".github/workflows/{i:03d}.yml",
+                    "type": "blob", "size": len(raw), "sha": sha}
+                   for i in range(99)]
+        for blob in (None, [], {"encoding": "base64", "sha": sha},
+                     {"encoding": "base64", "sha": sha, "content": 123},
+                     {"encoding": "base64", "sha": sha, "content": "!!!!"},
+                     {"encoding": "base64", "sha": sha, "content": "A" * 100}):
+            with self.subTest(blob=repr(blob)):
+                def fake_github(url, token):
+                    if "/git/trees/" in url:
+                        return {"tree": entries, "truncated": False}
+                    return blob
+                with tempfile.TemporaryDirectory() as temp:
+                    with patch.object(audit, "github", side_effect=fake_github):
+                        with self.assertRaises(ValueError):
+                            audit.run(Path(temp) / "audit.json", "")
+
     def test_forged_blob_is_rejected(self):
         raw = b"name: sample\n"
         sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()

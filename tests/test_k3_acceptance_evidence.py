@@ -42,7 +42,7 @@ class K3EvidenceTests(unittest.TestCase):
                 rows = [{"url_sha256": format(i, "064x"), "hls_manifest_seen": True,
                          "https_reachable": True, "status": "manifest_only"}
                         for i in range(75)]
-                if hour == 12:
+                if hour == 3:
                     rows[0]["https_reachable"] = False
                 report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
                           "measured_at_utc": f"2026-10-23T{hour:02d}:00:00+00:00",

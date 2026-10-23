@@ -151,6 +151,38 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertFalse(result["sandbox_restore_accepted"])
             self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
 
+    def test_symlinked_ancestor_during_inventory_blocks_second_read(self):
+        from unittest.mock import patch
+        from madsc.backup import verify_independent_restore as real_verify
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            parent = base / "parent"
+            parent.mkdir()
+            roots = [parent / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            original_rglob = Path.rglob
+            calls = [0]
+            swapped = [False]
+
+            def swap_parent_during_inventory(root, pattern):
+                if root == roots[2] and not swapped[0]:
+                    swapped[0] = True
+                    parent.rename(base / "real-parent")
+                    parent.symlink_to(base / "real-parent", target_is_directory=True)
+                return original_rglob(root, pattern)
+
+            def count_verify(*args):
+                calls[0] += 1
+                return real_verify(*args)
+
+            with patch.object(Path, "rglob", autospec=True, side_effect=swap_parent_during_inventory), \
+                 patch("madsc.k4_restore_gate.verify_independent_restore", side_effect=count_verify):
+                result = audit_k4_restore(*roots, ["file.txt"])
+            self.assertEqual(calls[0], 1)
+            self.assertFalse(result["sandbox_restore_accepted"])
+
     def test_symlinked_ancestor_added_after_verification_fails_closed(self):
         from unittest.mock import patch
         from madsc.backup import verify_independent_restore as real_verify

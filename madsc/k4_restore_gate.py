@@ -58,6 +58,8 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
                 declared_dirs.add(parent.as_posix())
                 if len(names) + len(declared_dirs) > 20000:
                     raise ValueError("Restore audit inventory exceeds safe entry limit")
+    if seen_names.intersection(declared_dirs):
+        raise ValueError('Restore audit file conflicts with declared directory')
     result = verify_independent_restore(source, backup, restored, names)
     # The restore acceptance gate requires an exact file inventory, not just
     # matching hashes for a caller-selected subset. Reject unexpected files,

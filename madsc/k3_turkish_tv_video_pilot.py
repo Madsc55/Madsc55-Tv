@@ -76,7 +76,7 @@ def verify_av(url):
         if any(line.lstrip().startswith(("#EXT-X-MEDIA:", "#EXT-X-SESSION-DATA:",
                                          "#EXT-X-SESSION-KEY:")) for line in text.splitlines()):
             return False, False, "unsupported_master_metadata"
-        lines = [line.strip() for line in text.splitlines()]
+        lines = text.splitlines()
         variants = [lines[i + 1] for i, line in enumerate(lines[:-1])
                     if line.startswith("#EXT-X-STREAM-INF") and lines[i + 1]
                     and not lines[i + 1].startswith("#")]
@@ -116,7 +116,7 @@ def verify_av(url):
         return False, False, "unsupported_hls_segment_layout"
     if not any(line.lstrip().startswith("#EXTINF:") for line in text.splitlines()):
         return False, False, "no_segment_duration"
-    segments = [line.strip() for line in text.splitlines()
+    segments = [line for line in text.splitlines()
                 if line.strip() and not line.lstrip().startswith("#")]
     if not segments:
         return False, False, "no_segments"

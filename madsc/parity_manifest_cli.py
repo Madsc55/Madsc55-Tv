@@ -19,11 +19,10 @@ def _read_regular_file(path, limit):
     path = Path(path)
     if path.is_symlink():
         raise PermissionError("Symlink parity input is forbidden")
-    flags = os.O_RDONLY
-    if hasattr(os, "O_NONBLOCK"):
-        flags |= os.O_NONBLOCK
-    if hasattr(os, "O_NOFOLLOW"):
-        flags |= os.O_NOFOLLOW
+    # Keep the portable read-only modifiers in one source-bound expression so
+    # the K1 callsite audit can prove this descriptor is not a writer.
+    flags = (os.O_RDONLY | getattr(os, "O_NONBLOCK", 0)
+             | getattr(os, "O_NOFOLLOW", 0))
     descriptor = os.open(path, flags)
     try:
         metadata = os.fstat(descriptor)

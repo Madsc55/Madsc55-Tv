@@ -251,6 +251,20 @@ def run_commands():
         self.assertTrue(all(row["guard_control_flow_verified"]
                             for row in destination_mutations))
 
+    def test_parity_input_opens_are_source_bound_read_only_dispositions(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        rows = [
+            row for row in report["non_write_dispositions"]
+            if (row["path"], row["scope"], row["api"]) in {
+                ("madsc/parity_manifest_cli.py", "_read_regular_file", "os.open"),
+                ("madsc/parity_snapshot_writer.py", "_sha256_regular_file", "os.open"),
+            }
+        ]
+        self.assertEqual(len(rows), 2)
+        self.assertTrue(all(row["disposition"] == "proven_read_only_descriptor"
+                            and row["review_required"] is False for row in rows))
+
     def test_backup_rollback_delete_has_direct_k1_guard_dominance(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

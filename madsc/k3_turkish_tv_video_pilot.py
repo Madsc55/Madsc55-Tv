@@ -74,6 +74,11 @@ def verify_av(url):
         if not manifest.lstrip().startswith(b"#EXTM3U"):
             return False, False, "invalid_variant_manifest"
         text = manifest.decode("utf-8-sig", errors="replace")
+    if any(line.lstrip().startswith('#EXT-X-STREAM-INF') for line in text.splitlines()):
+        return False, False, 'nested_master_manifest'
+    if any(line.lstrip().startswith(('#EXT-X-KEY:', '#EXT-X-SESSION-KEY:'))
+           for line in text.splitlines()):
+        return False, False, 'encrypted_hls_unsupported'
     segments = [line.strip() for line in text.splitlines()
                 if line.strip() and not line.startswith("#")]
     if not segments:

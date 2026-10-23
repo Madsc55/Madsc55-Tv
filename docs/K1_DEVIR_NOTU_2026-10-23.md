@@ -71,3 +71,23 @@ CI doğrulaması: 39959033394 success, SHA 5c9951cfc7776755f0b368424d6aa5ee768da
 K1 için halen kanıt bekleyenler: 26 gerçek runtime güvenlik kabulünün tamamı (son bilinen 0/26), tüm gerçek yazma callsite'larının zorunlu K1 gate kapsamına alınması, K2 92 legacy workflow davranışsal eşdeğerliği (son bilinen 0/92), K4 bağımsız harici yedek ve restore, genel 22 kabul (son bilinen 0/22). production_ready=false korunmalı; kanıt olmadan yükseltilmemeli.
 
 Sınırlar: çalışan 1.039 IPTV kanalına, M3U, EPG, logo, favori, VOD, arşiv, yedek ve cihazlara dokunma; legacy depo read-only; PR #71 merge etme; Actions manuel dispatch/rerun yapma; sadece güvenli izole kod/test değişiklikleri ve [skip ci] commit. Diğer K2–K5 ajanları aynı main üzerinde eşzamanlı olabilir.
+
+## TOPLU K1 DENETİMİ — 23 Ekim 2026, 16:28 (+02:00)
+
+Kullanıcının topluca bitirme talebi üzerine güncel K1 kodu, korunan yazma kapısı çelişki raporu ve GitHub Actions logları birlikte yeniden incelendi.
+
+- Son incelenen başarısız CI: 39970871364, commit b492a64c0082bff953f98ef54a14a7796f7f0dd1. 1346 test, 2 başarısızlık: tests/test_k3_video_radio_quota.py içindeki alternate audio ve external session metadata beklentileri. K1 write_path_audit testleri bu koşuda geçti. Hatalar K3 kapsamındadır; K1 kapısı gevşetilerek çözülmez.
+- 39970931908, commit 23a86cb2be3c0b295903564ea7bd446bdccfc72f, kontrol sırasında in_progress; sonucu başarı olarak yazma.
+- K1'in madsc/write_callsite_audit.py taraması salt statik AST envanteridir; döndürdüğü runtime_gate_enforced=false ve production_writes=false değerleri kasıtlıdır. Bu sonuç gerçek yazma çağrılarının tamamının korunduğunu kanıtlamaz.
+- madsc/write_path_audit.py içindeki enforce_write_paths ve enforce_local_output_path yalnızca açıkça çağıran kodlar için preflight sağlar. Bağımsız GitHub Actions, shell/git yazmaları ve yarış koşullarını otomatik engellemez.
+- Korunan kapı ile legacy CALISANLAR.m3u yazan workflow'lar arasındaki çelişki sürüyor (bkz. docs/K1_KORUNAN_YAZMA_KAPISI_CELISKI_2026-10-22.md). Üretim M3U kapısını atlatma/gevşetme, canlı listeye yazma veya workflow dispatch yapma.
+
+### Bitirme için zorunlu kabul zinciri
+
+1. K1'in tüm gerçek Python/shell/Actions yazma çağrılarını tek tek sınıflandır: salt-okuma, izole rapor, korunan üretim yazımı; her sınıf için çağrı noktası ve uygulanacak guard kanıtı kaydet.
+2. İzole rapor yazan çağrılarda yalnız preflight değil, atomik/no-follow güvenli yazıcı ve eşzamanlı değiştirme testlerini doğrula; eski üretim yazıcılarını onaysız çalıştırma.
+3. Korunan üretim M3U değişiklikleri için ayrı taslak -> inceleme/onay -> kontrollü yayın mimarisi tasarla; mevcut kapı politikası korunmalı.
+4. K1'in 26 runtime kabul maddesinin her biri için gerçek koşu kimliği, kaynak commit, olumlu/olumsuz senaryo ve değişmeyen üretim dosyası kanıtı olmadan geçer not verme (şu an kanıtlanmış 0/26).
+5. Güncel main CI yeşil, K1 regresyonları yeşil, K2–K5 kabul kanıtları ayrı ayrı tamamlanmadan production_ready=false olarak tut.
+
+Bu denetim yeni bir runtime kabulü gerçekleştirmedi; bitmiş sayısını artırmaz. Kodun gerçek üretim yazma yollarına müdahale edilmedi.

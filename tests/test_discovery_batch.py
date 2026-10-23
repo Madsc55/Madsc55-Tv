@@ -127,6 +127,15 @@ class DiscoveryBatchTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_m3u8_preview(feeds)
 
+    def test_metadata_attributes_require_token_boundaries(self):
+        feed = ("#EXTM3U\n"
+                '#EXTINF:-1 xtvg-id="forged" tvg-id="real",Channel\n'
+                "https://example.org/live\n")
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 0)
+        self.assertEqual(report["parse_errors"][0]["reason"], "invalid_metadata_attribute")
+        self.assertEqual(report["candidates"], [])
+
     def test_extinf_quoted_commas_preserve_channel_identity(self):
         feed = ('#EXTM3U\n#EXTINF:-1 tvg-id="news,tr" group-title="News, World",News, HD\n'
                 'https://example.org/news.m3u8\n')

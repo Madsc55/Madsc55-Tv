@@ -6,7 +6,7 @@ Bu belge üretim kanallarını veya URL'leri doğrulanmış saymaz. İnceleme ya
 ## Kamuya açık örnek: iptv-org/iptv
 - Proje: https://github.com/iptv-org/iptv
 - Kaynak beyanı: README, bağlantıların kullanıcılarca sağlandığını; akışları barındırmadığını ve hedef sunucuları kontrol etmediğini bildirir.
-- Kod/veri deposu lisans beyanı: README'deki LICENSE bağlantısı (CC0/Unlicense göstergeleri); bu lisans tek tek üçüncü taraf yayınların yeniden dağıtım, gösterim veya ticari kullanım haklarını **kanıtlamaz**.
+- Kod/veri deposu lisans beyanı: README CC0 rozeti gösterir; ancak bağlantıdaki LICENSE dosyası açıkça **The Unlicense** metnini içerir. Bu dosya tek tek üçüncü taraf yayınların yeniden dağıtım, gösterim veya ticari kullanım haklarını **kanıtlamaz**.
 - Sonuç: **Liste kökeni kamuya açık, tekil yayın kökeni/lisansı doğrulanmamış.** K2 kabulüne veya otomatik üretim yayınına yükseltilemez.
 - İnceleme referansları: https://github.com/iptv-org/iptv/blob/master/README.md ; https://github.com/iptv-org/iptv/blob/master/CONTRIBUTING.md
 
@@ -47,7 +47,7 @@ Kaynaklar: https://github.com/iptv-org/iptv/blob/master/README.md ve https://git
 | --- | --- | --- |
 | Playlist yayımlayıcısı | `iptv-org/iptv` deposu, kullanıcı katkılı bağlantı listesi olduğunu kendi README'sinde bildiriyor | **Liste yayımlayıcısı belirli** |
 | Tekil yayın sunucusunun işletmecisi | README, bağlantıların hedefini kontrol etmediğini açıkça bildiriyor | **Doğrulanmadı** |
-| Depo lisansı | README CC0 rozeti ve LICENSE bağlantısı gösteriyor; GitHub depo üstverisinde ayrıca Unlicense sınıflandırması görülebiliyor. Kapsam, lisans dosyası üzerinden ayrıca teyit edilmelidir | **Depo lisans beyanı mevcut; yayın lisansı değil** |
+| Depo lisansı | README CC0 rozeti gösteriyor; doğrudan incelenen LICENSE dosyası **The Unlicense** metnidir. Bu tutarsızlık kaynak lisans kanıtında ayrıca not edilmiştir; üçüncü taraf yayın haklarını kapsadığı varsayılamaz | **Depo lisans beyanı mevcut; yayın lisansı değil** |
 | Tekil akış yeniden dağıtım izni | README/CONTRIBUTING, her akış için hak sahibinden yazılı izin sunmuyor | **Doğrulanmadı** |
 | Akışların çalışma durumu | CONTRIBUTING katkıcıların akış stabilitesi, coğrafi kısıt ve token kontrolü yapmasını istiyor; bu, bu denetimde bağımsız teknik örnek alındığı anlamına gelmez | **Doğrulanmadı** |
 | Farklı feed bağımsızlığı | Aynı organizasyondaki playlist, database, API ve site birbirine bağlı veri ürünleri olabilir | **Bağımsız kaynak olarak sayılamaz** |
@@ -57,3 +57,10 @@ Kaynaklar: https://github.com/iptv-org/iptv/blob/master/README.md ve https://git
 **Keşif kabul testi sözleşmesi:** Yerel/izinli M3U metni ile `parse_m3u` ve `corroborate_sources` çalıştırılmalı; girdinin SHA-256'sı, UTC zaman damgası, kaynak sahibi, parse_errors/rejected/duplicates ve aynı envanterin tekrar sayılmadığı kaydedilmelidir. Testte ağ isteği veya üretim playlist yazımı yapılmamalıdır. Bu çalıştırma bu denetim sırasında yapılmadı; CI yeşil veya canlı yayın çalışıyor denemez.
 
 **Sonuç:** Bu örnekte sadece liste yayımlayıcısının kamuya açık beyanı doğrulandı. Tekil yayınların kökeni, kullanım lisansı ve çalışma durumu **kanıtlanmadı**; K2 kabul kapısı kapalı kalır.
+
+
+## 23 Ekim 2026 — Lisans dosyası doğrudan karşılaştırması
+- Birincil kaynak README: https://raw.githubusercontent.com/iptv-org/iptv/master/README.md — son satırdaki lisans rozeti **CC0** etiketli.
+- Birincil kaynak LICENSE: https://github.com/iptv-org/iptv/blob/master/LICENSE — dosya **The Unlicense** metnini içerir ve unlicense.org adresine yönlendirir.
+- **Kanıt uyuşmazlığı:** Rozet CC0, LICENSE metni Unlicense. Depo lisansını tek ve tartışmasız bir CC0 lisansı olarak sınıflandırma; dosya metni ile README işaretini ayrı sakla. Bu durum tekil üçüncü taraf yayınların kullanım haklarını zaten doğrulamaz.
+- Bu incelemede yayın URL'lerine erişilmedi; yalnızca kamuya açık proje belge sayfaları okundu. Teknik yayın doğrulaması ve yayıncı yazılı izni hâlâ bekliyor.

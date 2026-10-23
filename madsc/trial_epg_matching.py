@@ -15,6 +15,8 @@ def norm(value):
 
 def xmltv_channels(xml_data):
     raw = xml_data.encode("utf-8") if isinstance(xml_data, str) else xml_data
+    if b"\x00" in raw:
+        raise ValueError("NUL byte in XMLTV")
     if b"<!DOCTYPE" in raw.upper() or b"<!ENTITY" in raw.upper():
         raise ValueError("XMLTV DTD/entity declarations are not allowed")
     root = ET.fromstring(raw)
@@ -100,6 +102,8 @@ def programme_coverage(playlist, xml_data, reference_time=None):
     if reference_time is not None and (reference_time.tzinfo is None or reference_time.utcoffset() is None):
         raise ValueError("reference_time must be timezone-aware")
     raw = xml_data.encode("utf-8") if isinstance(xml_data, str) else xml_data
+    if b"\x00" in raw:
+        raise ValueError("NUL byte in XMLTV")
     if b"<!DOCTYPE" in raw.upper() or b"<!ENTITY" in raw.upper():
         raise ValueError("XMLTV DTD/entity declarations are not allowed")
     root = ET.fromstring(raw)

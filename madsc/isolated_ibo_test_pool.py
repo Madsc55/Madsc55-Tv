@@ -11,6 +11,7 @@ def build_isolated_test_pool(records):
     if not isinstance(records, (list, tuple)) or len(records) != 6115:
         raise ValueError("Expected 6115 records")
     entries = []
+    seen_sources = set()
     for i, (r, decision) in enumerate(zip(records, classify_6115_positions()), 1):
         if not isinstance(r, Mapping) or type(r.get("position")) is not int or r["position"] != i:
             raise ValueError("Position mismatch")
@@ -19,6 +20,9 @@ def build_isolated_test_pool(records):
         digest = r.get("source_sha256")
         if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
             raise ValueError("Invalid source hash")
+        if digest in seen_sources:
+            raise ValueError("Duplicate source hash at position " + str(i))
+        seen_sources.add(digest)
         logo = r.get("logo_sha256")
         if logo is not None and (not isinstance(logo, str) or len(logo) != 64 or any(c not in "0123456789abcdef" for c in logo)):
             raise ValueError("Invalid logo hash")

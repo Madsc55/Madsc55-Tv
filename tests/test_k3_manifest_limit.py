@@ -15,3 +15,14 @@ class K3ManifestLimitTests(unittest.TestCase):
     def test_default_and_ceiling(self):
         self.assertEqual(pilot.LIMIT, 12)
         self.assertEqual(pilot.MAX_LIMIT, 75)
+
+    def test_shortfall_and_timestamp_are_recorded(self):
+        import json
+        with patch.object(pilot, "candidates", return_value=iter(())), \
+             patch.object(pilot, "write_fixture_report") as writer:
+            pilot.run(limit=75)
+            report = json.loads(writer.call_args.args[2])
+            self.assertEqual(report["candidate_limit"], 75)
+            self.assertEqual(report["candidate_shortfall"], 75)
+            self.assertEqual(report["probed"], 0)
+            self.assertIn("measured_at_utc", report)

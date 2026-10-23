@@ -4,6 +4,22 @@ from pathlib import Path
 from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verify_sandbox_restore, verify_independent_restore
 
 class BackupTests(unittest.TestCase):
+    def test_sandbox_destination_helper_blocks_protected_path_before_open(self):
+        import os
+        from unittest.mock import patch
+        from madsc.backup import _create_relative_file_nofollow
+        from madsc.write_path_audit import ProtectedWriteRejected
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            for protected_root in ("FAVORILER", "EPG", "logos"):
+                root = base / protected_root
+                root.mkdir()
+                with self.subTest(root=protected_root), patch.object(os, "open") as opener:
+                    with self.assertRaises(ProtectedWriteRejected):
+                        _create_relative_file_nofollow(root, ("channel.txt",))
+                    opener.assert_not_called()
+                self.assertEqual(list(root.iterdir()), [])
+
     def test_sandbox_destination_open_rejects_symlinked_parent(self):
         from madsc.backup import _create_relative_file_nofollow
         with tempfile.TemporaryDirectory() as tmp:

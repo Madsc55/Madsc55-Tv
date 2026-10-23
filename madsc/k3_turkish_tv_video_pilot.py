@@ -118,6 +118,11 @@ def verify_av(url):
                 if line.strip() and not line.lstrip().startswith("#")]
     if not segments:
         return False, False, "no_segments"
+    # Reject unsafe raw HLS references before urljoin normalizes whitespace or fragments.
+    if not same_origin_https(url, segments[0]) and urlsplit(segments[0]).scheme:
+        return False, False, "unsafe_segment_reference"
+    if any(char.isspace() or ord(char) < 0x20 or ord(char) == 0x7f for char in segments[0]) or "#" in segments[0]:
+        return False, False, "unsafe_segment_reference"
     segment_url = urljoin(url, segments[0])
     if not same_origin_https(url, segment_url):
         return False, False, "cross_host_segment"

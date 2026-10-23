@@ -235,3 +235,21 @@ class EpgTests(unittest.TestCase):
             e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "missing channel-name separator"):
                 check_epg_mapping(p, e)
+
+    def test_extinf_without_stream_uri_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "missing stream URI"):
+                check_epg_mapping(p, e)
+
+    def test_next_extinf_cannot_replace_missing_stream_uri(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\n#EXTINF:-1 tvg-id="other.tr",Other\nhttps://example.org/b.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/><channel id="other.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "missing stream URI"):
+                check_epg_mapping(p, e)

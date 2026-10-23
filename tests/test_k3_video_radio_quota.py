@@ -45,7 +45,8 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
             self.assertEqual(curl.call_count, 2)
 
     def test_byte_range_and_low_latency_parts_are_not_misprobed(self):
-        for tag in ("#EXT-X-BYTERANGE:1024@0", "#EXT-X-SKIP:SKIPPED-SEGMENTS=2",
+        for tag in ("#EXT-X-BYTERANGE:1024@0", "#EXT-X-DISCONTINUITY",
+                    "#EXT-X-GAP", "#EXT-X-SKIP:SKIPPED-SEGMENTS=2",
                     "#EXT-X-RENDITION-REPORT:URI=\"other.m3u8\"",
                     "#EXT-X-PART:DURATION=0.5,URI=\"part.ts\"",
                     "#EXT-X-PRELOAD-HINT:TYPE=PART,URI=\"next.ts\""):

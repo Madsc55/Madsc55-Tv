@@ -31,10 +31,12 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
         if ancestor.is_symlink():
             raise PermissionError("Symlinked destination ancestor")
     enforce_write_paths([destination.relative_to(destination.anchor).as_posix()])
+    # mkdir is atomic: an existing target (including a dangling symlink)
+    # must never be reused even if it appears after the preflight checks.
     destination.mkdir(mode=0o700)
     try:
         destination.chmod(0o700)
-    except OSError:
+    except BaseException:
         destination.rmdir()
         raise
     target = destination / "ibo_6115_archive_preview.json"

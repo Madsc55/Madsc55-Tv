@@ -339,5 +339,9 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
             "duplicates": len(catalog["duplicates"]),
             "rejected": rejected_count + len(catalog["rejected"]),
             "status": "SANDBOX_PREVIEW_ONLY",
+            "source_origin_verified": False,
+            "stream_license_verified": False,
+            "source_independence_verified": False,
+            "live_verified": False,
             "production_writes": False, "production_ready": False,
             "ibo_device_verified": False}

@@ -41,9 +41,9 @@ def build_isolated_test_pool(records):
         # Legacy status and evidence identifiers are claims, not independently
         # authenticated playback measurements. Never promote them to verified.
         playback = "unknown"
-        bucket = ("broken" if playback == "broken" else
-                  "foreign" if decision.country == "YABANCI_KULLANICI_BILDIRIMI" else
-                  "pending" if playback in ("pending", "unknown") else "retained")
+        # Legacy reports are triage hints, never verified failures or successes.
+        bucket = ("foreign" if decision.country == "YABANCI_KULLANICI_BILDIRIMI"
+                  else "pending")
         entries.append({"position": i, "source_sha256": digest,
                         "reported_country": decision.country, "reported_playback": reported,
                         "playback": playback,
@@ -53,4 +53,6 @@ def build_isolated_test_pool(records):
             "entry_count": 6115, "entries_sha256": hashlib.sha256(encoded).hexdigest(),
             "counts": {s: sum(e["bucket"] == s for e in entries)
                        for s in ("foreign", "broken", "pending", "retained")},
+            "reported_playback_counts": {s: sum(e["reported_playback"] == s for e in entries)
+                                         for s in ("working", "broken", "pending", "unknown")},
             "entries": entries}

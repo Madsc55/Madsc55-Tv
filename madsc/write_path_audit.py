@@ -94,9 +94,12 @@ def enforce_write_paths(paths: list[str]) -> dict:
     """
     report = audit_write_paths(paths)
     if report["blocked"]:
+        # Never echo unbounded untrusted paths into logs or exceptions.
+        # The full rejected set remains available from audit_write_paths().
         raise ProtectedWriteRejected(
-            "Protected or ambiguous write paths rejected: " +
-            ", ".join(report["rejected"])
+            f"Protected or ambiguous write paths rejected ({len(report['rejected'])}): " +
+            ", ".join(repr(path[:120]) for path in report["rejected"][:5]) +
+            (" [additional paths omitted]" if len(report["rejected"]) > 5 else "")
         )
     return {"blocked": False, "checked_paths": list(paths),
             "write_performed": False, "runtime_gate_enforced": True}

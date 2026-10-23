@@ -226,6 +226,14 @@ class DiscoveryBatchTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Combined source text"):
             build_m3u8_preview(feeds)
 
+    def test_corroboration_rejects_aggregate_candidate_overflow(self):
+        first = "#EXTM3U\n" + "".join(
+            f"#EXTINF:-1,Channel {i}\nhttps://a.example/{i}\n" for i in range(10001))
+        second = "#EXTM3U\n" + "".join(
+            f"#EXTINF:-1,Channel {i}\nhttps://b.example/{i}\n" for i in range(10000))
+        with self.assertRaisesRegex(ValueError, "Combined sources exceed bounded candidate limit"):
+            corroborate_sources({"first": first, "second": second})
+
     def test_corroboration_rejects_combined_source_text_before_parsing(self):
         feeds = {"a": "#EXTM3U\n" + " " * 4_000_000, "b": "#EXTM3U\n" + " " * 4_000_000}
         with self.assertRaisesRegex(ValueError, "Combined source text"):

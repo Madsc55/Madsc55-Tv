@@ -31,7 +31,7 @@ def audit_write_paths(paths: list[str]) -> dict:
         folded = normalized
         normalized_parts = folded.split("/")
         if (duplicate or chr(92) in raw or chr(92) in normalized
-            or "/" in normalized and "/" not in name
+            or normalized.count("/") != name.count("/")
             or not name or name.startswith("/")
             or any(part in ("", ".", "..") for part in parts)
             or any(part in ("", ".", "..") for part in normalized_parts)

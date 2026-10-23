@@ -86,10 +86,11 @@ def programme_coverage(playlist, xml_data):
     if root.tag != "tv":
         raise ValueError("XMLTV root element must be <tv>")
     results = matches(playlist, raw)
+    known_channels = xmltv_channels(raw)
     counts = {}
     for programme in root.findall("programme"):
         channel = (programme.get("channel") or "").strip()
-        if channel:
+        if channel and channel in known_channels:
             counts[channel] = counts.get(channel, 0) + 1
     for row in results:
         channel = row["matched_id"]

@@ -119,3 +119,24 @@ class K2ArtifactPairTests(unittest.TestCase):
                 compare_artifact_pair(first, second, a, a)
             with self.assertRaises(ValueError):
                 compare_artifact_pair(first, first, a, a)
+
+
+class K2PinnedLegacySourceTests(unittest.TestCase):
+    def test_three_reviewed_workflows_have_pinned_source_blobs(self):
+        import json
+        scope_path = Path(__file__).resolve().parents[1] / "docs" / "LEGACY_SOURCE_SCOPE.json"
+        scope = json.loads(scope_path.read_text(encoding="utf-8"))
+        self.assertEqual(scope["source_commit"], "ca374df3b9585c0d76a078db9536150ebbc260f7")
+        blobs = {row["path"]: row["git_blob_sha"] for row in scope["workflows"]}
+        self.assertEqual(len(blobs), 99)
+        expected = {
+            ".github/workflows/390-aday-tekrar-test.yml":
+                "b12f53a17434fe719a65edfdc968f675e1f16b95",
+            ".github/workflows/aday-bekletme.yml":
+                "68564680a2c32b11d1c5ed78825f01c85d0378e8",
+            ".github/workflows/aday-logo-epg-test.yml":
+                "21214309014625c4a63f00ee16c9017efac6b0a7",
+        }
+        for path, blob in expected.items():
+            with self.subTest(path=path):
+                self.assertEqual(blobs.get(path), blob)

@@ -21,6 +21,10 @@ def verify_artifact_bytes(path: str | Path, expected_sha256: str, *, max_bytes: 
     import stat
     target = Path(path)
     flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    # Reject symlinked parent directories as well as a symlinked leaf.
+    for parent in target.absolute().parents:
+        if parent.is_symlink():
+            raise ValueError("Artifact path has a symlinked ancestor")
     fd = os.open(target, flags)
     try:
         info = os.fstat(fd)

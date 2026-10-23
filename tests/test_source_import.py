@@ -106,10 +106,20 @@ class SourceImportTests(unittest.TestCase):
                         ValueError, "Duplicate metadata attribute"):
                     extract_candidates(p)
 
+    def test_uppercase_metadata_attributes_preserved(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u8"
+            p.write_text('#EXTM3U\n#EXTINF:-1 TVG-ID="upper.id" TVG-LOGO="https://example.org/logo.png" GROUP-TITLE="News",Upper\nhttps://example.org/live\n', encoding="utf-8")
+            result = extract_candidates(p)
+            candidate = result["candidates"][0]
+            self.assertEqual(candidate["tvg_id"], "upper.id")
+            self.assertEqual(candidate["tvg_logo"], "https://example.org/logo.png")
+            self.assertEqual(candidate["group_title"], "News")
+
     def test_unbalanced_attribute_quotes_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"
-            p.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="broken,Channel\\nhttps://example.org/live\\n', encoding="utf-8")
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="broken,Channel\nhttps://example.org/live\n', encoding="utf-8")
             with self.assertRaises(ValueError):
                 extract_candidates(p)
 

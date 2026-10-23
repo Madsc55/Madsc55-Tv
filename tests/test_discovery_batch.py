@@ -504,3 +504,16 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(report["candidate_rows"][0]["tvg_id"], "good")
         self.assertEqual([error["reason"] for error in report["parse_errors"]],
                          ["invalid_metadata_control"])
+
+    def test_extinf_bidi_format_character_is_rejected(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="news\u202e",News\n'
+                'https://example.org/bad\n'
+                '#EXTINF:-1 tvg-id="safe",Safe\n'
+                'https://example.org/safe\n')
+        result = parse_m3u(feed, "fixture")
+        self.assertEqual(result["entries"], 1)
+        self.assertEqual(result["candidate_rows"][0]["tvg_id"], "safe")
+        self.assertEqual([row["reason"] for row in result["parse_errors"]],
+                         ["invalid_metadata_control"])
+        self.assertFalse(result["production_writes"])

@@ -176,7 +176,7 @@ def run():
         tv_tested += 1
         try:
             ok, reason = verify_video(url)
-        except (ValueError, OSError, subprocess.TimeoutExpired):
+        except (ValueError, OSError, subprocess.TimeoutExpired, UnicodeError):
             ok, reason = False, "blocked_or_unreachable"
         results.append({"sha256": digest, "status": reason, "video_verified": ok})
         if ok:

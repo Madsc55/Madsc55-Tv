@@ -151,6 +151,38 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertFalse(result["sandbox_restore_accepted"])
             self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
 
+    def test_root_swap_before_inventory_prevents_walk(self):
+        from unittest.mock import patch
+        from madsc.backup import verify_independent_restore as real_verify
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            original_rglob = Path.rglob
+            calls = [0]
+
+            def swap_root_after_first_verify(*args):
+                result = real_verify(*args)
+                calls[0] += 1
+                if calls[0] == 1:
+                    roots[2].rename(base / "old-restored")
+                    roots[2].mkdir()
+                    (roots[2] / "file.txt").write_bytes(b"same")
+                return result
+
+            def forbid_swapped_walk(root, pattern):
+                if root == roots[2]:
+                    raise AssertionError("swapped restore root must not be walked")
+                return original_rglob(root, pattern)
+
+            with patch("madsc.k4_restore_gate.verify_independent_restore", side_effect=swap_root_after_first_verify), \
+                 patch.object(Path, "rglob", autospec=True, side_effect=forbid_swapped_walk):
+                result = audit_k4_restore(*roots, ["file.txt"])
+            self.assertEqual(calls[0], 1)
+            self.assertFalse(result["sandbox_restore_accepted"])
+
     def test_ancestor_swap_before_inventory_prevents_walk(self):
         from unittest.mock import patch
         from madsc.backup import verify_independent_restore as real_verify

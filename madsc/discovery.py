@@ -1,6 +1,7 @@
 """Deterministic, side-effect-free candidate deduplication and classification."""
 from __future__ import annotations
 from hashlib import sha256
+import re
 from urllib.parse import urlsplit, urlunsplit
 
 def normalize_url(value: str) -> str:
@@ -11,7 +12,7 @@ def normalize_url(value: str) -> str:
     value = value.strip()
     if any(ch.isspace() for ch in value):
         raise ValueError("Whitespace is forbidden in candidate URLs")
-    if __import__("re").search(r"%(?![0-9a-fA-F]{2})", value):
+    if re.search(r"%(?![0-9a-fA-F]{2})", value):
         raise ValueError("Malformed percent-encoding in candidate URL")
     if any(token in value.lower() for token in ("%0a", "%0d", "%00", "%250a", "%250d", "%2500")):
         raise ValueError("Encoded newline or NUL is forbidden in candidate URLs")

@@ -1,6 +1,7 @@
 """K5 offline, read-only channel history migration; never modifies source playlists."""
 import hashlib
 import json
+import re
 from collections.abc import Mapping
 from madsc.isolated_ibo_classification import classify_6115_positions
 
@@ -36,8 +37,8 @@ def build_isolated_test_pool(records):
             status, eid = h["status"], h["evidence_id"]
             if not isinstance(status, str) or status not in STATES or not isinstance(eid, str) or not 0 < len(eid) <= 256 or any(ord(c) < 32 or ord(c) == 127 or 0xD800 <= ord(c) <= 0xDFFF for c in eid):
                 raise ValueError("Invalid evidence")
-            if "://" in eid or "/" in eid or "\\" in eid or "@" in eid:
-                raise ValueError("Evidence identifier may not contain URLs or paths")
+            if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,255}", eid, flags=re.ASCII):
+                raise ValueError("Evidence identifier must be an opaque safe ID")
             clean.append({"status": status, "evidence_id": eid})
         reported = r.get("playback", "unknown")
         if not isinstance(reported, str) or reported not in STATES:

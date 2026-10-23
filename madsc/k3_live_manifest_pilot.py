@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import ipaddress
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 from madsc.fixture_report_writer import write_fixture_report
 import socket
@@ -67,10 +68,11 @@ def probe(url):
 def run(source_file=None, limit=LIMIT):
     if not isinstance(limit, int) or not 1 <= limit <= MAX_LIMIT:
         raise ValueError("Candidate limit must be between 1 and 75")
+    measured_at_utc = datetime.now(timezone.utc).isoformat()
     results = []
     seen_hashes = set()
     source_evidence = {}
-    # Keep the first LIMIT candidates while still exhausting the generator:
+    # Keep the first requested number of candidates while still exhausting the generator:
     # the source SHA-256 must describe the complete downloaded snapshot.
     for name, url in candidates(source_evidence, source_file):
         if len(results) >= limit:
@@ -95,6 +97,8 @@ def run(source_file=None, limit=LIMIT):
                       "audio_video_verified": False}
         results.append(result)
     report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT", "source": SOURCE,
+              "measured_at_utc": measured_at_utc, "candidate_limit": limit,
+              "candidate_shortfall": max(0, limit - len(results)),
               **source_evidence,
               "probed": len(results), "manifest_seen": sum(x.get("hls_manifest_seen", False) for x in results),
               "audio_video_verified": 0, "production_playlist_modified": False,

@@ -53,6 +53,8 @@ def verify_artifact_bytes(path: str | Path, expected_sha256: str, *, max_bytes: 
             raise ValueError("Artifact changed during verification")
         # Reject a path replaced while its original inode remained open.
         current = os.stat(target, follow_symlinks=False)
+        if not stat.S_ISREG(current.st_mode) or current.st_nlink != 1:
+            raise ValueError("Artifact path is no longer an unaliased regular file")
         if (current.st_dev, current.st_ino, current.st_size, current.st_mtime_ns, current.st_ctime_ns) != (
             info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
         ):

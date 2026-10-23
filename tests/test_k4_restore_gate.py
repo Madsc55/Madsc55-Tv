@@ -151,6 +151,37 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertFalse(result["sandbox_restore_accepted"])
             self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
 
+    def test_ancestor_swap_before_inventory_prevents_walk(self):
+        from unittest.mock import patch
+        from madsc.backup import verify_independent_restore as real_verify
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            parent = base / "parent"
+            parent.mkdir()
+            roots = [parent / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            calls = [0]
+            original_rglob = Path.rglob
+
+            def swap_after_first_verify(*args):
+                result = real_verify(*args)
+                calls[0] += 1
+                if calls[0] == 1:
+                    parent.rename(base / "real-parent")
+                    parent.symlink_to(base / "real-parent", target_is_directory=True)
+                return result
+
+            def reject_inventory_walk(root, pattern):
+                raise AssertionError("must not traverse symlinked ancestor")
+
+            with patch("madsc.k4_restore_gate.verify_independent_restore", side_effect=swap_after_first_verify), \
+                 patch.object(Path, "rglob", autospec=True, side_effect=reject_inventory_walk):
+                result = audit_k4_restore(*roots, ["file.txt"])
+            self.assertEqual(calls[0], 1)
+            self.assertFalse(result["sandbox_restore_accepted"])
+
     def test_symlinked_ancestor_during_inventory_blocks_second_read(self):
         from unittest.mock import patch
         from madsc.backup import verify_independent_restore as real_verify

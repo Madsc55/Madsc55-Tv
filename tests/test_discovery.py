@@ -55,7 +55,10 @@ class DiscoveryTests(unittest.TestCase):
         for url in ("https://example.org/live%0a#EXTINF",
                     "https://example.org/live%0Dnext",
                     "https://example.org/live%00",
-                    "https://example.org/live?x=%0a"):
+                    "https://example.org/live?x=%0a",
+                    "https://example.org/live%250a",
+                    "https://example.org/live?x=%250d",
+                    "https://example.org/live%2500"):
             with self.subTest(url=url), self.assertRaises(ValueError):
                 normalize_url(url)
         result = classify_candidates([{"name": "Unsafe", "url": "https://example.org/live%0a"}])

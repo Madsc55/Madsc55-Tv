@@ -4,7 +4,7 @@ import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-M3U_ATTRIBUTE = re.compile(r'(?:^|\s)([A-Za-z][\w-]*)="([^"]*)"')
+M3U_ATTRIBUTE = re.compile(r'(?:^|\s)([A-Za-z][\w-]*)="([^"]*)"(?=\s|$)')
 
 
 def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:

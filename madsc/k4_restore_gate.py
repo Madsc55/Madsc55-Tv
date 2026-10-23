@@ -13,17 +13,18 @@ from madsc.backup import snapshot_manifest, verify_independent_restore
 def audit_k4_restore(source: Path, backup: Path, restored: Path,
                      names: list[str]) -> dict:
     """Require matching backup/restore bytes before reporting sandbox success."""
+    # Validate root spelling before probing filesystem metadata. Relative paths
+    # must never be interpreted against the runner working directory.
+    roots = [Path(source), Path(backup), Path(restored)]
+    if any(not root.is_absolute() or str(root) != str(root.absolute())
+           or any(part in (".", "..") for part in root.parts)
+           for root in roots):
+        raise ValueError("Restore audit roots must be canonical absolute paths")
     # An aliased ancestor can redirect a seemingly independent sandbox tree.
     # Fail before reading any content through that path.
     for root in (Path(source), Path(backup), Path(restored)):
         if any(ancestor.is_symlink() for ancestor in (root, *root.parents)):
             raise ValueError("Restore audit paths must not contain symlink ancestors")
-    # Reject ambiguous aliases before any hashing or inventory traversal.
-    roots = [Path(source), Path(backup), Path(restored)]
-    if any(not root.is_absolute() or str(root) != str(root.absolute())
-           or any(part in ('.', '..') for part in root.parts)
-           for root in roots):
-        raise ValueError('Restore audit roots must be canonical absolute paths')
     # Reject oversized declared inventories before performing any file hashing.
     # Directory entries also count toward the bounded traversal budget.
     if not isinstance(names, list) or any(not isinstance(name, str) for name in names):

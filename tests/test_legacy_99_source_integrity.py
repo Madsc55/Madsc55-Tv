@@ -113,6 +113,24 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
                             audit.run(Path(temp) / "audit.json", "")
                         self.assertEqual(network.call_count, 1)
 
+    def test_invalid_blob_metadata_rejected_before_blob_fetch(self):
+        raw = b"name: sample\n"
+        sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        for field, invalid in (("sha", None), ("sha", "not-a-git-sha"),
+                               ("size", None), ("size", -1),
+                               ("size", 250001), ("size", True)):
+            with self.subTest(field=field, invalid=invalid):
+                entries = [{"path": f".github/workflows/{i:03d}.yml",
+                            "type": "blob", "size": len(raw), "sha": sha}
+                           for i in range(99)]
+                entries[0][field] = invalid
+                with tempfile.TemporaryDirectory() as temp:
+                    with patch.object(audit, "github", return_value={
+                            "tree": entries, "truncated": False}) as network:
+                        with self.assertRaises(ValueError):
+                            audit.run(Path(temp) / "audit.json", "")
+                        self.assertEqual(network.call_count, 1)
+
     def test_forged_blob_is_rejected(self):
         raw = b"name: sample\n"
         sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()

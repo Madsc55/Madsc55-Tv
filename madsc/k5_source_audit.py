@@ -64,6 +64,7 @@ def audit(root):
             continue
         rows.extend(doc["rows"])
     seen = set()
+    verified_paths = set()
     allowed_stages = {"K1", "K2", "K3", "K4", "K5"}
     required_signals = {"write", "push", "dispatch", "playlist", "epg",
                         "live", "backup", "artifact", "gate"}
@@ -84,6 +85,10 @@ def audit(root):
               or row.get("expected_sha") != expected[path]
               or row.get("verified") is not True):
             errors.append("sha_mismatch:" + path)
+        if (path in expected and row.get("sha") == expected[path]
+                and row.get("expected_sha") == expected[path]
+                and row.get("verified") is True):
+            verified_paths.add(path)
         signals = row.get("signals")
         stages = row.get("candidate_stages")
         if (not isinstance(signals, dict) or set(signals) != required_signals
@@ -92,6 +97,8 @@ def audit(root):
                 or len(set(map(str, stages))) != len(stages)
                 or any(type(stage) is not str or stage not in allowed_stages for stage in stages)):
             errors.append("invalid_signals:" + str(path))
+    if set(inventory_paths) != set(expected) | {path for path in inventory_paths if isinstance(path, str) and Path(path).name in EXCLUDED}:
+        errors.append("inventory_scope_inconsistent")
     for path in sorted(set(expected) - seen):
         errors.append("missing:" + path)
     if len(source_rows) != 99 or len(expected) != 92 or len(rows) != 92:
@@ -104,11 +111,7 @@ def audit(root):
     return {
         "source_commit": inventory.get("source_commit"),
         "expected": len(expected), "recorded": len(rows),
-        "verified_source_rows": sum(1 for r in rows if isinstance(r, dict)
-                                    and r.get("path") in expected
-                                    and r.get("sha") == expected[r["path"]]
-                                    and r.get("expected_sha") == expected[r["path"]]
-                                    and r.get("verified") is True),
+        "verified_source_rows": len(verified_paths),
         "source_audit_passed": not errors,
         "yaml_signal_counts": signal_counts,
         "static_mapping_only": True,

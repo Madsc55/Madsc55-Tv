@@ -9,7 +9,7 @@ def normalize_url(value: str) -> str:
     if any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF for ch in value) or "\\" in value:
         raise ValueError("Control characters or backslash escapes are forbidden in candidate URLs")
     value = value.strip()
-    if any(token in value.lower() for token in ("%0a", "%0d", "%00")):
+    if any(token in value.lower() for token in ("%0a", "%0d", "%00", "%250a", "%250d", "%2500")):
         raise ValueError("Encoded newline or NUL is forbidden in candidate URLs")
     parts = urlsplit(value)
     if parts.scheme.lower() not in ("http", "https") or not parts.netloc or parts.username or parts.password:

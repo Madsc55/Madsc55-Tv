@@ -20,7 +20,8 @@ def _validated_fixture_root(root: Path) -> Path:
             or "\\" in raw or "\\" in normalized
             or normalized.count("/") != raw.count("/")
             or ":" in normalized
-            or any(part in (".", "..") for part in normalized.split("/"))
+            or any(part in (".", "..") or part.endswith((" ", "."))
+                   for part in normalized.split("/") if part)
             or any(part in (".", "..") for part in raw.split("/"))
             or any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
                    or 0xFDD0 <= ord(ch) <= 0xFDEF

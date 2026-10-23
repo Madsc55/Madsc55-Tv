@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from madsc.backup import compare_copy, verify_sandbox_restore
+from madsc.backup import compare_copy, verify_sandbox_restore, verify_independent_restore
 
 
 class CopyAuditAncestorSymlinkTests(unittest.TestCase):
@@ -28,6 +28,22 @@ class CopyAuditAncestorSymlinkTests(unittest.TestCase):
                         compare_copy(source, destination, ["sample.txt"])
                     with self.assertRaisesRegex(ValueError, "symlinked ancestors"):
                         verify_sandbox_restore(source, destination, ["sample.txt"])
+
+
+    def test_three_tree_restore_rejects_aliased_ancestor(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "sample.txt").write_bytes(b"same")
+            alias = base / "alias"
+            try:
+                alias.symlink_to(roots[1], target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("Directory symlinks unavailable")
+            with self.assertRaisesRegex(ValueError, "symlinked ancestors"):
+                verify_independent_restore(roots[0], alias, roots[2], ["sample.txt"])
 
 
 if __name__ == "__main__":

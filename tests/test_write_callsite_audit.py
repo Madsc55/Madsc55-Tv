@@ -844,41 +844,45 @@ def mutate(path, fd):
         self.assertTrue(all(row["review_required"] for row in rows))
 
     def test_scan_tree_rejects_source_replaced_by_symlink_during_read(self):
+        from contextlib import contextmanager
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             source = root / "safe.py"
             target = root / "target.txt"
-            source.write_text("value = 1\n", encoding="utf-8")
-            target.write_text("value = 2\n", encoding="utf-8")
-            original_read = Path.read_text
+            source.write_text("value = 1\\n", encoding="utf-8")
+            target.write_text("value = 2\\n", encoding="utf-8")
+            original_open = Path.open
 
-            def swapping_read(path, *args, **kwargs):
-                content = original_read(path, *args, **kwargs)
+            @contextmanager
+            def swapping_open(path, *args, **kwargs):
+                with original_open(path, *args, **kwargs) as handle:
+                    yield handle
                 if path == source:
                     source.unlink()
                     source.symlink_to(target)
-                return content
 
-            with patch.object(Path, "read_text", swapping_read):
+            with patch.object(Path, "open", swapping_open):
                 with self.assertRaisesRegex(ValueError, "unsafe file type during audit"):
                     scan_python_tree(root)
 
     def test_scan_tree_rejects_source_modified_while_reading(self):
+        from contextlib import contextmanager
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             source = root / "safe.py"
-            source.write_text("value = 1\n", encoding="utf-8")
-            original_read = Path.read_text
+            source.write_text("value = 1\\n", encoding="utf-8")
+            original_open = Path.open
 
-            def changing_read(path, *args, **kwargs):
-                content = original_read(path, *args, **kwargs)
+            @contextmanager
+            def changing_open(path, *args, **kwargs):
+                with original_open(path, *args, **kwargs) as handle:
+                    yield handle
                 if path == source:
-                    source.write_text("value = 123456789\n", encoding="utf-8")
-                return content
+                    source.write_text("value = 123456789\\n", encoding="utf-8")
 
-            with patch.object(Path, "read_text", changing_read):
+            with patch.object(Path, "open", changing_open):
                 with self.assertRaisesRegex(ValueError, "changed during audit"):
                     scan_python_tree(root)
 

@@ -16,6 +16,25 @@ class BackupManifestHardeningTests(unittest.TestCase):
                     snapshot_manifest(root, ['folder', 'folder/child.txt'])
                 opener.assert_not_called()
 
+    def test_portable_manifest_aliases_rejected_before_source_open(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            for names in (['News.ts', 'news.ts'], ['K.ts', 'K.ts']):
+                entries = [{'path': name, 'bytes': 0, 'sha256': '0' * 64} for name in names]
+                with self.subTest(names=names), patch('madsc.backup.snapshot_manifest') as snapshot:
+                    with self.assertRaisesRegex(ValueError, 'Ambiguous portable'):
+                        verify_manifest(Path(directory), {'entries': entries})
+                    snapshot.assert_not_called()
+
+    def test_invisible_manifest_name_rejected_before_source_open(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            entries = [{'path': 'hidden\u200b.ts', 'bytes': 0, 'sha256': '0' * 64}]
+            with patch('madsc.backup.snapshot_manifest') as snapshot:
+                with self.assertRaisesRegex(ValueError, 'Invisible formatting'):
+                    verify_manifest(Path(directory), {'entries': entries})
+                snapshot.assert_not_called()
+
     def test_portable_aliases_rejected_before_source_open(self):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as directory:

@@ -106,6 +106,13 @@ class SourceImportTests(unittest.TestCase):
                         ValueError, "Duplicate metadata attribute"):
                     extract_candidates(p)
 
+    def test_unbalanced_attribute_quotes_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u"
+            p.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="broken,Channel\\nhttps://example.org/live\\n', encoding="utf-8")
+            with self.assertRaises(ValueError):
+                extract_candidates(p)
+
     def test_symlink_source_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             original = Path(d) / "original.m3u"

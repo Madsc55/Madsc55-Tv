@@ -22,13 +22,15 @@ _MUTATING_METHODS = {
     "write", "writelines", "write_text", "write_bytes", "unlink", "mkdir", "makedirs", "rmdir",
     "removedirs", "rename", "replace", "symlink_to", "hardlink_to",
     "touch", "truncate", "copy", "copy2", "copyfile", "copytree",
-    "move", "rmtree", "remove", "chmod", "lchmod",
+    "move", "rmtree", "remove", "chmod", "lchmod", "chown", "lchown",
 }
 _OS_MUTATORS = {
     "remove", "unlink", "rename", "replace", "mkdir", "makedirs",
     "rmdir", "removedirs", "symlink", "link", "truncate",
     "write", "writev", "pwrite", "pwritev", "ftruncate",
     "chmod", "lchmod", "fchmod", "chown", "lchown", "fchown", "utime",
+    "mkfifo", "mknod", "setxattr", "fsetxattr", "lsetxattr",
+    "removexattr", "fremovexattr", "lremovexattr", "chflags", "lchflags",
 }
 # Process launchers can perform writes outside Python's filesystem APIs (cp,
 # mv, redirection, scripts, etc.). Record them for command-level review.

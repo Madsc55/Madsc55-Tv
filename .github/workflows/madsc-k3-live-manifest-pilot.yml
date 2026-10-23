@@ -12,8 +12,24 @@ on:
           - "75"
 permissions:
   contents: read
+concurrency:
+  group: madsc55-k3-live-manifest-pilot
+  cancel-in-progress: false
 jobs:
+  offline-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate K1-K5 offline regression gate before network access
+        run: python -m madsc.offline_gate
   k3-real-manifest:
+    needs: offline-regression
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:

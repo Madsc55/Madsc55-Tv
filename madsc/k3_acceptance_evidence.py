@@ -39,10 +39,14 @@ def assess(paths):
         snapshots.append((stamp.astimezone(timezone.utc), set(ids), count))
     snapshots.sort(key=lambda s: s[0])
     elapsed = (snapshots[-1][0] - snapshots[0][0]).total_seconds()
+    adjacent_intervals = [(snapshots[i + 1][0] - snapshots[i][0]).total_seconds()
+                          for i in range(2)]
+    intervals_met = all(seconds >= 21600 for seconds in adjacent_intervals)
     same = len(set.intersection(*(s[1] for s in snapshots))) == 75
-    passed = elapsed >= 21600 and same and all(s[2] == 75 for s in snapshots)
+    passed = intervals_met and same and all(s[2] == 75 for s in snapshots)
     return {"stage": "K3_THREE_STAGE_MANIFEST_ACCEPTANCE", "elapsed_seconds": elapsed,
-            "minimum_six_hours_met": elapsed >= 21600, "same_75_candidates": same,
+            "minimum_six_hours_met": intervals_met,
+            "adjacent_interval_seconds": adjacent_intervals, "same_75_candidates": same,
             "manifest_seen_each": [s[2] for s in snapshots],
             "audio_video_verified": False, "manifest_acceptance": passed,
             "full_k3_acceptance": False}

@@ -458,3 +458,12 @@ class LocalOutputGuardTests(unittest.TestCase):
                 enforce_local_output_path(linked / "evidence.json")
             with self.assertRaises(ProtectedWriteRejected):
                 enforce_local_output_path(root / "elsewhere.json", allowed_root=real)
+
+    def test_windows_superscript_device_aliases_blocked(self):
+        paths = [f"reports/{prefix}{digit}.json"
+                 for prefix in ("COM", "LPT") for digit in ("¹", "²", "³")]
+        report = audit_write_paths(paths)
+        self.assertEqual(report["rejected"], paths)
+        for path in paths:
+            with self.subTest(path=path), self.assertRaises(ProtectedWriteRejected):
+                enforce_write_paths([path])

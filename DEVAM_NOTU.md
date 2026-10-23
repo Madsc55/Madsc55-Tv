@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50209)
+Total output lines: 1050
+
 # K3 YEREL HEDEFLİ TEST KANITI — 2026-10-23
 - GitHub `madsc/epg.py` blob `29fac7a619b198c6207767ba113e6a9d7c6629cf` esas alınarak ayrıştırıcı mantığı geçici yerel ortamda yeniden kuruldu. `python -m py_compile` geçti; 6 odaklı senaryo geçti: geçerli eşleşme, tırnaklı virgül, eksik stream URI, çift tvg-id, eksik tvg-id, sahte tvg-id.
 - Bunlar GitHub test dosyasının tamamının koşulduğu veya birebir kaynak dosyanın çalıştırıldığı anlamına gelmez. Tam unittest suite / CI hâlâ doğrulanmadı. GitHub clone denemesi DNS kısıtıyla başarısız oldu.
@@ -535,11 +538,7 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 
 
 ## 22 Ekim 2026 — Bu sohbetin son devri
-Kullanıcı tüm ilerlemenin kaydedilip yeni sohbete geçilmesini istedi. Ayrıntılı toplu devir: SOHBET_DEVIR_2026-10-22_SON.md. Yanlış eski repo çalışması ve yeni sisteme aktarım, bütün ilgili commit/kanıt dosyaları, başarısız testler ve düzeltmeleri, 757 test+5 kapı+5 dosya/K5 doğrulaması, açık 11 sözleşme farkı ve 92/26/22 bağımsız kabul eksikleri kaydedildi. Bu devir hazırlanırken HEAD 3c228e7340b090ae4edf49d3d7b49382a4ef6d69; bu HEAD'in eklediği five_stage_installation modülü ve iki testi okundu ama çalıştırılmadı. İlk iş güncel HEAD'de bunları ve tam offline_gate'i doğrulamak. 757 testi sonraki kaynak sürümüne otomatik mal etme. Korunan veriler/eski repo/PR71/izinsiz Actions ve canlı test sınırları değişmedi; IBO testi kullanıcıda. Bu commit yalnız dokümandır, yeni test sonucu değildir.
-
-
-## Eşzamanlı diğer devirle mutabakat
-Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_DEVIR_2026-10-22.md ekledi; metin okundu ve korundu. O belgedeki 707 test bilgisi tarihsel kaldı: 1b30eee paketi 757 test+5 kapı+5 rapor/K5 ile doğrulandı, daha sonraki 3c228e7 dosyaları henüz sınanmadı. Diğer belgenin kullanıcı ekranından aktardığı K4 EPG/logo ve K5 arşiv/bakım hedefleri ile repo teknik K4 yedek/K5 bakım adlandırması arasındaki fark yeni sohbette açık görev eşlemesiyle uzlaştırılmalı; repo isimleri varsayımla değiştirilmemeli. Bu devir kaydı bütün önceki notları tamamlar.
+Kullanıcı tüm ilerlemenin kaydedilip yeni sohbete geçilmesini istedi. Ayrıntılı toplu devir: SOHBET_DEVIR_2026-10-22_SON.md. Yanlış eski repo çalışması ve yeni sisteme aktarım, bütün ilgili commit/kanıt dosyaları, başarısız testler ve düzeltmeleri, 757 test+5 kapı+5 dosya/K5 doğrulam…209 tokens truncated…dı, daha sonraki 3c228e7 dosyaları henüz sınanmadı. Diğer belgenin kullanıcı ekranından aktardığı K4 EPG/logo ve K5 arşiv/bakım hedefleri ile repo teknik K4 yedek/K5 bakım adlandırması arasındaki fark yeni sohbette açık görev eşlemesiyle uzlaştırılmalı; repo isimleri varsayımla değiştirilmemeli. Bu devir kaydı bütün önceki notları tamamlar.
 
 ## 22 Ekim 2026 — kurulum kapısı ve zamanlama regresyonu doğrulaması
 - Son kod/test/kanıt commit SHA: `e4f68c0b6bf597da1ab21c5ebd8c9480d5b85991`; taban `554ec5f07a10dcf81041c1cc18a2081a04dc9e4c`. Eşzamanlı gelen `4fa9cf7` ve `554ec5f` kurulum-envanteri fail-closed testini ekledi/düzeltti; eski HEAD üzerine yazılmadı.
@@ -1040,3 +1039,11 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Temiz uzak main `c16f25d230b411ac100411a113a125b0b8f6b3fa` doğrulaması: **1157/1157 test**, beş izole K kapısı ve bütün offline kapılar başarılı; 140 adayın 104'ünde doğrudan yerel çağıran, 16'sında en az bir guarded çağıran gözlendi. Dış/import/callback çağrıları kapanmadığı için `caller_closure_verified=0`; subprocess read-only etki kanıtı da 0/6.
 - Kabul değişmedi: 0/92 davranış parity, 0/26 runtime güvenlik, 0/22 ana görev. Sıradaki iş 16 kısmi guarded çağıran kaydında tüm gerçek giriş yollarını ve altı subprocess komutunun etkisini tek tek kaynak-bağlı kapatmak; statik çağıran gözlemini runtime kabulü saymamak.
 - Korunan üretim verisi, eski depo, PR #71, canlı probe, cihaz ve Actions tetiklenmedi. Gerçek bağımsız execution/artifact, harici restore ve en son kullanıcı cihaz kanıtı hâlâ dış engel.
+
+
+## 23 Ekim 2026 — K1 artifact yazıcısı ebeveyn-değiştirme yarışı kapatıldı
+- Başlangıç `main` SHA'sı `fb4b00a88af5a1257eeb92bc531f2f94348e786c`; bu SHA'daki bağımsız M3U8 önizleme çalışmasına dokunulmadı. Güvenli descriptor-relative evidence yazıcısı public yardımcı olarak açıldı: `ce830b31d3fde66ebd63c853de54c4268a304ebd`. `artifact_transport._write_json_exclusive`, iki doğrudan K1 preflight sonrasında `O_NOFOLLOW|O_EXCL` ve dizin-descriptor traversal kullanan bu yazıcıya bağlandı: `083ef2dd1e98d3ff8ccfbc708391d73365ac09d1`.
+- Ebeveyn `reports` dizininin preflight dönüşünde dış dizine symlink olarak değiştirilmesi regresyonu eklendi; dışarıda dosya oluşmadığı doğrulandı. Test commitleri `40c58fbbb6ea4c7a14ed76b0e4f154b726f538bf` ve `f8c32a3a2bdf278ac627571e4118dd5bc07821e7`.
+- Temiz uzak `f8c32a3a2bdf278ac627571e4118dd5bc07821e7` checkout'unda hedefli 83/83 ve tam offline 1190/1190 test; beş izole K kapısı, write-callsite audit ve rapor round-trip başarılı. Başarısız test yok. Actions dispatch/rerun yapılmadı.
+- Bu yerel fixture/statik doğrulama davranışsal veya üretim kabulü değildir: parity 0/92, runtime güvenlik 0/26, ana görev 0/22 ve `production_acceptance=false` kaldı. Gerçek aynı-input bağımsız execution/artifact çiftleri, harici restore ve en son kullanıcı cihaz kanıtı hâlâ engelli/açık.
+- Sıradaki somut yerel iş: 140 açık write-callsite adayında kısmi guarded caller yollarını kaynak hashine bağlı kapatmak ve altı subprocess çağrısının gerçek dosya etkisini fail-closed sınıflandırmak. Korunan playlist/EPG/favori/logo/yedek/arşiv, eski depo, PR #71 ve üretim verisi değiştirilmedi.

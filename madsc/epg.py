@@ -58,7 +58,11 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
                 raise ValueError("Duplicate M3U tvg-id attribute")
             ids.append(matches[0].strip() if matches else "")
         elif pending_stream and line and not line.startswith("#"):
-            if not line.startswith(("https://", "http://")) or not urlsplit(line).hostname:
+            try:
+                valid_uri = line.startswith(("https://", "http://")) and bool(urlsplit(line).hostname)
+            except ValueError:
+                valid_uri = False
+            if not valid_uri:
                 raise ValueError("M3U EXTINF invalid stream URI")
             pending_stream = False
     if pending_stream:

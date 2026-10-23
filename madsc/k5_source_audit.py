@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 
+FROZEN_SOURCE_COMMIT = "ca374df3b9585c0d76a078db9536150ebbc260f7"
 PARTS = ("01_18", "19_36", "37_54", "55_72", "73_90", "91_92")
 EXCLUDED = {
     "madsc-01-guvenlik.yml", "madsc-02-kesif.yml", "madsc-03-kanal-test.yml",
@@ -21,6 +22,8 @@ def audit(root):
         return {"source_audit_passed": False, "production_accepted": False,
                 "behavioral_parity_accepted": 0,
                 "errors": ["missing_or_invalid_inventory:" + type(exc).__name__]}
+    if inventory.get("source_commit") != FROZEN_SOURCE_COMMIT:
+        errors.append("frozen_source_commit_mismatch")
     source_rows = inventory.get("workflows", [])
     if not isinstance(source_rows, list):
         source_rows = []
@@ -57,7 +60,7 @@ def audit(root):
         if not isinstance(doc, dict):
             errors.append("invalid_part_object:" + part)
             continue
-        if doc.get("source_commit") != inventory.get("source_commit"):
+        if doc.get("source_commit") != FROZEN_SOURCE_COMMIT:
             errors.append("wrong_commit:" + part)
         if not isinstance(doc.get("rows"), list):
             errors.append("invalid_rows:" + part)

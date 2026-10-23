@@ -129,3 +129,10 @@ Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim 
 - `madsc/restore_drill.py` -> `k4/madsc/restore_drill.py`; yedek commit `28f23a0973dfb2151622ad103990465e322922f6`; Git blob `a9cd3f74f888a636ce624a4b6fd89f668c0f14bd`.
 - Önceki dört dosyayla toplam **yedi K4 dosyası** gerçek özel depoya kopyalanıp geri okundu. Bu **tam sistem snapshot'ı değildir**; SHA-256 manifesti ve bağımsız restore henüz yoktur.
 - K4-15/16/17/18 tamamlanmadı. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.
+
+## 23 Ekim 2026 — Yedek drift'i tespit ve onarım
+
+- Kaynak commit `1de65a5b710b7e5b912ec87f30ea9c2518bbdeda` üzerinde yedi K4 dosyası karşılaştırıldı; altı dosya eşleşti, `.github/workflows/madsc-04-yedek.yml` eski sürümdeydi.
+- Kaynak Git blob `655296043e726bdb40dded5585aaa777f35edff1`, önceki yedek blob `31d6ff6fd98fbb87dcfeef6aa2709a517b268c7e`.
+- Özel depoda `k4/.github/workflows/madsc-04-yedek.yml` güncellendi: yedek commit `ca1338a73a22e36593597cb5adc6239bec0bb695`; tekrar okuma sonrası blob eşitliği doğrulandı.
+- Bu sürüm drift'i onarımıdır, SHA-256 tam sistem manifesti veya bağımsız restore değildir. K4-15/16/17/18 kabulü bekliyor; `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.

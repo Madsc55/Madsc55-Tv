@@ -86,12 +86,18 @@ def run(output, token):
             raise ValueError("Invalid legacy workflow blob metadata")
     rows = []
     for item in entries:
-        if item.get("size", 0) > 250000:
-            raise ValueError("Oversized workflow")
         blob = github(f"https://api.github.com/repos/{REPO}/git/blobs/{item['sha']}", token)
-        if blob.get("encoding") != "base64":
-            raise ValueError("Unexpected blob encoding")
-        raw = base64.b64decode("".join(blob["content"].split()), validate=True)
+        if (not isinstance(blob, dict) or blob.get("encoding") != "base64"
+                or not isinstance(blob.get("content"), str)
+                or not isinstance(blob.get("sha"), str)):
+            raise ValueError("Invalid legacy workflow blob response")
+        encoded = "".join(blob["content"].split())
+        if len(encoded) > ((item["size"] + 2) // 3) * 4:
+            raise ValueError("Oversized encoded workflow blob")
+        try:
+            raw = base64.b64decode(encoded, validate=True)
+        except (ValueError, base64.binascii.Error) as exc:
+            raise ValueError("Invalid workflow blob base64") from exc
         expected_sha = hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
         if expected_sha != item["sha"] or blob.get("sha") != item["sha"]:
             raise ValueError("Source blob SHA mismatch")

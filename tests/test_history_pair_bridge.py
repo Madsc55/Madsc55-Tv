@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from madsc.history_pair_bridge import bridge_legacy_pair, merge_into_envelope
-from madsc.history_pair_store import decode_pair
+from madsc.history_pair_store import decode_pair, encode_pair
 
 
 def pair(time, runs, state):
@@ -59,6 +59,15 @@ class HistoryPairBridgeTests(unittest.TestCase):
                 with self.assertRaises(OSError):
                     merge_into_envelope(dest, pair("2026-10-20T12:00:00Z", 3, "FAIL"))
             self.assertEqual(dest.read_bytes(), before)
+
+    def test_malformed_history_payload_types_rejected(self):
+        for payload in (None, [], "invalid", 7):
+            with self.subTest(payload=payload):
+                with self.assertRaises(ValueError):
+                    encode_pair(payload)
+                raw = json.dumps({"schema": 1, "payload": payload, "sha256": "0" * 64})
+                with self.assertRaises(ValueError):
+                    decode_pair(raw)
 
     def test_symlink_legacy_input_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:

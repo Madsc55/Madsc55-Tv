@@ -14,6 +14,12 @@ class DiscoveryTests(unittest.TestCase):
     def test_credentials_rejected(self):
         with self.assertRaises(ValueError):
             normalize_url("https://user:pass@example.org/live")
+    def test_empty_userinfo_is_rejected(self):
+        for url in ("https://@example.org/live", "https://:pass@example.org/live",
+                    "https://user:@example.org/live"):
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                normalize_url(url)
+
     def test_invalid_hosts_and_ports_rejected(self):
         for url in ("https://example.org:abc/live", "https://example.org:0/live",
                     "https://bad host/live", "https://[broken/live",

@@ -66,7 +66,7 @@ def same_origin_https(parent, child):
 def verify_av(url):
     """Verify codec streams from an HLS segment; audio language is not inferred."""
     manifest = safe_curl(url, 65536)
-    if not manifest or not manifest.lstrip().startswith(b"#EXTM3U") or len(manifest) > 65536:
+    if not isinstance(manifest, bytes) or not manifest.lstrip().startswith(b"#EXTM3U") or len(manifest) > 65536:
         return False, False, "no_manifest"
     text = manifest.decode("utf-8-sig", errors="replace")
     if any(line.strip().startswith("#EXT-X-STREAM-INF:") for line in text.splitlines()):
@@ -83,7 +83,7 @@ def verify_av(url):
         manifest = safe_curl(url, 65536)
         if not manifest:
             return False, False, "variant_unreachable"
-        if not manifest.lstrip().startswith(b"#EXTM3U") or len(manifest) > 65536:
+        if not isinstance(manifest, bytes) or not manifest.lstrip().startswith(b"#EXTM3U") or len(manifest) > 65536:
             return False, False, "invalid_variant_manifest"
         text = manifest.decode("utf-8-sig", errors="replace")
     if any(line.lstrip().startswith('#EXT-X-STREAM-INF') for line in text.splitlines()):

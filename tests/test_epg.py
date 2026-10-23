@@ -49,7 +49,8 @@ class EpgTests(unittest.TestCase):
     def test_http_stream_uri_requires_hostname(self):
         for uri in ("https://", "http:///stream.m3u8", "https://[broken-ipv6/stream.m3u8",
                     "https://example.org:invalid/live", "https://example.org:70000/live",
-                    "https://example.org:0/live", "https://user:secret@example.org/live"):
+                    "https://example.org:0/live", "https://user:secret@example.org/live",
+                    "https://example.org/live channel.m3u8", "https://example.org/li\tve"):
             with self.subTest(uri=uri), tempfile.TemporaryDirectory() as d:
                 p = Path(d) / "playlist.m3u8"
                 e = Path(d) / "xmltv.xml"

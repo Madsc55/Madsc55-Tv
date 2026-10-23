@@ -1,0 +1,457 @@
+{
+  "schema_version": 1,
+  "source_commit": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+  "method": "Direct GitHub YAML read, SHA check, conservative regex signals; NOT behavioral parity",
+  "rows": [
+    {
+      "path": ".github/workflows/madsc-ibo-6115-second.yml",
+      "sha": "4591be38fed55b81e6bf8d3a22319c262f11c01b",
+      "expected_sha": "4591be38fed55b81e6bf8d3a22319c262f11c01b",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "scripts/apply_ibo_6115_second.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-ibo-ilk-239.yml",
+      "sha": "7cfc6061bb1714c08cd52ff130a54c36bcee15c7",
+      "expected_sha": "7cfc6061bb1714c08cd52ff130a54c36bcee15c7",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "scripts/apply_ibo_first_239_decisions.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-ibo-kararlar-grup1.yml",
+      "sha": "d79a157a13c667d6dd60a0c4837cca2c1da4f220",
+      "expected_sha": "d79a157a13c667d6dd60a0c4837cca2c1da4f220",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "scripts/apply_ibo_decisions_group1.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-ibo-second-voice.yml",
+      "sha": "ad14d3daf071f8503651581ba93f6b6008fa0aee",
+      "expected_sha": "ad14d3daf071f8503651581ba93f6b6008fa0aee",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "scripts/apply_ibo_second_voice.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-otomatik-devam.yml",
+      "sha": "4cf99f3ce1801588c24082c2122b1d781192e7dd",
+      "expected_sha": "4cf99f3ce1801588c24082c2122b1d781192e7dd",
+      "verified": true,
+      "candidate_stages": [
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/madsc-rule24-test.yml",
+      "sha": "8092ea97979380e7af71aaa9383dc28f41c86ab8",
+      "expected_sha": "8092ea97979380e7af71aaa9383dc28f41c86ab8",
+      "verified": true,
+      "candidate_stages": [
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/madsc-sistem-saglik-denetimi.yml",
+      "sha": "c3c18155d13c2ca5e1a76304729fbcc6739849a5",
+      "expected_sha": "c3c18155d13c2ca5e1a76304729fbcc6739849a5",
+      "verified": true,
+      "candidate_stages": [
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "tools/sistem_saglik_denetimi.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-son-kontrol-kurtarma-teshis.yml",
+      "sha": "471540a306c4146fa12123510a4c70dcfe1356eb",
+      "expected_sha": "471540a306c4146fa12123510a4c70dcfe1356eb",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/madsc-son-kontrol.yml",
+      "sha": "08871f1b397184459a093606c2519e1c19e5167a",
+      "expected_sha": "08871f1b397184459a093606c2519e1c19e5167a",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": true,
+        "backup": true,
+        "artifact": true,
+        "gate": true
+      },
+      "script_refs": [
+        "tools/workflow_failure_gate.py",
+        "final_validation.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-toplu-butunluk.yml",
+      "sha": "d7456c7a5526350b0d52e39b6708cf288d209dbf",
+      "expected_sha": "d7456c7a5526350b0d52e39b6708cf288d209dbf",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "scripts/bulk_integrity_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-tum-sistem-yedek.yml",
+      "sha": "f56db59dc9a8a12f21296a80ea53b602340454ef",
+      "expected_sha": "f56db59dc9a8a12f21296a80ea53b602340454ef",
+      "verified": true,
+      "candidate_stages": [
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "scripts/repository_settings_inventory.py",
+        "scripts/full_system_backup.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-turk-kanal-geri-sec.yml",
+      "sha": "ee4538c2b9e11f5589d8babacd9f3ff39457cc9b",
+      "expected_sha": "ee4538c2b9e11f5589d8babacd9f3ff39457cc9b",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "scripts/recover_turkish_backups.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-uc-asama.yml",
+      "sha": "93c3a87372b1dfbe80ba9e59dabc2180511112ae",
+      "expected_sha": "93c3a87372b1dfbe80ba9e59dabc2180511112ae",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": true,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": true
+      },
+      "script_refs": [
+        "tools/workflow_failure_gate.py",
+        "verification_pipeline.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-yedek-turk-ayir.yml",
+      "sha": "67b12b441fab5fa57eded1a7684ebf24e7d819c2",
+      "expected_sha": "67b12b441fab5fa57eded1a7684ebf24e7d819c2",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "scripts/keep_turkish_backups.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/madsc-yedekler-aktarim-test.yml",
+      "sha": "e4de46aa7edbd84b8dc3bdda0e3d75a39421118b",
+      "expected_sha": "e4de46aa7edbd84b8dc3bdda0e3d75a39421118b",
+      "verified": true,
+      "candidate_stages": [
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/madsc-yedekler-sayi-duzelt.yml",
+      "sha": "feb92ccf12c62b3818cac164f0effe319083872f",
+      "expected_sha": "feb92ccf12c62b3818cac164f0effe319083872f",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "scripts/sync_yedekler_category_count.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/oncelikli-kanal-dogrulama.yml",
+      "sha": "ae7c910e5f7d840a6bceb0ab99cad3c9d414d63f",
+      "expected_sha": "ae7c910e5f7d840a6bceb0ab99cad3c9d414d63f",
+      "verified": true,
+      "candidate_stages": [
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "scripts/oncelikli_kanal_dogrula.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/onikinci-hata-siniflandirma-test.yml",
+      "sha": "41bf9c8b94b7f1e4ad045b1708cf52bb6edbe8da",
+      "expected_sha": "41bf9c8b94b7f1e4ad045b1708cf52bb6edbe8da",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    }
+  ]
+}

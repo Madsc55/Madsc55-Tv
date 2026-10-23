@@ -67,6 +67,14 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
             self.assertEqual(curl.call_args_list[1].args[0],
                              "https://example.org/segment.ts")
 
+    def test_alternate_audio_rendition_is_not_claimed_as_verified(self):
+        manifest = (b'#EXTM3U\n#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio",'
+                    b'NAME="Turkish",URI="audio.m3u8"\n#EXTINF:4,\nsegment.ts\n')
+        with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "alternate_media_unsupported"))
+            curl.assert_called_once()
+
     def test_encrypted_media_playlist_fails_before_segment_download(self):
         manifest = b'#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\n#EXTINF:4,\nsegment.ts\n'
         with patch.object(pilot, 'safe_curl', return_value=manifest) as curl:

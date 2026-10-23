@@ -1,0 +1,418 @@
+{
+  "schema_version": 1,
+  "source_commit": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+  "method": "Direct GitHub YAML read, SHA check, conservative regex signals; NOT behavioral parity",
+  "rows": [
+    {
+      "path": ".github/workflows/publish-iptv-png-logos.yml",
+      "sha": "7b8fa621b2cfaf151e26855d92a6ccbc326d6ed3",
+      "expected_sha": "7b8fa621b2cfaf151e26855d92a6ccbc326d6ed3",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/sekizinci-tekrar-raporu-test.yml",
+      "sha": "64665da9b8f4602e0b9310e012c835729a73afa7",
+      "expected_sha": "64665da9b8f4602e0b9310e012c835729a73afa7",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/sozcu-akit-ozel-test.yml",
+      "sha": "b74d2db6f7acced67f514cae037be44b9722059d",
+      "expected_sha": "b74d2db6f7acced67f514cae037be44b9722059d",
+      "verified": true,
+      "candidate_stages": [
+        "K3",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yedekler/sozcu_akit_ozel_test.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/test-13-kaynak-degisiklik.yml",
+      "sha": "44c95db225dca48f6a50a72f72f6e4ce2f7d5457",
+      "expected_sha": "44c95db225dca48f6a50a72f72f6e4ce2f7d5457",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-14-istikrar.yml",
+      "sha": "4915ba2ac06a188a9ae4dddcfc46fda78f37515b",
+      "expected_sha": "4915ba2ac06a188a9ae4dddcfc46fda78f37515b",
+      "verified": true,
+      "candidate_stages": [
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-15-logo-epg.yml",
+      "sha": "de27646659c70b0206f998ac2b69a3aa948682d2",
+      "expected_sha": "de27646659c70b0206f998ac2b69a3aa948682d2",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": true,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": [
+        "tools/logo_epg_audit.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/test-16-workflow-safety.yml",
+      "sha": "902925df650f77f80e618a80da101cdeb68da23e",
+      "expected_sha": "902925df650f77f80e618a80da101cdeb68da23e",
+      "verified": true,
+      "candidate_stages": [
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-17-candidate-summary.yml",
+      "sha": "70d1ae2d665ebc398d1c41d7134ea7c89a3186f1",
+      "expected_sha": "70d1ae2d665ebc398d1c41d7134ea7c89a3186f1",
+      "verified": true,
+      "candidate_stages": [
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-18-change-simulation.yml",
+      "sha": "e39f6603c188d72f7ebb87f8b1cfbb858962d553",
+      "expected_sha": "e39f6603c188d72f7ebb87f8b1cfbb858962d553",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-19-integration.yml",
+      "sha": "bd8c5c1401661fc1dff468274d9e4f6ebe963279",
+      "expected_sha": "bd8c5c1401661fc1dff468274d9e4f6ebe963279",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": true,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-20-full-integration.yml",
+      "sha": "41d5fd3ff8024f960a4c4f5e15810ea48d1fb3b8",
+      "expected_sha": "41d5fd3ff8024f960a4c4f5e15810ea48d1fb3b8",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": true,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-21-functional-e2e.yml",
+      "sha": "f13904e84f0116b53120b792a89e1a4377f6dbc3",
+      "expected_sha": "f13904e84f0116b53120b792a89e1a4377f6dbc3",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": true,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-22-real-playlist.yml",
+      "sha": "f1fe0cc001eac113f56acffaece5850d3eba515d",
+      "expected_sha": "f1fe0cc001eac113f56acffaece5850d3eba515d",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": true,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-23-live-stream.yml",
+      "sha": "412b3f263bab8d8f7c96f2776e56aa939a6b73b2",
+      "expected_sha": "412b3f263bab8d8f7c96f2776e56aa939a6b73b2",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-24-system-audit.yml",
+      "sha": "4cdb0dce456bd49cbb082c9506f7019f62776dc7",
+      "expected_sha": "4cdb0dce456bd49cbb082c9506f7019f62776dc7",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-25-full-project-readonly.yml",
+      "sha": "c00a6295182f7b31b7a0bc95af7056c0f20cae47",
+      "expected_sha": "c00a6295182f7b31b7a0bc95af7056c0f20cae47",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-26-automation-safety.yml",
+      "sha": "ada482112b58e47bd56b8c742ad08633e1f3b840",
+      "expected_sha": "ada482112b58e47bd56b8c742ad08633e1f3b840",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-27-pipeline-contract.yml",
+      "sha": "41a24282bd6785cba1025d32040ccb1c994bf38a",
+      "expected_sha": "41a24282bd6785cba1025d32040ccb1c994bf38a",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    }
+  ]
+}

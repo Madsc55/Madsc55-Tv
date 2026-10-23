@@ -290,6 +290,10 @@ def verify_independent_restore(source: Path, backup: Path, restored: Path,
     if any(Path(path).is_symlink() or not Path(path).is_dir()
            for path in (source, backup, restored)):
         raise ValueError("Independent restore trees must be real directories")
+    if any(ancestor.is_symlink()
+           for path in (source, backup, restored)
+           for ancestor in (Path(path), *Path(path).parents)):
+        raise ValueError("Independent restore roots must have no symlinked ancestors")
     locations = [path.resolve(strict=True) for path in (source, backup, restored)]
     if len(set(locations)) != 3:
         raise ValueError("Source, backup and restored trees must be distinct")

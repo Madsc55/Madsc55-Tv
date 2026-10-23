@@ -83,6 +83,15 @@ class K5IboArchiveExportTests(unittest.TestCase):
                         export_6115_archive_manifest(self.urls, destination)
                     self.assertFalse(destination.exists())
 
+    def test_unicode_noncharacter_destination_is_rejected_before_creation(self):
+        with TemporaryDirectory() as tmp:
+            for codepoint in (0xFDD0, 0xFFFF, 0x1FFFE):
+                with self.subTest(codepoint=hex(codepoint)):
+                    destination = Path(tmp) / ("archive" + chr(codepoint))
+                    with self.assertRaisesRegex(PermissionError, "Unsafe destination"):
+                        export_6115_archive_manifest(self.urls, destination)
+                    self.assertFalse(destination.exists())
+
     def test_manifest_file_has_private_permissions(self):
         if os.name != "posix":
             self.skipTest("POSIX permission bits unavailable")

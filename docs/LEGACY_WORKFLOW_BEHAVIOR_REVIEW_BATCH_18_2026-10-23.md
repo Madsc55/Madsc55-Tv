@@ -1,0 +1,15 @@
+# Legacy workflow static review — Batch 18 (2026-10-23)
+
+Frozen legacy source: `Madsc55/madsc-tv` tree `ca374df3b9585c0d76a078db9536150ebbc260f7`. Read-only inspection; no workflow dispatch, no production writes, no device test.
+
+1. `.github/workflows/madsc-arsiv-yedek-aktarim.yml`, blob `d2062b168db134177cb1683d86eaafa2c2937d54`: manual-only, `contents: read`, 15-minute timeout, prints a dry-run warning. It **does not transfer archives** or provide archive evidence. Treat as disabled placeholder; not behavioral parity or backup acceptance. Checkout omits `persist-credentials: false`; although no subsequent writes are performed, replacement should use read-only checkout credentials.
+
+2. `.github/workflows/madsc-aylik-merkezi-denetim.yml`, blob `8cca9b93855c1e2184863b8e59b07817e546366f`: manual, push and cron `0 7 1,15 * *` triggers; `contents: read`, `actions: read`, checkout credentials disabled, non-cancelling concurrency and 15-minute timeout. Executes extensive sequential inventories, Python syntax checks, security gate, unit tests, backup evidence and GitHub API status collection. A successful static workflow parse is not proof that all checks finish within 15 minutes or that an external backup restore occurred. Verify actual job run and artifact results; preserve read-only permission and split bounded independent gates where appropriate. This is a scheduled central audit, **not** an automatic approval for protected writes.
+
+3. `.github/workflows/madsc-ibo-kararlar-grup1.yml`, blob `d79a157a13c667d6dd60a0c4837cca2c1da4f220`: push-triggered on its YAML file, main-only, `contents: write`, checkout credentials persist by default. It force-resets runner workspace to origin/main, executes `scripts/apply_ibo_decisions_group1.py`, stages protected `CALISANLAR.m3u` and decision/archive artifacts, then invokes `tools/protected_write_gate.py --base origin/main` before commit and push. The protected-write gate should block staged M3U changes, but runner-local mutation occurs **before** gate enforcement. Do not dispatch or migrate this automatic push path; replace with isolated immutable preview/report, pre-mutation approval boundary and explicit human authorization for any future protected promotion. User classification is not live playback or IBO device verification.
+
+## Deduplication and acceptance
+- Compared these three names against review batches 01–16: not previously listed. They are new unique static reviews. Prior 48 + 3 = **51/92** static reviews, **41/92** pending, subject to canonical inventory reconciliation.
+- Frozen tree contains 99 workflow YAML paths while project acceptance ledger declares 92; investigate seven-path canonical exclusion/dedup difference before claiming full coverage.
+- Behavioral parity remains **0/92**, runtime security acceptance **0/26**, main-task acceptance **0/22**. No CI or runtime acceptance implied.
+- Owners: K4 for archive transfer/backup evidence, K1/K5 for central audit and write gates, K5 for IBO preview; avoid parallel edits to their active code.

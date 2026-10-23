@@ -176,17 +176,16 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("M3U source bodies must be text")
     if sum(len(body) for body in sources.values()) > 8_000_000:
         raise ValueError("Combined source text exceeds bounded input limit")
-    # Validate provenance labels before URL normalization and aggregation.
-    # Avoid parsing each M3U twice just to reject malformed source names.
-    if any(any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
-               for ch in source) for source in sources):
-        raise ValueError("Invalid source name: control characters or UTF-8 surrogates")
     known = {normalize_url(url) for url in (known_urls or set())}
     grouped = defaultdict(lambda: {"sources": set(), "source_fingerprints": set(),
                                     "urls": set(), "names": set()})
     reports = {}
+    total_entries = 0
     for source, text in sorted(sources.items()):
         report = parse_m3u(text, source)
+        total_entries += report["entries"]
+        if total_entries > 20000:
+            raise ValueError("Combined sources exceed bounded candidate limit")
         reports[source] = {"entries": report["entries"], "rejected": len(report["rejected"]),
                            "parse_errors": len(report["parse_errors"])}
         # Labels and serialization order do not prove independence. Fingerprint

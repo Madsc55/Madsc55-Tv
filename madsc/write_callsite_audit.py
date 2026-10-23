@@ -791,6 +791,8 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
                 raise ValueError(f"Unsafe Python source descriptor during audit: {relative}")
             source_bytes = handle.read()
             descriptor_after = os.fstat(handle.fileno())
+            if len(source_bytes) != descriptor_after.st_size:
+                raise ValueError(f"Python source length changed during audit: {relative}")
             if (descriptor_stat.st_dev, descriptor_stat.st_ino, descriptor_stat.st_size,
                     descriptor_stat.st_mtime_ns, descriptor_stat.st_ctime_ns) != (
                     descriptor_after.st_dev, descriptor_after.st_ino, descriptor_after.st_size,

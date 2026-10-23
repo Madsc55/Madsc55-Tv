@@ -5,7 +5,10 @@ import re
 from madsc.discovery import classify_candidates
 
 def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict:
-    source = Path(source)
+    try:
+        source = Path(source)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Source must be a filesystem path") from exc
     if source.suffix.lower() not in (".m3u", ".m3u8"):
         raise ValueError("Only M3U and M3U8 playlists are supported")
     if source.is_symlink() or not source.is_file():
@@ -14,7 +17,10 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
     import stat
     if not hasattr(os, "O_NOFOLLOW") or any(parent.is_symlink() for parent in source.absolute().parents):
         raise ValueError("Unsafe source path")
-    fd = os.open(source, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0))
+    try:
+        fd = os.open(source, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0))
+    except OSError as exc:
+        raise ValueError("Source file could not be opened safely") from exc
     try:
         info = os.fstat(fd)
         if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > 16 * 1024 * 1024:

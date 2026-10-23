@@ -157,10 +157,10 @@ class FixtureReportWriterTests(unittest.TestCase):
     def test_fixture_roots_reject_ambiguous_unicode_and_controls(self):
         with tempfile.TemporaryDirectory() as d:
             base = Path(d)
-            invalid = (str(base) + "/bad\\u202e", str(base) + "/bad\\n",
-                       str(base) + "/bad\\uff0falias",
+            invalid = (str(base) + "/bad\u202e", str(base) + "/bad\n",
+                       str(base) + "/bad\uff0falias",
                        str(base) + "/bad\\\\alias",
-                       str(base) + "/bad\\uff1aalias")
+                       str(base) + "/bad\uff1aalias")
             for raw in invalid:
                 with self.subTest(root=repr(raw)):
                     with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):

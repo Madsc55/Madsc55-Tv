@@ -9,6 +9,23 @@ from madsc.history_pair_store import write_isolated_history_pair, decode_pair
 
 
 class FixtureReportWriterTests(unittest.TestCase):
+    def test_k4_fixture_exclusive_write_rejects_existing(self):
+        from madsc.write_path_audit import (enforce_write_paths,
+                                            enforce_local_evidence_path)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "reports/k4-source/nested/sample.txt"
+            enforce_write_paths(["reports/k4-source/nested/sample.txt"])
+            target.parent.mkdir(parents=True)
+            enforce_local_evidence_path(target, allowed_root=root)
+            write_exclusive_bytes(target, b"fixture", allowed_root=root)
+            self.assertEqual(target.read_bytes(), b"fixture")
+            with self.assertRaises(PermissionError):
+                enforce_local_evidence_path(target, allowed_root=root)
+            with self.assertRaises(PermissionError):
+                write_exclusive_bytes(target, b"overwrite", allowed_root=root)
+            self.assertEqual(target.read_bytes(), b"fixture")
+
     def test_exclusive_evidence_syncs_file_and_parent_directory(self):
         import os
         with tempfile.TemporaryDirectory() as d:

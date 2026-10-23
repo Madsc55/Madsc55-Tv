@@ -47,9 +47,9 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
             folded_names = [name.casefold() for name in attr_names]
             if len(folded_names) != len(set(folded_names)):
                 raise ValueError("Duplicate metadata attribute")
-            match = re.search(r'(?:^|\s)tvg-id="([^"]*)"', attrs)
-            logo = re.search(r'(?:^|\s)tvg-logo="([^"]*)"', attrs)
-            group = re.search(r'(?:^|\s)group-title="([^"]*)"', attrs)
+            match = re.search(r'(?:^|\s)tvg-id="([^"]*)"', attrs, flags=re.IGNORECASE)
+            logo = re.search(r'(?:^|\s)tvg-logo="([^"]*)"', attrs, flags=re.IGNORECASE)
+            group = re.search(r'(?:^|\s)group-title="([^"]*)"', attrs, flags=re.IGNORECASE)
             pending = {"name": channel_name, "tvg_id": match.group(1) if match else "",
                        "tvg_logo": logo.group(1) if logo else "",
                        "group_title": group.group(1) if group else ""}

@@ -750,7 +750,8 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
     if any(ancestor.is_symlink() for ancestor in (requested_root, *requested_root.parents)):
         raise ValueError("Symlinked source root or ancestor requires review")
     root = requested_root.resolve(strict=True)
-    if not root.is_dir():
+    root_stat = root.stat(follow_symlinks=False)
+    if not stat.S_ISDIR(root_stat.st_mode) or root_stat.st_nlink < 1:
         raise ValueError("Source root must be a directory")
     # pathlib.rglob("*.py") may not descend into symlinked directories.
     # Reject linked directories before enumerating sources, rather than

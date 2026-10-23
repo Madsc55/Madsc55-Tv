@@ -328,6 +328,10 @@ def verify_independent_restore(source: Path, backup: Path, restored: Path,
 
 def _remove_created_tree_if_same(destination: Path, identity: tuple[int, int]) -> None:
     """Rollback only the exact directory inode created by this operation."""
+    guarded_destination = Path(destination).absolute()
+    enforce_write_paths([
+        guarded_destination.relative_to(guarded_destination.anchor).as_posix()
+    ])
     try:
         current = destination.lstat()
     except FileNotFoundError:

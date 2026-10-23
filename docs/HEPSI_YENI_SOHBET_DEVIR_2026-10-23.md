@@ -63,3 +63,14 @@
 6. Her değişikliğin ardından CI logunu ve test edilen SHA'yı kaydet, yanlış başaran iddiasından kaçın; düzenli devir notu bırak.
 
 **Yeni sohbet başlangıç istemi**: `Madsc55/Madsc55-Tv main üzerinde docs/HEPSI_YENI_SOHBET_DEVIR_2026-10-23.md, DEVAM_NOTU.md, PROJE_HAFIZASI.md son kayıtlarını oku; HEAD ve Actions'ı doğrula. K1–K5 kodunu tekrarlamadan geliştir; önce K1 75 yazma adayının kök neden incelemesini, K5 74 workflow statik incelemesini ve K3/K4 gerçek kanıt eksiklerini ilerlet; testleri doğrula, notları güncelle. Korunan üretim dosyalarına dokunma, eski depoya yazma, PR #71'i merge etme. Resmî kabul sayaçları 0/92, 0/26, 0/22.`
+
+
+## 23 Ekim 2026 — Sohbet devri ek kaydı (EPG ve son CI)
+
+- Kullanıcı: K1–K5 beşli sistemi topluca bitirmeye odaklan; diğer sohbetlerin devirlerini ve güncel GitHub kanıtlarını kontrol et. IBO Player Pro üzerinde EPG'nin gerçek görüntüleme kabulünü kullanıcı yapacak; asistan EPG kodunu, raporlamayı ve güvenli testleri üstlenecek.
+- Ana depo `Madsc55/Madsc55-Tv`, `main` kontrol anındaki HEAD `9885b537ef3d` (kısa SHA); başka K1–K5 işçileri eşzamanlı commit yapıyor, yeni sohbette HEAD tekrar okunmalı. Son görülen ana CI: `40002212175` başarılı (`9b950286d905`), daha yeni `40002248915` ve `40002229536` iptal edilmiş; bunlar HEAD kabul kanıtı değildir.
+- Ayrı EPG deposu `Madsc55/madsc-tv` (`main`). EPG dosyası `epg/madsc-epg.xml`; Pages yayın akışı onu köke `madsc-epg.xml` olarak kopyalıyor. EPG raporu 23 Ekim: 1.039 liste girdisi, 730 eşleşen, 309 eşleşmeyen, 583 kullanılabilir liste girdisi, 8.600 program. Cihaz/İsveç doğrulaması bekliyor.
+- EPG commit'leri: `a9dba704` sıkıştırılmış/açılmış indirme boyut sınırı; `d1c60773` bozuk gzip hata yönetimi; `10b7377c` eksik `tvg-id` ayrıştırmalı rapor; `7022d2d0` çevrimdışı regresyon testleri; `97c784bf` günlük üretim öncesi test kapısı; `bf424bcf` salt-okunur bağımsız EPG CI. `bf424bcf` için Actions `40002039822` **başarılı**. Bu CI başarıları gerçek günlük yayın veya IBO cihaz kabulü anlamına gelmez.
+- ÖNEMLİ: Bu EPG değişiklikleri ayrı `Madsc55/madsc-tv` deposunda yapılmıştır; ana beşli sistem deposuyla karıştırma. Korunan canlı IPTV/EPG listelerine doğrudan yazma. Kullanıcı EPG'yi IBO Player Pro'da doğrulayacak.
+- Sonraki işler: Ana depoda 92 workflow davranışsal parity, K1 gerçek yazma riskleri, K3 gerçek yayın/EPG, K4 harici restore, K5 arşiv kabulünü bağımsız kanıtlarla ilerlet. Önceki kabul sayaçlarını kanıt olmadan yükseltme. EPG tarafında 309 eşleşmeyenin kaynak/kimlik ayrımını güvenli biçimde araştır, yeni günlük test kapısının gerçek üretim koşusunda çalıştığını doğrula.
+- PR #71'i birleştirme; kullanıcı dosyaları, favoriler, logolar, yedekler ve arşivleri koru. `[skip ci]` commit'lerini test edilmiş sayma.

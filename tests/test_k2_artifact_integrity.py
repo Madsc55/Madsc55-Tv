@@ -76,3 +76,15 @@ class K2ArtifactIntegrityTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class K2ArtifactParentPathTests(unittest.TestCase):
+    def test_symlinked_parent_directory_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            actual = root / "actual"
+            actual.mkdir()
+            (actual / "artifact").write_bytes(b"sample")
+            alias = root / "alias"
+            alias.symlink_to(actual, target_is_directory=True)
+            with self.assertRaises(ValueError):
+                verify_artifact_bytes(alias / "artifact", hashlib.sha256(b"sample").hexdigest())

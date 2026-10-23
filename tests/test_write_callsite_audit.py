@@ -412,6 +412,18 @@ def mutate(path, fd):
             with self.assertRaisesRegex(ValueError, "Non-regular Python source"):
                 scan_python_tree(root)
 
+    def test_shutil_metadata_copy_mutations_are_inventoried(self):
+        source = (
+            "import shutil\n"
+            "def mutate(source, target):\n"
+            "    shutil.copymode(source, target)\n"
+            "    shutil.copystat(source, target)\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["shutil.copymode", "shutil.copystat"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

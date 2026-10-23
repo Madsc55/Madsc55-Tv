@@ -272,9 +272,11 @@ def execute(category: str) -> dict:
                     tuple(range(3, 355)) if scenario == "354"
                     else tuple(range(355, 365)) if scenario == "364"
                     else tuple(range(16, 50)))
-                and (scenario != "354" or (
-                    preview.user_reported_unverified_positions == tuple(range(3, 335))
-                    and preview.user_classified_foreign_positions == tuple(range(335, 355)))))
+                and preview.user_reported_unverified_positions == (
+                    tuple(range(3, 335)) if scenario == "354" else ())
+                and preview.user_classified_foreign_positions == (
+                    tuple(range(335, 355)) if scenario == "354"
+                    else preview.archived_positions))
             try:
                 classify_archive_positions(scenario, source_entries[:-1])
             except ValueError:

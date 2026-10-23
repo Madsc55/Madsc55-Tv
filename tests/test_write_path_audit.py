@@ -285,6 +285,16 @@ class LocalOutputGuardTests(unittest.TestCase):
                         enforce_local_turkish_tv_test_playlist(candidate, allowed_root=root)
             self.assertFalse(expected.exists())
 
+    def test_dangling_symlink_parent_is_rejected_before_directory_check(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            dangling = root / "dangling"
+            dangling.symlink_to(root / "missing", target_is_directory=True)
+            target = dangling / "evidence.json"
+            with self.assertRaisesRegex(ProtectedWriteRejected, "Symlinked output ancestor"):
+                enforce_local_output_path(target)
+            self.assertFalse((root / "missing").exists())
+
     def test_symlinked_parent_and_root_boundary_blocked(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

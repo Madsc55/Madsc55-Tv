@@ -35,6 +35,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
             if separator is None or quoted:
                 raise ValueError("Malformed M3U EXTINF: missing channel-name separator")
             attribute_text = line[:separator]
+            if attribute_text.count('"') % 2:
+                raise ValueError("Malformed M3U EXTINF: unbalanced quoted attribute")
             matches = [value for key, value in M3U_ATTRIBUTE.findall(attribute_text)\n                       if key == "tvg-id"]
             if len(matches) > 1:
                 raise ValueError("Duplicate M3U tvg-id attribute")

@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50399)
+Total output lines: 1067
+
 Warning: truncated output (original token count: 52876)
 Total output lines: 1115
 
@@ -546,24 +549,7 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Tam bitmiş değildir: kurulumda 16 YAML vardır (beş ana + ekler); on yardımcı komut ana sisteme bağlıdır fakat 11 statik sözleşme farkı açık. 125 statik yazıcı çağrı adayı tümü runtime denetlendi sayılmaz. Defter 0 completed/7 in_progress/15 pending; kabul 0/92, 0/26, 0/22. Eski bağımsız aynı-input execution/artifact, canlı/zaman aralıklı K3, kullanıcının IBO cihaz testi, harici yedek/restore ve gerçek uçtan uca güvenlik kanıtları eksik. Gerçek kabul olmadan eski otomasyonları kapatma veya defteri completed yapma.
 - Actions/merge/PR71/canlı probing/korunan IPTV-EPG-yedek-favori-logo-arşiv ve eski repo yazısı yapılmadı. Bu [skip ci] paketinin SHA'sı Git geçmişindedir. Sonraki iş rapordaki bağımsız dış kanıt engellerini ve 11 kaynak sözleşme farkını ana beşli sistem içinde çözmek; küçük fixture testlerini gerçek 92 davranış tamamlandı gibi sunmamak.
 
-- Yayın sırasında diğer sohbetin yalnız docs/K1_K5_KURULUM_DURUMU_2026-10-22.md ekleyen a39cdfa commit'i geldi; içerik okundu ve korundu. Test edilen Python/test/workflow kaynakları değişmedi; dal eski HEAD üzerine zorlanmadı.
-
-
-## 22 Ekim 2026 — Bu…2876 tokens truncated…doğrulanana kadar gerçek kabul 0/92, 0/26, 0/22 olarak kalır.
-
-
-## 22 Ekim 2026 — K4 O_NOFOLLOW kapısı
-- madsc/k4_evidence.py b0f1d0a49966608c8e63ad291f46a9fb043c2cd4 [skip ci]: os.O_NOFOLLOW yoksa kanıt okuma fail-closed. tests/test_k4_evidence.py eadb7e40a412679c30108a0260c6ada76fa12a71 [skip ci]: bu durumu ve çıktı üretilmediğini kontrol eden test.
-- Yerel git ls-remote: github.com DNS çözümlenemiyor; testler ve offline_gate yeni HEAD üzerinde çalıştırılmadı. Actions tetiklenmedi. Üst dizin TOCTOU sertleştirmesi ve gerçek kabul kanıtı açık; 0/92, 0/26, 0/22.
-
-
-## 22 Ekim 2026 — K4 sahte üretim iddiası reddi
-- K4 verify(): production_ready=True/1 ve category='k3' gibi sahte alanları reddetme, opsiyonel category yoksa eski run_drill raporuyla uyum; kod c189cde33a47690373eddc6c502b4e14cfb82fd6, test afe19df9646868a0153a19c4c9895c4bf90c29d1 [skip ci].
-- Yerel git ls-remote denemesi github.com DNS çözümleme hatasıyla başarısız. Bu SHA için test ve offline_gate doğrulaması yapılmadı, Actions tetiklenmedi. Gerçek kabul 0/92, 0/26, 0/22; korunan veriye dokunulmadı.
-
-
-## 22 Ekim 2026 — K5 davranış karşılaştırma çıktısı, test bekliyor
-- madsc/legacy_parity_cli.py commit 108de8e7c049bf8abab52fa69ae587133ba420f4: K5 karşılaştırma raporu exclusive os.open(O_CREAT|O_EXCL, varsa O_NOFOLLOW) ile açılıyor; ikinci yol kontrolü korunuyor. tests/test_legacy_parity_cli.py commit 1f4d31a03f3ca7b61bd06b28c4693bd3e3142867: ikinci kontrol sonrasında sembolik bağlantı değişiminde hedefin korunmasını denetleyen regresyon eklendi.
+- Yayın sırasında diğer sohbetin yalnız docs/K1_K5_KURULUM_DURUMU_2026-10-22.md ekleyen a39cdfa commit'i geldi; içerik okundu ve korundu. Test edilen Python/test/workflow kay…399 tokens truncated…3e3142867: ikinci kontrol sonrasında sembolik bağlantı değişiminde hedefin korunmasını denetleyen regresyon eklendi.
 - Bu SHA için test sonucu yok; GitHub Actions tetiklenmedi. K5 gerçek davranış eşdeğerliği 0/92, 26 runtime güvenlik 0/26, görev kabulü 0/22. Öncelik test_legacy_parity_cli, tam offline_gate, sonra eksik gerçek eski/yeni çalışma çiftlerini toplu kanıtlama. Korunan veriye dokunulmadı.
 
 
@@ -1058,3 +1044,10 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - İlk hedefli koşu, guard çağrısını ayrı deyime çevirirken dönüş path'inin yeniden kurulmadığını gösteren 14 error + 3 bağlı failure üretti; bu koşu başarı sayılmadı. Düzeltmeden ve rebase'den sonra exact uzak SHA'da hedefli **110/110**, tam `python -m madsc.offline_gate` **1435/1435**, beş izole K kapısı ve tüm offline kapılar başarılı. Envanter 109 dosya / 140 aday; başarısız son test yok.
 - Kabul değişmedi: parity **0/92**, runtime güvenlik **0/26**, ana görev **0/22**, production false. Fixture/statik sonuçlar gerçek bağımsız execution/artifact, harici restore veya cihaz kanıtı değildir. Actions elle başlatılmadı; canlı probe, üretim yazısı, korunan veri, eski repo, PR #71 ve merge işlemi yapılmadı.
 - Sıradaki somut yerel iş: güncel envanterde guard baskınlığı olmayan gerçek writer/rollback helper'larını string dönüşümü ve subprocess adaylarından ayır; merkezi K1 guard eklenebilen ilk bağımsız grubu kaynak-bağlı testlerle kapat. Dış aynı-input bağımsız run/artifact kanıtı gelmeden 92 kabulünü artırma.
+
+
+## 23 Ekim 2026 — K1 K3 pilot segment yazısı koruması
+- Core fixture paketinden sonra güncel `main` yeniden okunup K5'in `ffa444e`/`e9d3825` commitleri korunarak kod/test SHA `08ae448288ca488ce54caeea1993f787eca75e87` yayımlandı (`[skip ci]`).
+- `k3_turkish_tv_video_pilot.verify_av` indirilen segment baytlarını artık doğrudan `Path.write_bytes` ile yazmıyor; ortak `write_exclusive_bytes` üzerinden açık temporary `allowed_root`, K1 path preflight, no-follow dizin traversal ve exclusive create kullanıyor. Test, payload/destination/root sözleşmesini doğruluyor; audit'te `segment.write_bytes` adayı kaldırıldı. Canlı pilot veya stream probing çalıştırılmadı.
+- İlk audit testi mevcut ffprobe subprocess adayını hesaba katmadığı için 1/139 failure verdi; başarı sayılmadan yalnız dosya yazma adayına daraltıldı. Exact uzak SHA'da hedefli **139/139**, tam offline **1438/1438**, beş izole K kapısı ve bütün offline kapılar başarılı. Envanter 109 dosya / **139 aday**; son başarısız test yok.
+- Kabul değişmedi: parity 0/92, runtime 0/26, görev 0/22, production false. Sıradaki yerel iş `offline_five_gate.assess_report_roundtrip` geçici paket dizini oluşturmasını güvenli temp-root/callsite sözleşmesine bağlamak; `legacy_retest_390` CSV `StringIO` çağrılarını filesystem yazısı saymadan kaynak-bağlı ayırmak. Gerçek bağımsız artifact/run, restore ve en son kullanıcı cihaz kanıtı bekleniyor.

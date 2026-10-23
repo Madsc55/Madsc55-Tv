@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50201)
+Total output lines: 1198
+
 Warning: truncated output (original token count: 51618)
 Total output lines: 1217
 
@@ -614,9 +617,7 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 
 ## 19 Ekim 2026 — YENİ SOHBETE DEVİR (GÜNCEL ANA REFERANS)
 - Kullanıcı açıkça 99 otomasyonun her birinin gerçek kaynak davranışını çözmeyi, YAPILACAK/YAPILMAYACAK/KANIT BEKLEYEN kararlarını saklamayı ve K1–K5 sistemini kanıtla bitirmeyi istedi. Yeni sohbetten aynı yerden devam edilecek.
-- **İLK OKUNACAK DOSYA:** `docs/YENI_SOHBET_DEVIR_2026-10-19.md` (commit `6d1c8dde40d0a7…1618 tokens truncated…etimi değildir; dispatch yapılmadı. Opt-in rapor upload artık failure durumunda da always() && !cancelled() ile denenir; kaynaklar/izinler/cron/korunan veri değişmedi.
-- Sözleşme denetimi süreyi yalnız ilgili komutun bulunduğu job ile karşılaştırır; ilgisiz uzun job komutu maskeleyemez. Komut, süre, rapor yolu, actions izni veya failure-upload kaybı contract_gate ve mevcut offline_gate başarısını engeller. Artifact ad farkı ayrı inceleme olarak görünür; otomatik eşdeğerlik verilmez. Yeni kapı entegrasyon regresyonu dahil dört test eklendi. Önceki süre fixture'ı gerçek komutu içermediğinden düzeltildi; eksik komut süre uyumluluğu sayılmıyor.
-- Nihai python -m madsc.offline_gate: 764 test, beş izole K1–K5 kapısı, kurulum envanteri, 92+7 kaynak/10 yardımcı komut/22 görev ve beş gerçek yerel raporun K5 tüketimi başarılı. git diff --check temiz. Kanıt, test edilen kaynak SHA256 ve rapor hashleri: docs/FIVE_STAGE_CONTRACT_VALIDATION_2026-10-22.json.
+- **İL…201 tokens truncated…hai python -m madsc.offline_gate: 764 test, beş izole K1–K5 kapısı, kurulum envanteri, 92+7 kaynak/10 yardımcı komut/22 görev ve beş gerçek yerel raporun K5 tüketimi başarılı. git diff --check temiz. Kanıt, test edilen kaynak SHA256 ve rapor hashleri: docs/FIVE_STAGE_CONTRACT_VALIDATION_2026-10-22.json.
 - 11 statik farktan iki süre farkı giderildi; dokuz artifact isim değişikliği inceleme olarak açık. Bunlar çalışma zamanı byte zinciri kabulü değildir. Davranış 0/92, runtime güvenlik 0/26, görev tam kabulü 0/22 korunur. Korunan listeler/EPG/favoriler/yedek/logo/arşiv, eski depo, PR71 ve merge işlemi yok. Actions başlatılmadı; kullanıcının ilettiği izin kotayı harcamak için gereksiz tekrar gerekçesi sayılmadı. IBO cihaz testi kullanıcıda.
 - Sıradaki bağlantılı iş: dokuz yeniden adlandırılan artifact için gerçek üretici/tüketici dosya ve byte zinciri ile bağımsız aynı-input eski/yeni run/artifact kanıtını bağlamak; eksik dış kaynağı fixture ile tamamlanmış göstermemek. K2/K3 canlı ölçüm ve bağımsız geçmiş, K4 dış backup/restore, K1 26 runtime kuralı ve K5 gerçek uçtan uca kabul açık. Kod/kanıt/notlar aynı [skip ci] commitindedir; kendi SHA'sı Git geçmişindedir.
 
@@ -1190,3 +1191,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Kod/test SHA `70d1150fe4866f96c87b7bc3dece6b3ba2741080`: `core.execute` fixture oluşturma/değiştirmeleri sabit allowlist'li, yalnız doğrudan sistem temp kökünde çalışan, descriptor-relative no-follow ve inode/link doğrulamalı ortak yazıcıya taşındı. Symlink, hardlink, traversal, korunan ad ve nested-root negatifleri kapsandı.
 - Exact uzak SHA doğrulaması: hedefli 110/110, tam offline 1435/1435, beş izole kapı ve bütün offline kapılar başarılı; envanter 109 dosya/140 aday. İlk eksik dönüş-path düzeltmesi öncesindeki başarısız hedefli koşu kabul edilmedi.
 - Sayaçlar değişmedi: 0/92 parity, 0/26 runtime, 0/22 görev, production false. Sıradaki yerel K1 işi guard'sız gerçek writer/rollback helper grubunu kaynak-bağlı ayırıp korumaktır; bağımsız artifact/run, harici restore ve en son kullanıcı cihaz testi dış kanıt olarak açıktır.
+
+
+## 23 Ekim 2026 — K1 K3 pilot segment writer
+- Kod/test SHA `08ae448288ca488ce54caeea1993f787eca75e87`: K3 video pilotunun temporary `sample.ts` yazısı doğrudan `write_bytes` yerine açık allowed-root kullanan ortak exclusive/no-follow K1 writer'a bağlandı. Canlı probe yapılmadı.
+- Exact uzak doğrulama hedefli 139/139, tam offline 1438/1438 ve bütün kapılar başarılı; aday sayısı 140'tan 139'a indi. İlk audit beklentisindeki 1 failure başarı sayılmadan düzeltildi.
+- Kabul 0/92, 0/26, 0/22 ve production false. Sıradaki yerel iş geçici roundtrip paket dizini ile `StringIO` CSV false-positive ayrımıdır; dış bağımsız kanıtlar ve cihaz testi açıktır.

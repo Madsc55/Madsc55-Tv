@@ -60,6 +60,15 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     export_6115_archive_manifest(self.urls, destination)
             self.assertFalse(destination.exists())
 
+    def test_manifest_file_has_private_permissions(self):
+        if os.name != "posix":
+            self.skipTest("POSIX permission bits unavailable")
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            export_6115_archive_manifest(self.urls, destination)
+            manifest = destination / "ibo_6115_archive_preview.json"
+            self.assertEqual(manifest.stat().st_mode & 0o777, 0o600)
+
     def test_directory_sync_failure_rolls_back(self):
         if not hasattr(os, "O_DIRECTORY"):
             self.skipTest("Directory fsync unsupported")

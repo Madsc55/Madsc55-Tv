@@ -43,3 +43,5 @@ jobs:
 # CI audit: validate latest K1-K5 changes including post-run K2 and K5 regressions.
 
 # CI audit: verify K1 caller closure, K2 encoded URLs, and K5 chmod rollback.
+
+# CI audit: validate K1 xattr/serializer and K2 parent inspection regressions.

@@ -45,3 +45,12 @@ Audit dalı değişiklikleri PR olarak incelemeye sunulsun; Actions CI doğrulam
 - K3 video artifact sözleşmesi hedef workflow'unda `if-no-files-found: warn` eksikti; `.github/workflows/madsc-03-kanal-test.yml` içine eklendi.
 - Yeni CI: run `40033130573` (commit `0fb444b246450615b390f572f30daafd1236f90f`) ve run `40033132772` (commit `d309bf7d24859d773a77f7cb742e5bc670818b84`) kontrol sırasında henüz sonuçlanmamıştı.
 - CI sonuçları başarılı olmadan bu düzeltmeler doğrulanmış sayılmaz. Canlı HLS, video/ses, Pages/XMLTV, 6 saat süreklilik ve cihaz kabul kapıları hâlâ açık.
+
+
+## Güncel doğrulama sonucu
+- Run `40033130573` — commit `0fb444b246450615b390f572f30daafd1236f90f`: SUCCESS, offline-tests işi başarılı.
+- Run `40033132772` — commit `d309bf7d24859d773a77f7cb742e5bc670818b84`: SUCCESS, offline-tests işi başarılı.
+- Run `40033178689` — commit `1816b0e5f2448b6c6d28d9e5865be27124cbdc23`: SUCCESS, offline-tests işi başarılı. Bu, kayıtlı test dalındaki en yeni doğrulama; run bağlantısı: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40033178689
+- Önceki 1.484 testlik çalışmadaki iki hata düzeltildikten sonra offline gate geçti. Bu başarı yalnızca o commit'in offline test kapsamını kanıtlar.
+- Online manifest/video workflow'ları bu oturumda başlatılmadı; gerçek HLS video/ses, Pages/XMLTV, 6 saat süreklilik ve IBO Player Pro doğrulanmış değildir.
+- K3-13 açık kalır; audit dalı PR ile incelemede, main'e birleştirilmedi.

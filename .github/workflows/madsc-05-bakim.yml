@@ -476,6 +476,20 @@ jobs:
           python -m madsc.workflow_consolidation --contract-gate > reports/workflow-contract-gate.json
           python -m json.tool reports/workflow-contract-matrix.json >/dev/null
           python -m madsc.k1_k5_acceptance_requirements > reports/k1-k5-evidence-requirements.json
+      - name: K5 92 sabit kaynak SHA kapsam kapisi
+        shell: bash
+        run: |
+          mkdir -p reports
+          python -m madsc.k5_source_audit --output reports/k5-source-audit.json
+          python -m json.tool reports/k5-source-audit.json >/dev/null
+      - name: K5 92 kaynak SHA raporunu sakla
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: madsc-k5-frozen-source-audit
+          path: reports/k5-source-audit.json
+          if-no-files-found: error
+          retention-days: 14
       - name: K5 envanter ve eksik kanit raporlarini sakla
         uses: actions/upload-artifact@v4
         with:

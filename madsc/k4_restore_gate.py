@@ -101,7 +101,11 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
         # Never start an inventory walk through an ancestor that was swapped
         # into a symlink after the initial root validation.
         try:
-            if any(ancestor.is_symlink() for ancestor in (root, *root.parents)):
+            root_metadata = root.lstat()
+            root_identity = root_identities[roots.index(root)]
+            if (not stat.S_ISDIR(root_metadata.st_mode)
+                    or (root_metadata.st_dev, root_metadata.st_ino) != root_identity
+                    or any(ancestor.is_symlink() for ancestor in (root, *root.parents))):
                 inventory_matches = False
                 continue
         except OSError:

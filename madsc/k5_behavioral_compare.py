@@ -1,0 +1,69 @@
+"""Offline, fail-closed comparison of independently captured legacy/new workflow evidence.
+
+This tool never runs workflows, accesses the network, or writes production data.
+Evidence must come from separately executed, isolated fixture runs.
+"""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+FIELDS = ("exit_code", "stdout_sha256", "stderr_sha256", "artifacts", "side_effects", "timed_out", "retry_count")
+DIGEST = set("0123456789abcdef")
+
+
+def _digest(value):
+    return isinstance(value, str) and len(value) == 64 and set(value) <= DIGEST
+
+
+def _valid(record):
+    if not isinstance(record, dict) or set(record) != set(FIELDS):
+        return False
+    if type(record["exit_code"]) is not int or type(record["retry_count"]) is not int or record["retry_count"] < 0:
+        return False
+    if type(record["timed_out"]) is not bool:
+        return False
+    if not _digest(record["stdout_sha256"]) or not _digest(record["stderr_sha256"]):
+        return False
+    for field in ("artifacts", "side_effects"):
+        value = record[field]
+        if not isinstance(value, dict) or any(not isinstance(k, str) or not _digest(v) for k, v in value.items()):
+            return False
+    return True
+
+
+def compare(document):
+    errors = []
+    if not isinstance(document, dict) or set(document) != {"workflow", "fixture_sha256", "legacy", "new", "independent_runs", "isolated_fixture"}:
+        return {"accepted": False, "errors": ["invalid_evidence_schema"]}
+    if not isinstance(document["workflow"], str) or not document["workflow"].endswith((".yml", ".yaml")):
+        errors.append("invalid_workflow")
+    if not _digest(document["fixture_sha256"]):
+        errors.append("invalid_fixture_digest")
+    if document["independent_runs"] is not True or document["isolated_fixture"] is not True:
+        errors.append("independence_or_isolation_unproven")
+    for side in ("legacy", "new"):
+        if not _valid(document[side]):
+            errors.append("invalid_" + side + "_record")
+    if not errors:
+        for field in FIELDS:
+            if document["legacy"][field] != document["new"][field]:
+                errors.append("mismatch:" + field)
+    return {"accepted": not errors, "errors": errors}
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("evidence", type=Path)
+    args = parser.parse_args()
+    try:
+        document = json.loads(args.evidence.read_text(encoding="utf-8"))
+        result = compare(document)
+    except (OSError, ValueError) as exc:
+        result = {"accepted": False, "errors": ["unreadable_evidence:" + type(exc).__name__]}
+    print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+    raise SystemExit(0 if result["accepted"] else 1)
+
+
+if __name__ == "__main__":
+    main()

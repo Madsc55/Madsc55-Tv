@@ -53,3 +53,10 @@ Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim 
 - Gerçek harici yedek makbuzu, bağımsız harici restore ve 1/15 gerçek scheduler run kanıtı halen yoktur. CI veya yerel fixture bunların yerine geçmez.
 - Harici hedef onaylanmadan gerçek veri aktarımı ve üretim zamanlayıcısı açılmaz.
 
+
+## 23 Ekim 2026 — Güncel otomatik test doğrulaması
+
+- [Actions 39963096390](https://github.com/Madsc55/Madsc55-Tv/actions/runs/39963096390) `b57a53d93891adedd7a98397284ce8d13095f747` commit'inde **success**; `Offline Python regression suite` job adımı da **success**. Bu yalnızca ilgili commit için geçerlidir.
+- [Actions 39965157273](https://github.com/Madsc55/Madsc55-Tv/actions/runs/39965157273) `99524af0a038ba6cd5cf5cc96c24ce507fd43fa1` commit'inde **success**. Bu da üretim kabulü değildir.
+- En son sorguda [Actions 39966437586](https://github.com/Madsc55/Madsc55-Tv/actions/runs/39966437586) `b5719ac15e4aa1683f3561d0b6718491948f6459` commit'i için **queued** durumundaydı; sonucu başarı sayılmadı.
+- K4-15/16/17/18 harici sağlayıcı makbuzu, gerçek restore, VOD/arşiv envanteri ve ayın 1/15 scheduler kanıtı olmadan **BEKLİYOR** kalır. Bu kayıt kabul bayraklarını değiştirmez.

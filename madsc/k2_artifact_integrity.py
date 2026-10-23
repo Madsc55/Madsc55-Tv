@@ -20,6 +20,9 @@ def verify_artifact_bytes(path: str | Path, expected_sha256: str, *, max_bytes: 
     import os
     import stat
     target = Path(path)
+    # Lexical parent traversal can bypass the ancestor symlink check.
+    if ".." in target.parts:
+        raise ValueError("Artifact paths must not contain parent traversal")
     flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
     # Reject symlinked parent directories as well as a symlinked leaf.
     for parent in target.absolute().parents:

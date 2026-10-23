@@ -131,3 +131,18 @@ def programme_coverage(playlist, xml_data, reference_time=None):
             row["current_programme_count"] = current_counts.get(channel, 0) if channel else 0
             row["has_current_programmes"] = row["current_programme_count"] > 0
     return results
+
+
+def coverage_summary(rows):
+    """Aggregate read-only K3 acceptance metrics from programme_coverage rows."""
+    rows = list(rows)
+    statuses = ("existing_valid", "exact_unique", "ambiguous", "unmatched")
+    summary = {"total_channels": len(rows)}
+    for status in statuses:
+        summary[status] = sum(row["status"] == status for row in rows)
+    summary["with_programmes"] = sum(bool(row["has_programmes"]) for row in rows)
+    summary["without_programmes"] = len(rows) - summary["with_programmes"]
+    if rows and all("has_current_programmes" in row for row in rows):
+        summary["with_current_programmes"] = sum(bool(row["has_current_programmes"]) for row in rows)
+        summary["without_current_programmes"] = len(rows) - summary["with_current_programmes"]
+    return summary

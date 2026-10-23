@@ -533,3 +533,12 @@ class DiscoveryBatchTests(unittest.TestCase):
                 '#EXTINF:-1 tvg-id="good",Good\r\n'
                 'https://example.org/good\r\n')
         self.assertEqual(parse_m3u(feed, "fixture")["entries"], 1)
+
+    def test_nonstandard_separators_fail_closed_across_batch_entrypoints(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="bad\u2028id",Bad\n'
+                'https://example.org/bad\n')
+        for entrypoint in (corroborate_sources, build_m3u8_preview):
+            with self.subTest(entrypoint=entrypoint.__name__):
+                with self.assertRaisesRegex(ValueError, "unsupported line separators"):
+                    entrypoint({"fixture": feed})

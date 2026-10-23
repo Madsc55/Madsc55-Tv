@@ -69,3 +69,7 @@
 ## 8. On ek sabit workflow'un kaynak doğrulaması ve EPG yayın riski
 
 `docs/K5_LEGACY_ON_WORKFLOW_KARSILASTIRMA_2026-10-23.md` dosyasında 10 eski YAML doğrudan sabit commit'ten okunarak karşılaştırıldı. `epg-gunluk.yml` içindeki **contents: write + korunan kapı + git push** ve `epg-pages.yml` içindeki **Pages deploy + yayın SHA256 doğrulaması** üretim yan etkisi olan kritik zincirdir; bu çalışma sırasında çalıştırılmadı. Kaynak-temelli inceleme ve belge güncellemesi, gerçek yayın eşdeğerliği, başarılı CI veya bağımsız eski/yeni artifact kanıtı anlamına gelmez. **Kabul 0/92; üretim geçişi bloke.** Önceki statik 45/92 sayısı mükerrerlik kontrolü olmadan artırılmadı.
+
+## 9. On ek sabit workflow ve kritik main yazma yolu
+
+`docs/K5_LEGACY_EK_ON_WORKFLOW_2026-10-23.md` ile 10 ek eski workflow YAML'ı sabit commit'ten doğrudan incelendi. `madsc-birlesik-kesif.yml` `contents: write`, `actions: write`, korunan kapı ve 10 denemelik `main` push döngüsü içerir. `iptv-test.yml` korunan `CALISANLAR.m3u` dosyasını artifact olarak taşır; salt-okunur GitHub izni yerel dosya değişmezliğini tek başına kanıtlamaz. İlgili script yan etkileri ve yeni sistemdeki gerçek koruma kapısı bağımsız olarak doğrulanmadan üretim kabulü verilmez. Statik inceleme sayısı mükerrerlik kontrolü yapılmadan artırılmadı; **davranışsal kabul 0/92**.

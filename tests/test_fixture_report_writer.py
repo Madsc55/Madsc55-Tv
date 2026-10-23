@@ -26,6 +26,21 @@ class FixtureReportWriterTests(unittest.TestCase):
                 write_exclusive_bytes(target, b"overwrite", allowed_root=root)
             self.assertEqual(target.read_bytes(), b"fixture")
 
+    def test_k4_fixture_exclusive_write_rejects_symlink_parent(self):
+        from madsc.write_path_audit import enforce_local_evidence_path
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            outside = root / "outside"
+            outside.mkdir()
+            reports = root / "reports"
+            reports.symlink_to(outside, target_is_directory=True)
+            target = reports / "k4-source/nested/sample.txt"
+            with self.assertRaises(PermissionError):
+                enforce_local_evidence_path(target, allowed_root=root)
+            with self.assertRaises(PermissionError):
+                write_exclusive_bytes(target, b"fixture", allowed_root=root)
+            self.assertEqual(list(outside.iterdir()), [])
+
     def test_exclusive_evidence_syncs_file_and_parent_directory(self):
         import os
         with tempfile.TemporaryDirectory() as d:

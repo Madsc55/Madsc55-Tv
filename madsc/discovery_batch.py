@@ -21,12 +21,6 @@ def _canonical_source_name(name: str) -> str:
 def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     if not isinstance(text, str) or not isinstance(source, str) or not source.strip() or len(text) > 8_000_000:
         raise ValueError("Source and M3U text are required")
-    # Source names are provenance labels, not arbitrary control sequences.
-    # Reject embedded controls before they can contaminate audit reports.
-    if any(unicodedata.category(ch) in ("Cs",) for ch in source):
-        raise ValueError("M3U source and text must be valid UTF-8")
-    if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in source):
-        raise ValueError("Source name contains control characters")
     # Surrogate code points cannot be represented in UTF-8 output and must
     # fail at ingestion rather than during downstream hashing or rendering.
     try:
@@ -34,6 +28,10 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         source.encode("utf-8", errors="strict")
     except UnicodeEncodeError as exc:
         raise ValueError("M3U source and text must be valid UTF-8") from exc
+    # Source names are provenance labels, not arbitrary control sequences.
+    # Reject embedded controls before they can contaminate audit reports.
+    if any(unicodedata.category(ch) in ("Cc", "Cf", "Zl", "Zp") for ch in source):
+        raise ValueError("Source name contains control characters")
     if len(source) > 256:
         raise ValueError("Source name exceeds bounded length")
     if type(max_entries) is not int or not 1 <= max_entries <= 20000:
@@ -93,19 +91,19 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 errors.append({"line": number, "reason": "invalid_metadata_attribute"})
                 discard_url_for_rejected_entry = True
                 continue
+            identity_attributes = {"tvg-id", "tvg-logo", "group-title"}
+            if any(name.casefold() not in identity_attributes
+                   and any(identity in name.casefold() for identity in identity_attributes)
+                   for name, _ in attr_pairs):
+                pending = None
+                errors.append({"line": number, "reason": "invalid_metadata_attribute"})
+                discard_url_for_rejected_entry = True
+                continue
             # Do not silently discard malformed identity-related attributes.
             # A bare or unquoted tvg-id could otherwise turn a channel into a
             # misleading name-only match instead of a rejected candidate.
             remainder = ATTR.sub("", meta)
             if re.search(r'(?i)(?:^|\s)(?:tvg-id|tvg-logo|group-title)\s*=', remainder):
-                pending = None
-                errors.append({"line": number, "reason": "invalid_metadata_attribute"})
-                discard_url_for_rejected_entry = True
-                continue
-            # Lookalike identity keys (e.g. xtvg-id) must not be treated as harmless metadata.
-            if any(name.casefold().endswith(("tvg-id", "tvg-logo", "group-title"))
-                   and name.casefold() not in {"tvg-id", "tvg-logo", "group-title"}
-                   for name, _ in attr_pairs):
                 pending = None
                 errors.append({"line": number, "reason": "invalid_metadata_attribute"})
                 discard_url_for_rejected_entry = True
@@ -243,9 +241,6 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
         raise ValueError("Ambiguous duplicate source names")
     if any(isinstance(name, str) and len(name) > 256 for name in sources):
         raise ValueError("Source name exceeds bounded length")
-    if any(any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
-               for ch in name) for name in sources):
-        raise ValueError("Invalid source name: control characters or UTF-8 surrogates")
     rows = []
     rejected_count = 0
     # Downstream classification is bounded to 20,000 rows in total.

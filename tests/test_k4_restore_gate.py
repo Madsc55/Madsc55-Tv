@@ -151,6 +151,36 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertFalse(result["sandbox_restore_accepted"])
             self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
 
+    def test_nested_directory_symlink_swap_during_inventory_fails_closed(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                (root / "nested").mkdir(parents=True)
+                (root / "nested" / "file.txt").write_bytes(b"same")
+            original_rglob = Path.rglob
+            swapped = [False]
+
+            def swap_nested_during_walk(root, pattern):
+                iterator = original_rglob(root, pattern)
+                if root != roots[2]:
+                    return iterator
+
+                def changed():
+                    for item in iterator:
+                        if item.name == "file.txt" and not swapped[0]:
+                            swapped[0] = True
+                            (root / "nested").rename(root / "old-nested")
+                            (root / "nested").symlink_to(root / "old-nested", target_is_directory=True)
+                        yield item
+                return changed()
+
+            with patch.object(Path, "rglob", autospec=True, side_effect=swap_nested_during_walk):
+                result = audit_k4_restore(*roots, ["nested/file.txt"])
+            self.assertTrue(swapped[0])
+            self.assertFalse(result["sandbox_restore_accepted"])
+
     def test_root_swap_before_inventory_prevents_walk(self):
         from unittest.mock import patch
         from madsc.backup import verify_independent_restore as real_verify

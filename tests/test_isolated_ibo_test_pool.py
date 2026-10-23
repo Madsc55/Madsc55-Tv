@@ -48,3 +48,10 @@ class TestK5Pool(unittest.TestCase):
         pool = build_isolated_test_pool(self.records)
         self.assertEqual(pool["entries"][0]["playback"], "unknown")
         self.assertFalse(pool["device_verified"])
+
+    def test_legacy_status_preserved_without_claiming_verification(self):
+        self.records[0].update(playback="broken", history=[{"status": "broken", "evidence_id": "legacy-3"}])
+        entry = build_isolated_test_pool(self.records)["entries"][0]
+        self.assertEqual(entry["reported_playback"], "broken")
+        self.assertEqual(entry["playback"], "unknown")
+        self.assertEqual(entry["history"][0]["evidence_id"], "legacy-3")

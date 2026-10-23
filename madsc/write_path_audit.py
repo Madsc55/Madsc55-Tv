@@ -44,7 +44,7 @@ def audit_write_paths(paths: list[str]) -> dict:
                     {f"com{i}" for i in range(1, 10)} |
                     {f"lpt{i}" for i in range(1, 10)})
                    for part in normalized_parts)
-            or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw)
+            or any(unicodedata.category(ch) == "Cc" for ch in raw)
             # Format controls (bidi overrides, zero-width joins) can disguise
             # protected filenames in reviews and logs; reject them outright.
             or any(unicodedata.category(ch) in ("Cf", "Cs") for ch in raw)

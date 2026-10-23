@@ -240,7 +240,7 @@ def _process_contract(node: ast.Call, bindings=None) -> dict | None:
     unpacked_keywords = any(keyword.arg is None for keyword in node.keywords)
     shell_value = next((keyword.value for keyword in node.keywords
                         if keyword.arg == "shell"), None)
-    if name in {"os.system", "os.popen"}:
+    if name in {"os.system", "os.popen", "subprocess.getoutput", "subprocess.getstatusoutput"}:
         shell_status = "implicit_shell"
     elif unpacked_keywords:
         shell_status = "unknown_keyword_unpacking"

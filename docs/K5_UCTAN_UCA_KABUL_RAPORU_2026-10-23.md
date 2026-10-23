@@ -99,3 +99,7 @@ Bu bölüm önceki parça parça kaynak incelemelerinden farklıdır: `docs/K5_K
 ## 15. CI kanıt görünürlüğü ve risk sayacı (2026-10-23)
 
 `madsc/k5_source_audit.py` kaynak SHA kapsamına ek olarak YAML sinyal sayılarını ve **0 bağımsız eski/yeni koşu çifti, 92 eksik davranışsal kanıt** durumunu JSON rapora yazar. Beklenen statik işaret sayıları: `contents: write` 20, `git push` 21, `CALISANLAR.m3u` 34 ve aşağı akış dispatch 2. `tests/test_k5_source_audit.py` risk sayacı ve kanıt yokluğu regresyonlarını da içerir. Bu sayılar çalıştırma sırasında oluşan gerçek yan etkileri ispatlamaz. GitHub Actions'ın güncel sonucu bu turda bağımsız doğrulanamadı; mevcut commit için CI başarısı iddia edilmez. **Üretim kabulü halen RED.**
+
+## 16. K5 bağımsız CI komutu ve bozuk envanter düzeltmesi
+
+K5 bağımsız CI testi `python -m unittest discover -s tests -p 'test_k5_source_audit.py' -v` olarak değiştirildi; `tests` klasörünün Python paketi olması gerekmiyor. `madsc/k5_source_audit.py` kaynak envanterindeki eksik/yanlış Git blob SHA alanlarını kontrollü `invalid_inventory_row` hatasıyla reddediyor; regresyon testi eklendi. Bu düzeltmelerin GitHub Actions üzerinde başarılı olduğu henüz kanıtlanmadı. **92/92 kaynak kimliği denetimi ile 0/92 bağımsız davranışsal kabul ayrımı geçerlidir.**

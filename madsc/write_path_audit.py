@@ -123,11 +123,11 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
                 or metadata.st_nlink != 1):
             raise ProtectedWriteRejected("Existing, nonregular or hardlinked output")
     parent = path.parent
-    if not parent.is_dir():
-        raise ProtectedWriteRejected("Output parent must exist")
     for ancestor in (parent, *parent.parents):
         if ancestor.is_symlink():
             raise ProtectedWriteRejected("Symlinked output ancestor")
+    if not parent.is_dir():
+        raise ProtectedWriteRejected("Output parent must exist")
     if allowed_root is not None:
         # Validate the root before Path normalizes dot components. A caller
         # must not smuggle traversal or control characters through the boundary.

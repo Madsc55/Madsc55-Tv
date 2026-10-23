@@ -5,6 +5,7 @@ from madsc.batch_acceptance import _unique_json_pairs
 from pathlib import Path
 from madsc.artifact_handoff import pack, unpack
 from madsc.discovery import classify_candidates
+from madsc.fixture_report_writer import write_exclusive_bytes
 from madsc.handoff import assess_candidates
 from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
@@ -14,8 +15,8 @@ def _write_json_exclusive(destination: Path, payload: dict) -> None:
     destination = Path(destination)
     enforce_write_paths([destination.name])
     enforce_local_output_path(destination.absolute())
-    with destination.open("x", encoding="utf-8") as handle:
-        handle.write(json.dumps(payload, sort_keys=True) + "\n")
+    serialized = (json.dumps(payload, sort_keys=True) + "\n").encode("utf-8")
+    write_exclusive_bytes(destination.absolute(), serialized)
 
 
 def main():

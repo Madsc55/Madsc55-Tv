@@ -16,6 +16,16 @@ class BackupManifestHardeningTests(unittest.TestCase):
                     snapshot_manifest(root, ['folder', 'folder/child.txt'])
                 opener.assert_not_called()
 
+    def test_manifest_file_directory_collision_rejected_before_source_open(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            entries = [{'path': name, 'bytes': 0, 'sha256': '0' * 64}
+                       for name in ('folder', 'folder/child.txt')]
+            with patch('madsc.backup.snapshot_manifest') as snapshot:
+                with self.assertRaisesRegex(ValueError, 'file conflicts with declared directory'):
+                    verify_manifest(Path(directory), {'entries': entries})
+                snapshot.assert_not_called()
+
     def test_portable_manifest_aliases_rejected_before_source_open(self):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as directory:

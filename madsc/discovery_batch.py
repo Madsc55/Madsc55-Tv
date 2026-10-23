@@ -37,7 +37,7 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     if type(max_entries) is not int or not 1 <= max_entries <= 20000:
         raise ValueError("Invalid candidate limit")
     lines = text.removeprefix("\ufeff").splitlines()
-    if not lines or lines[0].strip() != "#EXTM3U":
+    if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Missing M3U header")
     # A URL may not be silently associated with a different EXTINF entry.
     # Malformed metadata consumes only its own following URL.

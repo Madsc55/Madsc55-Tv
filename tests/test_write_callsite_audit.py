@@ -880,8 +880,8 @@ def mutate(path, fd):
                 with original_open(path, *args, **kwargs) as handle:
                     yield handle
                 if path == source:
-                    with original_open(source, "w", encoding="utf-8") as writer:
-                        writer.write("value = 123456789\n")
+                    with original_open(source, "w", encoding="utf-8") as replacement:
+                        replacement.write("value = 123456789\n")
 
             with patch.object(Path, "open", changing_open):
                 with self.assertRaisesRegex(ValueError, "changed during audit"):

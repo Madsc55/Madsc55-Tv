@@ -57,6 +57,15 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
             network.assert_not_called()
             self.assertEqual(list(outside.iterdir()), [])
 
+    def test_existing_output_rejected_before_network(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(audit, "github") as network:
+            output = Path(temp) / "audit.json"
+            output.write_text("existing evidence", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                audit.run(output, "")
+            network.assert_not_called()
+            self.assertEqual(output.read_text(encoding="utf-8"), "existing evidence")
+
     def test_blocker_summary_rejects_forged_acceptance(self):
         missing = ["legacy_execution", "new_execution", "input_output_comparison",
                    "side_effect_comparison", "failure_timeout_comparison",

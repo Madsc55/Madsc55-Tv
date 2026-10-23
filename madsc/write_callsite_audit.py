@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import stat
 from pathlib import Path
 
 _GUARDS = {
@@ -399,6 +400,8 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
         # Reject rather than silently omitting an untrusted Python entry.
         if file.is_symlink():
             raise ValueError(f"Symlinked Python source requires review: {relative}")
+        if not stat.S_ISREG(file.stat(follow_symlinks=False).st_mode):
+            raise ValueError(f"Non-regular Python source requires review: {relative}")
         scanned.append(relative)
         source = file.read_text(encoding="utf-8")
         tree = ast.parse(source, filename=relative)

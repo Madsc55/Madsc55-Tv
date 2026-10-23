@@ -37,7 +37,9 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
             attribute_text = line[:separator]
             if attribute_text.count('"') % 2:
                 raise ValueError("Malformed M3U EXTINF: unbalanced quoted attribute")
-            matches = [value for key, value in M3U_ATTRIBUTE.findall(attribute_text)\n                       if key == "tvg-id"]
+            matches = [match.group(2) for match in M3U_ATTRIBUTE.finditer(attribute_text)
+                       if match.group(1) == "tvg-id"
+                       and attribute_text[:match.start(1)].count('"') % 2 == 0]
             if len(matches) > 1:
                 raise ValueError("Duplicate M3U tvg-id attribute")
             ids.append(matches[0].strip() if matches else "")

@@ -30,7 +30,7 @@ _MUTATING_METHODS = {
 _OS_MUTATORS = {
     "remove", "unlink", "rename", "replace", "mkdir", "makedirs",
     "rmdir", "removedirs", "symlink", "link", "truncate",
-    "write", "writev", "pwrite", "pwritev", "ftruncate",
+    "write", "writev", "pwrite", "pwritev", "sendfile", "copy_file_range", "splice", "ftruncate",
     "chmod", "lchmod", "fchmod", "chown", "lchown", "fchown", "utime",
     "mkfifo", "mknod", "setxattr", "fsetxattr", "lsetxattr",
     "removexattr", "fremovexattr", "lremovexattr", "chflags", "lchflags",

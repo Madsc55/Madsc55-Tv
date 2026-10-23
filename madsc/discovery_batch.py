@@ -171,7 +171,7 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Known URLs contain control characters")
     if any(any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
                for ch in source) for source in sources):
-        raise ValueError("Invalid source name")
+        raise ValueError("Invalid source name: control characters or UTF-8 surrogates")
     if any(not isinstance(body, str) for body in sources.values()):
         raise ValueError("M3U source bodies must be text")
     if sum(len(body) for body in sources.values()) > 8_000_000:

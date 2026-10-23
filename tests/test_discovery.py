@@ -34,6 +34,10 @@ class DiscoveryTests(unittest.TestCase):
             with self.subTest(url=url), self.assertRaises(ValueError):
                 normalize_url(url)
 
+    def test_unbalanced_ipv6_bracket_has_consistent_error(self):
+        with self.assertRaisesRegex(ValueError, "Invalid candidate host or port"):
+            normalize_url("https://[broken/live")
+
     def test_invalid_hosts_and_ports_rejected(self):
         for url in ("https://example.org:abc/live", "https://example.org:0/live",
                     "https://bad host/live", "https://[broken/live",

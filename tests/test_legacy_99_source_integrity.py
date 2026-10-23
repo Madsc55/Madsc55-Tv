@@ -68,6 +68,16 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             audit.summarize_blockers([dict(row, evidence_missing=missing[:-1])])
 
+    def test_blocker_summary_rejects_malformed_evidence_types(self):
+        required = ["legacy_execution", "new_execution", "input_output_comparison",
+                    "side_effect_comparison", "failure_timeout_comparison", "reviewer_approval"]
+        for malformed in (required[:-1] + [[]], required[:-1] + [None],
+                          required[:-1] + [{"unexpected": True}]):
+            with self.subTest(malformed=repr(malformed)):
+                with self.assertRaises(ValueError):
+                    audit.summarize_blockers([{"behavioral_parity_verified": False,
+                                              "evidence_missing": malformed}])
+
     def test_stage_hints_remain_provisional(self):
         self.assertEqual(audit.candidate_stages("epg-gunluk.yml"), ["K3"])
         self.assertEqual(audit.candidate_stages("madsc-tum-sistem-yedek.yml"), ["K4"])

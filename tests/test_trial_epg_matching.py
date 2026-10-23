@@ -19,6 +19,11 @@ class TrialEpgMatchingTest(unittest.TestCase):
         rows = programme_coverage('#EXTINF:-1 tvg-id="a",TRT 1', xml)
         self.assertEqual(rows[0]["programme_count"], 0)
         self.assertFalse(rows[0]["has_programmes"])
+    def test_missing_or_malformed_programme_start_is_not_guide_coverage(self):
+        xml = '<tv><channel id="a"/><programme channel="a"><title>Missing time</title></programme><programme channel="a" start="tomorrow"><title>Bad time</title></programme></tv>'
+        rows = programme_coverage('#EXTINF:-1 tvg-id="a",Channel', xml)
+        self.assertEqual(rows[0]["programme_count"], 0)
+        self.assertFalse(rows[0]["has_programmes"])
     def test_programme_coverage_rejects_entities(self):
         with self.assertRaisesRegex(ValueError, "DTD/entity"):
             programme_coverage('#EXTINF:-1,TRT 1', '<!DOCTYPE tv><tv/>')

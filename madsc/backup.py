@@ -141,6 +141,8 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     # This API only verifies the exact local checksum-manifest schema.
     allowed_fields = {"entries", "mode", "external_backup_verified",
                       "restore_verified", "production_writes"}
+    if any(type(key) is not str for key in manifest):
+        raise ValueError("Invalid backup manifest field names")
     if set(manifest) - allowed_fields:
         raise ValueError("Unsupported backup manifest fields")
     # Local manifests cannot be relabeled as an externally verified backup.

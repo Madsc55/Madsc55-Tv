@@ -34,7 +34,7 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
     destination.mkdir(mode=0o700)
     try:
         destination.chmod(0o700)
-    except OSError:
+    except BaseException:
         destination.rmdir()
         raise
     target = destination / "ibo_6115_archive_preview.json"

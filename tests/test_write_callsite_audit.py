@@ -324,6 +324,19 @@ async def async_outer(value=path.touch()):
         self.assertEqual(rows[0]["api"], "candidate.lower.replace")
         self.assertTrue(rows[0]["review_required"])
 
+    def test_os_open_unpacked_keywords_never_proven_read_only(self):
+        source = (
+            "import os\n"
+            "def check(path, options):\n"
+            "    os.open(path, os.O_RDONLY, **options)\n"
+            "    os.open(path, flags=os.O_RDONLY, **options)\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 2)
+        self.assertTrue(all("dynamic flags require review" in row["api"]
+                            for row in rows))
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_tree_scan_rejects_symlinked_python_source(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

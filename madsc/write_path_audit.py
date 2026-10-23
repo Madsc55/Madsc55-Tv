@@ -29,9 +29,10 @@ def audit_write_paths(paths: list[str]) -> dict:
         if len(raw) > 4096:
             rejected.append(raw)
             continue
-        # The repository gate receives Git paths, not platform-specific drive
-        # paths. Reject path strings with an absolute Windows drive prefix.
-        if len(raw) >= 2 and raw[0].isalpha() and raw[1] == ":":
+        # Reject Unicode compatibility forms of Windows drive prefixes too;
+        # normalization can turn fullwidth punctuation into an ASCII colon.
+        prefix = unicodedata.normalize("NFKC", raw[:2])
+        if len(prefix) >= 2 and prefix[0].isascii() and prefix[0].isalpha() and prefix[1] == ":":
             rejected.append(raw)
             continue
         name = raw.replace(chr(92), "/")
@@ -241,6 +242,11 @@ def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: P
     policy_probe = root / "reports/turkish-tv-test-playlist-boundary.json"
     result = _enforce_local_path(policy_probe, allowed_root=root,
                                  allow_existing_regular_file=False)
+    # The special-case target must obey the same no-follow ancestor policy
+    # as the JSON probe; otherwise a symlinked reports directory can escape.
+    for ancestor in (expected.parent, *expected.parent.parents):
+        if ancestor.is_symlink():
+            raise ProtectedWriteRejected("Symlinked isolated playlist ancestor")
     if expected.exists() or expected.is_symlink():
         raise ProtectedWriteRejected("Existing test playlist evidence")
     return {**result, "path_checked": True, "isolated_test_playlist": True}

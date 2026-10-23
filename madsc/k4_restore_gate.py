@@ -71,6 +71,12 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
             raise ValueError('Ambiguous restore audit directory alias')
         if portable_directory in seen_portable_names:
             raise ValueError('Restore audit portable file-directory collision')
+    # Reject a declared file whose portable spelling aliases a directory prefix.
+    # This check also covers cases where the file is a parent of another file.
+    for declared_file in seen_names:
+        portable_file = unicodedata.normalize("NFKC", declared_file).casefold()
+        if portable_file in portable_dirs:
+            raise ValueError("Restore audit portable file-directory collision")
     # Pin the source manifest before the first cross-tree verification.
     # Otherwise a coordinated change to all three trees during verification
     # can be mistaken for a valid new baseline.

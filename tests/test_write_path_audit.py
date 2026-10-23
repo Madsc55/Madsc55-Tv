@@ -18,6 +18,17 @@ class WritePathAuditTests(unittest.TestCase):
                 with self.assertRaises(ProtectedWriteRejected):
                     enforce_write_paths([path])
 
+    def test_isolated_playlist_rejects_symlinked_reports_ancestor(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            outside = root / "outside"
+            outside.mkdir()
+            (root / "reports").symlink_to(outside, target_is_directory=True)
+            destination = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_turkish_tv_test_playlist(destination, allowed_root=root)
+            self.assertFalse((outside / destination.name).exists())
+
     def test_isolated_playlist_rejects_oversized_inputs(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
@@ -50,7 +61,8 @@ class WritePathAuditTests(unittest.TestCase):
         self.assertNotIn("x" * 500, message)
 
     def test_drive_prefixed_repository_paths_fail_closed(self):
-        for path in ("C:/reports/evidence.json", "z:reports/evidence.json"):
+        for path in ("C:/reports/evidence.json", "z:reports/evidence.json",
+                     "Ｃ：/reports/evidence.json", "C：/reports/evidence.json"):
             with self.subTest(path=path):
                 self.assertEqual(audit_write_paths([path])["rejected"], [path])
                 with self.assertRaises(ProtectedWriteRejected):

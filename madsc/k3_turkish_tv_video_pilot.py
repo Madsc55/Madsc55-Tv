@@ -163,8 +163,8 @@ def run():
         if tv_tested >= LIMIT:
             break
         source_rows += 1
-        cat = category(name) if isinstance(name, str) else None
-        if not isinstance(url, str) or not url.strip():
+        cat = category(name) if isinstance(name, str) and name.strip() else None
+        if not isinstance(url, str) or not url.strip() or len(url) > 4096:
             results.append({"status": "invalid_source_url"})
             continue
         digest = hashlib.sha256(url.encode()).hexdigest()

@@ -193,5 +193,5 @@ def write_stage_report(root: Path, stage: str, report: dict) -> dict:
         raise ValueError("Isolated evidence must explicitly deny production readiness")
     relative_path = f"reports/{stage}-isolated-evidence.json"
     result = write_fixture_report(root, relative_path,
-                                  json.dumps(report, sort_keys=True, ensure_ascii=False) + "\n")
+                                  json.dumps(report, sort_keys=True, ensure_ascii=False, allow_nan=False) + "\n")
     return {**result, "stage": stage, "relative_path": relative_path}

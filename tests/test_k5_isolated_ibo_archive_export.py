@@ -87,6 +87,26 @@ class K5IboArchiveExportTests(unittest.TestCase):
             if hasattr(os, "O_NOFOLLOW"):
                 self.assertTrue(observed[0] & os.O_NOFOLLOW)
 
+    def test_fdopen_failure_closes_descriptor_and_rolls_back(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            original_open = os.open
+            opened = []
+            def record_open(path, flags, *args, **kwargs):
+                fd = original_open(path, flags, *args, **kwargs)
+                if Path(path).name == "ibo_6115_archive_preview.json":
+                    opened.append(fd)
+                return fd
+            with patch("madsc.isolated_ibo_archive_export.os.open", side_effect=record_open):
+                with patch("madsc.isolated_ibo_archive_export.os.fdopen",
+                           side_effect=OSError("fixture fdopen failure")):
+                    with self.assertRaisesRegex(OSError, "fdopen failure"):
+                        export_6115_archive_manifest(self.urls, destination)
+            self.assertEqual(len(opened), 1)
+            with self.assertRaises(OSError):
+                os.fstat(opened[0])
+            self.assertFalse(destination.exists())
+
     def test_file_sync_failure_rolls_back(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"

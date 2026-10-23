@@ -216,6 +216,11 @@ class _Scanner(ast.NodeVisitor):
         self._visit_scope(node, node.name)
 
     def visit_Lambda(self, node):
+        # Lambda defaults execute immediately in the enclosing scope;
+        # only the lambda body is deferred until invocation.
+        for default in (*node.args.defaults, *node.args.kw_defaults):
+            if default is not None:
+                self.visit(default)
         collector = _ScopeCalls()
         collector.visit(node.body)
         guards = sorted(n.lineno for n in collector.calls

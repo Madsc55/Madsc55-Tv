@@ -74,6 +74,23 @@ def _create_relative_file_nofollow(root: Path, parts: tuple[str, ...],
                 pass
 
 
+def _reject_portable_directory_aliases(paths: list[str]) -> None:
+    """Reject portable directory aliases and file/directory collisions."""
+    import unicodedata
+    files = {unicodedata.normalize("NFKC", path).casefold() for path in paths}
+    directories: dict[str, str] = {}
+    for path in paths:
+        parts = path.split("/")
+        for depth in range(1, len(parts)):
+            directory = "/".join(parts[:depth])
+            key = unicodedata.normalize("NFKC", directory).casefold()
+            if key in files:
+                raise ValueError("Portable backup file-directory collision")
+            previous = directories.setdefault(key, directory)
+            if previous != directory:
+                raise ValueError("Ambiguous portable backup directory alias")
+
+
 def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     root = Path(root)
     if root.is_symlink() or not root.is_dir():
@@ -99,6 +116,7 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     portable = [unicodedata.normalize('NFKC', name).casefold() for name in paths]
     if len(set(portable)) != len(paths):
         raise ValueError('Ambiguous portable backup source path alias')
+    _reject_portable_directory_aliases(paths)
     if any(unicodedata.category(character) == 'Cf'
            for name in paths for character in name):
         raise ValueError('Invisible formatting character in backup source path')
@@ -198,6 +216,7 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     portable = [unicodedata.normalize('NFKC', path).casefold() for path in paths]
     if len(set(portable)) != len(paths):
         raise ValueError('Ambiguous portable backup manifest path alias')
+    _reject_portable_directory_aliases(paths)
     if any(unicodedata.category(character) == 'Cf'
            for path in paths for character in path):
         raise ValueError('Invisible formatting character in backup manifest path')

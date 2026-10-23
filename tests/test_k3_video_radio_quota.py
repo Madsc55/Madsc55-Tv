@@ -9,6 +9,23 @@ from madsc import k3_turkish_tv_video_pilot as pilot
 
 
 class K3VideoRadioQuotaTests(unittest.TestCase):
+    def test_nested_urls_reject_scheme_downgrade_and_origin_bypass(self):
+        base = "https://example.org/master.m3u8"
+        for target in ("http://example.org/segment.ts",
+                       "https://example.org:8443/segment.ts",
+                       "https://user:pass@example.org/segment.ts",
+                       "https://evil.example.org/segment.ts"):
+            with self.subTest(target=target):
+                self.assertFalse(pilot.same_origin_https(base, target))
+        self.assertTrue(pilot.same_origin_https(base, "https://example.org/segment.ts"))
+
+    def test_http_segment_rejected_without_download(self):
+        manifest = b"#EXTM3U\\n#EXTINF:4,\\nhttp://example.org/segment.ts\\n"
+        with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "cross_host_segment"))
+            curl.assert_called_once()
+
     def test_encrypted_media_playlist_fails_before_segment_download(self):
         manifest = b'#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\n#EXTINF:4,\nsegment.ts\n'
         with patch.object(pilot, 'safe_curl', return_value=manifest) as curl:

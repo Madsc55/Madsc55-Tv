@@ -55,6 +55,17 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                                  (False, False, "unsupported_hls_segment_layout"))
                 curl.assert_called_once()
 
+    def test_indented_comment_is_not_used_as_segment_url(self):
+        manifest = b"#EXTM3U\n   #EXTINF:4,\n   # comment\nsegment.ts\n"
+        with patch.object(pilot, "safe_curl", side_effect=[manifest, b"x" * 188]) as curl, \
+             patch.object(pilot.subprocess, "run") as probe:
+            probe.return_value.returncode = 1
+            probe.return_value.stdout = b""
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "probe_error"))
+            self.assertEqual(curl.call_args_list[1].args[0],
+                             "https://example.org/segment.ts")
+
     def test_encrypted_media_playlist_fails_before_segment_download(self):
         manifest = b'#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\n#EXTINF:4,\nsegment.ts\n'
         with patch.object(pilot, 'safe_curl', return_value=manifest) as curl:

@@ -49,6 +49,13 @@ class WritePathAuditTests(unittest.TestCase):
         self.assertIn("additional paths omitted", message)
         self.assertNotIn("x" * 500, message)
 
+    def test_drive_prefixed_repository_paths_fail_closed(self):
+        for path in ("C:/reports/evidence.json", "z:reports/evidence.json"):
+            with self.subTest(path=path):
+                self.assertEqual(audit_write_paths([path])["rejected"], [path])
+                with self.assertRaises(ProtectedWriteRejected):
+                    enforce_write_paths([path])
+
     def test_oversized_path_is_rejected_before_normalization(self):
         long_path = "reports/" + "x" * 4090 + ".json"
         report = audit_write_paths([long_path])

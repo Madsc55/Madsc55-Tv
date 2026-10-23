@@ -39,4 +39,5 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-# CI audit: revalidate latest K1-K5 snapshot including K5 surrogate URL fixes.
+
+# CI audit: validate latest K1-K5 changes including post-run K2 and K5 regressions.

@@ -924,7 +924,7 @@ def mutate(path, fd):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             source = root / "safe.py"
-            source.write_text("value = 123456789\\n", encoding="utf-8")
+            source.write_text("value = 123456789\n", encoding="utf-8")
             original_open = Path.open
 
             class ShortReadHandle:

@@ -33,7 +33,7 @@ def _valid(record):
 
 def compare(document):
     errors = []
-    if not isinstance(document, dict) or set(document) != {"workflow", "fixture_sha256", "legacy", "new", "independent_runs", "isolated_fixture"}:
+    if not isinstance(document, dict) or set(document) != {"workflow", "fixture_sha256", "legacy", "new", "independent_runs", "isolated_fixture", "legacy_run_id", "new_run_id", "legacy_commit_sha", "new_commit_sha"}:
         return {"accepted": False, "errors": ["invalid_evidence_schema"]}
     workflow = document["workflow"]
     if (not isinstance(workflow, str) or not workflow.endswith((".yml", ".yaml"))
@@ -45,6 +45,16 @@ def compare(document):
         errors.append("invalid_fixture_digest")
     if document["independent_runs"] is not True or document["isolated_fixture"] is not True:
         errors.append("independence_or_isolation_unproven")
+    for field in ("legacy_run_id", "new_run_id"):
+        value = document[field]
+        if not isinstance(value, str) or not value.strip() or len(value) > 200:
+            errors.append("invalid_" + field)
+    if document.get("legacy_run_id") == document.get("new_run_id"):
+        errors.append("run_ids_not_independent")
+    for field in ("legacy_commit_sha", "new_commit_sha"):
+        value = document[field]
+        if not isinstance(value, str) or len(value) != 40 or any(c not in DIGEST for c in value):
+            errors.append("invalid_" + field)
     for side in ("legacy", "new"):
         if not _valid(document[side]):
             errors.append("invalid_" + side + "_record")

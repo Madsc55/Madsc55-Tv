@@ -227,6 +227,30 @@ def run_commands():
         self.assertEqual(classes.count("python_module_payload"), 1)
         self.assertEqual(classes.count("caller_controlled_command"), 1)
 
+    def test_backup_source_opens_are_read_only_dispositions_but_creates_stay_open(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        read_opens = [row for row in report["non_write_dispositions"]
+                      if row["path"] == "madsc/backup.py"
+                      and row["scope"] == "_open_relative_file_nofollow"
+                      and row["api"] == "os.open"]
+        self.assertEqual(len(read_opens), 3)
+        self.assertTrue(all(
+            row["disposition"] == "proven_read_only_descriptor"
+            and row["review_required"] is False
+            for row in read_opens
+        ))
+        destination_mutations = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/backup.py"
+            and row["scope"] == "_create_relative_file_nofollow"
+            and row["api"].split(" [", 1)[0] in {"os.open", "os.mkdir"}
+        ]
+        self.assertEqual(len(destination_mutations), 4)
+        self.assertTrue(all(row["review_required"] for row in destination_mutations))
+        self.assertTrue(all(row["guard_control_flow_verified"]
+                            for row in destination_mutations))
+
     def test_process_literal_file_output_switches_are_recorded_fail_closed(self):
         source = '''
 import subprocess

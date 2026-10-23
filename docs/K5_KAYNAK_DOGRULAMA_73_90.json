@@ -1,0 +1,432 @@
+{
+  "schema_version": 1,
+  "source_commit": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+  "method": "Direct GitHub YAML read, SHA check, conservative regex signals; NOT behavioral parity",
+  "rows": [
+    {
+      "path": ".github/workflows/test-28-approval-gate.yml",
+      "sha": "d9253678d662c7bb2caefe12286ce15d5e6f702f",
+      "expected_sha": "d9253678d662c7bb2caefe12286ce15d5e6f702f",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-29-write-path-audit.yml",
+      "sha": "93b083583024215f0340b2d70974732ab9478c4d",
+      "expected_sha": "93b083583024215f0340b2d70974732ab9478c4d",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-30-write-risk-report.yml",
+      "sha": "97879b5d4f95546b521ecb5b034571fe230374dd",
+      "expected_sha": "97879b5d4f95546b521ecb5b034571fe230374dd",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-31-protected-write-gate.yml",
+      "sha": "eca623c47a4cb81e88e14d59f58862c8e110e6d1",
+      "expected_sha": "eca623c47a4cb81e88e14d59f58862c8e110e6d1",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-32-unapproved-write-regression.yml",
+      "sha": "ca2bd0ed80045bc3ce0c027397172e16e28bdb5e",
+      "expected_sha": "ca2bd0ed80045bc3ce0c027397172e16e28bdb5e",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": true,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-33-all-write-paths.yml",
+      "sha": "76d1d09da818fe8b8fe531167e8dd30b9a8717a2",
+      "expected_sha": "76d1d09da818fe8b8fe531167e8dd30b9a8717a2",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-34-protected-write-regression.yml",
+      "sha": "453f8ca6c0bcde59ef8fd4afc22fcc72baafc002",
+      "expected_sha": "453f8ca6c0bcde59ef8fd4afc22fcc72baafc002",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-35-remaining-write-gate.yml",
+      "sha": "8bec3b96e6b084f6f2b44f9bd5af3af7bfd103c4",
+      "expected_sha": "8bec3b96e6b084f6f2b44f9bd5af3af7bfd103c4",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-36-system-integration-audit.yml",
+      "sha": "f83899a4733d6bf979cd7ee74835ace179f6708e",
+      "expected_sha": "f83899a4733d6bf979cd7ee74835ace179f6708e",
+      "verified": true,
+      "candidate_stages": [
+        "K3",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": true,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-37-indirect-write-audit.yml",
+      "sha": "36b1c85749f7358efeb45962ffae0cae88525d56",
+      "expected_sha": "36b1c85749f7358efeb45962ffae0cae88525d56",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": true,
+        "live": false,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-38-audit-selftest.yml",
+      "sha": "bbe368fffdf354d9f61d654f009dcd749da8183f",
+      "expected_sha": "bbe368fffdf354d9f61d654f009dcd749da8183f",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K3",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": true,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/test-39-protected-playlist.yml",
+      "sha": "2d495c94091c7c2194686c41181ac981f5a5d8aa",
+      "expected_sha": "2d495c94091c7c2194686c41181ac981f5a5d8aa",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": [
+        "scripts/protected_playlist_audit.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/test-kanal-adaylari.yml",
+      "sha": "324040ec251f5bc9a0dc5c652312500d6cf37d67",
+      "expected_sha": "324040ec251f5bc9a0dc5c652312500d6cf37d67",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "scripts/test_kanal_adaylari.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/toplu-sistem-kontrol.yml",
+      "sha": "34cf72108fb7aea4a1abde31027cfd3a859db43d",
+      "expected_sha": "34cf72108fb7aea4a1abde31027cfd3a859db43d",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": true,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/vod-guncelle.yml",
+      "sha": "78c3b8aa8e27b9f25e439337e2e94be9468b6f3b",
+      "expected_sha": "78c3b8aa8e27b9f25e439337e2e94be9468b6f3b",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "scripts/vod_guncelle.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/yedek-geri-yukleme-tatbikat.yml",
+      "sha": "08a38be283550147e0e267f72fcc1291bfc9f88c",
+      "expected_sha": "08a38be283550147e0e267f72fcc1291bfc9f88c",
+      "verified": true,
+      "candidate_stages": [
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "scripts/restore_dry_run.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/yedekler-yeniler-medya-kontrol.yml",
+      "sha": "43fd2b8bc0f6f4173bb3dde16744d10376d1027b",
+      "expected_sha": "43fd2b8bc0f6f4173bb3dde16744d10376d1027b",
+      "verified": true,
+      "candidate_stages": [
+        "K3",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "scripts/yedekler_yeniler_medya_kontrol.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/yeni-aday-on-test.yml",
+      "sha": "a0d0625a65233e35f37dbcda25e6a3fd71915f75",
+      "expected_sha": "a0d0625a65233e35f37dbcda25e6a3fd71915f75",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yeni_aday_on_test.py"
+      ]
+    }
+  ]
+}

@@ -116,7 +116,6 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     portable = [unicodedata.normalize('NFKC', name).casefold() for name in paths]
     if len(set(portable)) != len(paths):
         raise ValueError('Ambiguous portable backup source path alias')
-    _reject_portable_directory_aliases(paths)
     if any(unicodedata.category(character) == 'Cf'
            for name in paths for character in name):
         raise ValueError('Invisible formatting character in backup source path')
@@ -125,6 +124,7 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
     if any('/'.join(name.split('/')[:depth]) in declared
            for name in paths for depth in range(1, len(name.split('/')))):
         raise ValueError('Backup source file conflicts with declared directory')
+    _reject_portable_directory_aliases(paths)
     entries = []
     for name in sorted(paths):
         if (any(ord(c) < 32 or ord(c) == 127
@@ -216,7 +216,6 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     portable = [unicodedata.normalize('NFKC', path).casefold() for path in paths]
     if len(set(portable)) != len(paths):
         raise ValueError('Ambiguous portable backup manifest path alias')
-    _reject_portable_directory_aliases(paths)
     if any(unicodedata.category(character) == 'Cf'
            for path in paths for character in path):
         raise ValueError('Invisible formatting character in backup manifest path')
@@ -224,6 +223,7 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
     if any('/'.join(path.split('/')[:depth]) in declared
            for path in paths for depth in range(1, len(path.split('/')))):
         raise ValueError('Backup manifest file conflicts with declared directory')
+    _reject_portable_directory_aliases(paths)
     # A manifest is a canonical snapshot, not an arbitrary subset or reordered list.
     if paths != sorted(paths):
         return False

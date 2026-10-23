@@ -173,6 +173,83 @@ def read(path, flags):
         self.assertEqual(len(rows), 2)
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_single_direct_local_read_only_flags_are_source_bound_dispositions(self):
+        source = '''
+import os
+def read(path):
+    base = os.O_RDONLY | os.O_NOFOLLOW
+    flags = base | getattr(os, "O_NONBLOCK", 0)
+    os.open(path, flags)
+'''
+        self.assertEqual(scan_python_source(source), [])
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "reader.py").write_text(source, encoding="utf-8")
+            report = scan_python_tree(root)
+        self.assertEqual(report["candidate_callsite_count"], 0)
+        self.assertEqual(report["non_write_disposition_count"], 1)
+        row = report["non_write_dispositions"][0]
+        self.assertEqual(row["disposition"], "proven_read_only_descriptor")
+        self.assertEqual(len(row["source_file_sha256"]), 64)
+
+    def test_unsafe_or_non_dominating_local_flag_bindings_remain_fail_closed(self):
+        source = '''
+import os
+def parameter(path, flags):
+    flags = os.O_RDONLY
+    os.open(path, flags)
+def reassigned(path):
+    flags = os.O_RDONLY
+    flags = os.O_RDWR
+    os.open(path, flags)
+def conditional(path, enabled):
+    if enabled:
+        flags = os.O_RDONLY
+    os.open(path, flags)
+def after(path):
+    os.open(path, flags)
+    flags = os.O_RDONLY
+def external(path):
+    global flags
+    flags = os.O_RDONLY
+    os.open(path, flags)
+def imported(path):
+    flags = os.O_RDONLY
+    from os import O_WRONLY as flags
+    os.open(path, flags)
+def captured(path, value):
+    flags = os.O_RDONLY
+    match value:
+        case flags:
+            pass
+    os.open(path, flags)
+def closure(path):
+    flags = os.O_RDONLY
+    def change():
+        nonlocal flags
+        flags = os.O_WRONLY
+    change()
+    os.open(path, flags)
+def dynamic(path):
+    flags = os.O_RDONLY
+    exec("flags = os.O_WRONLY")
+    os.open(path, flags)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 9)
+        self.assertTrue(all(row["review_required"] for row in rows))
+
+    def test_single_direct_local_write_flags_remain_write_candidates(self):
+        source = '''
+import os
+def write(path):
+    flags = os.O_WRONLY | os.O_CREAT
+    os.open(path, flags)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertIn("flags require review", rows[0]["api"])
+
     def test_only_syntactically_proven_text_replace_is_dispositioned(self):
         source = '''
 def transform(value, path):

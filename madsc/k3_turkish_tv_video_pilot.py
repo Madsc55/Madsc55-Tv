@@ -94,7 +94,8 @@ def verify_av(url):
     if any(line.lstrip().startswith(("#EXT-X-MAP:", "#EXT-X-I-FRAME-STREAM-INF:"))
            for line in text.splitlines()):
         return False, False, "unsupported_hls_media_layout"
-    if any(line.lstrip().startswith(("#EXT-X-BYTERANGE:", "#EXT-X-PART:", "#EXT-X-PRELOAD-HINT:"))
+    if any(line.lstrip().startswith(("#EXT-X-BYTERANGE:", "#EXT-X-PART:", "#EXT-X-PRELOAD-HINT:",
+                                     "#EXT-X-SKIP:", "#EXT-X-RENDITION-REPORT:"))
            for line in text.splitlines()):
         return False, False, "unsupported_hls_segment_layout"
     segments = [line.strip() for line in text.splitlines()

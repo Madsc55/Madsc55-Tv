@@ -22,6 +22,24 @@ class WorkflowWriteBoundaryTests(unittest.TestCase):
                 self.assertNotRegex(source, r"(?m)\bgit\s+push\b")
                 self.assertNotRegex(source, r"(?m)^[ \t]*pull_request_target[ \t]*:")
 
+class K4FixtureWriteBoundaryTests(unittest.TestCase):
+    """Prevent regression to an unguarded K4 shell fixture write."""
+
+    def test_k4_fixture_seed_uses_k1_policy_and_exclusive_writer(self):
+        workflow = (Path(__file__).resolve().parents[1] / ".github" /
+                    "workflows/madsc-04-yedek.yml").read_text(encoding="utf-8")
+        step = workflow.split("- name: K4 temporary backup and restore drill", 1)[1]
+        step = step.split("\n      - name:", 1)[0]
+        self.assertIn("enforce_write_paths(", step)
+        self.assertIn("enforce_local_evidence_path(", step)
+        self.assertIn("write_exclusive_bytes(", step)
+        self.assertLess(step.index("enforce_write_paths("), step.index("mkdir(parents=True"))
+        self.assertLess(step.index("enforce_local_evidence_path("),
+                        step.index("write_exclusive_bytes("))
+        self.assertNotIn("printf 'k4 fixture backup", step)
+        self.assertNotIn("> reports/k4-source/nested/sample.txt", step)
+
+
 class WorkflowWriteBoundaryRegressionTests(unittest.TestCase):
     def test_forbidden_workflow_patterns_are_detected(self):
         import re

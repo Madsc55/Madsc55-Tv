@@ -31,6 +31,15 @@ class BackupManifestHardeningTests(unittest.TestCase):
                         verify_manifest(root, manifest)
             self.assertTrue(verify_manifest(root, snapshot_manifest(root, ["good.txt"])))
 
+    def test_manifest_rejects_nonstring_keys(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'good.txt').write_text('ok')
+            manifest = snapshot_manifest(root, ['good.txt'])
+            manifest[42] = 'invalid'
+            with self.assertRaises(ValueError):
+                verify_manifest(root, manifest)
+
     def test_unknown_top_level_manifest_claims_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

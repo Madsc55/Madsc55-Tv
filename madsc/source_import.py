@@ -18,8 +18,13 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
         raise ValueError("Invalid source file") from exc
     import os
     import stat
-    if not hasattr(os, "O_NOFOLLOW") or any(parent.is_symlink() for parent in source.absolute().parents):
+    if not hasattr(os, "O_NOFOLLOW"):
         raise ValueError("Unsafe source path")
+    try:
+        if any(parent.is_symlink() for parent in source.absolute().parents):
+            raise ValueError("Unsafe source path")
+    except OSError as exc:
+        raise ValueError("Unsafe source path") from exc
     try:
         fd = os.open(source, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0))
     except OSError as exc:

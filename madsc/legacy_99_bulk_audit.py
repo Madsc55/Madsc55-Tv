@@ -59,6 +59,8 @@ def github(url, token):
 def run(output, token):
     path = Path(output)
     enforce_local_output_path(path.absolute())
+    if path.exists() or path.is_symlink():
+        raise ValueError("Will not overwrite evidence")
     ref = urllib.parse.quote(BRANCH, safe="")
     tree = github(f"https://api.github.com/repos/{REPO}/git/trees/{ref}?recursive=1", token)
     if tree.get("truncated"):

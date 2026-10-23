@@ -14,6 +14,11 @@ class TrialEpgMatchingTest(unittest.TestCase):
         rows = programme_coverage('#EXTINF:-1 tvg-id="a",TRT 1\n#EXTINF:-1 tvg-id="b",TV 8\n#EXTINF:-1,Unknown', xml)
         self.assertEqual([r["programme_count"] for r in rows], [1, 0, 0])
         self.assertEqual([r["has_programmes"] for r in rows], [True, False, False])
+    def test_valid_xmltv_timestamp_is_counted(self):
+        xml = '<tv><channel id="a"/><programme channel="a" start="20261023100000 +0200" stop="20261023110000 +0200"><title>News</title></programme></tv>'
+        row = programme_coverage('#EXTINF:-1 tvg-id="a",TRT 1', xml)[0]
+        self.assertEqual(row["programme_count"], 1)
+        self.assertTrue(row["has_programmes"])
     def test_orphan_xmltv_programme_does_not_create_guide_coverage(self):
         xml = '<tv><channel id="a"><display-name>TRT 1</display-name></channel><programme channel="missing" start="20261023100000 +0000"><title>Orphan</title></programme></tv>'
         rows = programme_coverage('#EXTINF:-1 tvg-id="a",TRT 1', xml)

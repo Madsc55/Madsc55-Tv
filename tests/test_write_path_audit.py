@@ -311,6 +311,16 @@ class LocalOutputGuardTests(unittest.TestCase):
                         enforce_local_output_path(target, allowed_root=str(root) + suffix)
             self.assertFalse(target.exists())
 
+    def test_local_output_rejects_nfkc_dot_segment_aliases(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for candidate in (str(root) + "/．/evidence.json",
+                              str(root) + "/．．/evidence.json"):
+                with self.subTest(candidate=candidate):
+                    with self.assertRaises(ProtectedWriteRejected):
+                        enforce_local_output_path(candidate, allowed_root=root)
+            self.assertFalse((root / "evidence.json").exists())
+
     def test_local_output_rejects_nfkc_separator_aliases(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

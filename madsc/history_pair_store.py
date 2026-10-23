@@ -12,7 +12,7 @@ KEYS = ("gecmis.json", "ana_liste_test_gecmisi.json")
 
 
 def encode_pair(pair):
-    if set(pair) != set(KEYS):
+    if not isinstance(pair, dict) or set(pair) != set(KEYS):
         raise ValueError("Both history documents are required")
     for name, key in (("gecmis.json", "history"),
                       ("ana_liste_test_gecmisi.json", "channels")):
@@ -30,7 +30,10 @@ def decode_pair(raw):
         raise ValueError("Invalid history envelope")
     if envelope["schema"] != 1:
         raise ValueError("Unsupported history envelope")
-    canonical = json.dumps(envelope["payload"], sort_keys=True, ensure_ascii=False,
+    payload = envelope["payload"]
+    if not isinstance(payload, dict):
+        raise ValueError("Invalid history payload")
+    canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False,
                            separators=(",", ":"))
     if hashlib.sha256(canonical.encode("utf-8")).hexdigest() != envelope["sha256"]:
         raise ValueError("History digest mismatch")

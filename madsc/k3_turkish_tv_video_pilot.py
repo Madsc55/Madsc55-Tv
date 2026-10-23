@@ -69,7 +69,7 @@ def verify_av(url):
     if not manifest or not manifest.lstrip().startswith(b"#EXTM3U"):
         return False, False, "no_manifest"
     text = manifest.decode("utf-8-sig", errors="replace")
-    if "#EXT-X-STREAM-INF" in text:
+    if any(line.strip().startswith("#EXT-X-STREAM-INF:") for line in text.splitlines()):
         lines = [line.strip() for line in text.splitlines()]
         variants = [lines[i + 1] for i, line in enumerate(lines[:-1])
                     if line.startswith("#EXT-X-STREAM-INF") and lines[i + 1]

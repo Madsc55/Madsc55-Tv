@@ -234,6 +234,15 @@ class EpgTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "NUL byte"):
                 check_epg_mapping(p, e)
 
+    def test_xmltv_nul_byte_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_bytes(b'<tv><channel id="trt1.tr"/>\x00</tv>')
+            with self.assertRaisesRegex(ValueError, "NUL byte in XMLTV"):
+                check_epg_mapping(p, e)
+
     def test_xmltv_doctype_is_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "playlist.m3u8"

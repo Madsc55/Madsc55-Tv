@@ -39,4 +39,4 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-# CI audit: revalidate current K1-K5 main snapshot after skipped commits.
+# CI audit: revalidate latest K1-K5 snapshot including K5 surrogate URL fixes.

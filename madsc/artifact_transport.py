@@ -8,6 +8,16 @@ from madsc.discovery import classify_candidates
 from madsc.handoff import assess_candidates
 from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
+
+def _write_json_exclusive(destination: Path, payload: dict) -> None:
+    """Write one evidence object only after an immediate K1 preflight."""
+    destination = Path(destination)
+    enforce_write_paths([destination.name])
+    enforce_local_output_path(destination.absolute())
+    with destination.open("x", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload, sort_keys=True) + "\n")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("mode", choices=["produce", "consume"])
@@ -41,20 +51,13 @@ def main():
         if result["network_probed"] or result["production_playlist_modified"]:
             raise ValueError("Read-only invariant failed")
         if args.output is not None:
-            if args.output.is_symlink():
-                raise ValueError("Invalid report output")
-            enforce_write_paths([args.output.name])
-            enforce_local_output_path(args.output.absolute())
-            with args.output.open("x", encoding="utf-8") as handle:
-                handle.write(json.dumps({"schema": "madsc-handoff-verification-v1", "run_id": args.run_id,
+            _write_json_exclusive(args.output, {
+                "schema": "madsc-handoff-verification-v1", "run_id": args.run_id,
                 "commit_sha": args.commit_sha, "source_digest": envelope["digest"],
                 "candidate_count": result["candidate_count"], "read_only": True,
-                "network_probed": False, "production_ready": False}, sort_keys=True) + "\n")
+                "network_probed": False, "production_ready": False})
     if args.mode == "produce":
-        enforce_write_paths([args.path.name])
-        enforce_local_output_path(args.path.absolute())
-        with args.path.open("x", encoding="utf-8") as handle:
-            handle.write(json.dumps(result, sort_keys=True) + "\n")
+        _write_json_exclusive(args.path, result)
     print(json.dumps({"mode": args.mode, "source_mode": "read_only_m3u" if args.mode == "produce" and args.source is not None else ("synthetic_fixture" if args.mode == "produce" else "verified_artifact"), "production_ready": False, "verified": True}))
 if __name__ == "__main__":
     main()

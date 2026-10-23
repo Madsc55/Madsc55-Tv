@@ -23,6 +23,8 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         raise ValueError("Source and M3U text are required")
     # Source names are provenance labels, not arbitrary control sequences.
     # Reject embedded controls before they can contaminate audit reports.
+    if any(unicodedata.category(ch) in ("Cs",) for ch in source):
+        raise ValueError("M3U source and text must be valid UTF-8")
     if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in source):
         raise ValueError("Source name contains control characters")
     # Surrogate code points cannot be represented in UTF-8 output and must

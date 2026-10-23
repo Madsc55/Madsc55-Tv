@@ -107,6 +107,31 @@ class K5IboArchiveExportTests(unittest.TestCase):
                 os.fstat(opened[0])
             self.assertFalse(destination.exists())
 
+    def test_manifest_write_failure_closes_file_and_rolls_back(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            real_fdopen = os.fdopen
+            class FailingWriter:
+                def __init__(self, handle):
+                    self.handle = handle
+                def __enter__(self):
+                    return self
+                def __exit__(self, *args):
+                    return self.handle.__exit__(*args)
+                def write(self, data):
+                    raise OSError("fixture write failure")
+                def flush(self):
+                    return self.handle.flush()
+                def fileno(self):
+                    return self.handle.fileno()
+            def wrapped_fdopen(fd, mode):
+                return FailingWriter(real_fdopen(fd, mode))
+            with patch("madsc.isolated_ibo_archive_export.os.fdopen",
+                       side_effect=wrapped_fdopen):
+                with self.assertRaisesRegex(OSError, "write failure"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(destination.exists())
+
     def test_file_sync_failure_rolls_back(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"

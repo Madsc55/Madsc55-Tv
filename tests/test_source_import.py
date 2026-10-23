@@ -134,6 +134,7 @@ class SourceImportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"
             p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="channel",Channel "HD, Live\nhttps://example.org/live\n', encoding="utf-8")
+            self.assertTrue(p.read_bytes().startswith(b"#EXTM3U\\n"), "Fixture header changed before import")
             result = extract_candidates(p)
             self.assertEqual(result["candidates"][0]["name"], 'Channel "HD, Live')
             self.assertEqual(result["candidates"][0]["tvg_id"], "channel")

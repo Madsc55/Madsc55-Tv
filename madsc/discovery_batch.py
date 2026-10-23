@@ -65,7 +65,9 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         # preserve the strict rejection of padding on ordinary LF rows.
         if raw.startswith("#EXTINF:") and line != raw and not any(
             unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw
-        ) and not ("," in raw and not raw.rsplit(",", 1)[1].strip()) and not transport_crlf:
+        ) and not ("," in raw and not raw.rsplit(",", 1)[1].strip()) and not (
+            transport_crlf and raw.endswith(" ") and raw.rstrip(" ") == line
+        ):
             # Whitespace padding that is not a control must not silently
             # change the declared channel identity.
             errors.append({"line": number, "reason": "invalid_metadata_whitespace"})

@@ -102,6 +102,17 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
                         audit.run(Path(temp) / "audit.json", "")
                     self.assertEqual(network.call_count, 1)
 
+    def test_malformed_tree_entries_rejected_before_blob_fetch(self):
+        with tempfile.TemporaryDirectory() as temp:
+            for entry in (None, [], {"path": None, "type": "blob"},
+                          {"path": ".github/workflows/a.yml", "type": None}):
+                with self.subTest(entry=repr(entry)):
+                    tree = {"tree": [entry], "truncated": False}
+                    with patch.object(audit, "github", return_value=tree) as network:
+                        with self.assertRaises(ValueError):
+                            audit.run(Path(temp) / "audit.json", "")
+                        self.assertEqual(network.call_count, 1)
+
     def test_forged_blob_is_rejected(self):
         raw = b"name: sample\n"
         sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()

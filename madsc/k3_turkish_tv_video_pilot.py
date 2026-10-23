@@ -163,7 +163,7 @@ def run():
         if tv_tested >= LIMIT:
             break
         source_rows += 1
-        cat = category(name)
+        cat = category(name) if isinstance(name, str) else None
         if not isinstance(url, str) or not url:
             results.append({"status": "invalid_source_url"})
             continue

@@ -29,7 +29,7 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     for raw_line in text.splitlines():
         line = raw_line.strip()
         if line.startswith("#EXTM3U"):
-            if header_seen or line != header:
+            if header_seen or line != header or pending_stream or ids:
                 raise ValueError("Duplicate or misplaced M3U header")
             header_seen = True
         if line.startswith("#EXTINF:"):

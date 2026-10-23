@@ -117,7 +117,9 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     if inventory_matches and result["independent_sandbox_restore_matches"] is True:
         confirmed = verify_independent_restore(source, backup, restored, names)
         inventory_matches = (confirmed["independent_sandbox_restore_matches"] is True
-                             and snapshot_manifest(Path(source), names)["entries"] == initial_entries)
+                             and snapshot_manifest(Path(source), names)["entries"] == initial_entries
+                             and snapshot_manifest(Path(backup), names)["entries"] == initial_entries
+                             and snapshot_manifest(Path(restored), names)["entries"] == initial_entries)
         if inventory_matches:
             result = confirmed
     accepted = result["independent_sandbox_restore_matches"] is True and inventory_matches

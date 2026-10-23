@@ -44,6 +44,15 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, "probe_error"))
             self.assertEqual(curl.call_count, 2)
 
+    def test_byte_range_and_low_latency_parts_are_not_misprobed(self):
+        for tag in ("#EXT-X-BYTERANGE:1024@0", "#EXT-X-PART:DURATION=0.5,URI=\"part.ts\"",
+                    "#EXT-X-PRELOAD-HINT:TYPE=PART,URI=\"next.ts\""):
+            manifest = ("#EXTM3U\n" + tag + "\n#EXTINF:4,\nsegment.ts\n").encode()
+            with self.subTest(tag=tag), patch.object(pilot, "safe_curl", return_value=manifest) as curl:
+                self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                                 (False, False, "unsupported_hls_segment_layout"))
+                curl.assert_called_once()
+
     def test_encrypted_media_playlist_fails_before_segment_download(self):
         manifest = b'#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\n#EXTINF:4,\nsegment.ts\n'
         with patch.object(pilot, 'safe_curl', return_value=manifest) as curl:

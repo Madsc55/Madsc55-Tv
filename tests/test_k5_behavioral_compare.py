@@ -22,6 +22,8 @@ def evidence():
         "workflow": ".github/workflows/example.yml",
         "fixture_sha256": digest(b"fixture"),
         "legacy": record(), "new": record(),
+        "legacy_run_id": "legacy-run-001", "new_run_id": "new-run-001",
+        "legacy_commit_sha": "a" * 40, "new_commit_sha": "b" * 40,
         "independent_runs": True, "isolated_fixture": True,
     }
 
@@ -109,6 +111,16 @@ class BehavioralCompareTests(unittest.TestCase):
         doc = evidence()
         doc["approval"] = True
         self.assertIn("invalid_evidence_schema", compare(doc)["errors"])
+
+    def test_same_execution_id_rejected(self):
+        doc = evidence()
+        doc["new_run_id"] = doc["legacy_run_id"]
+        self.assertIn("run_ids_not_independent", compare(doc)["errors"])
+
+    def test_missing_commit_identity_rejected(self):
+        doc = evidence()
+        doc["new_commit_sha"] = "unknown"
+        self.assertIn("invalid_new_commit_sha", compare(doc)["errors"])
 
     def test_boolean_exit_code_rejected(self):
         doc = evidence()

@@ -130,6 +130,14 @@ class SourceImportTests(unittest.TestCase):
             result = extract_candidates(p)
             self.assertEqual(result["candidates"][0]["name"], 'Channel "HD"')
 
+    def test_channel_name_with_unmatched_quote_and_comma(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u"
+            p.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="channel",Channel "HD, Live\\nhttps://example.org/live\\n', encoding="utf-8")
+            result = extract_candidates(p)
+            self.assertEqual(result["candidates"][0]["name"], 'Channel "HD, Live')
+            self.assertEqual(result["candidates"][0]["tvg_id"], "channel")
+
     def test_symlink_source_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             original = Path(d) / "original.m3u"

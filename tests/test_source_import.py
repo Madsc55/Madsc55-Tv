@@ -183,6 +183,15 @@ class SourceImportTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "opened safely"):
                     extract_candidates(p)
 
+    def test_parent_path_inspection_oserror_rejected_cleanly(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u"
+            p.write_text("#EXTM3U\\n", encoding="utf-8")
+            with patch.object(Path, "absolute", side_effect=OSError("injected path error")):
+                with self.assertRaisesRegex(ValueError, "Unsafe source path"):
+                    extract_candidates(p)
+
     def test_source_stat_oserror_rejected_cleanly(self):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as d:

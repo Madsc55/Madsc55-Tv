@@ -45,6 +45,10 @@ def playlist_entries(playlist):
             raise ValueError("Malformed EXTINF attributes")
         found = [m.group(2) for m in ATTR.finditer(attributes)
                  if m.group(1) == "tvg-id" and attributes[:m.start(1)].count('"') % 2 == 0]
+        declared = [m for m in re.finditer(r'(?:^|\s)tvg-id(?=\s|=)', attributes)
+                    if attributes[:m.start()].count('"') % 2 == 0]
+        if len(declared) != len(found):
+            raise ValueError("Malformed tvg-id attribute")
         if len(found) > 1:
             raise ValueError("Duplicate tvg-id attribute")
         entries.append((line[separator + 1:].strip(), found[0].strip() if found else ""))

@@ -757,6 +757,22 @@ def mutate(path, fd):
                          ["os.posix_spawn", "os.posix_spawnp", "os.spawnv"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_subprocess_shell_output_helpers_are_reviewed(self):
+        source = (
+            "import subprocess\n"
+            "def capture(command):\n"
+            "    subprocess.getoutput(command)\n"
+            "    subprocess.getstatusoutput(command)\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual(
+            [row["api"].split(" [")[0] for row in rows],
+            ["subprocess.getoutput", "subprocess.getstatusoutput"],
+        )
+        self.assertTrue(all(row["review_required"] for row in rows))
+        self.assertTrue(all(row["process_shell_status"] == "implicit_shell"
+                            for row in rows))
+
     def test_os_exec_process_replacements_are_reviewed(self):
         source = (
             "import os\n"

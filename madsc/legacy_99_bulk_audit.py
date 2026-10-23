@@ -66,6 +66,10 @@ def run(output, token):
     if (not isinstance(tree, dict) or tree.get("truncated") is not False
             or not isinstance(tree.get("tree"), list)):
         raise ValueError("Incomplete or invalid legacy tree")
+    for item in tree["tree"]:
+        if (not isinstance(item, dict) or not isinstance(item.get("path"), str)
+                or not isinstance(item.get("type"), str)):
+            raise ValueError("Malformed legacy tree entry")
     entries = sorted((item for item in tree["tree"]
                       if item["path"].startswith(".github/workflows/")
                       and item["path"].endswith((".yml", ".yaml"))

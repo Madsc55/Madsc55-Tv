@@ -123,12 +123,12 @@ class SourceImportTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 extract_candidates(p)
 
-    def test_unbalanced_channel_name_quotes_rejected(self):
+    def test_quoted_channel_name_is_preserved(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"
-            p.write_text('#EXTM3U\n#EXTINF:-1,Channel "broken\nhttps://example.org/live\n', encoding="utf-8")
-            with self.assertRaises(ValueError):
-                extract_candidates(p)
+            p.write_text('#EXTM3U\n#EXTINF:-1,Channel "HD"\nhttps://example.org/live\n', encoding="utf-8")
+            result = extract_candidates(p)
+            self.assertEqual(result["candidates"][0]["name"], 'Channel "HD"')
 
     def test_symlink_source_rejected(self):
         with tempfile.TemporaryDirectory() as d:

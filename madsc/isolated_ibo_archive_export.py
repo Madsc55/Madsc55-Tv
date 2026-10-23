@@ -45,10 +45,10 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
             os.fsync(handle.fileno())
         # Verify the persisted bytes before claiming a successful export.
         saved = target.read_bytes()
-        if json.loads(saved) != manifest:
-            raise OSError("Archive manifest readback mismatch")
         if hashlib.sha256(saved).digest() != hashlib.sha256(payload).digest():
             raise OSError("Archive manifest byte integrity mismatch")
+        if json.loads(saved) != manifest:
+            raise OSError("Archive manifest readback mismatch")
         # Ensure the new directory entry is durable as well as the file bytes.
         if hasattr(os, "O_DIRECTORY"):
             directory_flags = os.O_RDONLY | os.O_DIRECTORY

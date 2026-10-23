@@ -87,6 +87,15 @@ class K5IboArchiveExportTests(unittest.TestCase):
             if hasattr(os, "O_NOFOLLOW"):
                 self.assertTrue(observed[0] & os.O_NOFOLLOW)
 
+    def test_file_sync_failure_rolls_back(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            with patch("madsc.isolated_ibo_archive_export.os.fsync",
+                       side_effect=OSError("fixture file sync failure")):
+                with self.assertRaisesRegex(OSError, "file sync failure"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(destination.exists())
+
     def test_directory_sync_failure_rolls_back(self):
         if not hasattr(os, "O_DIRECTORY"):
             self.skipTest("Directory fsync unsupported")

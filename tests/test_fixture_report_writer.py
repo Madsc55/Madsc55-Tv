@@ -204,6 +204,18 @@ class FixtureReportWriterTests(unittest.TestCase):
                         write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}")
                     self.assertFalse((root / "reports").exists())
 
+    def test_fixture_root_rejects_ambiguous_double_slashes(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for raw in ("//" + str(root).lstrip("/"),
+                        str(root) + "//fixture"):
+                with self.subTest(raw=raw):
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_fixture_report(Path(raw), "reports/evidence.json", "{}")
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_turkish_tv_test_bundle(Path(raw), b"#EXTM3U\\n", "{}")
+            self.assertFalse((root / "reports").exists())
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

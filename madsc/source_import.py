@@ -38,7 +38,7 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
             if len(parts) != 2:
                 raise ValueError("Invalid EXTINF metadata")
             attrs, channel_name = parts[0], parts[1].strip()
-            if attrs.count('"') % 2:
+            if attrs.count('"') % 2 or channel_name.count('"') % 2:
                 raise ValueError("Unbalanced EXTINF attribute quotes")
             # M3U metadata attributes must be unique case-insensitively. Picking
             # the first duplicate silently can bind a channel to the wrong EPG ID

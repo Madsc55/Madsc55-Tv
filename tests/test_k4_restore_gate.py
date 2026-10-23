@@ -151,6 +151,34 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertFalse(result["sandbox_restore_accepted"])
             self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
 
+    def test_replaced_restore_root_with_identical_bytes_fails_closed(self):
+        from unittest.mock import patch
+        from madsc.backup import verify_independent_restore as real_verify
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            calls = [0]
+
+            def replace_after_verify(*args):
+                result = real_verify(*args)
+                calls[0] += 1
+                if calls[0] == 2:
+                    old = base / "old-restored"
+                    roots[2].rename(old)
+                    roots[2].mkdir()
+                    (roots[2] / "file.txt").write_bytes(b"same")
+                return result
+
+            with patch("madsc.k4_restore_gate.verify_independent_restore",
+                       side_effect=replace_after_verify):
+                result = audit_k4_restore(*roots, ["file.txt"])
+            self.assertEqual(calls[0], 2)
+            self.assertFalse(result["sandbox_restore_accepted"])
+            self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
+
     def test_mismatch_fails_closed(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

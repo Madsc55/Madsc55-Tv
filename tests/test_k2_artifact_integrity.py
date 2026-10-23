@@ -74,9 +74,6 @@ class K2ArtifactIntegrityTests(unittest.TestCase):
 
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 class K2ArtifactParentPathTests(unittest.TestCase):
     def test_symlinked_parent_directory_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -140,3 +137,6 @@ class K2PinnedLegacySourceTests(unittest.TestCase):
         for path, blob in expected.items():
             with self.subTest(path=path):
                 self.assertEqual(blobs.get(path), blob)
+
+if __name__ == "__main__":
+    unittest.main()

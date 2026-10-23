@@ -52,6 +52,13 @@ class DiscoveryTests(unittest.TestCase):
                 self.assertEqual(len(result["rejected"]), 1)
                 self.assertFalse(result["production_playlist_modified"])
 
+    def test_whitespace_in_url_path_and_query_rejected(self):
+        for url in ("https://example.org/live stream",
+                    "https://example.org/live?channel=one two",
+                    "https://example.org/live\u00a0hd"):
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                normalize_url(url)
+
     def test_encoded_line_breaks_and_nul_are_rejected(self):
         for url in ("https://example.org/live%0a#EXTINF",
                     "https://example.org/live%0Dnext",

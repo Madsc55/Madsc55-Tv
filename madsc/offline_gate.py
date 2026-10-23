@@ -123,7 +123,7 @@ def main():
     try:
         from madsc.write_callsite_audit import scan_python_tree
         write_callsite_inventory = scan_python_tree(root)
-        write_callsite_audit_passed = write_callsite_inventory.get("schema") == "madsc-k1-write-callsite-inventory-v1"
+        write_callsite_audit_passed = write_callsite_inventory.get("schema") == "madsc-k1-write-callsite-inventory-v2"
     except Exception as exc:
         write_callsite_inventory = {"error": type(exc).__name__, "runtime_gate_enforced": False}
         write_callsite_audit_passed = False

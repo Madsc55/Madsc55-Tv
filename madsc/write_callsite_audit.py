@@ -164,6 +164,8 @@ def _classify_call(node: ast.Call) -> tuple[str, str]:
     # os.fdopen wraps a descriptor and may expose a writable file object.
     # Include the wrapper's mode even if its later write() is in a helper.
     if name == "os.fdopen":
+        if any(isinstance(arg, ast.Starred) for arg in node.args):
+            return "write_candidate", name + " [dynamic mode]"
         mode = node.args[1] if len(node.args) > 1 else None
         for kw in node.keywords:
             if kw.arg == "mode":
@@ -182,6 +184,9 @@ def _classify_call(node: ast.Call) -> tuple[str, str]:
     is_path_open = (isinstance(node.func, ast.Attribute) and leaf == "open"
                     and name not in {"os.open", "posix.open", "builtins.open", "io.open"})
     if is_builtin_open or is_path_open:
+        # *args may supply a writable mode even when no explicit mode is seen.
+        if any(isinstance(arg, ast.Starred) for arg in node.args):
+            return "write_candidate", name + " [dynamic mode]"
         mode = None
         # Path.open(mode) takes mode as its first argument; builtins.open and
         # io.open take (file, mode), as does the unqualified built-in open().

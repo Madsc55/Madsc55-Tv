@@ -1,11 +1,10 @@
 """Offline regression tests for K5 frozen-source coverage and tamper detection."""
 import json
-import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from madsc.k5_source_audit import PARTS, audit
+from madsc.k5_source_audit import audit
 
 
 class K5SourceAuditTests(unittest.TestCase):
@@ -24,6 +23,22 @@ class K5SourceAuditTests(unittest.TestCase):
         self.assertEqual(result["independent_old_new_execution_pairs"], 0)
         self.assertEqual(result["yaml_signal_counts"]["push"], 21)
         self.assertEqual(result["yaml_signal_counts"]["write"], 20)
+
+    def test_malformed_inventory_digest_fails_closed(self):
+        original = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            value = original(path, *args, **kwargs)
+            if str(path).endswith("LEGACY_SOURCE_SCOPE.json"):
+                data = json.loads(value)
+                data["workflows"][0]["git_blob_sha"] = "invalid"
+                return json.dumps(data)
+            return value
+
+        with patch.object(Path, "read_text", read_text):
+            result = audit(self.root)
+        self.assertFalse(result["source_audit_passed"])
+        self.assertIn("invalid_inventory_row", result["errors"])
 
     def test_missing_batch_fails_closed(self):
         original = Path.read_text

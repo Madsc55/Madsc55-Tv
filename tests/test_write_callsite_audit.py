@@ -918,6 +918,34 @@ def mutate(path, fd):
                 with self.assertRaisesRegex(ValueError, "changed during audit"):
                     scan_python_tree(root)
 
+    def test_scan_tree_rejects_truncated_source_read(self):
+        from contextlib import contextmanager
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source = root / "safe.py"
+            source.write_text("value = 123456789\\n", encoding="utf-8")
+            original_open = Path.open
+
+            class ShortReadHandle:
+                def __init__(self, handle):
+                    self.handle = handle
+
+                def fileno(self):
+                    return self.handle.fileno()
+
+                def read(self):
+                    return self.handle.read()[:4]
+
+            @contextmanager
+            def short_open(path, *args, **kwargs):
+                with original_open(path, *args, **kwargs) as handle:
+                    yield ShortReadHandle(handle) if path == source else handle
+
+            with patch.object(Path, "open", short_open):
+                with self.assertRaisesRegex(ValueError, "source length changed during audit"):
+                    scan_python_tree(root)
+
     def test_scan_tree_rejects_regular_file_as_source_root(self):
         with tempfile.TemporaryDirectory() as d:
             source = Path(d) / "source.py"

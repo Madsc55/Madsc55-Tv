@@ -54,8 +54,8 @@ def safe_curl(url, limit):
 
 def same_origin_https(parent, child):
     """Reject scheme downgrade, credentials, nonstandard ports and cross-origin HLS URLs."""
-    a, b = urlsplit(parent), urlsplit(child)
     try:
+        a, b = urlsplit(parent), urlsplit(child)
         return (a.scheme == b.scheme == "https" and a.hostname == b.hostname
                 and a.port in (None, 443) and b.port in (None, 443)
                 and not a.username and not a.password and not b.username and not b.password)
@@ -110,7 +110,7 @@ def verify_av(url):
     if not same_origin_https(url, segment_url):
         return False, False, "cross_host_segment"
     payload = safe_curl(segment_url, MAX_SEGMENT)
-    if not payload or len(payload) < 188:
+    if not payload or len(payload) < 188 or len(payload) > MAX_SEGMENT:
         return False, False, "segment_unreachable"
     with tempfile.TemporaryDirectory() as folder:
         segment = Path(folder) / "sample.ts"

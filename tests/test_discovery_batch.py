@@ -71,7 +71,7 @@ class DiscoveryBatchTests(unittest.TestCase):
     def test_preview_rejects_invisible_source_label_before_parsing(self):
         for label in ("feed\u202e", "feed\u200b", "feed\u2028"):
             with self.subTest(label=repr(label)):
-                with self.assertRaisesRegex(ValueError, "Invalid source name"):
+                with self.assertRaisesRegex(ValueError, "(Invalid source name|Source name contains control characters)"):
                     build_m3u8_preview({label: "not an M3U feed"})
 
     def test_known_urls_reject_invisible_unicode(self):

@@ -39,6 +39,8 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     lines = text.removeprefix("\ufeff").splitlines()
     if not lines or lines[0].strip() != "#EXTM3U":
         raise ValueError("Missing M3U header")
+    # A URL may not be silently associated with a different EXTINF entry.
+    # Malformed metadata consumes only its own following URL.
     candidates, errors = [], []
     pending = None
     discard_url_for_rejected_entry = False
@@ -167,6 +169,9 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         for url in known_urls
     ):
         raise ValueError("Known URLs contain control characters")
+    if any(any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+               for ch in source) for source in sources):
+        raise ValueError("Invalid source name")
     if any(not isinstance(body, str) for body in sources.values()):
         raise ValueError("M3U source bodies must be text")
     if sum(len(body) for body in sources.values()) > 8_000_000:

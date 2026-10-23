@@ -205,6 +205,17 @@ def _direct_local_flag_bindings(node) -> dict[str, ast.AST]:
     return direct
 
 
+def _direct_guard_line(statement) -> int | None:
+    """Return a guard line only when the statement executes it unconditionally."""
+    value = statement.value if isinstance(statement, ast.Expr) else None
+    if isinstance(value, ast.Await):
+        value = value.value
+    if (isinstance(value, ast.Call)
+            and _call_name(value).rsplit(".", 1)[-1] in _GUARDS):
+        return value.lineno
+    return None
+
+
 def _is_proven_text_receiver(node: ast.AST) -> bool:
     if isinstance(node, ast.Constant) and isinstance(node.value, str):
         return True
@@ -365,6 +376,7 @@ class _Scanner(ast.NodeVisitor):
         self.source_file_sha256 = hashlib.sha256(source.encode("utf-8")).hexdigest()
         self.scope: list[tuple[str, list[int]]] = []
         self.flag_bindings: list[dict[str, ast.AST]] = []
+        self.dominating_guards: list[list[int]] = []
         self.rows: list[dict] = []
         self.dispositions: list[dict] = []
 
@@ -378,8 +390,13 @@ class _Scanner(ast.NodeVisitor):
         bindings = (_direct_local_flag_bindings(node)
                     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) else {})
         self.flag_bindings.append(bindings)
+        self.dominating_guards.append([])
         for child in node.body:
             self.visit(child)
+            guard_line = _direct_guard_line(child)
+            if guard_line is not None:
+                self.dominating_guards[-1].append(guard_line)
+        self.dominating_guards.pop()
         self.flag_bindings.pop()
         self.scope.pop()
 
@@ -432,7 +449,9 @@ class _Scanner(ast.NodeVisitor):
                         if _call_name(n).rsplit(".", 1)[-1] in _GUARDS)
         self.scope.append((f"<lambda@{node.lineno}>", guards))
         self.flag_bindings.append({})
+        self.dominating_guards.append([])
         self.visit(node.body)
+        self.dominating_guards.pop()
         self.flag_bindings.pop()
         self.scope.pop()
 
@@ -447,6 +466,8 @@ class _Scanner(ast.NodeVisitor):
                               "proven_read_only_descriptor"}:
             function, guards = self.scope[-1] if self.scope else ("<module>", [])
             earlier = any(line < node.lineno for line in guards)
+            dominating = list(self.dominating_guards[-1]
+                              if self.dominating_guards else ())
             segment = ast.get_source_segment(self.source, node) or ""
             base = {
                 "path": self.path,
@@ -467,10 +488,13 @@ class _Scanner(ast.NodeVisitor):
                     **base,
                     "recognized_guard_precedes_write_in_scope": earlier,
                     "guard_lines_in_scope": guards,
-                    # Lexical order is not proof that a guard dominates a write:
-                    # it may live in a conditional, loop, or exception branch.
-                    "guard_control_flow_verified": False,
-                    "guard_assessment": "lexical-only; manual control-flow review required",
+                    "dominating_guard_lines_in_scope": dominating,
+                    "guard_control_flow_verified": bool(dominating),
+                    "guard_assessment": (
+                        "direct unconditional guard statement dominates this call; "
+                        "callee/caller contract review still required"
+                        if dominating else
+                        "lexical-only; manual control-flow review required"),
                     "review_required": True,
                 })
         self.generic_visit(node)

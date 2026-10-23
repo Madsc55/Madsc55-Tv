@@ -263,7 +263,18 @@ def execute(category: str) -> dict:
                 and len(preview.kept_positions) == expected_keep
                 and len(preview.archived_positions) == expected_archive
                 and sorted(preview.kept_positions + preview.archived_positions)
-                    == list(range(1, count + 1)))
+                    == list(range(1, count + 1))
+                and preview.kept_positions == (
+                    tuple(range(1, 3)) if scenario == "354"
+                    else tuple(range(1, 355)) if scenario == "364"
+                    else tuple(range(1, 16)) + tuple(range(50, 399)))
+                and preview.archived_positions == (
+                    tuple(range(3, 355)) if scenario == "354"
+                    else tuple(range(355, 365)) if scenario == "364"
+                    else tuple(range(16, 50)))
+                and (scenario != "354" or (
+                    preview.user_reported_unverified_positions == tuple(range(3, 335))
+                    and preview.user_classified_foreign_positions == tuple(range(335, 355)))))
             try:
                 classify_archive_positions(scenario, source_entries[:-1])
             except ValueError:

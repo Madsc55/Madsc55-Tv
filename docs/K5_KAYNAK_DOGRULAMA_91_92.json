@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "source_commit": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+  "method": "Direct GitHub YAML read, SHA check, conservative regex signals; NOT behavioral parity",
+  "rows": [
+    {
+      "path": ".github/workflows/yeni-kanal-arama-2026.yml",
+      "sha": "89f74c54f72f48583ff5abf1d148e3cc5b57f8f6",
+      "expected_sha": "89f74c54f72f48583ff5abf1d148e3cc5b57f8f6",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yeni_kanal_tara.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/yeniler-guvenli-arama.yml",
+      "sha": "fabb2cf59223a983ed22046d19617a210efc16f2",
+      "expected_sha": "fabb2cf59223a983ed22046d19617a210efc16f2",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "kaynak_kesfet.py",
+        "yeni_kanal_tara.py"
+      ]
+    }
+  ]
+}

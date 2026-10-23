@@ -99,9 +99,9 @@ def verify_av(url):
         if not isinstance(manifest, bytes) or not manifest.lstrip().startswith(b"#EXTM3U") or len(manifest) > 65536:
             return False, False, "invalid_variant_manifest"
         try:
-        text = manifest.decode("utf-8-sig", errors="strict")
-    except UnicodeDecodeError:
-        return False, False, "invalid_manifest_encoding"
+            text = manifest.decode("utf-8-sig", errors="strict")
+        except UnicodeDecodeError:
+            return False, False, "invalid_manifest_encoding"
     if "\x00" in text or any(ch in text for ch in ("\u0085", "\u2028", "\u2029")):
         return False, False, "invalid_manifest_characters"
     if any(line.strip().startswith("#EXT-X-PLAYLIST-TYPE:VOD") for line in text.splitlines()):

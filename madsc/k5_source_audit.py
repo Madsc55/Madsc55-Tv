@@ -12,14 +12,24 @@ EXCLUDED = {
 
 def audit(root):
     root = Path(root)
-    inventory = json.loads((root / "docs/LEGACY_SOURCE_SCOPE.json").read_text(encoding="utf-8"))
     errors = []
+    try:
+        inventory = json.loads((root / "docs/LEGACY_SOURCE_SCOPE.json").read_text(encoding="utf-8"))
+        if not isinstance(inventory, dict):
+            raise ValueError("inventory must be an object")
+    except (OSError, ValueError) as exc:
+        return {"source_audit_passed": False, "production_accepted": False,
+                "behavioral_parity_accepted": 0,
+                "errors": ["missing_or_invalid_inventory:" + type(exc).__name__]}
     source_rows = inventory.get("workflows", [])
     if not isinstance(source_rows, list):
         source_rows = []
         errors.append("invalid_inventory")
     inventory_paths = [r.get("path") for r in source_rows if isinstance(r, dict)]
-    if len(inventory_paths) != len(source_rows) or len(set(inventory_paths)) != len(inventory_paths):
+    if any(not isinstance(path, str) for path in inventory_paths):
+        errors.append("invalid_inventory_path")
+    if (len(inventory_paths) != len(source_rows)
+            or len({str(path) for path in inventory_paths}) != len(inventory_paths)):
         errors.append("invalid_or_duplicate_inventory_paths")
     for row in source_rows:
         if (not isinstance(row, dict)
@@ -28,6 +38,10 @@ def audit(root):
                 or len(row["git_blob_sha"]) != 40
                 or any(c not in "0123456789abcdef" for c in row["git_blob_sha"])):
             errors.append("invalid_inventory_row")
+    excluded_seen = {Path(path).name for path in inventory_paths
+                     if isinstance(path, str) and Path(path).name in EXCLUDED}
+    if excluded_seen != EXCLUDED:
+        errors.append("excluded_scope_mismatch")
     expected = {r["path"]: r["git_blob_sha"] for r in source_rows
                 if isinstance(r, dict) and isinstance(r.get("path"), str)
                 and isinstance(r.get("git_blob_sha"), str)
@@ -40,7 +54,10 @@ def audit(root):
         except (OSError, ValueError) as exc:
             errors.append("missing_or_invalid_part:" + part + ":" + type(exc).__name__)
             continue
-        if doc.get("source_commit") != inventory["source_commit"]:
+        if not isinstance(doc, dict):
+            errors.append("invalid_part_object:" + part)
+            continue
+        if doc.get("source_commit") != inventory.get("source_commit"):
             errors.append("wrong_commit:" + part)
         if not isinstance(doc.get("rows"), list):
             errors.append("invalid_rows:" + part)
@@ -85,7 +102,7 @@ def audit(root):
                               and row["signals"].get(key) is True)
                      for key in sorted(required_signals)}
     return {
-        "source_commit": inventory["source_commit"],
+        "source_commit": inventory.get("source_commit"),
         "expected": len(expected), "recorded": len(rows),
         "verified_source_rows": sum(1 for r in rows if isinstance(r, dict)
                                     and r.get("path") in expected

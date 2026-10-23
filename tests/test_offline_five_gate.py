@@ -110,6 +110,48 @@ class OfflineFiveGateTests(unittest.TestCase):
         self.assertEqual(report["categories"]["k5"], "failure")
         self.assertFalse(report["production_ready"])
 
+    def test_all_archive_scenarios_reject_swapped_positions(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from madsc.k5_archive_preview import classify_archive_positions
+
+        original = classify_archive_positions
+        for target in ("354", "364", "398"):
+            with self.subTest(scenario=target):
+                def wrong_partition(scenario, entries):
+                    preview = original(scenario, entries)
+                    if scenario != target:
+                        return preview
+                    kept = list(preview.kept_positions)
+                    archived = list(preview.archived_positions)
+                    kept[-1], archived[0] = archived[0], kept[-1]
+                    return replace(preview, kept_positions=tuple(kept),
+                                   archived_positions=tuple(archived))
+                with patch("madsc.core.classify_archive_positions", side_effect=wrong_partition):
+                    report = assess_all()
+                self.assertFalse(report["fixture_gate_passed"])
+                self.assertEqual(report["categories"]["k5"], "failure")
+                self.assertFalse(report["production_ready"])
+
+    def test_all_archive_scenarios_reject_wrong_metadata(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from madsc.k5_archive_preview import classify_archive_positions
+
+        original = classify_archive_positions
+        for target in ("354", "364", "398"):
+            with self.subTest(scenario=target):
+                def wrong_metadata(scenario, entries):
+                    preview = original(scenario, entries)
+                    if scenario == target:
+                        return replace(preview, user_classified_foreign_positions=())
+                    return preview
+                with patch("madsc.core.classify_archive_positions", side_effect=wrong_metadata):
+                    report = assess_all()
+                self.assertFalse(report["fixture_gate_passed"])
+                self.assertEqual(report["categories"]["k5"], "failure")
+                self.assertFalse(report["production_writes"])
+
     def test_stage_inventory_is_exact_five(self):
         from unittest.mock import patch
         with patch("madsc.offline_five_gate.CATEGORIES", ("k1", "k2", "k3", "k4", "k4")):

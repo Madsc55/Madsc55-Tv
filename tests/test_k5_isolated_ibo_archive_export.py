@@ -99,7 +99,9 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     destination = Path(tmp) / name
                     with self.assertRaisesRegex(PermissionError, "Oversized destination"):
                         export_6115_archive_manifest(self.urls, destination)
-                    self.assertFalse(destination.exists())
+                    # stat() on an overlong filename can itself raise ENAMETOOLONG.
+                    # Inspect the valid parent instead to prove no output was made.
+                    self.assertEqual(list(Path(tmp).iterdir()), [])
 
     def test_manifest_file_has_private_permissions(self):
         if os.name != "posix":

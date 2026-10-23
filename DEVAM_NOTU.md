@@ -1,3 +1,10 @@
+# K3 YEREL HEDEFLİ TEST KANITI — 2026-10-23
+- GitHub `madsc/epg.py` blob `29fac7a619b198c6207767ba113e6a9d7c6629cf` esas alınarak ayrıştırıcı mantığı geçici yerel ortamda yeniden kuruldu. `python -m py_compile` geçti; 6 odaklı senaryo geçti: geçerli eşleşme, tırnaklı virgül, eksik stream URI, çift tvg-id, eksik tvg-id, sahte tvg-id.
+- Bunlar GitHub test dosyasının tamamının koşulduğu veya birebir kaynak dosyanın çalıştırıldığı anlamına gelmez. Tam unittest suite / CI hâlâ doğrulanmadı. GitHub clone denemesi DNS kısıtıyla başarısız oldu.
+- Canlı HLS video/ses, 6+ saat, Pages/XMLTV, logo kimliği ve en son kullanıcının IBO Player Pro cihaz kabulü açık. Üretim verilerine dokunulmadı.
+
+---
+
 # K3 M3U YAYIN ADRESİ KONTROLÜ — 2026-10-23
 - Kod commit `21939da0e88779891d23cc8ca2b501c7ba94385d`: `#EXTINF` kaydının ardından yayın URI'si yoksa veya yeni `#EXTINF` gelirse fail-closed `ValueError` verir. Yayın adresi içeriğini indirmez/değiştirmez.
 - Test commit `2497512559a354f0a2785b417563ae245fd1c002`: eksik URI ve ikinci `#EXTINF` regresyonları.

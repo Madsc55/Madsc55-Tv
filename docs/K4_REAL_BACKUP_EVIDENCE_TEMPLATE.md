@@ -103,3 +103,11 @@ Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim 
 - Boş özel depoya güvenlik/kabul yönergelerini içeren `README.md` eklendi: commit `af40e0da1d4eb55f3a5a5321132773818ef18d25`.
 - **Bu commit gerçek yedek değildir.** Henüz kaynak dosya aktarımı, SHA-256 gerçek içerik manifesti, GitHub'a yedek teslim makbuzu veya temiz hedefte restore doğrulaması yapılmadı.
 - K4-15/16/17/18 bekliyor; `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.
+
+## 23 Ekim 2026 — İlk gerçek özel GitHub dosya yedeği (sınırlı kapsam)
+
+- Kaynak `madsc/k4_restore_gate.py` özel `Madsc55/Madsc55-Tv-Backup` deposunda `k4/madsc/k4_restore_gate.py` yoluna gerçekten yazıldı: commit `911fbe4e3882ad341add6f9d9f7c335677aa29b0`.
+- Kaynak ve hedef Git blob SHA-1: `d4f8b574dcc12c04c62d3219d2fadad103d51726`. Hedef GitHub'dan yeniden okundu; kaynakla içerik eşitliği `true` doğrulandı.
+- Özel depoda kanıt notu `restore-evidence/K4_READBACK.md`: commit `746eeda6dac807d54ecbbbd0edcee66bfb02e5cc`.
+- Bu **tek bir kaynak kodu dosyasının** gerçek depo-dışı kopyası ve geri okumasıdır; SHA-256 manifesti, tam K1–K5 yedeği, bağımsız temiz hedef restore'u, gerçek VOD/arşiv veya zamanlayıcı kanıtı değildir. İki depo aynı GitHub sağlayıcısında olduğu için sağlayıcıdan bağımsız felaket kurtarma sayılmaz.
+- K4-15 tam kapsam **BEKLİYOR**; K4-16/17/18 **BEKLİYOR**. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.

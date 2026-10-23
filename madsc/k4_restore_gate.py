@@ -107,6 +107,14 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
             inventory_matches = False
         if actual_files != expected_files or actual_dirs != expected_dirs:
             inventory_matches = False
+    # Rehash after the inventory walk: a file could have changed after the
+    # initial manifest verification but before the inventory was inspected.
+    # A second independent read must agree with the first verified snapshot.
+    if inventory_matches and result["independent_sandbox_restore_matches"] is True:
+        confirmed = verify_independent_restore(source, backup, restored, names)
+        inventory_matches = confirmed["independent_sandbox_restore_matches"] is True
+        if inventory_matches:
+            result = confirmed
     accepted = result["independent_sandbox_restore_matches"] is True and inventory_matches
     return {
         "stage": "K4_ARCHIVE_RESTORE",

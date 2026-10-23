@@ -25,6 +25,7 @@ _MUTATING_METHODS = {
     "removedirs", "rename", "replace", "symlink_to", "hardlink_to", "link_to",
     "touch", "truncate", "copy", "copy2", "copyfile", "copyfileobj", "copytree", "copymode", "copystat",
     "move", "rmtree", "remove", "chmod", "lchmod", "chown", "lchown",
+    "setxattr", "removexattr", "utime", "writeheader", "writerow", "writerows",
     "extract", "extractall", "unpack_archive", "make_archive",
 }
 _OS_MUTATORS = {

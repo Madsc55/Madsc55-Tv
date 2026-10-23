@@ -178,7 +178,7 @@ class SourceImportTests(unittest.TestCase):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"
-            p.write_text("#EXTM3U\\n", encoding="utf-8")
+            p.write_text("#EXTM3U\n", encoding="utf-8")
             with patch("os.open", side_effect=FileNotFoundError("removed")):
                 with self.assertRaisesRegex(ValueError, "opened safely"):
                     extract_candidates(p)
@@ -187,7 +187,7 @@ class SourceImportTests(unittest.TestCase):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"
-            p.write_text("#EXTM3U\\n", encoding="utf-8")
+            p.write_text("#EXTM3U\n", encoding="utf-8")
             with patch.object(Path, "absolute", side_effect=OSError("injected path error")):
                 with self.assertRaisesRegex(ValueError, "Unsafe source path"):
                     extract_candidates(p)
@@ -196,7 +196,7 @@ class SourceImportTests(unittest.TestCase):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "source.m3u"
-            p.write_text("#EXTM3U\\n", encoding="utf-8")
+            p.write_text("#EXTM3U\n", encoding="utf-8")
             with patch.object(Path, "is_file", side_effect=OSError("injected stat error")):
                 with self.assertRaisesRegex(ValueError, "Invalid source file"):
                     extract_candidates(p)

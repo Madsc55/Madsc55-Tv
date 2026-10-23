@@ -175,6 +175,11 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 errors.append({"line": number, "reason": "invalid_url_control"})
                 pending = None
                 continue
+            # Do not silently trim URL whitespace: it changes the supplied endpoint.
+            if raw != line:
+                errors.append({"line": number, "reason": "invalid_url_whitespace"})
+                pending = None
+                continue
             # Metadata count already bounds every EXTINF, including rejected rows.
             # Do not let URL count replace the stronger metadata budget.
             if len(candidates) >= max_entries:

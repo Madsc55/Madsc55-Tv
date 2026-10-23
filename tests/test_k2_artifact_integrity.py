@@ -75,6 +75,15 @@ class K2ArtifactIntegrityTests(unittest.TestCase):
 
 
 class K2ArtifactParentPathTests(unittest.TestCase):
+
+    def test_parent_traversal_rejected_before_open(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "artifact").write_bytes(b"safe")
+            expected = hashlib.sha256(b"safe").hexdigest()
+            with self.assertRaises(ValueError):
+                verify_artifact_bytes(root / "subdir" / ".." / "artifact", expected)
+
     def test_symlinked_parent_directory_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

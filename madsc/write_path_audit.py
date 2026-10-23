@@ -186,8 +186,11 @@ def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: P
     # Do not normalize a relative or traversing caller-supplied root before
     # checking it: the isolated exception must obey the same root policy.
     raw_root = str(allowed_root)
+    normalized_root = unicodedata.normalize("NFKC", raw_root)
     root = Path(allowed_root)
-    if (not root.is_absolute() or chr(92) in raw_root or
+    if (not root.is_absolute() or chr(92) in normalized_root or
+            normalized_root.count("/") != raw_root.count("/") or
+            ":" in normalized_root or
             any(part in (".", "..") for part in raw_root.split("/")) or
             any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
                 or 0xFDD0 <= ord(ch) <= 0xFDEF
@@ -195,7 +198,10 @@ def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: P
         raise ProtectedWriteRejected("Invalid isolated test playlist root")
     expected = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
     raw_destination = str(destination)
-    if (chr(92) in raw_destination or
+    normalized_destination = unicodedata.normalize("NFKC", raw_destination)
+    if (chr(92) in normalized_destination or
+            normalized_destination.count("/") != raw_destination.count("/") or
+            ":" in normalized_destination or
             any(part in (".", "..") for part in raw_destination.split("/")) or
             any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
                 or 0xFDD0 <= ord(ch) <= 0xFDEF

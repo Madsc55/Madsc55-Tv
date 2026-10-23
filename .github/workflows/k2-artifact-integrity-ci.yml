@@ -1,0 +1,28 @@
+name: MADSC K2 Artifact Integrity CI
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'madsc/k2_artifact_integrity.py'
+      - 'tests/test_k2_artifact_integrity.py'
+      - '.github/workflows/k2-artifact-integrity-ci.yml'
+  pull_request:
+    paths:
+      - 'madsc/k2_artifact_integrity.py'
+      - 'tests/test_k2_artifact_integrity.py'
+      - '.github/workflows/k2-artifact-integrity-ci.yml'
+permissions:
+  contents: read
+jobs:
+  artifact-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run isolated K2 artifact regression tests
+        run: python -m unittest discover -s tests -p test_k2_artifact_integrity.py -v

@@ -4,7 +4,7 @@ import hashlib
 import os
 import stat
 from pathlib import Path
-from madsc.write_path_audit import enforce_local_output_path
+from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
 
 def _open_relative_file_nofollow(root: Path, parts: tuple[str, ...]) -> int:
@@ -18,8 +18,12 @@ def _open_relative_file_nofollow(root: Path, parts: tuple[str, ...]) -> int:
     if (type(nofollow) is not int or type(directory) is not int
             or os.open not in os.supports_dir_fd):
         raise ValueError("Secure no-follow backup opening is unavailable")
-    directory_flags = os.O_RDONLY | directory | nofollow
-    file_flags = os.O_RDONLY | nofollow | getattr(os, "O_NONBLOCK", 0)
+    # Keep the actual open expressions source-auditable: these named constants
+    # are read-only modifiers, while the separate destination helper below
+    # remains a write candidate. The availability checks above still fail
+    # closed before either platform-specific attribute is used.
+    directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    file_flags = os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0)
     opened_dirs: list[int] = []
     try:
         current = os.open(root, directory_flags)
@@ -42,6 +46,11 @@ def _create_relative_file_nofollow(root: Path, parts: tuple[str, ...],
     if (not parts or any(not isinstance(part, str) or part in ("", ".", "..")
                          or "/" in part or "\\" in part for part in parts)):
         raise ValueError("Unsafe sandbox destination path")
+    # The caller has already confined this to a newly-created sandbox root.
+    # Guard that root again here so direct helper calls cannot enter protected
+    # live trees, while an isolated backup may faithfully contain an .m3u file.
+    guarded_root = root.absolute()
+    enforce_write_paths([guarded_root.relative_to(guarded_root.anchor).as_posix()])
     nofollow = getattr(os, "O_NOFOLLOW", None)
     directory = getattr(os, "O_DIRECTORY", None)
     if (type(nofollow) is not int or type(directory) is not int
@@ -250,10 +259,10 @@ def compare_copy(source: Path, destination: Path, names: list[str]) -> bool:
     if not isinstance(names, list) or not names:
         raise ValueError("Copy audit requires a nonempty file list")
     roots = [Path(source), Path(destination)]
-    if any(root.is_symlink() or not root.is_dir() for root in roots):
-        raise ValueError("Copy audit requires real directories")
     if any(ancestor.is_symlink() for root in roots for ancestor in (root, *root.parents)):
         raise ValueError("Copy audit roots must have no symlinked ancestors")
+    if any(not root.is_dir() for root in roots):
+        raise ValueError("Copy audit requires real directories")
     resolved = [root.resolve(strict=True) for root in roots]
     if (resolved[0] == resolved[1] or
             resolved[0].is_relative_to(resolved[1]) or
@@ -287,13 +296,12 @@ def verify_independent_restore(source: Path, backup: Path, restored: Path,
             any(not isinstance(name, str) or not name for name in names) or
             len(set(names)) != len(names)):
         raise ValueError("Restore audit requires unique named files")
-    if any(Path(path).is_symlink() or not Path(path).is_dir()
-           for path in (source, backup, restored)):
-        raise ValueError("Independent restore trees must be real directories")
     if any(ancestor.is_symlink()
            for path in (source, backup, restored)
            for ancestor in (Path(path), *Path(path).parents)):
         raise ValueError("Independent restore roots must have no symlinked ancestors")
+    if any(not Path(path).is_dir() for path in (source, backup, restored)):
+        raise ValueError("Independent restore trees must be real directories")
     locations = [path.resolve(strict=True) for path in (source, backup, restored)]
     if len(set(locations)) != 3:
         raise ValueError("Source, backup and restored trees must be distinct")

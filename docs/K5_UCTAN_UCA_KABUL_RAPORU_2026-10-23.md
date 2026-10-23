@@ -77,3 +77,7 @@
 ## 10. Eski workflow'larda korunan yazma ve güvenli no-op ayrımı
 
 `docs/K5_LEGACY_YAZMA_NOOP_ON_WORKFLOW_2026-10-23.md` dosyasında 10 sabit eski workflow doğrudan YAML içeriği üzerinden karşılaştırıldı. IBO 530/6115/ilk 239/grup1/ikinci sesli işlerinde `CALISANLAR.m3u` üzerinde commit/push sözleşmeleri bulundu. Buna karşılık IBO 3–5281 ve otomatik devam işleri yalnızca güvenli no-op/echo davranışında. 399–530 arşiv konumları ve 239/6115 karar senaryoları için 354/364/398 önizlemesinden **ayrı** kanıt gerekir. Bu yazma yolları çalıştırılmadı. Önceki statik 45/92 sayısı mükerrerlik kontrolü olmadan artırılmadı; **davranışsal kabul 0/92** ve üretim geçişi bloke.
+
+## 11. On ek workflow: yeniden tetikleme, son kontrol ve yedek yazma zinciri
+
+`docs/K5_LEGACY_ZINCIR_ON_WORKFLOW_2026-10-23.md` dosyasında 10 eski YAML doğrudan sabit commit'ten incelendi. `madsc-uc-asama.yml` kendini yeniden dispatch edebilir, `madsc-son-kontrol.yml` 10 rapor push retry içerir; YEDEKLER/Türk kanal işlemleri `CALISANLAR.m3u` dosyasını commit/push zincirine dahil eder. Bu davranışların K1 yazma kapısı, K2 kaynak kimliği, K3 canlı teknik test, K4 bağımsız restore ve K5 retry/artifact kanıtı birlikte sağlanmadan kabul edilmesi yasaktır. Eski workflow'lar çalıştırılmadı. **Davranışsal kabul 0/92; üretim geçişi bloke.** Mükerrerlik incelemesi yapılmadan statik 45/92 sayısı yükseltilmedi.

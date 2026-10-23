@@ -781,6 +781,8 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
             raise ValueError(f"Non-regular Python source requires review: {relative}")
         if source_stat.st_nlink != 1:
             raise ValueError(f"Hardlinked Python source requires review: {relative}")
+        if source_stat.st_size > 16 * 1024 * 1024:
+            raise ValueError(f"Python source exceeds audit size limit: {relative}")
         # Bind the read to the validated file descriptor instead of reopening
         # the path after lstat; reject a replacement between those operations.
         with file.open("rb") as handle:
@@ -789,6 +791,8 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
                 raise ValueError(f"Python source replaced before audit read: {relative}")
             if not stat.S_ISREG(descriptor_stat.st_mode) or descriptor_stat.st_nlink != 1:
                 raise ValueError(f"Unsafe Python source descriptor during audit: {relative}")
+            if descriptor_stat.st_size > 16 * 1024 * 1024:
+                raise ValueError(f"Python source exceeds audit size limit: {relative}")
             source_bytes = handle.read()
             descriptor_after = os.fstat(handle.fileno())
             if len(source_bytes) != descriptor_after.st_size:

@@ -7,7 +7,7 @@ from __future__ import annotations
 from pathlib import Path
 import stat
 
-from madsc.backup import verify_independent_restore
+from madsc.backup import snapshot_manifest, verify_independent_restore
 
 
 def audit_k4_restore(source: Path, backup: Path, restored: Path,
@@ -72,6 +72,8 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
         if portable_directory in seen_portable_names:
             raise ValueError('Restore audit portable file-directory collision')
     result = verify_independent_restore(source, backup, restored, names)
+    # Pin the initially verified source contents, not merely cross-tree equality.
+    initial_entries = snapshot_manifest(Path(source), names)["entries"] if result["independent_sandbox_restore_matches"] is True else None
     # The restore acceptance gate requires an exact file inventory, not just
     # matching hashes for a caller-selected subset. Reject unexpected files,
     # symlinks and extra directories in any of the three sandbox trees.
@@ -112,7 +114,8 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     # A second independent read must agree with the first verified snapshot.
     if inventory_matches and result["independent_sandbox_restore_matches"] is True:
         confirmed = verify_independent_restore(source, backup, restored, names)
-        inventory_matches = confirmed["independent_sandbox_restore_matches"] is True
+        inventory_matches = (confirmed["independent_sandbox_restore_matches"] is True
+                             and snapshot_manifest(Path(source), names)["entries"] == initial_entries)
         if inventory_matches:
             result = confirmed
     accepted = result["independent_sandbox_restore_matches"] is True and inventory_matches

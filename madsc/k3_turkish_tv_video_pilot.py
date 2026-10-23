@@ -89,6 +89,8 @@ def verify_av(url):
         if not isinstance(manifest, bytes) or not manifest.lstrip().startswith(b"#EXTM3U") or len(manifest) > 65536:
             return False, False, "invalid_variant_manifest"
         text = manifest.decode("utf-8-sig", errors="replace")
+    if any(line.strip().startswith("#EXT-X-PLAYLIST-TYPE:VOD") for line in text.splitlines()):
+        return False, False, "vod_playlist_not_live"
     if any(line.lstrip().startswith("#EXT-X-ENDLIST") for line in text.splitlines()):
         return False, False, "vod_playlist_not_live"
     if any(line.lstrip().startswith('#EXT-X-STREAM-INF') for line in text.splitlines()):

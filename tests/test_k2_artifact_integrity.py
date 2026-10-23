@@ -111,6 +111,24 @@ class K2ArtifactPairTests(unittest.TestCase):
             self.assertFalse(result["behavioral_parity_accepted"])
             self.assertFalse(result["production_ready"])
 
+    def test_alias_paths_to_same_file_are_rejected(self):
+        from madsc.k2_artifact_integrity import compare_artifact_pair
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            path = root / "artifact"
+            path.write_bytes(b"same inode")
+            digest = hashlib.sha256(b"same inode").hexdigest()
+            with self.assertRaises(ValueError):
+                compare_artifact_pair(path, root / "." / "artifact", digest, digest)
+            alias = root / "symlink"
+            alias.symlink_to(path)
+            with self.assertRaises(ValueError):
+                compare_artifact_pair(path, alias, digest, digest)
+            hardlink = root / "hardlink"
+            os.link(path, hardlink)
+            with self.assertRaises(ValueError):
+                compare_artifact_pair(path, hardlink, digest, digest)
+
     def test_mismatch_and_forged_expected_hash_rejected(self):
         from madsc.k2_artifact_integrity import compare_artifact_pair
         with tempfile.TemporaryDirectory() as folder:

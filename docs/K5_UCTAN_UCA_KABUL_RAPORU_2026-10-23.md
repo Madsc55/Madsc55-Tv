@@ -61,3 +61,7 @@
 ## 6. Sabit kaynakta doğrudan doğrulanan örnekler (ek kontrol)
 
 `docs/K5_LEGACY_KAYNAK_DOGRULAMASI_2026-10-23.md` dosyasında `390-aday-tekrar-test.yml`, `aday-bekletme.yml` ve `aday-logo-epg-test.yml` eski sabit commit'ten **doğrudan okunarak** tetik, komut, timeout, artifact ve beşli sistem karşılıkları karşılaştırıldı. Bu örnekler, sırasıyla K3/K5, K2/K3/K5 ve K1/K3/K5 arasında çok-aşamalı davranışların bulunduğunu gösterir. Kaynak incelemesi, çağrılan script'lerin bağımsız yürütme sonuçlarını ve artifact SHA eşitliğini doğrulamadığından **davranışsal kabul 0/92** kalır. Önceki 45/92 ayrıntılı inceleme sayısı bu üç örneğin daha önce sayılmış olabilmesi nedeniyle artırılmadı.
+
+## 7. Altı ek workflow'un doğrudan YAML sözleşmesi
+
+`docs/K5_LEGACY_ALTI_WORKFLOW_KARSILASTIRMA_2026-10-23.md` ile aday önceliklendirme, teknik aday yedek taslağı, akıllı puanlama, altıncı tekrar testi, otomatik PNG logo hazırlığı ve beşinci zaman aşımı testinin eski sabit commit'teki workflow YAML'ları doğrudan okundu. 65 saniye teknik timeout, `RETEST_LIMIT=5`, gerçek ffprobe ve logo playlist değişmezliği gibi **eşdeğerlik için zorunlu** sınırlar kaydedildi. Eski-yeni ayrı koşu ve artifact kanıtları olmadığından üretim kabul kararı değişmedi; önceki 45/92 statik inceleme sayısı mükerrerlik denetlenmeden artırılmadı.

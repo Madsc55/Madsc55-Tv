@@ -31,14 +31,20 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
         raise ValueError("Restore audit requires at least one declared file")
     if len(names) > 10000:
         raise ValueError("Restore audit exceeds manifest entry limit")
+    import unicodedata
     declared_dirs = set()
     seen_names = set()
+    seen_portable_names = set()
     for name in names:
         if len(name) > 4096:
             raise ValueError("Restore audit path exceeds bounded length")
         if name in seen_names:
             raise ValueError("Duplicate restore audit path")
+        portable_name = unicodedata.normalize('NFKC', name).casefold()
+        if portable_name in seen_portable_names:
+            raise ValueError("Ambiguous restore audit path alias")
         seen_names.add(name)
+        seen_portable_names.add(portable_name)
         if (not name or name.startswith("~") or ":" in name or chr(92) in name
                 or any(ord(character) < 32 or ord(character) == 127
                        or 0xD800 <= ord(character) <= 0xDFFF for character in name)

@@ -718,3 +718,12 @@ class DiscoveryBatchTests(unittest.TestCase):
         feed = '#EXTM3U\n' + ('#EXTINF:-1,Invalid\n' * 10_001)
         with self.assertRaisesRegex(ValueError, "Combined sources exceed bounded candidate limit"):
             build_m3u8_preview({"one": feed, "two": feed})
+
+    def test_source_report_counts_rejected_metadata_as_processed(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1,Missing URL\n'
+                '#EXTINF:-1,Valid\n'
+                'https://example.org/valid.m3u8\n')
+        report = corroborate_sources({"fixture": feed})
+        self.assertEqual(report["source_reports"]["fixture"]["metadata_entries"], 2)
+        self.assertEqual(report["source_reports"]["fixture"]["entries"], 1)

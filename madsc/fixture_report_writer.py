@@ -50,6 +50,11 @@ def _prepare_fixture_root(root: Path) -> Path:
             raise PermissionError("Secure descriptor-relative directory creation is unavailable")
         root_fd = os.open(root, os.O_RDONLY | directory_flag | nofollow)
         try:
+            opened = os.fstat(root_fd)
+            expected = root.stat(follow_symlinks=False)
+            if ((opened.st_dev, opened.st_ino) !=
+                    (expected.st_dev, expected.st_ino)):
+                raise PermissionError("Fixture root changed during directory creation")
             os.mkdir("reports", dir_fd=root_fd)
         finally:
             os.close(root_fd)

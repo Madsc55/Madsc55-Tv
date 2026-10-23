@@ -101,7 +101,8 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
     # Validate the caller's lexical path before pathlib normalizes dot segments.
     raw = str(destination)
     raw_parts = raw.replace(chr(92), "/").split("/")
-    if any(part in (".", "..") for part in raw_parts):
+    if (chr(92) in raw or any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw)
+            or any(part in (".", "..") for part in raw_parts)):
         raise ProtectedWriteRejected("Ambiguous or traversing output path")
     path = Path(destination)
     if not path.is_absolute():

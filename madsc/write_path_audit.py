@@ -129,6 +129,15 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
         if ancestor.is_symlink():
             raise ProtectedWriteRejected("Symlinked output ancestor")
     if allowed_root is not None:
+        # Validate the root before Path normalizes dot components. A caller
+        # must not smuggle traversal or control characters through the boundary.
+        raw_root = str(allowed_root)
+        if (chr(92) in raw_root or
+                any(part in (".", "..") for part in raw_root.split("/")) or
+                any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+                    or 0xFDD0 <= ord(ch) <= 0xFDEF
+                    or (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw_root)):
+            raise ProtectedWriteRejected("Ambiguous allowed output root")
         root = Path(allowed_root)
         if not root.is_absolute() or not root.is_dir() or root.is_symlink():
             raise ProtectedWriteRejected("Invalid allowed output root")

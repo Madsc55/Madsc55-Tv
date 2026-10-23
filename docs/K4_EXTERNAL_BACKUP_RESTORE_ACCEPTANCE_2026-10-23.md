@@ -125,3 +125,9 @@ K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen
 - `tests/test_k4_restore_gate.py` commit `d05b422f`: göreli köklerin dosya okumadan reddi; CI `39877670956` başarılı.
 - Restore dosya sınırı erkene alındı: kod `7fd847a3`; test beklentisi `49a1dece`. Bu iki commit'teki önceki CI'lar bir test beklentisi nedeniyle başarısız oldu; test beklentisi güncel kaynakta düzeltildikten sonra CI `39877893585` ve `39877984306` başarılı.
 - En son başarılı CI, yerel/çevrimdışı test paketini doğrular; harici sağlayıcı makbuzu, dış ortamda bağımsız restore, korumalı VOD/arşiv kabulü ve ayın 1/15 gerçek zamanlama çalıştırması kanıtı yerine geçmez. Bu dört kabul açık, `production_ready=false`.
+
+## 23 Ekim — Unicode yol güvenliği ve CI kabul kaydı
+- K4 restore envanterinde Unicode NFKC/casefold çakışmaları kod `4b98d09d`, regresyon `fca2196e` ile reddedilir.
+- Görünmez Unicode `Cf` biçim kontrolleri kod `706e7556`, regresyon `dd1b8fd8` ile reddedilir.
+- GitHub Actions `39878261354`, commit `dd1b8fd86276` için başarılı. Önceki `39878187919` ve `39878196409` başarısız, `39878243638` iptal edilmiştir; başarılı sonuç yalnızca test edilen commit kapsamındadır.
+- Dış kabul kanıtları K4-15/16/17/18 hâlâ eksik; `production_ready=false`. Gerçek cihaz testi en son kullanıcıya aittir.

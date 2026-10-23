@@ -98,6 +98,15 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
     expected_dirs = declared_dirs
     inventory_matches = True
     for root in (Path(source), Path(backup), Path(restored)):
+        # Never start an inventory walk through an ancestor that was swapped
+        # into a symlink after the initial root validation.
+        try:
+            if any(ancestor.is_symlink() for ancestor in (root, *root.parents)):
+                inventory_matches = False
+                continue
+        except OSError:
+            inventory_matches = False
+            continue
         actual_files = set()
         actual_dirs = set()
         inspected = 0

@@ -312,6 +312,17 @@ async def async_outer(value=path.touch()):
                           "target.link_to"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_unknown_method_chain_replace_stays_reviewable(self):
+        source = (
+            "def check(candidate):\n"
+            "    candidate.lower().replace('old', 'new')\n"
+            "    'literal'.lower().replace('old', 'new')\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["api"], "lower.replace")
+        self.assertTrue(rows[0]["review_required"])
+
     def test_tree_scan_rejects_symlinked_python_source(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

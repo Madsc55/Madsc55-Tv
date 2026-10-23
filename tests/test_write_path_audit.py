@@ -4,6 +4,7 @@ from pathlib import Path
 from madsc.write_path_audit import (audit_write_paths, enforce_write_paths,
                                     enforce_local_output_path,
                                     enforce_local_append_path,
+                                    enforce_local_replace_path,
                                     enforce_local_turkish_tv_test_playlist,
                                     ProtectedWriteRejected)
 
@@ -116,6 +117,12 @@ class WritePathAuditTests(unittest.TestCase):
         report = audit_write_paths(["YEDEKLER/a.txt", "LoGoS/a.png",
                                     "ArSiV/sample.txt", "EPG/data.xml"])
         self.assertEqual(len(report["rejected"]), 4)
+
+    def test_legacy_note_archive_is_protected_at_repository_depth(self):
+        paths = ["docs/eski_depo_not_arsivi/notes.txt",
+                 "prefix/docs/ESKI_DEPO_NOT_ARSIVI/decision.json"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths)
     def test_ambiguous_and_control_character_paths_blocked(self):
         paths = ["reports/a\x00.json", "reports/a\n.json", "reports/a\t.json",
                  "reports/file:stream", "reports/file. ", "reports/file.",
@@ -225,6 +232,20 @@ class WritePathAuditTests(unittest.TestCase):
 
 
 class LocalOutputGuardTests(unittest.TestCase):
+    def test_replace_guard_allows_regular_file_but_rejects_protected_archive(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            output = root / "merged.md"
+            output.write_text("old", encoding="utf-8")
+            self.assertTrue(enforce_local_replace_path(
+                output, allowed_root=root)["path_checked"])
+            archive = root / "docs/eski_depo_not_arsivi"
+            archive.mkdir(parents=True)
+            protected = archive / "notes.txt"
+            protected.write_text("history", encoding="utf-8")
+            with self.assertRaises(ProtectedWriteRejected):
+                enforce_local_replace_path(protected, allowed_root=root)
+
     def test_fixed_turkish_tv_playlist_exception_does_not_relax_general_guard(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

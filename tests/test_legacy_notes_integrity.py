@@ -20,6 +20,7 @@ class LegacyNotesIntegrityTests(unittest.TestCase):
             merged = root / "merged.md"
             with patch.object(merger, "ARCHIVE", archive), patch.object(merger, "OUTPUT", merged):
                 merger.build(include_structured=True, remove=False)
+                merger.build(include_structured=True, remove=False)
             report = root / "report.json"
             result = legacy_notes_integrity.verify(merged, archive, report)
             self.assertTrue(result["verified"])
@@ -36,6 +37,36 @@ class LegacyNotesIntegrityTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 legacy_notes_integrity.verify(merged, archive, root / "bad-report.json")
             self.assertFalse((root / "bad-report.json").exists())
+
+    def test_remove_archived_notes_is_rejected_before_output_or_deletion(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            archive = root / "docs/eski_depo_not_arsivi"
+            archive.mkdir(parents=True)
+            source = archive / "AGENTS.md"
+            source.write_text("Old rules\n", encoding="utf-8")
+            merged = root / "merged.md"
+            with patch.object(merger, "ARCHIVE", archive), patch.object(merger, "OUTPUT", merged):
+                with self.assertRaisesRegex(PermissionError, "removal is prohibited"):
+                    merger.build(remove=True)
+            self.assertEqual(source.read_text(encoding="utf-8"), "Old rules\n")
+            self.assertFalse(merged.exists())
+
+    def test_symlinked_temporary_output_is_rejected_without_external_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            archive = root / "archive"
+            archive.mkdir()
+            (archive / "AGENTS.md").write_text("Old rules\n", encoding="utf-8")
+            merged = root / "merged.md"
+            outside = root / "outside.md"
+            outside.write_text("preserve", encoding="utf-8")
+            merged.with_suffix(".md.tmp").symlink_to(outside)
+            with patch.object(merger, "ARCHIVE", archive), patch.object(merger, "OUTPUT", merged):
+                with self.assertRaises(PermissionError):
+                    merger.build()
+            self.assertEqual(outside.read_text(encoding="utf-8"), "preserve")
+            self.assertFalse(merged.exists())
 
     def test_unmarked_injected_text_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:

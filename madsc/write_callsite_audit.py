@@ -18,6 +18,7 @@ _GUARDS = {
     "enforce_write_paths",
     "enforce_local_output_path",
     "enforce_local_append_path",
+    "enforce_local_replace_path",
     "enforce_local_turkish_tv_test_playlist",
     "enforce_local_evidence_path",
 }

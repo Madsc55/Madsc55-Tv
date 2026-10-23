@@ -290,6 +290,17 @@ def run_commands():
         self.assertTrue(all(row["guard_control_flow_verified"] for row in mutations))
         self.assertTrue(all(row["review_required"] for row in mutations))
 
+    def test_legacy_note_atomic_replace_has_direct_k1_guard(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        mutations = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "scripts/birlestir_eski_sistem_notlari.py"
+            and row["scope"] == "_replace_output_atomically"
+        ]
+        self.assertEqual([row["api"] for row in mutations], ["os.replace"])
+        self.assertTrue(mutations[0]["guard_control_flow_verified"])
+
     def test_process_literal_file_output_switches_are_recorded_fail_closed(self):
         source = '''
 import subprocess

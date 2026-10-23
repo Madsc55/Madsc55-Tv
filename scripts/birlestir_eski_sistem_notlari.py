@@ -3,20 +3,63 @@
 
 Yalniz docs/eski_depo_not_arsivi altindaki tarihsel kopyalari okur.
 GitHub API boyut sinirina takilmamak icin dosyalari yerel diskte akisa yazar.
-Varsayilan davranis kaynaklari silmez. --remove-archived-notes yalnizca
-birebir dogrulanan ve birlestirilen .md/.txt/.rst arşiv kopyalarini siler.
+Varsayilan davranis kaynaklari silmez. --remove-archived-notes geriye donuk
+CLI uyumlulugu icin taninir ancak korunan arsiv kopyalarini silmeyi reddeder.
 JSON/CSV kaynaklari yalnizca --include-structured ile dahil edilir.
 """
 import argparse
 import hashlib
 import json
+import os
+import stat
 from pathlib import Path
+
+from madsc.fixture_report_writer import write_exclusive_bytes
+from madsc.write_path_audit import (enforce_local_output_path,
+                                    enforce_local_replace_path)
 
 ROOT = Path(__file__).resolve().parents[1]
 ARCHIVE = ROOT / "docs" / "eski_depo_not_arsivi"
 OUTPUT = ROOT / "ESKI_SISTEM_NOTLARI.md"
 EXTS = {".md", ".txt", ".rst"}
 STRUCTURED = {".json", ".csv"}
+
+
+def _replace_output_atomically(destination, payload):
+    """Replace the merged note through one guarded, no-follow parent fd."""
+    destination = Path(destination)
+    allowed_root = destination.parent
+    tmp = destination.with_suffix(destination.suffix + ".tmp")
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    if not isinstance(nofollow, int) or not isinstance(directory_flag, int):
+        raise PermissionError("Secure descriptor-relative replacement is unavailable")
+    enforce_local_replace_path(destination, allowed_root=allowed_root)
+    enforce_local_output_path(tmp, allowed_root=allowed_root)
+    write_exclusive_bytes(tmp, payload, allowed_root=allowed_root)
+    identity = tmp.lstat()
+    parent_fd = os.open(destination.parent.anchor,
+                        os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+                        | getattr(os, "O_NOFOLLOW", 0))
+    try:
+        for part in destination.parent.parts[1:]:
+            next_fd = os.open(part, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+                              | getattr(os, "O_NOFOLLOW", 0),
+                              dir_fd=parent_fd)
+            os.close(parent_fd)
+            parent_fd = next_fd
+        current = os.stat(tmp.name, dir_fd=parent_fd, follow_symlinks=False)
+        if (not stat.S_ISREG(current.st_mode) or current.st_nlink != 1
+                or (current.st_dev, current.st_ino, current.st_size,
+                    current.st_mtime_ns, current.st_ctime_ns) !=
+                   (identity.st_dev, identity.st_ino, identity.st_size,
+                    identity.st_mtime_ns, identity.st_ctime_ns)):
+            raise PermissionError("Temporary merged note changed before replacement")
+        enforce_local_replace_path(destination, allowed_root=allowed_root)
+        os.replace(tmp.name, destination.name,
+                   src_dir_fd=parent_fd, dst_dir_fd=parent_fd)
+    finally:
+        os.close(parent_fd)
 
 
 def source_files(include_structured=False):
@@ -35,6 +78,8 @@ def build(include_structured=False, remove=False):
     paths = [p for p in paths if p.relative_to(ARCHIVE).as_posix() != "ARSIV_REHBERI.md"]
     if not any(p.name == "AGENTS.md" for p in paths):
         raise RuntimeError("AGENTS.md arsivde yok; islem durduruldu")
+    if remove:
+        raise PermissionError("Archived source note removal is prohibited")
     pieces = []
     hashes = {}
     for p in paths:
@@ -67,15 +112,7 @@ def build(include_structured=False, remove=False):
         recovered = merged.split(start, 1)[1].split(end, 1)[0].encode("utf-8")
         if hashlib.sha256(recovered).hexdigest() != hashes[rel]:
             raise RuntimeError(f"Birlesim dogrulanamadi: {rel}")
-    tmp = OUTPUT.with_suffix(".md.tmp")
-    tmp.write_text(merged, encoding="utf-8")
-    tmp.replace(OUTPUT)
-    if remove:
-        # Yalnizca eski metin not kopyalari. JSON/CSV arsiv kopyalari
-        # ozellikle korunur; yanlislikla veri kaybi olmasin.
-        for p in paths:
-            if p.suffix.lower() in EXTS:
-                p.unlink()
+    _replace_output_atomically(OUTPUT, merged.encode("utf-8"))
     print(json.dumps({"output": str(OUTPUT), "sources": len(paths),
                       "bytes": OUTPUT.stat().st_size, "removed_text_copies": bool(remove)},
                      ensure_ascii=False))

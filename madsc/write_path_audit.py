@@ -14,6 +14,7 @@ PROTECTED_EXACT = frozenset({
 })
 PROTECTED_PREFIXES = ("yedekler/", "YEDEKLER/", "FAVORILER/", "HEPSI/",
                       "EPG/", "logolar/", "logos/", "arsiv/")
+PROTECTED_PATH_FRAGMENTS = ("docs/eski_depo_not_arsivi/",)
 
 def audit_write_paths(paths: list[str]) -> dict:
     if not isinstance(paths, list) or not paths:
@@ -79,6 +80,8 @@ def audit_write_paths(paths: list[str]) -> dict:
             or any(part in {item.casefold() for item in PROTECTED_EXACT}
                    for part in normalized_parts)
             or any(folded.startswith(prefix.casefold()) for prefix in PROTECTED_PREFIXES)
+            or any(("/" + fragment.casefold()) in ("/" + folded)
+                   for fragment in PROTECTED_PATH_FRAGMENTS)
             or PurePosixPath(folded).suffix in (".m3u", ".m3u8")
             or PurePosixPath(folded).stem in ("favoriler", "favorites", "hepsi")
             or any(part in ("favoriler", "hepsi", "yedekler",
@@ -198,6 +201,12 @@ def enforce_local_append_path(destination: Path, *, allowed_root: Path | None = 
     should pass allowed_root for isolated writes; this is not an atomic writer
     and does not authorize production writes or intercept other processes.
     """
+    return _enforce_local_path(destination, allowed_root=allowed_root,
+                               allow_existing_regular_file=True)
+
+
+def enforce_local_replace_path(destination: Path, *, allowed_root: Path | None = None) -> dict:
+    """Preflight an atomic replacement target without authorizing its content."""
     return _enforce_local_path(destination, allowed_root=allowed_root,
                                allow_existing_regular_file=True)
 

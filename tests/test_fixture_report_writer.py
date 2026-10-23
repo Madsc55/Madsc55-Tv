@@ -172,8 +172,8 @@ class FixtureReportWriterTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             base = Path(d)
             for raw in (str(base) + "/" + "a" * 4097,
-                        str(base) + "/bad\\ufdd0",
-                        str(base) + "/bad\\u0085"):
+                        str(base) + "/bad\ufdd0",
+                        str(base) + "/bad\u0085"):
                 with self.subTest(root_length=len(raw)):
                     with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
                         write_fixture_report(Path(raw), "reports/evidence.json", "{}")

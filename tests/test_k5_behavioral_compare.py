@@ -88,6 +88,28 @@ class BehavioralCompareTests(unittest.TestCase):
         doc["fixture_sha256"] = "bad"
         self.assertIn("invalid_fixture_digest", compare(doc)["errors"])
 
+    def test_absolute_and_parent_workflow_paths_rejected(self):
+        for path in ("/.github/workflows/example.yml", ".github/workflows/../../outside.yml", ".github/workflows/sub/../../../outside.yaml"):
+            with self.subTest(path=path):
+                doc = evidence()
+                doc["workflow"] = path
+                self.assertIn("invalid_workflow", compare(doc)["errors"])
+
+    def test_non_workflow_directory_rejected(self):
+        doc = evidence()
+        doc["workflow"] = "docs/example.yml"
+        self.assertIn("invalid_workflow", compare(doc)["errors"])
+
+    def test_invalid_artifact_digest_rejected(self):
+        doc = evidence()
+        doc["legacy"]["artifacts"] = {"report.json": "sha-not-valid"}
+        self.assertIn("invalid_legacy_record", compare(doc)["errors"])
+
+    def test_unexpected_top_level_field_rejected(self):
+        doc = evidence()
+        doc["approval"] = True
+        self.assertIn("invalid_evidence_schema", compare(doc)["errors"])
+
     def test_boolean_exit_code_rejected(self):
         doc = evidence()
         doc["legacy"]["exit_code"] = False

@@ -204,6 +204,24 @@ class FixtureReportWriterTests(unittest.TestCase):
                         write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}")
                     self.assertFalse((root / "reports").exists())
 
+    def test_bundle_reports_directory_created_using_root_descriptor(self):
+        import os
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            real_mkdir = os.mkdir
+            seen = []
+            def observed_mkdir(path, mode=0o777, *, dir_fd=None):
+                if path == "reports":
+                    self.assertIsNotNone(dir_fd)
+                    self.assertTrue(os.path.samefile(root, f"/proc/self/fd/{dir_fd}")
+                                    if Path("/proc/self/fd").exists() else
+                                    os.fstat(dir_fd).st_ino == root.stat().st_ino)
+                    seen.append(path)
+                return real_mkdir(path, mode, dir_fd=dir_fd)
+            with patch("madsc.fixture_report_writer.os.mkdir", side_effect=observed_mkdir):
+                write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}")
+            self.assertEqual(seen, ["reports"])
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

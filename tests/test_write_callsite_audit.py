@@ -220,6 +220,50 @@ def run_commands():
         self.assertEqual(len(rows), 6)
         self.assertTrue(all(row["process_stdio_bounded_verified"] for row in rows))
         self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
+        classes = [row["process_command_effect_classification"] for row in rows]
+        self.assertEqual(classes.count("network_client"), 2)
+        self.assertEqual(classes.count("media_inspector"), 1)
+        self.assertEqual(classes.count("python_inline_payload"), 1)
+        self.assertEqual(classes.count("python_module_payload"), 1)
+        self.assertEqual(classes.count("caller_controlled_command"), 1)
+
+    def test_process_literal_file_output_switches_are_recorded_fail_closed(self):
+        source = '''
+import subprocess
+def download(url):
+    subprocess.run(["curl", "--output=report.bin", url])
+    subprocess.run(["curl", "-o", "report.bin", url])
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(rows[0]["process_literal_file_output_switches"], ["--output"])
+        self.assertEqual(rows[1]["process_literal_file_output_switches"], ["-o"])
+        self.assertTrue(all(row["process_dynamic_arguments_require_review"] for row in rows))
+        self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
+
+    def test_process_argv_cwd_and_env_sources_are_bound_without_effect_claim(self):
+        source = '''
+import subprocess
+def run(url, root, options):
+    subprocess.run(["curl", "-fsS", url], cwd="safe", env={"LANG": "C"})
+    subprocess.run(["ffprobe", "-of", "json", url], cwd=root, env=options)
+    subprocess.run(["tool"], cwd="safe", env={"LANG": "C"}, **options)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(rows[0]["process_argv_argument_count"], 3)
+        self.assertEqual(rows[0]["process_argv_dynamic_argument_count"], 1)
+        self.assertEqual(rows[0]["process_literal_options"], ["-fsS"])
+        self.assertEqual(rows[0]["process_command_effect_classification"],
+                         "network_client")
+        self.assertEqual(rows[0]["process_cwd_syntax"], "explicit_literal")
+        self.assertEqual(rows[0]["process_env_syntax"], "explicit_literal_mapping")
+        self.assertEqual(rows[1]["process_command_effect_classification"],
+                         "media_inspector")
+        self.assertEqual(rows[1]["process_literal_file_output_switches"], [])
+        self.assertEqual(rows[1]["process_cwd_syntax"], "explicit_expression")
+        self.assertEqual(rows[1]["process_env_syntax"], "explicit_expression")
+        self.assertEqual(rows[2]["process_cwd_syntax"], "dynamic_keyword_unpacking")
+        self.assertEqual(rows[2]["process_env_syntax"], "dynamic_keyword_unpacking")
+        self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
 
     def test_process_shell_keyword_unpacking_and_dynamic_values_stay_unknown(self):
         source = '''\nimport subprocess\ndef run_commands(options, dynamic):\n    subprocess.run(["tool"], **options)\n    subprocess.Popen(["tool"], shell=dynamic)\n    subprocess.call(["tool"], shell=True)\n'''

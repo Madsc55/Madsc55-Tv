@@ -74,6 +74,8 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         ):
             # Whitespace padding that is not a control must not silently
             # change the declared channel identity.
+            if pending is not None:
+                errors.append({"line": number, "reason": "missing_url"})
             errors.append({"line": number, "reason": "invalid_metadata_whitespace"})
             pending = None
             discard_url_for_rejected_entry = True

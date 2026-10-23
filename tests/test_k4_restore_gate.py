@@ -43,6 +43,29 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertFalse(result["external_storage_proven"])
             self.assertFalse(result["production_writes"])
 
+    def test_inventory_io_error_fails_closed(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ("source", "backup", "restored")]
+            for root in trees:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            original_rglob = Path.rglob
+
+            def interrupted_inventory(path, pattern):
+                if path == trees[2]:
+                    def broken():
+                        yield from ()
+                        raise OSError("simulated unreadable inventory")
+                    return broken()
+                return original_rglob(path, pattern)
+
+            with patch.object(Path, "rglob", autospec=True, side_effect=interrupted_inventory):
+                result = audit_k4_restore(*trees, ["file.txt"])
+            self.assertFalse(result["sandbox_restore_accepted"])
+            self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
+
     def test_mismatch_fails_closed(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

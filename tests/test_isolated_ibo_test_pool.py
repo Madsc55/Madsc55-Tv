@@ -30,4 +30,10 @@ class TestK5Pool(unittest.TestCase):
 
     def test_url_not_exported(self):
         self.records[0]["url"] = "https://private.example/token"
-        self.assertNotIn("private.example", str(build_isolated_test_pool(self.records)))
+        with self.assertRaises(ValueError):
+            build_isolated_test_pool(self.records)
+
+    def test_evidence_url_rejected(self):
+        self.records[0]["history"] = [{"status": "broken", "evidence_id": "https://private.example"}]
+        with self.assertRaises(ValueError):
+            build_isolated_test_pool(self.records)

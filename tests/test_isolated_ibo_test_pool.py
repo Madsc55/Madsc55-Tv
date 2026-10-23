@@ -68,3 +68,13 @@ class TestK5Pool(unittest.TestCase):
         self.records[1]["source_sha256"] = self.records[0]["source_sha256"]
         with self.assertRaises(ValueError):
             build_isolated_test_pool(self.records)
+
+    def test_evidence_query_token_rejected(self):
+        self.records[0]["history"] = [{"status": "broken", "evidence_id": "token=secret123"}]
+        with self.assertRaises(ValueError):
+            build_isolated_test_pool(self.records)
+
+    def test_evidence_opaque_identifier_accepted(self):
+        self.records[0]["history"] = [{"status": "broken", "evidence_id": "legacy-2026:check_01"}]
+        entry = build_isolated_test_pool(self.records)["entries"][0]
+        self.assertEqual(entry["history"][0]["evidence_id"], "legacy-2026:check_01")

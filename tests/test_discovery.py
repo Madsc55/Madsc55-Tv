@@ -25,6 +25,11 @@ class DiscoveryTests(unittest.TestCase):
         self.assertEqual(len(result["duplicates"]), 1)
         self.assertEqual(result["duplicates"][0]["duplicate_reason"], "already_known")
 
+    def test_empty_fragment_delimiter_is_rejected(self):
+        for url in ("https://example.org/live#", "https://example.org/live#fragment"):
+            with self.subTest(url=url), self.assertRaisesRegex(ValueError, "fragments"):
+                normalize_url(url)
+
     def test_credentials_rejected(self):
         with self.assertRaises(ValueError):
             normalize_url("https://user:pass@example.org/live")

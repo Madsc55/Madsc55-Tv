@@ -6,6 +6,14 @@ from madsc.epg import check_epg_mapping
 
 class EpgTests(unittest.TestCase):
 
+    def test_header_after_extinf_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            p, e = Path(d) / "playlist.m3u8", Path(d) / "xmltv.xml"
+            p.write_text('#EXTINF:-1 tvg-id="trt1.tr",TRT 1\n#EXTM3U\nhttps://example.org/live\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Duplicate or misplaced M3U header|Invalid M3U8 playlist"):
+                check_epg_mapping(p, e)
+
     def test_duplicate_m3u_header_is_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             p, e = Path(d) / "playlist.m3u8", Path(d) / "xmltv.xml"

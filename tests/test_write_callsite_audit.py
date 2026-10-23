@@ -168,6 +168,31 @@ def mutate(path):
         self.assertTrue(all(not row["process_shell_disabled_verified"] for row in rows))
         self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
 
+    def test_process_executable_resolves_only_safe_direct_local_argv_binding(self):
+        source = '''
+import subprocess
+def run_commands(url, dynamic):
+    command = ["curl", url]
+    subprocess.run(command)
+    reassigned = ["safe", url]
+    reassigned = dynamic
+    subprocess.run(reassigned)
+    if dynamic:
+        conditional = ["conditional", url]
+    subprocess.run(conditional)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(rows[0]["process_command_source"],
+                         "direct_local_single_assignment")
+        self.assertTrue(rows[0]["process_argv_container_verified"])
+        self.assertFalse(rows[0]["process_literal_argv_verified"])
+        self.assertEqual(rows[0]["process_executable_syntax"], "curl")
+        for row in rows[1:]:
+            self.assertEqual(row["process_command_source"], "unresolved_name")
+            self.assertFalse(row["process_argv_container_verified"])
+            self.assertIsNone(row["process_executable_syntax"])
+            self.assertFalse(row["process_effect_verified_read_only"])
+
     def test_builtin_and_io_open_use_the_correct_mode_argument(self):
         source = '''\nimport builtins\nimport io\ndef mutate():\n    builtins.open("output.txt", "w")\n    io.open("output2.txt", mode="a")\n    builtins.open("input.txt", "r")\n'''
         rows = scan_python_source(source)

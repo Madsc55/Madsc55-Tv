@@ -167,6 +167,23 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
             self.assertEqual(pilot.verify_av("https://example.org/media.m3u8"),
                              (False, False, "probe_error"))
 
+    def test_report_distinguishes_video_with_audio_from_video_only(self):
+        rows = [("TV Audio", "https://example.org/av.m3u8"),
+                ("TV Silent", "https://example.org/video.m3u8")]
+        with tempfile.TemporaryDirectory() as d:
+            with patch.object(pilot, "candidates", return_value=iter(rows)), \
+                 patch.object(pilot, "verify_video",
+                              side_effect=[(True, "video_audio_detected"),
+                                           (True, "video_detected")]), \
+                 patch.object(pilot, "write_fixture_report") as write, \
+                 patch.object(pilot.Path, "cwd", return_value=Path(d)):
+                pilot.run()
+        report = json.loads(write.call_args.args[2])
+        self.assertEqual(report["video_verified"], 2)
+        self.assertEqual(report["video_audio_verified"], 1)
+        self.assertEqual(report["video_only_detected"], 1)
+        self.assertFalse(report["language_confirmed_by_audio"])
+
     def test_radio_does_not_consume_tv_probe_quota(self):
         rows = [("Radyo Haber", "https://example.org/radio.m3u8")]
         rows += [(f"TV {i}", f"https://example.org/tv{i}.m3u8") for i in range(pilot.LIMIT + 2)]

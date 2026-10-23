@@ -19,7 +19,7 @@ def build_legacy_m3u8_preview(source_dir: Path, snapshot: Path | None = None) ->
         raise ValueError("Source must be a regular directory")
     data = load_historical_categories() if snapshot is None else load_historical_categories(snapshot)
     manifests = {item["file"]: item for item in data["source_files"]}
-    drafts = ["#EXTM3U"]
+    drafts = []
     counts = {}
     for filename in SOURCE_FILES:
         path = source_dir / filename
@@ -30,9 +30,9 @@ def build_legacy_m3u8_preview(source_dir: Path, snapshot: Path | None = None) ->
             raise ValueError("Legacy source SHA mismatch: " + filename)
         content = raw.decode("utf-8-sig")
         lines = [line.strip() for line in content.splitlines() if line.strip()]
-        if not lines or lines[0] != "#EXTM3U":
+        if not lines or not (lines[0] == "#EXTM3U" or lines[0].startswith("#EXTM3U ")):
             raise ValueError("Invalid M3U header: " + filename)
-        entries = []
+        if not drafts:\n            drafts.append(lines[0])\n        entries = []
         pending = None
         for line in lines[1:]:
             if line.startswith("#EXTINF:"):

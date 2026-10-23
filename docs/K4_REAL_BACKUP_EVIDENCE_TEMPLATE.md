@@ -80,3 +80,10 @@ Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim 
 - İlk 100 kayıttaki en son tamamlanmış başarılı genel CI: `40022310560`, commit `cd963633ed909bf9b8acf5e64db629cd4114055b`. Bu bir K4 dış-depolama teslim makbuzu değildir.
 - Tarama sırasında `40022533383` pending ve `40022512400` in_progress idi; sonuçları başarılı sayılmadı.
 - Harici depolama sağlayıcısı tarafından imzalanmış teslim makbuzu veya nesne kimliği ile aynı nesneden yapılmış bağımsız restore çalışması hâlâ sunulmadı. K4-15/K4-16 **BEKLİYOR**, `external_storage_proven=false`, `production_restore_approved=false`.
+
+## 23 Ekim 2026 — Son durum doğrulaması (aynı gün)
+
+- `main` SHA `09cd66dc2ee2d6d04d6830e8dbd69f0ad2146634` gözlendi; GitHub Actions `40022533383`, `40022512400`, `40022310560`, `40022282596` genel CI çalışmaları `success` olarak tamamlandı. Bunlar gerçek harici yedek teslimi veya bağımsız geri yükleme makbuzu değildir.
+- İlk 100 Actions çalışmasında K4/yedek/backup workflow ad/yol eşleşmesi **0**; bu sonuç toplam `1059` kaydın tümü için genellenemez.
+- Bağımsız harici hedef, gerçek yedek nesne kimliği, sağlayıcı teslim makbuzu ve aynı nesneden temiz hedefe geri yükleme kanıtı bulunamadı. K4-15/16/17/18 **BEKLİYOR**; `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.
+- Yalnızca kanıt defteri güncellendi; gerçek harici yedek, gerçek restore, workflow dispatch veya üretim yazması yapılmadı.

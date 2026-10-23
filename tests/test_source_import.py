@@ -153,6 +153,13 @@ class SourceImportTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 extract_candidates(oversized)
 
+    def test_invalid_utf8_source_rejected_cleanly(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u"
+            p.write_bytes(b"#EXTM3U\\n#EXTINF:-1,Channel\\nhttps://example.org/live\\n\\xff")
+            with self.assertRaisesRegex(ValueError, "valid UTF-8"):
+                extract_candidates(p)
+
     def test_missing_source_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(ValueError):

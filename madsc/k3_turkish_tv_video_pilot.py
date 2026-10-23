@@ -165,7 +165,11 @@ def run():
         if not isinstance(url, str) or not url.strip() or len(url) > 4096:
             results.append({"status": "invalid_source_url"})
             continue
-        digest = hashlib.sha256(url.encode()).hexdigest()
+        try:
+            digest = hashlib.sha256(url.encode()).hexdigest()
+        except UnicodeError:
+            results.append({"status": "invalid_source_url"})
+            continue
         if not cat:
             results.append({"sha256": digest, "status": "radio_excluded"})
             continue

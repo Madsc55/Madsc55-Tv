@@ -9,6 +9,8 @@ def normalize_url(value: str) -> str:
     if any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF for ch in value) or "\\" in value:
         raise ValueError("Control characters or backslash escapes are forbidden in candidate URLs")
     value = value.strip()
+    if any(ch.isspace() for ch in value):
+        raise ValueError("Whitespace is forbidden in candidate URLs")
     if any(token in value.lower() for token in ("%0a", "%0d", "%00", "%250a", "%250d", "%2500")):
         raise ValueError("Encoded newline or NUL is forbidden in candidate URLs")
     parts = urlsplit(value)

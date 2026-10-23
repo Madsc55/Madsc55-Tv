@@ -74,6 +74,25 @@ class OfflineFiveGateTests(unittest.TestCase):
         self.assertFalse(result["production_ready"])
         self.assertFalse(result["production_writes"])
 
+    def test_wrong_archive_positions_with_correct_counts_fail_gate(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from madsc.k5_archive_preview import classify_archive_positions
+
+        original = classify_archive_positions
+        def swapped_positions(scenario, entries):
+            result = original(scenario, entries)
+            if scenario != "354":
+                return result
+            return replace(result,
+                           kept_positions=(1, 3),
+                           archived_positions=(2,) + tuple(range(4, 355)))
+        with patch("madsc.core.classify_archive_positions", side_effect=swapped_positions):
+            report = assess_all()
+        self.assertFalse(report["fixture_gate_passed"])
+        self.assertEqual(report["categories"]["k5"], "failure")
+        self.assertFalse(report["production_ready"])
+
     def test_stage_inventory_is_exact_five(self):
         from unittest.mock import patch
         with patch("madsc.offline_five_gate.CATEGORIES", ("k1", "k2", "k3", "k4", "k4")):

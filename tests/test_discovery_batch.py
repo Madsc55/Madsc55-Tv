@@ -74,6 +74,15 @@ class DiscoveryBatchTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Invalid source name"):
                     build_m3u8_preview({label: "not an M3U feed"})
 
+    def test_known_urls_reject_invisible_unicode(self):
+        feed = "#EXTM3U\n#EXTINF:-1,News\nhttps://example.org/live\n"
+        for url in ("https://example.org/\u200blive",
+                    "https://example.org/\u202elive",
+                    "https://example.org/\u2028live"):
+            with self.subTest(url=repr(url)):
+                with self.assertRaisesRegex(ValueError, "control characters"):
+                    corroborate_sources({"source": feed}, known_urls={url})
+
     def test_known_urls_requires_set(self):
         with self.assertRaises(ValueError):
             corroborate_sources({"a": "#EXTM3U"}, known_urls=["https://example.org/a"])

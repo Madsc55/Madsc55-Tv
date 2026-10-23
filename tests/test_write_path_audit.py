@@ -285,6 +285,22 @@ class LocalOutputGuardTests(unittest.TestCase):
                         enforce_local_turkish_tv_test_playlist(candidate, allowed_root=root)
             self.assertFalse(expected.exists())
 
+    def test_isolated_playlist_rejects_nfkc_aliases(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "reports").mkdir()
+            target = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+            for suffix in ("／extra", "＼extra", "：stream"):
+                with self.subTest(suffix=suffix):
+                    with self.assertRaises(ProtectedWriteRejected):
+                        enforce_local_turkish_tv_test_playlist(target, allowed_root=str(root) + suffix)
+            for alias in ("／", "＼", "："):
+                with self.subTest(alias=alias):
+                    candidate = str(root) + "/reports" + alias + "MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
+                    with self.assertRaises(ProtectedWriteRejected):
+                        enforce_local_turkish_tv_test_playlist(candidate, allowed_root=root)
+            self.assertFalse(target.exists())
+
     def test_allowed_root_rejects_nfkc_separator_aliases(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

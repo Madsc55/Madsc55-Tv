@@ -290,6 +290,23 @@ def run_commands():
         self.assertTrue(all(row["guard_control_flow_verified"] for row in mutations))
         self.assertTrue(all(row["review_required"] for row in mutations))
 
+    def test_core_fixture_mutations_have_direct_k1_guard_dominance(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        mutations = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/core_fixture_writer.py"
+            and row["scope"] == "write_core_fixture"
+        ]
+        self.assertGreaterEqual(len(mutations), 7)
+        self.assertTrue(all(row["guard_control_flow_verified"]
+                            for row in mutations))
+        execute_mutations = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/core.py" and row["scope"] == "execute"
+        ]
+        self.assertEqual(execute_mutations, [])
+
     def test_legacy_note_atomic_replace_has_direct_k1_guard(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

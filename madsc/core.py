@@ -8,6 +8,7 @@ from tempfile import TemporaryDirectory
 
 from madsc.backup import snapshot_manifest, verify_manifest, compare_copy, verify_sandbox_restore, verify_independent_restore
 from madsc.channel_test import evaluate_probe, evaluate_repeated_probes, evaluate_ffprobe_json
+from madsc.core_fixture_writer import write_core_fixture
 from madsc.discovery import classify_candidates
 from madsc.dependencies import validate_batch, plan_task
 from madsc.maintenance import aggregate, retry_decision, summarize_batch, review_candidate_batch, assess_failure_history
@@ -33,7 +34,8 @@ def execute(category: str) -> dict:
     if category == "k1":
         with TemporaryDirectory() as d:
             p = Path(d) / "sample.m3u"
-            p.write_text("#EXTM3U\n#EXTINF:-1,Sample\nhttps://example.org/live\n", encoding="utf-8")
+            write_core_fixture(Path(d), "sample.m3u",
+                               b"#EXTM3U\n#EXTINF:-1,Sample\nhttps://example.org/live\n")
             original = p.read_bytes()
             before = inspect_playlist(p)
             after = inspect_playlist(p)
@@ -66,16 +68,20 @@ def execute(category: str) -> dict:
             results = []
             for suffix in (".m3u", ".m3u8"):
                 p = Path(d) / ("sample" + suffix)
-                p.write_text("#EXTM3U\\n#EXTINF:-1,Sample\\nhttps://example.org/live.m3u8\\n#EXTINF:-1,Duplicate\\nhttps://example.org/live.m3u8\\n#EXTINF:-1,Invalid\\nfile:///invalid\\n".replace("\\n", "\n"), encoding="utf-8")
+                write_core_fixture(Path(d), "sample" + suffix,
+                    b"#EXTM3U\n#EXTINF:-1,Sample\n"
+                    b"https://example.org/live.m3u8\n"
+                    b"#EXTINF:-1,Duplicate\nhttps://example.org/live.m3u8\n"
+                    b"#EXTINF:-1,Invalid\nfile:///invalid\n")
                 before = p.read_bytes()
                 result = extract_candidates(p)
                 results.append((result, before == p.read_bytes()))
             legacy = Path(d) / "legacy_history"
-            legacy.mkdir()
             first = {"gecmis.json": {"history": {"fixture": {"last_test": "2026-10-19T12:00:00Z", "runs": 1, "last_result": "PASS", "decision": "MANUAL_ONLY"}}},
                      "ana_liste_test_gecmisi.json": {"channels": {"fixture": {"last_test": "2026-10-19T12:00:00Z", "runs": 1, "last_result": "PASS", "decision": "MANUAL_ONLY"}}}}
             for name, doc in first.items():
-                (legacy / name).write_text(json.dumps(doc), encoding="utf-8")
+                write_core_fixture(Path(d), f"legacy_history/{name}",
+                                   json.dumps(doc).encode("utf-8"))
             original_history = {name: (legacy / name).read_bytes() for name in first}
             envelope = Path(d) / "history-pair.json"
             bridge_legacy_pair(legacy, envelope)
@@ -111,7 +117,8 @@ def execute(category: str) -> dict:
                     "no_production_approval": not result["production_change_allowed"]}
         with TemporaryDirectory() as d:
             p = Path(d) / "sample.m3u8"
-            p.write_text("#EXTM3U\n#EXTINF:-1,Sample\nhttps://example.org/live.m3u8\n", encoding="utf-8")
+            write_core_fixture(Path(d), "sample.m3u8",
+                               b"#EXTM3U\n#EXTINF:-1,Sample\nhttps://example.org/live.m3u8\n")
             original = p.read_bytes()
             discovery = extract_candidates(p)
             digest = discovery["candidates"][0]["url_sha256"]
@@ -132,7 +139,8 @@ def execute(category: str) -> dict:
                 and not decision["delete_allowed"]
                 and not decision["production_change_allowed"])
             xml = Path(d) / "epg.xml"
-            xml.write_text('<tv><channel id="sample.tv"/><programme channel="sample.tv"/></tv>', encoding="utf-8")
+            write_core_fixture(Path(d), "epg.xml",
+                b'<tv><channel id="sample.tv"/><programme channel="sample.tv"/></tv>')
             epg = inspect_xmltv(xml, {"sample.tv"})
             evidence["xmltv_id_matching"] = epg["matched_playlist_ids"] == 1 and epg["orphaned_programmes"] == 0 and not epg["device_verified"]
             evidence["ibo_report_not_device_verified"] = (decision["ibo_result_supplied"]
@@ -140,7 +148,8 @@ def execute(category: str) -> dict:
             evidence["ibo_fixture_not_live_device_evidence"] = (
                 not protected["network_probed"] and not protected["production_playlist_modified"])
             pilot = Path(d) / "pilot.xml"
-            pilot.write_text('<tv><channel id="fixture.tv"/><programme channel="fixture.tv"/></tv>', encoding="utf-8")
+            write_core_fixture(Path(d), "pilot.xml",
+                b'<tv><channel id="fixture.tv"/><programme channel="fixture.tv"/></tv>')
             pilot_original = pilot.read_bytes()
             joined = join_pilot(
                 [{"channel": "Fixture", "channel_id": "fixture.tv", "stream_sha256": digest}],
@@ -167,14 +176,14 @@ def execute(category: str) -> dict:
     elif category == "k4":
         with TemporaryDirectory() as d:
             p = Path(d) / "sample.txt"
-            p.write_text("fixture", encoding="utf-8")
+            write_core_fixture(Path(d), "sample.txt", b"fixture")
             manifest = snapshot_manifest(Path(d), ["sample.txt"])
             with TemporaryDirectory() as copy_dir:
-                (Path(copy_dir) / "sample.txt").write_bytes(p.read_bytes())
+                write_core_fixture(Path(copy_dir), "sample.txt", p.read_bytes())
                 copy_ok = compare_copy(Path(d), Path(copy_dir), ["sample.txt"])
                 restore_audit = verify_sandbox_restore(Path(d), Path(copy_dir), ["sample.txt"])
                 with TemporaryDirectory() as third_dir:
-                    (Path(third_dir) / "sample.txt").write_bytes(p.read_bytes())
+                    write_core_fixture(Path(third_dir), "sample.txt", p.read_bytes())
                     independent = verify_independent_restore(Path(d), Path(copy_dir), Path(third_dir), ["sample.txt"])
             evidence = {"three_tree_restore_fixture": independent["independent_sandbox_restore_matches"] and not independent["external_storage_proven"],
                         "independent_restore_reports_no_production_proof": (
@@ -224,10 +233,11 @@ def execute(category: str) -> dict:
         handoff_item = handoff_report["assessed"][0]
         with TemporaryDirectory() as source_dir, TemporaryDirectory() as backup_dir, TemporaryDirectory() as restored_dir:
             for directory in (source_dir, backup_dir, restored_dir):
-                (Path(directory) / "fixture.txt").write_text("isolated-k4", encoding="utf-8")
+                write_core_fixture(Path(directory), "fixture.txt", b"isolated-k4")
             k4_review = verify_independent_restore(
                 Path(source_dir), Path(backup_dir), Path(restored_dir), ["fixture.txt"])
-            (Path(restored_dir) / "fixture.txt").write_text("corrupted-restore", encoding="utf-8")
+            write_core_fixture(Path(restored_dir), "fixture.txt", b"corrupted-restore",
+                               overwrite=True)
             k4_corrupt_review = verify_independent_restore(
                 Path(source_dir), Path(backup_dir), Path(restored_dir), ["fixture.txt"])
         cross_system_review = review_candidate_batch(candidate_report, k4_review)

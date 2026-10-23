@@ -28,6 +28,8 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     try:
         text.encode("utf-8", errors="strict")
         source.encode("utf-8", errors="strict")
+        if len(text.encode("utf-8", errors="strict")) > 8_000_000:
+            raise ValueError("M3U source exceeds bounded UTF-8 byte limit")
     except UnicodeEncodeError as exc:
         raise ValueError("M3U source and text must be valid UTF-8") from exc
     # Source names are provenance labels, not arbitrary control sequences.
@@ -224,7 +226,11 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
         raise ValueError("Invalid source name: control characters or UTF-8 surrogates")
     if any(not isinstance(body, str) for body in sources.values()):
         raise ValueError("M3U source bodies must be text")
-    if sum(len(body) for body in sources.values()) > 8_000_000:
+    try:
+        total_bytes = sum(len(body.encode("utf-8", errors="strict")) for body in sources.values())
+    except UnicodeEncodeError as exc:
+        raise ValueError("M3U source bodies must be valid UTF-8") from exc
+    if total_bytes > 8_000_000:
         raise ValueError("Combined source text exceeds bounded input limit")
     known = {normalize_url(url) for url in (known_urls or set())}
     grouped = defaultdict(lambda: {"sources": set(), "source_fingerprints": set(),

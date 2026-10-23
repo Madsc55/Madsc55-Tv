@@ -1,5 +1,6 @@
 """Offline acceptance gate must never claim production readiness."""
-import hashlib\nimport unittest
+import hashlib
+import unittest
 
 from madsc.isolated_ibo_archive_preview import build_6115_archive_preview
 from madsc.isolated_ibo_test_pool import build_isolated_test_pool

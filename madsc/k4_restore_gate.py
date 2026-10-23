@@ -78,6 +78,14 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
         portable_file = unicodedata.normalize("NFKC", declared_file).casefold()
         if portable_file in portable_dirs:
             raise ValueError("Restore audit portable file-directory collision")
+    # Pin directory identities as well as content: replacing a tree with an
+    # identical-looking directory during the audit must not be accepted.
+    root_identities = []
+    for root in roots:
+        metadata = root.lstat()
+        if not stat.S_ISDIR(metadata.st_mode):
+            raise ValueError("Restore audit root must be a real directory")
+        root_identities.append((metadata.st_dev, metadata.st_ino))
     # Pin the source manifest before the first cross-tree verification.
     # Otherwise a coordinated change to all three trees during verification
     # can be mistaken for a valid new baseline.
@@ -129,6 +137,13 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
                              and snapshot_manifest(Path(restored), names)["entries"] == initial_entries)
         if inventory_matches:
             result = confirmed
+    for root, identity in zip(roots, root_identities):
+        try:
+            metadata = root.lstat()
+            if not stat.S_ISDIR(metadata.st_mode) or (metadata.st_dev, metadata.st_ino) != identity:
+                inventory_matches = False
+        except OSError:
+            inventory_matches = False
     accepted = result["independent_sandbox_restore_matches"] is True and inventory_matches
     return {
         "stage": "K4_ARCHIVE_RESTORE",

@@ -492,3 +492,15 @@ class DiscoveryBatchTests(unittest.TestCase):
     def test_valid_extinf_rows_still_fit_source_limit(self):
         feed = "#EXTM3U\n#EXTINF:-1,One\nhttps://example.org/one\n"
         self.assertEqual(parse_m3u(feed, "source", max_entries=1)["entries"], 1)
+
+    def test_extinf_control_characters_are_rejected_without_url_leak(self):
+        feed = ('#EXTM3U\n'
+                '#EXTINF:-1 tvg-id="bad\\x00id",Bad\n'
+                'https://example.org/bad\n'
+                '#EXTINF:-1 tvg-id="good",Good\n'
+                'https://example.org/good\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(report["candidate_rows"][0]["tvg_id"], "good")
+        self.assertEqual([error["reason"] for error in report["parse_errors"]],
+                         ["invalid_metadata_control"])

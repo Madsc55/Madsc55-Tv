@@ -307,6 +307,20 @@ def run_commands():
         ]
         self.assertEqual(execute_mutations, [])
 
+    def test_k3_video_segment_has_no_direct_file_write_candidate(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        mutations = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/k3_turkish_tv_video_pilot.py"
+            and row["scope"] == "verify_av"
+        ]
+        apis = [row["api"] for row in mutations]
+        self.assertNotIn("segment.write_bytes", apis)
+        self.assertEqual([api for api in apis if "process command" not in api], [
+            "tempfile.TemporaryDirectory [temporary filesystem creation requires review]"
+        ])
+
     def test_legacy_note_atomic_replace_has_direct_k1_guard(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

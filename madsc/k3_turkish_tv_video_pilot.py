@@ -5,7 +5,7 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
-from madsc.fixture_report_writer import write_fixture_report
+from madsc.fixture_report_writer import write_exclusive_bytes, write_fixture_report
 from urllib.parse import urljoin, urlsplit
 
 from madsc.k3_live_manifest_pilot import candidates, probe
@@ -123,7 +123,7 @@ def verify_av(url):
         return False, False, "segment_unreachable"
     with tempfile.TemporaryDirectory() as folder:
         segment = Path(folder) / "sample.ts"
-        segment.write_bytes(payload)
+        write_exclusive_bytes(segment, payload, allowed_root=Path(folder))
         try:
             result = subprocess.run(
                 ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",

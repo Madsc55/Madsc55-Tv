@@ -212,6 +212,22 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
             self.assertEqual(pilot.verify_av("https://example.org/media.m3u8"),
                              (False, False, "probe_error"))
 
+    def test_segment_uses_guarded_exclusive_temp_writer(self):
+        manifest = b'#EXTM3U\n#EXTINF:4,\nsegment.ts\n'
+        payload = b"x" * 188
+        with patch.object(pilot, "safe_curl", side_effect=[manifest, payload]), \
+             patch.object(pilot, "write_exclusive_bytes") as write, \
+             patch.object(pilot.subprocess, "run") as probe:
+            probe.return_value.returncode = 1
+            probe.return_value.stdout = b""
+            self.assertEqual(pilot.verify_av("https://example.org/media.m3u8"),
+                             (False, False, "probe_error"))
+        destination, written_payload = write.call_args.args
+        self.assertEqual(destination.name, "sample.ts")
+        self.assertEqual(written_payload, payload)
+        self.assertEqual(write.call_args.kwargs["allowed_root"],
+                         destination.parent)
+
     def test_report_distinguishes_video_with_audio_from_video_only(self):
         rows = [("TV Audio", "https://example.org/av.m3u8"),
                 ("TV Silent", "https://example.org/video.m3u8")]

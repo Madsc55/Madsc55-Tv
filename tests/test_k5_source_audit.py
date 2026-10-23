@@ -1,0 +1,55 @@
+"""Offline regression tests for K5 frozen-source coverage and tamper detection."""
+import json
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+from madsc.k5_source_audit import PARTS, audit
+
+
+class K5SourceAuditTests(unittest.TestCase):
+    def setUp(self):
+        self.root = Path(__file__).resolve().parents[1]
+
+    def test_all_92_source_rows_pinned(self):
+        result = audit(self.root)
+        self.assertEqual(result["expected"], 92)
+        self.assertEqual(result["recorded"], 92)
+        self.assertEqual(result["verified_source_rows"], 92)
+        self.assertTrue(result["source_audit_passed"], result["errors"])
+        self.assertFalse(result["production_accepted"])
+        self.assertEqual(result["behavioral_parity_accepted"], 0)
+
+    def test_missing_batch_fails_closed(self):
+        original = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            if str(path).endswith("K5_KAYNAK_DOGRULAMA_91_92.json"):
+                raise FileNotFoundError("simulated missing evidence")
+            return original(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", read_text):
+            result = audit(self.root)
+        self.assertFalse(result["source_audit_passed"])
+        self.assertTrue(any("missing_or_invalid_part:91_92" in x for x in result["errors"]))
+
+    def test_tampered_source_sha_fails_closed(self):
+        original = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            value = original(path, *args, **kwargs)
+            if str(path).endswith("K5_KAYNAK_DOGRULAMA_91_92.json"):
+                data = json.loads(value)
+                data["rows"][0]["sha"] = "0" * 40
+                return json.dumps(data)
+            return value
+
+        with patch.object(Path, "read_text", read_text):
+            result = audit(self.root)
+        self.assertFalse(result["source_audit_passed"])
+        self.assertTrue(any(x.startswith("sha_mismatch:") for x in result["errors"]))
+
+
+if __name__ == "__main__":
+    unittest.main()

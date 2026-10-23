@@ -73,12 +73,16 @@ def _call_name(node: ast.Call) -> str:
     return ""
 
 
-def _flag_names(node: ast.AST) -> set[str] | None:
+def _flag_names(node: ast.AST, bindings=None, resolving=frozenset()) -> set[str] | None:
     """Return statically-known os.open flag names, or None for uncertainty."""
     if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
-        left = _flag_names(node.left)
-        right = _flag_names(node.right)
+        left = _flag_names(node.left, bindings, resolving)
+        right = _flag_names(node.right, bindings, resolving)
         return None if left is None or right is None else left | right
+    if isinstance(node, ast.Name):
+        if not bindings or node.id not in bindings or node.id in resolving:
+            return None
+        return _flag_names(bindings[node.id], bindings, resolving | {node.id})
     if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
         if node.value.id in {"os", "posix"} and node.attr.startswith("O_"):
             return {node.attr}
@@ -99,6 +103,106 @@ def _flag_names(node: ast.AST) -> set[str] | None:
     if isinstance(node, ast.Constant) and type(node.value) is int and node.value == 0:
         return set()
     return None
+
+
+class _LocalBindingCollector(ast.NodeVisitor):
+    """Count local stores without inheriting deferred nested scopes."""
+    def __init__(self):
+        self.stores = {}
+        self.external = set()
+        self.dynamic_scope = False
+
+    def _store(self, name):
+        if name:
+            self.stores[name] = self.stores.get(name, 0) + 1
+
+    def visit_Name(self, node):
+        if isinstance(node.ctx, ast.Store):
+            self._store(node.id)
+
+    def visit_Import(self, node):
+        for alias in node.names:
+            self._store(alias.asname or alias.name.split(".", 1)[0])
+
+    def visit_ImportFrom(self, node):
+        for alias in node.names:
+            self._store(alias.asname or alias.name)
+
+    def visit_MatchAs(self, node):
+        self._store(node.name)
+        self.generic_visit(node)
+
+    def visit_MatchStar(self, node):
+        self._store(node.name)
+
+    def visit_MatchMapping(self, node):
+        self._store(node.rest)
+        self.generic_visit(node)
+
+    def visit_ExceptHandler(self, node):
+        self._store(node.name)
+        self.generic_visit(node)
+
+    def visit_Call(self, node):
+        if isinstance(node.func, ast.Name) and node.func.id == "exec":
+            self.dynamic_scope = True
+        self.generic_visit(node)
+
+    def visit_Global(self, node):
+        self.external.update(node.names)
+
+    def visit_Nonlocal(self, node):
+        self.external.update(node.names)
+
+    def visit_FunctionDef(self, node):
+        return
+
+    def visit_AsyncFunctionDef(self, node):
+        return
+
+    def visit_Lambda(self, node):
+        return
+
+    def visit_ClassDef(self, node):
+        return
+
+
+def _direct_local_flag_bindings(node) -> dict[str, ast.AST]:
+    """Return single-assignment locals whose value dominates later statements."""
+    collector = _LocalBindingCollector()
+    for statement in node.body:
+        collector.visit(statement)
+    if collector.dynamic_scope:
+        return {}
+    nested_nonlocals = set()
+    for statement in node.body:
+        if isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            for descendant in ast.walk(statement):
+                if isinstance(descendant, ast.Nonlocal):
+                    nested_nonlocals.update(descendant.names)
+    parameters = {
+        arg.arg for arg in (*node.args.posonlyargs, *node.args.args,
+                            *node.args.kwonlyargs)
+    }
+    if node.args.vararg:
+        parameters.add(node.args.vararg.arg)
+    if node.args.kwarg:
+        parameters.add(node.args.kwarg.arg)
+    direct = {}
+    for statement in node.body:
+        if (isinstance(statement, ast.Assign) and len(statement.targets) == 1
+                and isinstance(statement.targets[0], ast.Name)):
+            name, value = statement.targets[0].id, statement.value
+        elif (isinstance(statement, ast.AnnAssign)
+              and isinstance(statement.target, ast.Name)
+              and statement.value is not None):
+            name, value = statement.target.id, statement.value
+        else:
+            continue
+        if (collector.stores.get(name) == 1 and name not in parameters
+                and name not in collector.external and name not in nested_nonlocals):
+            direct[name] = value
+    return direct
 
 
 def _is_proven_text_receiver(node: ast.AST) -> bool:
@@ -126,7 +230,7 @@ def _is_proven_text_replace(node: ast.Call) -> bool:
     return False
 
 
-def _classify_call(node: ast.Call) -> tuple[str, str]:
+def _classify_call(node: ast.Call, flag_bindings=None) -> tuple[str, str]:
     name = _call_name(node)
     leaf = name.rsplit(".", 1)[-1]
     if leaf == "replace" and _is_proven_text_replace(node):
@@ -146,7 +250,7 @@ def _classify_call(node: ast.Call) -> tuple[str, str]:
         # O_RDONLY argument appears. Never certify such a call read-only.
         if any(kw.arg is None for kw in node.keywords):
             return "write_candidate", name + " [dynamic flags require review]"
-        names = _flag_names(flags) if flags is not None else None
+        names = _flag_names(flags, flag_bindings) if flags is not None else None
         if (names is not None and names and names <= _READ_ONLY_OPEN_FLAGS
                 and names & {"O_RDONLY", "O_PATH"}):
             return "proven_read_only_descriptor", name
@@ -260,6 +364,7 @@ class _Scanner(ast.NodeVisitor):
         self.source = source
         self.source_file_sha256 = hashlib.sha256(source.encode("utf-8")).hexdigest()
         self.scope: list[tuple[str, list[int]]] = []
+        self.flag_bindings: list[dict[str, ast.AST]] = []
         self.rows: list[dict] = []
         self.dispositions: list[dict] = []
 
@@ -270,8 +375,12 @@ class _Scanner(ast.NodeVisitor):
         guards = sorted(n.lineno for n in collector.calls
                         if _call_name(n).rsplit(".", 1)[-1] in _GUARDS)
         self.scope.append((name, guards))
+        bindings = (_direct_local_flag_bindings(node)
+                    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) else {})
+        self.flag_bindings.append(bindings)
         for child in node.body:
             self.visit(child)
+        self.flag_bindings.pop()
         self.scope.pop()
 
     def _visit_definition_expressions(self, node):
@@ -322,11 +431,18 @@ class _Scanner(ast.NodeVisitor):
         guards = sorted(n.lineno for n in collector.calls
                         if _call_name(n).rsplit(".", 1)[-1] in _GUARDS)
         self.scope.append((f"<lambda@{node.lineno}>", guards))
+        self.flag_bindings.append({})
         self.visit(node.body)
+        self.flag_bindings.pop()
         self.scope.pop()
 
     def visit_Call(self, node):
-        classification, api = _classify_call(node)
+        bindings = {
+            name: value for name, value in (self.flag_bindings[-1].items()
+                                            if self.flag_bindings else ())
+            if value.lineno < node.lineno
+        }
+        classification, api = _classify_call(node, bindings)
         if classification in {"write_candidate", "proven_non_filesystem_text_transform",
                               "proven_read_only_descriptor"}:
             function, guards = self.scope[-1] if self.scope else ("<module>", [])

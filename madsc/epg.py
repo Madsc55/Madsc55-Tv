@@ -66,6 +66,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
         raise ValueError("Malformed M3U EXTINF directive")
 
     xmltv_raw = xmltv.read_bytes()
+    if b"\x00" in xmltv_raw:
+        raise ValueError("NUL byte in XMLTV")
     xmltv_upper = xmltv_raw.upper()
     if b"<!DOCTYPE" in xmltv_upper or b"<!ENTITY" in xmltv_upper:
         raise ValueError("XMLTV DTD and entity declarations are not allowed")

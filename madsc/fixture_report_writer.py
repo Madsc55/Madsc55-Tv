@@ -25,7 +25,7 @@ def _prepare_fixture_root(root: Path) -> Path:
     return root
 
 
-def _exclusive_bytes(destination: Path, payload: bytes) -> None:
+def write_exclusive_bytes(destination: Path, payload: bytes) -> None:
     """Create an exclusive evidence file through no-follow directory descriptors."""
     nofollow = getattr(os, "O_NOFOLLOW", None)
     directory_flag = getattr(os, "O_DIRECTORY", None)
@@ -74,6 +74,11 @@ def _exclusive_bytes(destination: Path, payload: bytes) -> None:
                         created_identity.st_ctime_ns):
                     os.unlink(destination.name, dir_fd=parent_fd)
         os.close(parent_fd)
+
+
+def _exclusive_bytes(destination: Path, payload: bytes) -> None:
+    """Compatibility wrapper for existing fixture-writer callers and tests."""
+    write_exclusive_bytes(destination, payload)
 
 
 

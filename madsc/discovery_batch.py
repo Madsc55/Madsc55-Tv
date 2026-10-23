@@ -52,7 +52,15 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     discard_url_for_rejected_entry = False
     metadata_entries = 0
     for number, raw in enumerate(lines[1:], 2):
+        # Preserve controls until EXTINF validation: strip() would silently
+        # erase leading/trailing tabs and other whitespace controls.
         line = raw.strip()
+        if line.startswith("#EXTINF:") and any(
+            unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+            for ch in raw if ch not in ("\\r", "\\n")
+        ):
+            # Retain the raw row for the metadata control check below.
+            line = raw
         if line.startswith("#EXTINF:"):
             metadata_entries += 1
             if metadata_entries > max_entries:

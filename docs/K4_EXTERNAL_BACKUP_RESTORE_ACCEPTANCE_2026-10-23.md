@@ -119,3 +119,9 @@ K4-18'in eksikliği artık yalnızca run kanıtının yokluğu değil: incelenen
 - Metin olmayan manifest alan adları reddediliyor: kod `f24a7284`, test `ca5dc622`.
 - Bunlar yerel güvenlik kontrolleridir; CI başarısı ve dış yedek kabulü kanıtı yerine geçmez.
 - K4-15 harici teslim kanıtı, K4-16 bağımsız harici restore, K4-17 korumalı VOD/arşiv ve K4-18 ayın 1/15 gerçek zamanlama kanıtı açık. Üretim hazır değil. IBO Player Pro gerçek cihaz doğrulaması kullanıcı tarafından en son yapılacak.
+
+## 23 Ekim — K4 restore gate CI takibi güncellendi
+- `madsc/k4_restore_gate.py` commit `54cd091d`: kanonik mutlak kök yolu kontrolü; CI `39877628223` başarılı.
+- `tests/test_k4_restore_gate.py` commit `d05b422f`: göreli köklerin dosya okumadan reddi; CI `39877670956` başarılı.
+- Restore dosya sınırı erkene alındı: kod `7fd847a3`; test beklentisi `49a1dece`. Bu iki commit'teki önceki CI'lar bir test beklentisi nedeniyle başarısız oldu; test beklentisi güncel kaynakta düzeltildikten sonra CI `39877893585` ve `39877984306` başarılı.
+- En son başarılı CI, yerel/çevrimdışı test paketini doğrular; harici sağlayıcı makbuzu, dış ortamda bağımsız restore, korumalı VOD/arşiv kabulü ve ayın 1/15 gerçek zamanlama çalıştırması kanıtı yerine geçmez. Bu dört kabul açık, `production_ready=false`.

@@ -28,7 +28,8 @@ class K5IboArchivePreviewTests(unittest.TestCase):
                     " https://example.invalid/live", "", None, "https://", "https://user:secret@example.invalid/live",
                     "https://example.invalid/live#fragment", "https://example.invalid/path\\segment",
                     "https://example.invalid:0/live", "https://example.invalid:65536/live",
-                    "https://example.invalid:invalid/live", "https://example.invalid/\u0001bad"):
+                    "https://example.invalid:invalid/live", "https://example.invalid/\u0001bad",
+                    "https://example.invalid/\ud800"):
             candidate = self.urls.copy()
             candidate[10] = bad
             with self.subTest(bad=bad), self.assertRaises(ValueError):

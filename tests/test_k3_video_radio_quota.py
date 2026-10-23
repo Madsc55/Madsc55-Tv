@@ -35,6 +35,12 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
             self.assertEqual(curl.call_count, 2)
             probe.assert_not_called()
 
+    def test_malformed_nested_url_is_rejected_without_exception(self):
+        self.assertFalse(pilot.same_origin_https("https://example.org/master.m3u8",
+                                                  "https://[broken/segment.ts"))
+        self.assertFalse(pilot.same_origin_https("https://[broken/master.m3u8",
+                                                  "https://example.org/segment.ts"))
+
     def test_http_segment_rejected_without_download(self):
         manifest = b"#EXTM3U\n#EXTINF:4,\nhttp://example.org/segment.ts\n"
         with patch.object(pilot, "safe_curl", return_value=manifest) as curl:

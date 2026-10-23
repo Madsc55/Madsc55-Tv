@@ -24,6 +24,7 @@ from madsc.history_pair_bridge import bridge_legacy_pair, merge_into_envelope
 from madsc.history_pair_store import decode_pair
 from madsc.legacy_workflow_safety import assess_workflow_source
 from madsc.legacy_parity_evidence import compare_provenance_bound_batch
+from madsc.k5_archive_preview import classify_archive_positions
 
 CATEGORIES = {"k1": "security", "k2": "discovery", "k3": "channel_testing", "k4": "backup", "k5": "maintenance"}
 PROTECTED = ("CALISANLAR.m3u", "YENILER", "YEDEKLER", "HEPSI", "FAVORILER", "epg/", "logolar/")
@@ -251,7 +252,26 @@ def execute(category: str) -> dict:
                 rejected_overwrite = True
         guarded_handoff_ok = (saved_report == k5_payload and rejected_unsafe
                               and rejected_overwrite and guarded_report["production_write_allowed"] is False)
+        archive_scenarios = (("354", 354, 2, 352), ("364", 364, 354, 10),
+                             ("398", 398, 364, 34))
+        archive_preview_ok = True
+        for scenario, count, expected_keep, expected_archive in archive_scenarios:
+            source_entries = tuple(range(count))
+            preview = classify_archive_positions(scenario, source_entries)
+            archive_preview_ok = archive_preview_ok and (
+                source_entries == tuple(range(count))
+                and len(preview.kept_positions) == expected_keep
+                and len(preview.archived_positions) == expected_archive
+                and sorted(preview.kept_positions + preview.archived_positions)
+                    == list(range(1, count + 1)))
+            try:
+                classify_archive_positions(scenario, source_entries[:-1])
+            except ValueError:
+                pass
+            else:
+                archive_preview_ok = False
         evidence = {"k1_guards_k5_report_write": guarded_handoff_ok,
+                    "archive_classification_preview_read_only": archive_preview_ok,
                     "all_92_pair_requirements_bound_without_acceptance": (
                         pair_preparation["pair_preparation_rows"] == 92
                         and pair_preparation["replacement_contract_catalog_checked"]

@@ -151,6 +151,36 @@ class K4RestoreGateTests(unittest.TestCase):
             self.assertFalse(result["sandbox_restore_accepted"])
             self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
 
+    def test_root_swap_during_inventory_blocks_second_verification(self):
+        from unittest.mock import patch
+        from madsc.backup import verify_independent_restore as real_verify
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            roots = [base / name for name in ("source", "backup", "restored")]
+            for root in roots:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            original_rglob = Path.rglob
+            calls = [0]
+
+            def swap_before_inventory(root, pattern):
+                if root == roots[2]:
+                    old = base / "old-restored"
+                    roots[2].rename(old)
+                    roots[2].mkdir()
+                    (roots[2] / "file.txt").write_bytes(b"same")
+                return original_rglob(root, pattern)
+
+            def count_verification(*args):
+                calls[0] += 1
+                return real_verify(*args)
+
+            with patch.object(Path, "rglob", autospec=True, side_effect=swap_before_inventory), \
+                 patch("madsc.k4_restore_gate.verify_independent_restore", side_effect=count_verification):
+                result = audit_k4_restore(*roots, ["file.txt"])
+            self.assertEqual(calls[0], 1)
+            self.assertFalse(result["sandbox_restore_accepted"])
+
     def test_replaced_restore_root_with_identical_bytes_fails_closed(self):
         from unittest.mock import patch
         from madsc.backup import verify_independent_restore as real_verify

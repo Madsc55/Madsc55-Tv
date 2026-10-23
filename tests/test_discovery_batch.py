@@ -708,3 +708,13 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertFalse(report["live_verified"])
         self.assertFalse(report["production_ready"])
         self.assertFalse(report["production_writes"])
+
+    def test_combined_rejected_metadata_counts_toward_corroboration_limit(self):
+        feed = '#EXTM3U\n' + ('#EXTINF:-1,Invalid\n' * 10_001)
+        with self.assertRaisesRegex(ValueError, "Combined sources exceed bounded candidate limit"):
+            corroborate_sources({"one": feed, "two": feed})
+
+    def test_combined_rejected_metadata_counts_toward_preview_limit(self):
+        feed = '#EXTM3U\n' + ('#EXTINF:-1,Invalid\n' * 10_001)
+        with self.assertRaisesRegex(ValueError, "Combined sources exceed bounded candidate limit"):
+            build_m3u8_preview({"one": feed, "two": feed})

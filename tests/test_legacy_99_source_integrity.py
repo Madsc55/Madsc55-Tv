@@ -114,6 +114,20 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
                             audit.run(Path(temp) / "audit.json", "")
                         self.assertEqual(network.call_count, 1)
 
+    def test_duplicate_workflow_paths_rejected_before_blob_fetch(self):
+        raw = b"name: sample\n"
+        sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        entries = [{"path": f".github/workflows/{i:03d}.yml",
+                    "type": "blob", "size": len(raw), "sha": sha}
+                   for i in range(99)]
+        entries[1]["path"] = entries[0]["path"]
+        with tempfile.TemporaryDirectory() as temp:
+            with patch.object(audit, "github", return_value={
+                    "tree": entries, "truncated": False}) as network:
+                with self.assertRaisesRegex(ValueError, "Duplicate legacy workflow paths"):
+                    audit.run(Path(temp) / "audit.json", "")
+                self.assertEqual(network.call_count, 1)
+
     def test_invalid_blob_metadata_rejected_before_blob_fetch(self):
         raw = b"name: sample\n"
         sha = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()

@@ -628,3 +628,24 @@ class DiscoveryBatchTests(unittest.TestCase):
         self.assertEqual(report["candidate_rows"][0]["name"], "Good")
         self.assertEqual([error["reason"] for error in report["parse_errors"]],
                          ["missing_url", "invalid_metadata_whitespace"])
+
+    def test_leading_space_before_extinf_is_rejected(self):
+        feed = ('#EXTM3U\n'
+                ' #EXTINF:-1,Bad\n'
+                'https://example.org/bad\n'
+                '#EXTINF:-1,Good\n'
+                'https://example.org/good\n')
+        report = parse_m3u(feed, "fixture")
+        self.assertEqual(report["entries"], 1)
+        self.assertEqual(report["candidate_rows"][0]["name"], "Good")
+        self.assertIn("invalid_metadata_whitespace",
+                      [error["reason"] for error in report["parse_errors"]])
+
+    def test_leading_space_metadata_consumes_candidate_limit(self):
+        feed = ('#EXTM3U\n'
+                ' #EXTINF:-1,Bad\n'
+                'https://example.org/bad\n'
+                '#EXTINF:-1,Good\n'
+                'https://example.org/good\n')
+        with self.assertRaisesRegex(ValueError, "bounded candidate limit"):
+            parse_m3u(feed, "fixture", max_entries=1)

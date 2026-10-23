@@ -2688,3 +2688,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Açık K2 görevleri: K2-05 gerçek kaynak ve lisans kanıtları; K2-06 günlük keşif / eski workflow davranışsal eşdeğerliği; K2-07 geçmiş artifact SHA-256 köken kanıtları; K2-08 gerçek kaynaklarla alternatif/duplicate kabulü. Gerçek yayıncı bağımsızlığı doğrulanmadı (`source_independence_verified=false`). Hiçbirini kanıtsız kapatma.
 - **IBO Player Pro cihaz doğrulaması kesinlikle en sona bırakıldı**. Kullanıcı cihazda test edip sonucu bildirecek; cihazın doğrulandığı iddia edilmeyecek.
 - Yeni sohbette önce `main` son commit ve Actions sonuçlarını kontrol et, başarısızlık varsa logları inceleyip düzelt, K2 açık işleri tekrarsız sürdür; paralel ajanların commit'lerini ezme.
+
+
+## 23 Ekim 2026 — K1 callsite envanteri v2 ve doğrulama
+- `write_callsite_audit` kaynak dosya ve çağrı ifadesi SHA-256 bağıyla gerçek aday/non-write disposition ayrımı üretir. Yalnız açık salt-okunur `os.open` bayrak birleşimleri ve literal-string köklü `.replace` zincirleri kapatılır; değişken bayraklar ile kullanıcı tanımlı olabilecek `strip/lower/replace` zincirleri fail-closed kalır.
+- Kod/kapı/test zinciri: `9bb82d897959412c550307ffdaf9c95646db2431`, `57cc1d0ed05302bc5acdb7595bb88523bfb2ffa6`, `b353f3919ef374f3a33997b5b42bc701ee7c5a1a`, receiver sertleştirmesi `60f984d`/`9078e18`, son uyarlama `0d32b48b7f15c53050f2c5c85412eebffc34c533`.
+- Temiz doğrulama: 1120/1120 test ve tüm offline kapılar başarılı; 100 dosya, 142 açık aday, 5 salt-okunur descriptor + 2 literal-string non-write disposition. Bu statik sonuç 26 runtime kuralı, 92 davranış parity'si veya 22 ana görev kabulü değildir; sayaçlar 0/26, 0/92, 0/22.
+- Sonraki K1 işi değişken `os.open` bayraklarının lexical sabit atamalarını kaynak-bağlı çözümlemek, sonra gerçek writer/subprocess çağrılarında guard dominasyonu/call-chain kanıtıdır. Dış bağımsız execution/artifact kanıtı ve gerçek harici restore açık; IBO cihaz testi en son kullanıcı tarafından yapılacak.

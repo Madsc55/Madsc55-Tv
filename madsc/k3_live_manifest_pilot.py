@@ -54,7 +54,8 @@ def probe(url):
         "--max-filesize", "65536", "--range", "0-65535",
         "--resolve", resolve, url,
     ]
-    result = subprocess.run(command, capture_output=True, timeout=11, check=False)
+    result = subprocess.run(command, capture_output=True, timeout=11, check=False,
+                            stdin=subprocess.DEVNULL)
     body = result.stdout[:65536]
     is_manifest = result.returncode == 0 and body.lstrip().startswith(b"#EXTM3U")
     return {"url_sha256": gate["url_sha256"], "https_reachable": result.returncode == 0,

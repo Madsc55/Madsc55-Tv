@@ -32,6 +32,15 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, "no_manifest"))
             curl.assert_called_once()
 
+    def test_nonbyte_segment_rejected_before_ffprobe(self):
+        manifest = b"#EXTM3U\n#EXTINF:4,\nsegment.ts\n"
+        with patch.object(pilot, "safe_curl", side_effect=[manifest, "not bytes"]) as curl, \
+             patch.object(pilot.subprocess, "run") as probe:
+            self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
+                             (False, False, "segment_unreachable"))
+            self.assertEqual(curl.call_count, 2)
+            probe.assert_not_called()
+
     def test_oversized_segment_rejected_before_ffprobe(self):
         manifest = b"#EXTM3U\n#EXTINF:4,\nsegment.ts\n"
         with patch.object(pilot, "safe_curl", side_effect=[manifest, b"x" * (pilot.MAX_SEGMENT + 1)]) as curl, \

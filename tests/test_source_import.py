@@ -168,6 +168,20 @@ class SourceImportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "valid UTF-8"):
                 extract_candidates(p)
 
+    def test_non_path_source_rejected_cleanly(self):
+        for invalid in (None, 123, []):
+            with self.subTest(source=invalid), self.assertRaisesRegex(ValueError, "filesystem path"):
+                extract_candidates(invalid)
+
+    def test_source_disappearing_during_open_rejected_cleanly(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "source.m3u"
+            p.write_text("#EXTM3U\\n", encoding="utf-8")
+            with patch("madsc.source_import.os.open", side_effect=FileNotFoundError("removed")):
+                with self.assertRaisesRegex(ValueError, "opened safely"):
+                    extract_candidates(p)
+
     def test_missing_source_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(ValueError):

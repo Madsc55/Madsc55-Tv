@@ -139,6 +139,52 @@ def mutate(path, flags, enabled):
                          ["os.open [flags require review]"] * 4)
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_proven_read_only_os_open_is_dispositioned_out_of_candidates(self):
+        source = '''
+import os
+def read(path):
+    os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    os.open(path, os.O_RDONLY | getattr(os, "O_CLOEXEC", 0))
+'''
+        self.assertEqual(scan_python_source(source), [])
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "reader.py").write_text(source, encoding="utf-8")
+            report = scan_python_tree(root)
+        self.assertEqual(report["candidate_callsite_count"], 0)
+        self.assertEqual(report["non_write_disposition_count"], 2)
+        self.assertTrue(all(
+            row["disposition"] == "proven_read_only_descriptor"
+            and not row["review_required"]
+            and len(row["source_file_sha256"]) == 64
+            and len(row["source_segment_sha256"]) == 64
+            for row in report["non_write_dispositions"]
+        ))
+
+    def test_dynamic_or_unknown_os_open_flags_remain_fail_closed(self):
+        source = '''
+import os
+def read(path, flags):
+    os.open(path, flags)
+    os.open(path, os.O_RDONLY | custom_flag())
+'''
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 2)
+        self.assertTrue(all(row["review_required"] for row in rows))
+
+    def test_only_syntactically_proven_text_replace_is_dispositioned(self):
+        source = '''
+def transform(value, path):
+    "literal".replace("a", "b")
+    value.strip().replace("a", "b")
+    path.replace(destination)
+'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows], ["path.replace"])
+        self.assertTrue(rows[0]["review_required"])
+        self.assertEqual(len(rows[0]["source_file_sha256"]), 64)
+        self.assertEqual(len(rows[0]["source_segment_sha256"]), 64)
+
     def test_fdopen_write_modes_and_tempfile_creation_are_reviewed(self):
         source = '''
 import os

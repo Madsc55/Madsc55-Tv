@@ -236,6 +236,15 @@ class EpgTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "missing channel-name separator"):
                 check_epg_mapping(p, e)
 
+    def test_empty_extinf_channel_name_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "playlist.m3u8"
+            e = Path(d) / "xmltv.xml"
+            p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",   \nhttps://example.org/a.m3u8\n', encoding="utf-8")
+            e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "empty channel name"):
+                check_epg_mapping(p, e)
+
     def test_extinf_without_stream_uri_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "playlist.m3u8"

@@ -26,9 +26,9 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
     # Surrogate code points cannot be represented in UTF-8 output and must
     # fail at ingestion rather than during downstream hashing or rendering.
     try:
-        text.encode("utf-8", errors="strict")
+        encoded_text = text.encode("utf-8", errors="strict")
         source.encode("utf-8", errors="strict")
-        if len(text.encode("utf-8", errors="strict")) > 8_000_000:
+        if len(encoded_text) > 8_000_000:
             raise ValueError("M3U source exceeds bounded UTF-8 byte limit")
     except UnicodeEncodeError as exc:
         raise ValueError("M3U source and text must be valid UTF-8") from exc

@@ -243,6 +243,9 @@ def build_m3u8_preview(sources: dict[str, str]) -> dict:
         raise ValueError("Ambiguous duplicate source names")
     if any(isinstance(name, str) and len(name) > 256 for name in sources):
         raise ValueError("Source name exceeds bounded length")
+    if any(any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+               for ch in name) for name in sources):
+        raise ValueError("Invalid source name: control characters or UTF-8 surrogates")
     rows = []
     rejected_count = 0
     # Downstream classification is bounded to 20,000 rows in total.

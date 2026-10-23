@@ -147,6 +147,11 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         elif line.startswith("#") or not line:
             continue
         elif pending is not None:
+            # Do not normalize away controls in the raw URL line.
+            if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw):
+                errors.append({"line": number, "reason": "invalid_url_control"})
+                pending = None
+                continue
             if len(candidates) >= max_entries:
                 raise ValueError("Source exceeds bounded candidate limit")
             candidates.append({**pending, "url": line, "source": source})

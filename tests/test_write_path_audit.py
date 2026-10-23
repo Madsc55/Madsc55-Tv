@@ -250,6 +250,17 @@ class LocalOutputGuardTests(unittest.TestCase):
                         enforce_local_output_path(target, allowed_root=root)
                     self.assertFalse(target.exists())
 
+    def test_allowed_root_traversal_and_control_characters_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            target = root / "evidence.json"
+            for candidate in (str(root) + "/nested/..", str(root) + "/.",
+                              str(root) + "/\ufdd0", str(root) + "/\u202e"):
+                with self.subTest(candidate=repr(candidate)):
+                    with self.assertRaises(ProtectedWriteRejected):
+                        enforce_local_output_path(target, allowed_root=candidate)
+            self.assertFalse(target.exists())
+
     def test_symlinked_parent_and_root_boundary_blocked(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

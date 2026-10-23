@@ -84,7 +84,9 @@ def _valid_xmltv_time(value):
         return False
     fmt = "%Y%m%d%H%M%S %z" if len(value.split(" ")[0]) == 14 else "%Y%m%d%H%M %z"
     try:
-        datetime.strptime(value, fmt)
+        parsed = datetime.strptime(value, fmt)
+        if parsed.utcoffset() is None or abs(parsed.utcoffset().total_seconds()) > 14 * 3600:
+            return False
     except ValueError:
         return False
     return True

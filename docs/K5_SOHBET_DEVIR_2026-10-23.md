@@ -23,3 +23,5 @@ Sonraki: main HEAD ve Actions kontrolü, offline test hatalarını teşhis/düze
 - Son K5 test genişletmesi: `3baaea4` doğrudan önizleme doğrulamasında sıfır, aralık dışı ve sayısal olmayan HTTPS portları için regresyon testleri ekler. Önceki `bc30b28` dizin açılışında `O_DIRECTORY` ve `O_NOFOLLOW` bayraklarını test eder. Bu yeni commitler `[skip ci]` ile kaydedildi; yeni CI/yerel test sonucu yoktur. Eski 1089 testlik başarısız koşuyu yeni commitlere atfetme.
 
 - K5 regresyon testi düzeltmesi `63443de`: güvensiz hedef yol testindeki literal kaçış dizileri yerine gerçek kontrol/surrogate karakterleri `chr()` ile üretiliyor. Önceki test bu senaryoları doğru sınamıyordu. Test sonucu CI/yerel koşumla henüz doğrulanmadı.
+
+- K5 private export permissions: commit `139ed08` explicitly applies mode 0700 to the newly created isolated manifest directory and fails closed if permission adjustment fails; test `c1081d3` checks POSIX mode bits. Both commits use `[skip ci]`; no test/CI pass is claimed.

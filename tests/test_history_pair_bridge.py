@@ -108,7 +108,7 @@ class HistoryPairBridgeTests(unittest.TestCase):
     def test_unpaired_surrogate_history_data_rejected_cleanly(self):
         import hashlib
         invalid = pair("2026-10-19T12:00:00Z", 2, "PASS")
-        invalid["gecmis.json"]["history"]["candidate"]["last_result"] = "\\ud800"
+        invalid["gecmis.json"]["history"]["candidate"]["last_result"] = chr(0xD800)
         with self.assertRaisesRegex(ValueError, "valid JSON"):
             encode_pair(invalid)
         raw_payload = json.dumps(invalid, ensure_ascii=True)

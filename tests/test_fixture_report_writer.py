@@ -8,6 +8,15 @@ from madsc.history_pair_store import write_isolated_history_pair, decode_pair
 
 
 class FixtureReportWriterTests(unittest.TestCase):
+    def test_stage_report_rejects_nonfinite_json_without_creating_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            report = {"category": "k3", "production_writes": False,
+                      "production_ready": False, "metric": float("nan")}
+            with self.assertRaises(ValueError):
+                write_stage_report(root, "k3", report)
+            self.assertFalse((root / "reports/k3-isolated-evidence.json").exists())
+
     def test_turkish_tv_bundle_is_fixed_scoped_and_non_overwriting(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

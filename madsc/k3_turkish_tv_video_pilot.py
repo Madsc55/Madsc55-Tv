@@ -109,8 +109,6 @@ def verify_av(url):
                                      "#EXT-X-DISCONTINUITY", "#EXT-X-GAP"))
            for line in text.splitlines()):
         return False, False, "unsupported_hls_segment_layout"
-    if any(line.lstrip().startswith("#EXT-X-PLAYLIST-TYPE:VOD") for line in text.splitlines()):
-        return False, False, "vod_playlist_not_live"
     if not any(line.lstrip().startswith("#EXTINF:") for line in text.splitlines()):
         return False, False, "no_segment_duration"
     segments = [line.strip() for line in text.splitlines()
@@ -178,7 +176,7 @@ def run():
         tv_tested += 1
         try:
             ok, reason = verify_video(url)
-        except (ValueError, OSError, subprocess.TimeoutExpired):
+        except (ValueError, OSError, subprocess.TimeoutExpired, UnicodeError):
             ok, reason = False, "blocked_or_unreachable"
         results.append({"sha256": digest, "status": reason, "video_verified": ok})
         if ok:

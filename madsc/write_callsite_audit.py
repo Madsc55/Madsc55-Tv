@@ -216,7 +216,13 @@ def _direct_guard_line(statement) -> int | None:
     return None
 
 
-def _process_contract(node: ast.Call) -> dict | None:
+def _resolve_local_expression(node: ast.AST | None, bindings, resolving=frozenset()):
+    if isinstance(node, ast.Name) and bindings and node.id in bindings and node.id not in resolving:
+        return _resolve_local_expression(bindings[node.id], bindings, resolving | {node.id})
+    return node
+
+
+def _process_contract(node: ast.Call, bindings=None) -> dict | None:
     """Record syntactic subprocess facts without claiming command safety."""
     name = _call_name(node)
     if name not in _PROCESS_LAUNCHERS:
@@ -236,12 +242,19 @@ def _process_contract(node: ast.Call) -> dict | None:
         shell_status = "explicit_true"
     else:
         shell_status = "dynamic"
-    command = node.args[0] if node.args else None
+    original_command = node.args[0] if node.args else None
+    command = _resolve_local_expression(original_command, bindings)
+    command_source = ("direct_local_single_assignment"
+                      if command is not original_command else
+                      "unresolved_name" if isinstance(original_command, ast.Name) else
+                      "direct_call_expression")
+    argv_container = isinstance(command, (ast.List, ast.Tuple)) and bool(command.elts)
     literal_argv = (isinstance(command, (ast.List, ast.Tuple)) and bool(command.elts)
                     and all(isinstance(item, ast.Constant)
                             and isinstance(item.value, str) for item in command.elts))
     executable = None
-    if literal_argv:
+    if (argv_container and isinstance(command.elts[0], ast.Constant)
+            and isinstance(command.elts[0].value, str)):
         executable = command.elts[0].value
     elif (isinstance(command, (ast.List, ast.Tuple)) and command.elts
           and isinstance(command.elts[0], ast.Attribute)
@@ -252,6 +265,8 @@ def _process_contract(node: ast.Call) -> dict | None:
     return {
         "process_shell_status": shell_status,
         "process_shell_disabled_verified": shell_status in {"default_false", "explicit_false"},
+        "process_command_source": command_source,
+        "process_argv_container_verified": argv_container,
         "process_literal_argv_verified": literal_argv,
         "process_executable_syntax": executable,
         "process_effect_verified_read_only": False,
@@ -520,7 +535,7 @@ class _Scanner(ast.NodeVisitor):
                 "source_file_sha256": self.source_file_sha256,
                 "source_segment_sha256": hashlib.sha256(segment.encode("utf-8")).hexdigest(),
             }
-            process_contract = _process_contract(node)
+            process_contract = _process_contract(node, bindings)
             if process_contract is not None:
                 base.update(process_contract)
             if classification != "write_candidate":

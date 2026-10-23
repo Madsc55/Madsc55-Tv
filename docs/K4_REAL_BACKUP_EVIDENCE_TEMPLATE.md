@@ -120,3 +120,12 @@ Gerçek depolama sağlayıcısı, yetkili hedef ve erişim onaylanmadan üretim 
 - `.github/workflows/madsc-04-yedek.yml` -> `k4/.github/workflows/madsc-04-yedek.yml`: commit `5d7960ff4ace80d6d33738bcb6bb7eae77acb132`, blob/content eşit.
 - Önceki `madsc/k4_restore_gate.py` kopyası dahil **dört K4 dosyası** yedeklendi. Git blob SHA-1, ayrıca talep edilen SHA-256 manifestinin yerine geçmez.
 - Eksikler: atomik tam kaynak snapshot ve kapsam manifesti, SHA-256, bağımsız temiz ortam restore, gerçek VOD/arşiv kapsamı, gerçek 1/15 scheduler, K1–K5 diğer uygun dosyaları. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false` korunur.
+
+## 23 Ekim 2026 — K4 test ve restore kodu yedek kapsamı genişletildi
+
+- Sabit kaynak commit `adb6cf636a5fcf88e0a2a2c090646b2d48ff9467` üzerinden üç dosya `Madsc55/Madsc55-Tv-Backup` özel deposuna aktarıldı; her biri hedef depodan yeniden okunarak içerik ve Git blob SHA eşitliği doğrulandı.
+- `tests/test_backup.py` -> `k4/tests/test_backup.py`; yedek commit `a9c051890ec7c26ea53bf44435a5935e3a9f896d`; Git blob `936a34136e3b25199f9a6051e0bb9629ed50e482`.
+- `tests/test_backup_manifest_hardening.py` -> `k4/tests/test_backup_manifest_hardening.py`; yedek commit `af63ca8e032f9b25c0b97b2bfdd4e36c1083ee6b`; Git blob `47a0d82487842a25199d24f37d231cf090f3ef925c`.
+- `madsc/restore_drill.py` -> `k4/madsc/restore_drill.py`; yedek commit `28f23a0973dfb2151622ad103990465e322922f6`; Git blob `a9cd3f74f888a636ce624a4b6fd89f668c0f14bd`.
+- Önceki dört dosyayla toplam **yedi K4 dosyası** gerçek özel depoya kopyalanıp geri okundu. Bu **tam sistem snapshot'ı değildir**; SHA-256 manifesti ve bağımsız restore henüz yoktur.
+- K4-15/16/17/18 tamamlanmadı. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.

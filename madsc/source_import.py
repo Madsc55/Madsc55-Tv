@@ -38,10 +38,19 @@ def extract_candidates(source: Path, known_urls: set[str] | None = None) -> dict
         if line.startswith("#EXTINF:"):
             if pending is not None:
                 raise ValueError("Unpaired channel metadata")
-            parts = re.split(r',(?=(?:[^"]*"[^"]*")*[^"]*$)', line, maxsplit=1)
-            if len(parts) != 2:
+            # Split at the first comma outside quoted attributes. Channel names
+            # may themselves contain unmatched quote characters.
+            quoted = False
+            separator = None
+            for position, character in enumerate(line):
+                if character == '"':
+                    quoted = not quoted
+                elif character == "," and not quoted:
+                    separator = position
+                    break
+            if separator is None:
                 raise ValueError("Invalid EXTINF metadata")
-            attrs, channel_name = parts[0], parts[1].strip()
+            attrs, channel_name = line[:separator], line[separator + 1:].strip()
             if attrs.count('"') % 2:
                 raise ValueError("Unbalanced EXTINF attribute quotes")
             # M3U metadata attributes must be unique case-insensitively. Picking

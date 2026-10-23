@@ -45,3 +45,12 @@ MADSC55-TV K1–K5 beşli sistemini, özellikle K2 aday keşfi ve kaynak kanıt�
 3. K2/K3 kanıt sözleşmelerinde somut eksik ara; test ile yeniden üret, güvenli kod düzeltmesi yap, CI kontrol et.
 4. Eski workflow 92/92 gerçek davranışsal eşdeğerlik için kaynak/kanıt envanterini incele; kanıtsız ilerleme yazma.
 5. K1–K5 kabul kapılarını tek tabloda gerçek kanıtla raporla; IBO cihaz testini kullanıcıya bırak.
+
+## 23 Ekim ek devir güncellemesi — son K2 ilerlemesi
+- Kaynak/lisans denetim belgesi: docs/K2_KAYNAK_KOKEN_LISANS_DENETIM_2026-10-23.md. iptv-org README CC0 rozeti ile LICENSE The Unlicense metni farklıdır; depo lisansı üçüncü taraf yayın iznini doğrulamaz.
+- K2 güvenlik kodu ve regresyon commitleri: f4b514f4 + 104250ee (başta boşluklu EXTINF); 27203b37 + eeb502d0 (kaynak kökeni/lisans fail-closed); 4bf37df7 + 97e1534f (UTF-8 bayt sınırı); 8a29d3e8 + 0f2004aa (önizleme UTF-8 bayt sınırı); c9b44e8f + ee08a04b (önizlemede köken/lisans/canlı doğrulama false); 79a51c62 + 0b7592b3 (reddedilmiş metadata dahil birleşik 20.000 sınırı); 1d1e685d + 8884b1c6 (kaynak başına metadata_entries raporu ve testi).
+- Kod dosyaları: madsc/discovery_batch.py; tests/test_discovery_batch.py. Her iki dosyayı güncel main üzerinden tekrar oku. Son iki K2 commit 1d1e685d2ef8726ffa8a9731c5e3cd83c43dbec3 ve 8884b1c6fa1a66c0996a1cd6ecc4254eec044869.
+- Güncel K2 kabulü: yayıncı sahipliği, açık yayın lisansı/yeniden dağıtım izni, gerçek operatör bağımsızlığı ve izinli kaynakla tekrarlanabilir keşif kanıtı YOK/BEKLİYOR. Farklı playlist envanteri bağımsız operatör kanıtı değildir.
+- Test commitleri CI başarısı değildir. En yeni main SHA ve Actions/job/logları doğrulanmadan geçiş iddia etme. K2 production_ready=false, live_verified=false; K3 canlı ölçüm ve kullanıcı IBO cihaz testi ayrı kapıdır.
+- DEVAM_NOTU.md dosyasının bu güncelleme öncesinde görülen sonunda parity 0/92, runtime 0/26, görev 0/22, production false yazılıydı. Bu sayılar güncellenmiş olabilir: yeniden oku, K2 tamamlanma yüzdesi olarak sunma.
+- İlk iş: main HEAD, mevcut testleri, son Actions sonucunu ve kaynak kanıt envanterini doğrula. Kalan işlerde gerçek kanıt üret; sadece yeni yorum satırı ekleyerek tamamlandı iddia etme.

@@ -20,9 +20,10 @@ _MUTATING_METHODS = {
     # File-object writes matter too: an open(..., "w") may be wrapped or
     # passed through a helper, so inventory write()/writelines() callsites.
     "write", "writelines", "write_text", "write_bytes", "unlink", "mkdir", "makedirs", "rmdir",
-    "removedirs", "rename", "replace", "symlink_to", "hardlink_to",
+    "removedirs", "rename", "replace", "symlink_to", "hardlink_to", "link_to",
     "touch", "truncate", "copy", "copy2", "copyfile", "copytree",
     "move", "rmtree", "remove", "chmod", "lchmod", "chown", "lchown",
+    "extract", "extractall", "unpack_archive", "make_archive",
 }
 _OS_MUTATORS = {
     "remove", "unlink", "rename", "replace", "mkdir", "makedirs",

@@ -72,6 +72,22 @@ class BehavioralCompareTests(unittest.TestCase):
                     doc["new"]["unrecognized"] = True
                 self.assertFalse(compare(doc)["accepted"])
 
+    def test_exit_code_and_side_effect_mismatch(self):
+        for field, value in (("exit_code", 2), ("side_effects", {"created.txt": digest(b"created")})):
+            with self.subTest(field=field):
+                doc = evidence()
+                doc["new"][field] = value
+                self.assertIn("mismatch:" + field, compare(doc)["errors"])
+
+    def test_workflow_path_and_fixture_digest_are_required(self):
+        doc = evidence()
+        doc["workflow"] = "../outside.yml"
+        result = compare(doc)
+        self.assertFalse(result["matched_evidence"])
+        doc = evidence()
+        doc["fixture_sha256"] = "bad"
+        self.assertIn("invalid_fixture_digest", compare(doc)["errors"])
+
     def test_boolean_exit_code_rejected(self):
         doc = evidence()
         doc["legacy"]["exit_code"] = False

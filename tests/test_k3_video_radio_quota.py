@@ -196,6 +196,9 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
         self.assertEqual(report["video_verified"], 2)
         self.assertEqual(report["video_audio_verified"], 1)
         self.assertEqual(report["video_only_detected"], 1)
+        self.assertEqual(report["live_continuity_hours_verified"], 0)
+        self.assertFalse(report["device_playback_verified"])
+        self.assertFalse(report["acceptance_75_channels_met"])
         self.assertFalse(report["language_confirmed_by_audio"])
 
     def test_radio_does_not_consume_tv_probe_quota(self):

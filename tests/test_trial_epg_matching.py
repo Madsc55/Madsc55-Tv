@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime, timezone
 from madsc.trial_epg_matching import matches, playlist_entries, programme_coverage
 
 XML = '<tv><channel id="a"><display-name>TRT 1</display-name></channel><channel id="b"><display-name>TV 8</display-name></channel><channel id="c"><display-name>TV-8</display-name></channel></tv>'
@@ -43,6 +44,17 @@ class TrialEpgMatchingTest(unittest.TestCase):
                 self.assertEqual(row["programme_count"], 0)
                 self.assertFalse(row["has_programmes"])
 
+    def test_current_guide_coverage_excludes_stale_and_missing_stop(self):
+        xml = '<tv><channel id="a"/><programme channel="a" start="20261023100000 +0000" stop="20261023110000 +0000"/><programme channel="a" start="20261022090000 +0000"/><programme channel="a" start="20261021100000 +0000" stop="20261021110000 +0000"/></tv>'
+        row = programme_coverage('#EXTINF:-1 tvg-id="a",Channel', xml, datetime(2026, 10, 23, 10, 30, tzinfo=timezone.utc))[0]
+        self.assertEqual(row["programme_count"], 3)
+        self.assertEqual(row["current_programme_count"], 1)
+        self.assertTrue(row["has_current_programmes"])
+        later = programme_coverage('#EXTINF:-1 tvg-id="a",Channel', xml, datetime(2026, 10, 23, 12, tzinfo=timezone.utc))[0]
+        self.assertFalse(later["has_current_programmes"])
+    def test_current_coverage_requires_aware_time(self):
+        with self.assertRaisesRegex(ValueError, "timezone-aware"):
+            programme_coverage('#EXTINF:-1,Channel', "<tv/>", datetime(2026, 10, 23))
     def test_programme_coverage_rejects_entities(self):
         with self.assertRaisesRegex(ValueError, "DTD/entity"):
             programme_coverage('#EXTINF:-1,TRT 1', '<!DOCTYPE tv><tv/>')

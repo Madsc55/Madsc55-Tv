@@ -111,9 +111,11 @@ class K5IboArchiveExportTests(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"
             real_fdopen = os.fdopen
+            opened_handles = []
             class FailingWriter:
                 def __init__(self, handle):
                     self.handle = handle
+                    opened_handles.append(handle)
                 def __enter__(self):
                     return self
                 def __exit__(self, *args):
@@ -130,6 +132,8 @@ class K5IboArchiveExportTests(unittest.TestCase):
                        side_effect=wrapped_fdopen):
                 with self.assertRaisesRegex(OSError, "write failure"):
                     export_6115_archive_manifest(self.urls, destination)
+            self.assertEqual(len(opened_handles), 1)
+            self.assertTrue(opened_handles[0].closed)
             self.assertFalse(destination.exists())
 
     def test_file_sync_failure_rolls_back(self):

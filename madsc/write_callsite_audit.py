@@ -653,8 +653,11 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
         # Reject rather than silently omitting an untrusted Python entry.
         if file.is_symlink():
             raise ValueError(f"Symlinked Python source requires review: {relative}")
-        if not stat.S_ISREG(file.stat(follow_symlinks=False).st_mode):
+        source_stat = file.stat(follow_symlinks=False)
+        if not stat.S_ISREG(source_stat.st_mode):
             raise ValueError(f"Non-regular Python source requires review: {relative}")
+        if source_stat.st_nlink != 1:
+            raise ValueError(f"Hardlinked Python source requires review: {relative}")
         scanned.append(relative)
         source = file.read_text(encoding="utf-8")
         tree = ast.parse(source, filename=relative)

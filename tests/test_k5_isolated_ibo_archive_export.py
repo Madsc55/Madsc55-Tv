@@ -60,6 +60,20 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     export_6115_archive_manifest(self.urls, destination)
             self.assertFalse(destination.exists())
 
+    def test_permission_adjustment_keyboard_interrupt_cleans_created_directory(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            original_chmod = Path.chmod
+            def interrupt_chmod(path, mode, *args, **kwargs):
+                if path == destination:
+                    raise KeyboardInterrupt("fixture permission interruption")
+                return original_chmod(path, mode, *args, **kwargs)
+            with patch("madsc.isolated_ibo_archive_export.Path.chmod",
+                       autospec=True, side_effect=interrupt_chmod):
+                with self.assertRaisesRegex(KeyboardInterrupt, "permission interruption"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(destination.exists())
+
     def test_manifest_file_has_private_permissions(self):
         if os.name != "posix":
             self.skipTest("POSIX permission bits unavailable")

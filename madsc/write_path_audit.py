@@ -106,6 +106,8 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
     raw = str(destination)
     raw_parts = raw.replace(chr(92), "/").split("/")
     if (chr(92) in raw or any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw)
+            or any(0xFDD0 <= ord(ch) <= 0xFDEF or
+                   (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw)
             or any(part in (".", "..") for part in raw_parts)):
         raise ProtectedWriteRejected("Ambiguous or traversing output path")
     path = Path(destination)

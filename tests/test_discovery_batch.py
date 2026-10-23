@@ -58,6 +58,16 @@ class DiscoveryBatchTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Ambiguous duplicate source names"):
                     entrypoint(sources)
 
+    def test_invisible_unicode_source_labels_rejected(self):
+        feed = "#EXTM3U\n#EXTINF:-1,News\nhttps://example.org/live\n"
+        for bad_label in ("feed\u202e", "feed\u200b", "feed\u2028"):
+            with self.subTest(label=repr(bad_label)):
+                with self.assertRaises(ValueError):
+                    parse_m3u(feed, bad_label)
+                for entrypoint in (corroborate_sources, build_m3u8_preview):
+                    with self.assertRaises(ValueError):
+                        entrypoint({bad_label: feed})
+
     def test_known_urls_requires_set(self):
         with self.assertRaises(ValueError):
             corroborate_sources({"a": "#EXTM3U"}, known_urls=["https://example.org/a"])

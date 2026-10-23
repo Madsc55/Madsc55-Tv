@@ -179,6 +179,18 @@ class FixtureReportWriterTests(unittest.TestCase):
                         write_fixture_report(Path(raw), "reports/evidence.json", "{}")
             self.assertFalse((base / "reports").exists())
 
+    def test_fixture_root_rejects_trailing_dot_and_space_aliases(self):
+        with tempfile.TemporaryDirectory() as d:
+            base = Path(d)
+            for suffix in ("alias.", "alias ", "alias\\uff0e", "alias\\u3000"):
+                root = base / suffix
+                with self.subTest(suffix=repr(suffix)):
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_fixture_report(root, "reports/evidence.json", "{}")
+                    with self.assertRaisesRegex(PermissionError, "absolute and nontraversing"):
+                        write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}")
+                    self.assertFalse(root.exists())
+
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

@@ -60,7 +60,8 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
         elif pending_stream and line and not line.startswith("#"):
             try:
                 parsed_uri = urlsplit(line)
-                valid_uri = (parsed_uri.scheme in ("https", "http")
+                valid_uri = (not any(char.isspace() for char in line)
+                             and parsed_uri.scheme in ("https", "http")
                              and bool(parsed_uri.hostname)
                              and parsed_uri.username is None
                              and parsed_uri.password is None

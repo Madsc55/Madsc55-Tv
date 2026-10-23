@@ -1,0 +1,473 @@
+{
+  "schema_version": 1,
+  "source_commit": "ca374df3b9585c0d76a078db9536150ebbc260f7",
+  "method": "Direct GitHub YAML read, SHA check, conservative regex signals; NOT behavioral parity",
+  "rows": [
+    {
+      "path": ".github/workflows/390-aday-tekrar-test.yml",
+      "sha": "b12f53a17434fe719a65edfdc968f675e1f16b95",
+      "expected_sha": "b12f53a17434fe719a65edfdc968f675e1f16b95",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yedekler/tekrar_test_390.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/aday-bekletme.yml",
+      "sha": "68564680a2c32b11d1c5ed78825f01c85d0378e8",
+      "expected_sha": "68564680a2c32b11d1c5ed78825f01c85d0378e8",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yeni_kanal_tara.py",
+        "aday_tekrar_raporu.py",
+        "gelismis_medya_testi.py",
+        "aday_bekletme.py",
+        "akilli_tekrar_test_takvimi.py",
+        "altinci_aday_tekrar_test.py",
+        "kaynak_guven_puani.py",
+        "aday_oncelik_raporu.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/aday-logo-epg-test.yml",
+      "sha": "21214309014625c4a63f00ee16c9017efac6b0a7",
+      "expected_sha": "21214309014625c4a63f00ee16c9017efac6b0a7",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": true,
+        "live": false,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "scripts/candidate_epg_logo_join.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/aday-oncelik-kontrol.yml",
+      "sha": "1c2aa765b59ebad5ddbe3f0a06fcc9ead088e52b",
+      "expected_sha": "1c2aa765b59ebad5ddbe3f0a06fcc9ead088e52b",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": [
+        "aday_oncelik_raporu.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/aday-yedekleme.yml",
+      "sha": "6ee9e08cc161b1fc975a8108fa102867de2d9690",
+      "expected_sha": "6ee9e08cc161b1fc975a8108fa102867de2d9690",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yedekler/teknik_adaylari_aktar.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/akilli-aday-puanlama.yml",
+      "sha": "8efd3656127031ebd3d73ca32d13ae55f9e22cb8",
+      "expected_sha": "8efd3656127031ebd3d73ca32d13ae55f9e22cb8",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yeni_kanal_tara.py",
+        "scripts/oncelikli_kanal_dogrula.py",
+        "scripts/akilli_aday_puanla.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/altinci-aday-tekrar-test.yml",
+      "sha": "268e05a82df328090ccf61c6335197350df8b99b",
+      "expected_sha": "268e05a82df328090ccf61c6335197350df8b99b",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "altinci_aday_tekrar_test.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/automatic-png-logos.yml",
+      "sha": "3d321b81f023647d1cd29c99f015d296a34df525",
+      "expected_sha": "3d321b81f023647d1cd29c99f015d296a34df525",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K3",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": true,
+        "epg": false,
+        "live": true,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "logo_deneme/audit.py",
+        "scripts/automatic_png_logos.py",
+        "scripts/logo_visual_evidence.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/besinci-zaman-asimi-test.yml",
+      "sha": "d36327a5b8846deab730e02043b3abc6a689ca63",
+      "expected_sha": "d36327a5b8846deab730e02043b3abc6a689ca63",
+      "verified": true,
+      "candidate_stages": [
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/birlesik-aday-raporu.yml",
+      "sha": "26c0cb7bfc5af366d462eeb72461fb4ca2f9ff23",
+      "expected_sha": "26c0cb7bfc5af366d462eeb72461fb4ca2f9ff23",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yeni_kanal_tara.py",
+        "scripts/oncelikli_kanal_dogrula.py",
+        "scripts/genel_aday_medya_test.py",
+        "scripts/akilli_aday_puanla.py",
+        "scripts/kanal_kararlilik_takip.py",
+        "scripts/birlesik_aday_raporu.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/birlesik-durum-raporu.yml",
+      "sha": "cfd859aa1c5d474749edd09d99506b006ab0f82b",
+      "expected_sha": "cfd859aa1c5d474749edd09d99506b006ab0f82b",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "tools/guncel_test_durum_ozeti.py",
+        "tools/eksik_turk_kanal_takibi.py",
+        "tools/kaynak_kapsam_denetimi.py",
+        "tools/genel_sistem_bakimi.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/dokuzuncu-akilli-tekrar-test.yml",
+      "sha": "ad54773ea6d7bb46d0c5deb51454fe8189f87c32",
+      "expected_sha": "ad54773ea6d7bb46d0c5deb51454fe8189f87c32",
+      "verified": true,
+      "candidate_stages": [
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/epg-gunluk.yml",
+      "sha": "d43d5c469b54b8ef89794e8fcc2c2cee9b0d84b9",
+      "expected_sha": "d43d5c469b54b8ef89794e8fcc2c2cee9b0d84b9",
+      "verified": true,
+      "candidate_stages": [
+        "K1",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": true,
+        "push": true,
+        "dispatch": false,
+        "playlist": false,
+        "epg": true,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": true
+      },
+      "script_refs": [
+        "scripts/build_epg.py",
+        "scripts/build_ibo_epg_test.py",
+        "scripts/epg_tv_readiness.py",
+        "tools/protected_write_gate.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/epg-pages.yml",
+      "sha": "00e956c71c389d015209293b5de5b325cd4cb116",
+      "expected_sha": "00e956c71c389d015209293b5de5b325cd4cb116",
+      "verified": true,
+      "candidate_stages": [
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": true,
+        "live": false,
+        "backup": false,
+        "artifact": false,
+        "gate": false
+      },
+      "script_refs": []
+    },
+    {
+      "path": ".github/workflows/felaket-kurtarma-tatbikati.yml",
+      "sha": "53081c63ade88138049d8da1fef43ecfab588b5f",
+      "expected_sha": "53081c63ade88138049d8da1fef43ecfab588b5f",
+      "verified": true,
+      "candidate_stages": [
+        "K4",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": false,
+        "backup": true,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "scripts/disaster_recovery_dry_run.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/genel-aday-medya-test.yml",
+      "sha": "8d313fa5936799f86fd026831a3a149cbb0c250b",
+      "expected_sha": "8d313fa5936799f86fd026831a3a149cbb0c250b",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yeni_kanal_tara.py",
+        "scripts/genel_aday_medya_test.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/genis-kanal-tarama.yml",
+      "sha": "ffea4c826bf1ea9f2b586ddbd279d169f930b9b1",
+      "expected_sha": "ffea4c826bf1ea9f2b586ddbd279d169f930b9b1",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "genis_kanal_tara.py"
+      ]
+    },
+    {
+      "path": ".github/workflows/ibo-bagimsiz-test-listesi.yml",
+      "sha": "be63acf659a9b50c68a8b01ff5434a3151877a8f",
+      "expected_sha": "be63acf659a9b50c68a8b01ff5434a3151877a8f",
+      "verified": true,
+      "candidate_stages": [
+        "K2",
+        "K3",
+        "K5"
+      ],
+      "signals": {
+        "write": false,
+        "push": false,
+        "dispatch": false,
+        "playlist": false,
+        "epg": false,
+        "live": true,
+        "backup": false,
+        "artifact": true,
+        "gate": false
+      },
+      "script_refs": [
+        "yeni_kanal_tara.py",
+        "scripts/genel_aday_medya_test.py",
+        "scripts/ibo_bagimsiz_test_listesi.py"
+      ]
+    }
+  ]
+}

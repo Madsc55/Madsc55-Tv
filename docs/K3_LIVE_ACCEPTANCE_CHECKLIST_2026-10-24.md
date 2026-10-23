@@ -37,3 +37,11 @@ Durum: AÇIK / henüz üretim kabulü yok.
 
 ## Sonraki işlem
 Audit dalı değişiklikleri PR olarak incelemeye sunulsun; Actions CI doğrulaması ve çevrimiçi pilotlar gerçek çalıştırma raporları oluşunca değerlendirilsin.
+
+
+## 2026-10-24 CI hata düzeltmeleri
+- Run `40032824172` / commit `f03709dfc18b24b88e806bf272d510cfc6130c99` başarısız oldu: 1.484 testte 2 hata.
+- `test_contradictory_success_is_rejected` testi hatalı saat koşulu kullanıyordu: fixture saatleri (0, 3, 6) iken bozuk veri koşulu (12) idi. Koşul gerçek orta ölçüme (3) taşındı; üretim kodunun çelişkili başarılı kanıtı reddetmesi doğrulanacak.
+- K3 video artifact sözleşmesi hedef workflow'unda `if-no-files-found: warn` eksikti; `.github/workflows/madsc-03-kanal-test.yml` içine eklendi.
+- Yeni CI: run `40033130573` (commit `0fb444b246450615b390f572f30daafd1236f90f`) ve run `40033132772` (commit `d309bf7d24859d773a77f7cb742e5bc670818b84`) kontrol sırasında henüz sonuçlanmamıştı.
+- CI sonuçları başarılı olmadan bu düzeltmeler doğrulanmış sayılmaz. Canlı HLS, video/ses, Pages/XMLTV, 6 saat süreklilik ve cihaz kabul kapıları hâlâ açık.

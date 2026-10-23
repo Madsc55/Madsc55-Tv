@@ -38,7 +38,7 @@ class K3EvidenceTests(unittest.TestCase):
     def test_contradictory_success_is_rejected(self):
         with TemporaryDirectory() as folder:
             files = []
-            for hour in (0, 3, 6):
+            for hour in (0, 6, 12):
                 rows = [{"url_sha256": format(i, "064x"), "hls_manifest_seen": True,
                          "https_reachable": True, "status": "manifest_only"}
                         for i in range(75)]

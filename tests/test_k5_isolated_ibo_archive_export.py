@@ -111,7 +111,7 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     return payload.replace(b'"source_count": 6115', b'"source_count": 6114')
                 return payload
             with patch("madsc.isolated_ibo_archive_export.Path.read_bytes", autospec=True, side_effect=corrupted_read):
-                with self.assertRaisesRegex(OSError, "readback mismatch"):
+                with self.assertRaisesRegex(OSError, "byte integrity mismatch"):
                     export_6115_archive_manifest(self.urls, destination)
             self.assertFalse(destination.exists())
 

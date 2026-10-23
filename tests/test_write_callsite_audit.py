@@ -773,6 +773,22 @@ def mutate(path, fd):
         self.assertTrue(all(row["process_shell_status"] == "implicit_shell"
                             for row in rows))
 
+    def test_fork_process_launchers_are_reviewed(self):
+        source = (
+            "import os\n"
+            "def spawn():\n"
+            "    os.fork()\n"
+            "    os.forkpty()\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(
+            {row["api"].split(" [")[0] for row in rows},
+            {"os.fork", "os.forkpty"},
+        )
+        self.assertTrue(all(row["review_required"] for row in rows))
+        self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
+
     def test_os_startfile_external_launcher_is_reviewed(self):
         source = (
             "import os\n"

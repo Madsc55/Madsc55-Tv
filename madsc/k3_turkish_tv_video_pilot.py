@@ -58,7 +58,10 @@ def same_origin_https(parent, child):
         a, b = urlsplit(parent), urlsplit(child)
         return (a.scheme == b.scheme == "https" and a.hostname == b.hostname
                 and a.port in (None, 443) and b.port in (None, 443)
-                and not a.username and not a.password and not b.username and not b.password)
+                and not a.username and not a.password and not b.username and not b.password
+                and not a.fragment and not b.fragment
+                and not any(char.isspace() or ord(char) < 0x20 or ord(char) == 0x7f
+                            for char in parent + child))
     except ValueError:
         return False
 

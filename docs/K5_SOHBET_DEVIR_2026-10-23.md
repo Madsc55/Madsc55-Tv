@@ -21,3 +21,5 @@ Sonraki: main HEAD ve Actions kontrolü, offline test hatalarını teşhis/düze
 - Bekleyenler: K5 testlerinin bağımsız koşulması ve CI doğrulaması, manifest güvenliğinin kalan risklerinin değerlendirilmesi, legacy workflow batch 17+ incelemesi ve davranışsal kabul kanıtları. 48/92 statik sayısını yeni kanıt olmadan artırma. Cihaz testi son aşamada kullanıcıya aittir.
 
 - Son K5 test genişletmesi: `3baaea4` doğrudan önizleme doğrulamasında sıfır, aralık dışı ve sayısal olmayan HTTPS portları için regresyon testleri ekler. Önceki `bc30b28` dizin açılışında `O_DIRECTORY` ve `O_NOFOLLOW` bayraklarını test eder. Bu yeni commitler `[skip ci]` ile kaydedildi; yeni CI/yerel test sonucu yoktur. Eski 1089 testlik başarısız koşuyu yeni commitlere atfetme.
+
+- K5 regresyon testi düzeltmesi `63443de`: güvensiz hedef yol testindeki literal kaçış dizileri yerine gerçek kontrol/surrogate karakterleri `chr()` ile üretiliyor. Önceki test bu senaryoları doğru sınamıyordu. Test sonucu CI/yerel koşumla henüz doğrulanmadı.

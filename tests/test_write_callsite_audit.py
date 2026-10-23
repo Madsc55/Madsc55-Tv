@@ -150,7 +150,23 @@ def mutate(path):
         self.assertEqual([row["api"] for row in rows],
                          ["subprocess.run [process command requires review]",
                           "os.system [process command requires review]"])
+        self.assertEqual(rows[0]["process_shell_status"], "default_false")
+        self.assertTrue(rows[0]["process_shell_disabled_verified"])
+        self.assertTrue(rows[0]["process_literal_argv_verified"])
+        self.assertEqual(rows[0]["process_executable_syntax"], "cp")
+        self.assertEqual(rows[1]["process_shell_status"], "implicit_shell")
+        self.assertFalse(rows[1]["process_shell_disabled_verified"])
+        self.assertFalse(rows[1]["process_literal_argv_verified"])
+        self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
         self.assertTrue(all(row["review_required"] for row in rows))
+
+    def test_process_shell_keyword_unpacking_and_dynamic_values_stay_unknown(self):
+        source = '''\nimport subprocess\ndef run_commands(options, dynamic):\n    subprocess.run(["tool"], **options)\n    subprocess.Popen(["tool"], shell=dynamic)\n    subprocess.call(["tool"], shell=True)\n'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["process_shell_status"] for row in rows],
+                         ["unknown_keyword_unpacking", "dynamic", "explicit_true"])
+        self.assertTrue(all(not row["process_shell_disabled_verified"] for row in rows))
+        self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
 
     def test_builtin_and_io_open_use_the_correct_mode_argument(self):
         source = '''\nimport builtins\nimport io\ndef mutate():\n    builtins.open("output.txt", "w")\n    io.open("output2.txt", mode="a")\n    builtins.open("input.txt", "r")\n'''

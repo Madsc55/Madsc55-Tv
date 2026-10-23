@@ -2,7 +2,7 @@
 import re
 import xml.etree.ElementTree as ET
 
-ATTR = re.compile(r'(?:^|\s)([A-Za-z][\w-]*)="([^"]*)"')
+ATTR = re.compile(r'(?:^|\s)([A-Za-z][\w-]*)="([^"]*)"(?=\s|$)')
 
 def norm(value):
     value = (value or "").casefold().replace("ı", "i")

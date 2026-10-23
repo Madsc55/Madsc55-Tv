@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import unicodedata
 from pathlib import Path
 
 from madsc.isolated_ibo_archive_preview import build_6115_archive_preview
@@ -16,7 +17,7 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
     raw = str(destination)
     if any(part in (".", "..") for part in raw.replace(chr(92), "/").split("/")):
         raise PermissionError("Ambiguous destination")
-    if any(ord(ch) < 32 or ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF for ch in raw):
+    if any(unicodedata.category(ch) in ('Cc', 'Cf', 'Cs', 'Zl', 'Zp') for ch in raw):
         raise PermissionError("Unsafe destination characters")
     destination = Path(destination).absolute()
     if destination.parent == destination:

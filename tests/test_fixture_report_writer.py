@@ -219,9 +219,19 @@ class FixtureReportWriterTests(unittest.TestCase):
                                      (expected.st_dev, expected.st_ino))
                     seen.append(path)
                 return real_mkdir(path, mode, dir_fd=dir_fd)
-            with patch("madsc.fixture_report_writer.os.mkdir", side_effect=observed_mkdir):
+            real_fsync = os.fsync
+            synced_root = []
+            def observed_fsync(fd):
+                opened = os.fstat(fd)
+                expected = root.stat()
+                if (opened.st_dev, opened.st_ino) == (expected.st_dev, expected.st_ino):
+                    synced_root.append(True)
+                return real_fsync(fd)
+            with patch("madsc.fixture_report_writer.os.mkdir", side_effect=observed_mkdir), \
+                 patch("madsc.fixture_report_writer.os.fsync", side_effect=observed_fsync):
                 write_turkish_tv_test_bundle(root, b"#EXTM3U\\n", "{}")
             self.assertEqual(seen, ["reports"])
+            self.assertTrue(synced_root, "root directory entry must be synced")
 
     def test_allowed_fixture_report(self):
         with tempfile.TemporaryDirectory() as d:

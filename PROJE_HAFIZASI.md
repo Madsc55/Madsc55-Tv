@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50357)
+Total output lines: 1176
+
 Warning: truncated output (original token count: 50279)
 Total output lines: 1170
 
@@ -605,14 +608,7 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 
 ## 19 Ekim 2026 — YENİ SOHBETE DEVİR (GÜNCEL ANA REFERANS)
 - Kullanıcı açıkça 99 otomasyonun her birinin gerçek kaynak davranışını çözmeyi, YAPILACAK/YAPILMAYACAK/KANIT BEKLEYEN kararlarını saklamayı ve K1–K5 sistemini kanıtla bitirmeyi istedi. Yeni sohbetten aynı yerden devam edilecek.
-- **İLK OKUNACAK DOSYA:** `docs/YENI_SOHBET_DEVIR_2026-10-19.md` (commit `6d1c8dde40d0a7020eee9f6b650ea483140ae925`). Bu dosya repo ayrımı, yasaklar, önceki CI/test commitleri, derin incelenen 23 YAML adı, 32 Python, kritik korunan liste yazma riskleri, 76 bekleyen YAML ve 92 parity kabul planını ayrıntılı içerir. Kelimesi…279 tokens truncated… K4 yedek yolları değişmedi, beş izole kapı birlikte geçti. Actions/production/eski repo/workflow/cron/izin/PR değişikliği yok. Kod/test/kanıt/notlar aynı [skip ci] commitinde; SHA geçmiştedir. Sıra doğrulaması tek başına API kökenini veya atlanmış satır bulunmadığını kanıtlamaz; authenticated history ve gerçek bağımsız yürütme kanıtı hâlâ eksiktir. Kabul 0/92, 0/26, 0/22 korunur.
-
-
-## 22 Ekim 2026 — mapping negatif regresyon ve CI doğrulaması
-- Yalnızca Madsc55/Madsc55-Tv/main: `3e582a9cdf7eae34e77b8c17bd88b5bd745bfa37` ile `tests/test_legacy_replacement_mapping_review.py` dosyasına 36 alt durumlu iki fail-closed negatif regresyon testi eklendi; bu commit `[skip ci]` idi.
-- `d6fe123a7384b35bc9efb10f69c595b4695d2d1c` ile replacement `declared_file_binding` alanlarında yalnızca boşluk içeren metinler reddedildi; CI tetiklendi.
-- GitHub Actions run `39791178779`, head SHA `d6fe123`, `offline-tests` işi ve `Offline Python regression suite` adımı **success** olarak doğrulandı. Run: https://github.com/Madsc55/Madsc55-Tv/actions/runs/39791178779 . Testlerin tek tek sayısı loglardan ayrıca çıkarılmadı.
-- Bu sonuç gerçek davranışsal eşdeğerlik veya üretim kabulü değildir: 0/92, 0/26, 0/22 korunur. Eski depo, canlı IPTV/EPG, favoriler, logolar, arşiv, yedek, workflow ve cron değiştirilmedi.
+- **İLK OKUNACAK DOSYA:** `docs/YENI_SOHBET_DEVIR_2026-10-19.md` (commit `6d1c8dde40d0a7020eee9f6b650ea483140ae925`). Bu dosya repo ayrımı, yasaklar, önceki CI/test commitleri, derin incelenen 23 YAML adı, 32 Python, kritik korunan liste yazma risk…357 tokens truncated…olar, arşiv, yedek, workflow ve cron değiştirilmedi.
 
 ## 22 Ekim 2026 — Beşli sistem toplu rapor üretimi ve K5 uçtan uca yerel kapısı
 - Yalnız Madsc55/Madsc55-Tv/main; taban 2ea58e800156e3c99eb63f882f838045fc0714eb. Güncel diğer sohbet kodu korundu. Önceki yerel ortam kaybolduğu için yeni checkout alındı; geçmiş 707 testi güncel kodun kanıtı sayılmadı. Birleşik kaynakta ilk toplu test: 754 test, 1 failure/4 error. Eksik EXT M3U başlıklı üç test girdisi ve literal backslash-n içeren iki fixture düzeltildi. Preview testi mevcut büyük harfli ad sözleşmesiyle, virgüllü id/grup korunumu da doğrulanarak güncellendi. Üretim parser'ları gevşetilmedi.
@@ -1167,3 +1163,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Altı subprocess çağrısının altısında stdin kapatıldı ve stdout/stderr capture/pipe sözleşmesi kaynak-bağlı audit alanlarıyla doğrulandı. Kod commitleri `869a5405056dc6c86c6fcf4b1055e7efab8987ef`, `509ae57ed135106a6988f12d68422c9215c74102`, `7c639daed7a0210c760e42c03172bd60c097295f`, `3dea21b0b6a44decca1f4020c248c053bd1a8c86`, `818d67a8b12a989667fd6271aa0d79397aca32ae`; test `fbb4b6a23ff044803723999eb98b6e396b21abe0`.
 - Temiz uzak checkout: 95 hedefli ve 1220 tam offline test, beş izole K kapısı ve audit başarılı. `process_stdio_bounded_verified=6/6`; gerçek dış-komut read-only etki kanıtı `0/6`, dolayısıyla adaylar kapanmadı ve runtime kabulü verilmedi.
 - Kabul 0/92, 0/26, 0/22. Sıradaki iş argv/cwd/env ve çıktı argümanlarının kaynak-hash-bağlı etki sınıflandırmasıdır; arbitrary parity komutu fail-closed kalır. Canlı EPG/cihaz, bağımsız artifact/run ve harici restore dış kanıt bekler.
+
+
+## 23 Ekim 2026 — K1 subprocess etki sınıfları
+- Güncel başlangıç `main` SHA `ae3778f0746def5635f9ad5fa55c7f8c00a37057`. Subprocess audit kodu `691a95b1a73da526325fe0d906491e6c117eac8d`, regresyonu `adf72bd893c97b7185ad6a4f1a5b2f259079587c`.
+- Altı çağrı argv/dinamik argüman, literal seçenek, gerçek `curl` dosya çıktı seçeneği, cwd/env kökeni ve komut sınıfıyla kaynak-bağlı kaydedildi: 2 network client, 1 media inspector, 1 Python inline, 1 Python module, 1 caller-controlled. Hepsi fail-closed; `process_effect_verified_read_only=0/6`.
+- Sonradan gelen K3 commitleri korunarak güncel uzak `dc354863e8a70a555a744dbd42e19f09fd6e31a0` içeriğinde 109 hedefli ve 1275 tam offline test başarılı; başarısız test yok. Beş izole kapı ve pinned 92 envanteri geçti fakat kabul 0/92, 0/26, 0/22 olarak kaldı. Bir yanlış blob SHA yazması 409 ile durdu ve güncel blobla güvenle tekrarlandı; başka commit ezilmedi. Actions/canlı probe/üretim veya korunan veri yazması yapılmadı.
+- Sıradaki yerel K1 işi, kısmi guard'lı helper girişlerini okuma/yazma etkisine göre kaynak-hash-bağlı ayırmak ve caller closure kanıtı olmadan disposition vermemek. Gerçek bağımsız execution/artifact, harici restore ve en son kullanıcı cihaz kanıtı dış engel olarak açık.

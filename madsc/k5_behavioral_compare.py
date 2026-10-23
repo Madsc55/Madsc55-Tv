@@ -48,7 +48,10 @@ def compare(document):
         for field in FIELDS:
             if document["legacy"][field] != document["new"][field]:
                 errors.append("mismatch:" + field)
-    # A JSON claim cannot attest that two executions were actually independent.\n    # Only a separately verified execution harness may grant behavioral acceptance.\n    return {"matched_evidence": not errors, "accepted": False,\n            "requires_independent_execution_verification": not errors, "errors": errors}
+    # A JSON claim cannot attest that two executions were actually independent.
+    # Only a separately verified execution harness may grant behavioral acceptance.
+    return {"matched_evidence": not errors, "accepted": False,
+            "requires_independent_execution_verification": not errors, "errors": errors}
 
 
 def main():

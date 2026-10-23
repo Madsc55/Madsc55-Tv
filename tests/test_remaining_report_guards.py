@@ -26,6 +26,25 @@ def in_folder(root):
 
 
 class RemainingReportGuardsTests(unittest.TestCase):
+    def test_artifact_transport_writer_is_exclusive_and_fail_closed(self):
+        from madsc.artifact_transport import _write_json_exclusive
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            reports = root / "reports"
+            reports.mkdir()
+            output = reports / "handoff.json"
+            _write_json_exclusive(output, {"verified": True})
+            original = output.read_bytes()
+            self.assertEqual(json.loads(original), {"verified": True})
+            with self.assertRaises(PermissionError):
+                _write_json_exclusive(output, {"verified": False})
+            self.assertEqual(output.read_bytes(), original)
+            protected = root / "EPG"
+            protected.mkdir()
+            with self.assertRaises(PermissionError):
+                _write_json_exclusive(protected / "handoff.json", {"verified": True})
+            self.assertFalse((protected / "handoff.json").exists())
+
     def diagnostic(self, root, output, summary=None):
         args = ['diagnostics', '--log', str(root / 'missing.log'), '--output', str(output)]
         if summary is not None:

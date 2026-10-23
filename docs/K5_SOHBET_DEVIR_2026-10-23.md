@@ -19,3 +19,5 @@ Sonraki: main HEAD ve Actions kontrolü, offline test hatalarını teşhis/düze
 - İzole manifest export dizini için dosya fsync sonrasında dizin fsync eklendi: 0fdccba7. Dizin fsync hata temizliği regresyon testi: 0677388. Dizin fsync açılışına O_NOFOLLOW eklendi: 347104a.
 - Bu commitler `[skip ci]` içerir. Yeni testlerin CI başarısı veya gerçek cihaz doğrulaması iddia edilmez.
 - Bekleyenler: K5 testlerinin bağımsız koşulması ve CI doğrulaması, manifest güvenliğinin kalan risklerinin değerlendirilmesi, legacy workflow batch 17+ incelemesi ve davranışsal kabul kanıtları. 48/92 statik sayısını yeni kanıt olmadan artırma. Cihaz testi son aşamada kullanıcıya aittir.
+
+- Son K5 test genişletmesi: `3baaea4` doğrudan önizleme doğrulamasında sıfır, aralık dışı ve sayısal olmayan HTTPS portları için regresyon testleri ekler. Önceki `bc30b28` dizin açılışında `O_DIRECTORY` ve `O_NOFOLLOW` bayraklarını test eder. Bu yeni commitler `[skip ci]` ile kaydedildi; yeni CI/yerel test sonucu yoktur. Eski 1089 testlik başarısız koşuyu yeni commitlere atfetme.

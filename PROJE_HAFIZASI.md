@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50803)
+Total output lines: 1172
+
 Warning: truncated output (original token count: 124047)
 Total output lines: 2706
 
@@ -600,18 +603,7 @@ SIRADAKI IS: GitHub Actions son kosularini dogrula. K2-K3 metadata icin gercekci
 ## 19 Ekim 2026 — YENİ SOHBETE DEVİR (GÜNCEL ANA REFERANS)
 - Kullanıcı açıkça 99 otomasyonun her birinin gerçek kaynak davranışını çözmeyi, YAPILACAK/YAPILMAYACAK/KANIT BEKLEYEN kararlarını saklamayı ve K1–K5 sistemini kanıtla bitirmeyi istedi. Yeni sohbetten aynı yerden devam edilecek.
 - **İLK OKUNACAK DOSYA:** `docs/YENI_SOHBET_DEVIR_2026-10-19.md` (commit `6d1c8dde40d0a7020eee9f6b650ea483140ae925`). Bu dosya repo ayrımı, yasaklar, önceki CI/test commitleri, derin incelenen 23 YAML adı, 32 Python, kritik korunan liste yazma riskleri, 76 bekleyen YAML ve 92 parity kabul planını ayrıntılı içerir. Kelimesi kelimesine sohbet transkripti değil, uygulanabilir teknik devir notudur.
-- Son durum: 99/99 YAML ilk tarama; 23/99 derin kaynak görev çözümü; 32 benzersiz Pyt…74047 tokens truncated…kırmızı/yeşil run sonuçları yeni sisteme kanıt sayılmadı.
-- Favori metadata/iç içe korunan yol K1 kapıları, K5 sayfalı eksik geçmiş reddi/current-run/rerun ayrımı ve job/step kaynak kapsamı mevcut yeni uygulamada doğrulandı. Bağımsız kategori kanıtının explicit true gereksinimi mevcut maintenance testiyle doğrulandı. Eski escaped-newline testi farklı workflow metnine körlemesine kopyalanmadı. Yeni runtime'da Git diff/push yayıncısı olmadığı için baseline seçenek enjeksiyonu düzeltmesi uygulanabilir bir üretim yolu olarak gösterilmedi.
-- 0962bc188f712948a03971d012a7d7ad3b381742 üzerinde güncel yerel doğrulama: **698 test + beş izole K1–K5 kapısı başarılı**. Ayrıntı, kaynak SHA256, K etki matrisi ve açık bağımlılıklar docs/SCREENSHOT_TEST_TRANSFER_AUDIT_2026-10-22.json içinde. Bu paket mevcut aktarımı ekrana göre doğrular; yeni işlev/test sayısı artışı değildir.
-- Actions başlatılmadı; üretim/korunan veri/eski repo/workflow değişmedi. Authenticated hata geçmişinin üretimde zorunlu kılındığı veya ekranlardaki eski kırmızı Actions'ın düzeldiği iddia edilmez. Kabul 0/92, 0/26, 0/22. Sonraki iş yeni sistemde bağımsız gerçek yürütme ve kaynak gerekçeli davranış eşlemesi kanıtını tamamlamaktır.
-
-## 22 Ekim 2026 — Gerekçeli eşleme incelemesi pair zincirine bağlandı
-- Tek hedef Madsc55/Madsc55-Tv/main; taban bf56ac1826d9e0d43a9e9c218e3865865b580b8d. Diğer sohbetin mevcut review_replacement_mappings işlevi lazy import ile mevcut provenance batch/CLI zincirinde kullanılır. İsteğe bağlı mapping_review_rows kaynak blob, seçilen replacement ve input/output rolü açısından behavior_mappings ile birebir bağlanır; kopuk veya kaynaksız inceleme rapor yazılmadan reddedilir. Yeni CLI/workflow/yazıcı yok.
-- İnceleme gerekçesi ilgili pair_preparation satırına taşınır; supplied aday sayısı ayrı raporlanır. Bunlar bağımsız onay değildir: review_required=true, independently_reviewed=0, behavioral acceptance=0 kalır. Fixture eşlemesi gerçek legacy davranış incelemesi gibi kaydedilmedi.
-- Dört yeni bütünleşik regresyon: gerekçenin aynı satıra taşınması, yanlış kaynak/rol/ek approved/duplicate/kaynaksız bildirim reddi, boş ve hiç verilmemiş inceleme ayrımı, mevcut CLI'nin hatalı incelemede çıktı yazmaması. python -m madsc.offline_gate: **702 test + beş izole K1–K5 kapısı başarılı**; 92+7 kaynak/10 yardımcı komut/22 görev envanteri geçti. git diff --check temiz. Kanıt docs/MAPPING_REVIEW_CHAIN_KANIT_2026-10-22.json.
-- K1 çıktı koruması değişmedi; K2/K3 canlı input ve K4 yedek/restore yolu değişmedi; K5 karşılaştırma raporu genişledi. Actions, production, eski repo, workflow/cron/izin, PR değişmedi. Kod/test/kanıt/notlar aynı [skip ci] commitinde, SHA geçmiştedir. Kabul 0/92, 0/26, 0/22. Gerçek kaynak gerekçeli davranış incelemesi ve bağımsız aynı-input yürütme/API/artifact/yan etki kanıtları hâlâ açık; yeni sahte metadata ekleyerek kabul üretme.
-
-## 22 Ekim 2026 — K5 sayfalı hata geçmişi sıra doğrulaması
+- Son d…803 tokens truncated…22 Ekim 2026 — K5 sayfalı hata geçmişi sıra doğrulaması
 - Tek hedef Madsc55/Madsc55-Tv/main, taban 37e52ab3647e9198e4ed2d207f47aaf81b87f59d. Eksik ve sırası bozuk supplied history eski success sınırını kullanarak RETRY_LATER verebiliyordu. Mevcut assess_failure_history artık filtrelemeden önce bütün aktif/tamamlanmış satırların timestamp/id sırasını sayfa içinde ve sayfalar arasında azalan olarak doğrular; bozuk aktif timestamp de reddedilir. Varsayılan üç hata eşiği ve sıralı prefix success sınırı politikası değişmedi.
 - Beş regresyonun dördü düzeltme öncesi beklenen ValueError oluşmadığı için başarısızdı. Düzeltme sonrası toplu python -m madsc.offline_gate: **707 test + beş izole K1–K5 kapısı başarılı**; 92+7 kaynak, 10 yardımcı komut, 22 görev envanteri geçti. git diff --check temiz. Kanıt docs/FAILURE_HISTORY_ORDER_KANIT_2026-10-22.json.
 - K5 retry kararı sıkılaştırıldı; K1 çıktı kapısı, K2/K3 keşif/kanal ve K4 yedek yolları değişmedi, beş izole kapı birlikte geçti. Actions/production/eski repo/workflow/cron/izin/PR değişikliği yok. Kod/test/kanıt/notlar aynı [skip ci] commitinde; SHA geçmiştedir. Sıra doğrulaması tek başına API kökenini veya atlanmış satır bulunmadığını kanıtlamaz; authenticated history ve gerçek bağımsız yürütme kanıtı hâlâ eksiktir. Kabul 0/92, 0/26, 0/22 korunur.
@@ -1164,3 +1156,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Writer helper doğrudan çağıranları ve çağrı-noktası guard baskınlığı `1bc73b2abd6b0f9dc20d3d4636e0f7e6cd23dfdd`, fail-closed testleri `c16f25d230b411ac100411a113a125b0b8f6b3fa`. 104/140 adayda yerel çağıran, 16/140 adayda guarded çağıran var; tüm çağıranların kapandığı kanıt 0.
 - Temiz son kod SHA'sında 1157/1157 test ve bütün offline K1–K5 kapıları başarılı. İlk argv testi gerçek bir çıkarım hatası yakaladı ve düzeltildikten sonra tam paket yeniden geçti.
 - Kabul 0/92, 0/26, 0/22. Sonraki iş kısmi guarded çağıranların gerçek giriş yolları ile altı subprocess etkisini incelemek; statik kayıtları runtime/production kanıtı saymamak.
+
+
+## 23 Ekim 2026 — K1 artifact transport TOCTOU kapısı
+- `artifact_transport` K1 preflight ile gerçek create arasında `Path.open` kullanmıyor; ortak descriptor-relative `O_NOFOLLOW|O_EXCL` yazıcıya bağlı. Kod zinciri `ce830b31d3fde66ebd63c853de54c4268a304ebd` + `083ef2dd1e98d3ff8ccfbc708391d73365ac09d1`, yarış/audit testleri `40c58fbbb6ea4c7a14ed76b0e4f154b726f538bf` + `f8c32a3a2bdf278ac627571e4118dd5bc07821e7`.
+- Temiz son `main` checkout'unda 83 hedefli ve 1190 tam offline test, beş izole kapı ve write-callsite audit başarılı. Parent dizini preflight sonrasında symlink ile değiştirilse bile dış hedefte dosya oluşmadı.
+- Kabul sayaçları değişmedi: 0/92 parity, 0/26 runtime, 0/22 ana görev; fixture/statik testler production kanıtı değildir. Sıradaki K1 paketi kısmi guarded caller kapanışı ve altı subprocess gerçek etkisinin kaynak-bağlı/fail-closed disposition'ıdır. Gerçek bağımsız artifact/run, harici restore ve en son kullanıcı cihaz testi dış kanıt bekler.

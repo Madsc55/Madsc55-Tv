@@ -176,7 +176,13 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
                 pending = None
                 continue
             # Do not silently trim URL whitespace: it changes the supplied endpoint.
-            if raw != line:
+            # As with EXTINF metadata, allow trailing ASCII transport padding
+            # only for consistently CRLF-delimited feeds. Never normalize LF
+            # URLs or leading whitespace into a different endpoint.
+            allowed_crlf_padding = (
+                transport_crlf and raw.endswith(" ") and raw.rstrip(" ") == line
+            )
+            if raw != line and not allowed_crlf_padding:
                 errors.append({"line": number, "reason": "invalid_url_whitespace"})
                 pending = None
                 continue

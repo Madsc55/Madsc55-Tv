@@ -6,6 +6,13 @@ from madsc.k4_restore_gate import audit_k4_restore
 
 
 class K4RestoreGateTests(unittest.TestCase):
+    def test_relative_restore_roots_are_rejected_before_hashing(self):
+        from unittest.mock import patch
+        with patch('madsc.k4_restore_gate.verify_independent_restore') as verify:
+            with self.assertRaisesRegex(ValueError, 'canonical absolute paths'):
+                audit_k4_restore(Path('source'), Path('backup'), Path('restored'), ['file.txt'])
+            verify.assert_not_called()
+
     def test_empty_restore_inventory_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)

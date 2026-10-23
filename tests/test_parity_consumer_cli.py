@@ -46,6 +46,11 @@ class ParityConsumerTests(unittest.TestCase):
             with self.subTest(consumer=key), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 source = prepare(root, key)
+                if key == 'k4':
+                    # The real K4 workflow creates its fixture exclusively.
+                    # Starting with an existing file correctly trips K1's
+                    # no-overwrite guard before the timeout consumer runs.
+                    source.unlink()
                 steps = steps_for(workflow)
                 consumer = next(step for step in steps if 'id: parity_consumer' in step)
                 result = self.execute(run_body(consumer).replace('--timeout-seconds 120',

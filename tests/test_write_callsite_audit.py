@@ -850,8 +850,8 @@ def mutate(path, fd):
             root = Path(d)
             source = root / "safe.py"
             target = root / "target.txt"
-            source.write_text("value = 1\\n", encoding="utf-8")
-            target.write_text("value = 2\\n", encoding="utf-8")
+            source.write_text("value = 1\n", encoding="utf-8")
+            target.write_text("value = 2\n", encoding="utf-8")
             original_open = Path.open
 
             @contextmanager
@@ -872,7 +872,7 @@ def mutate(path, fd):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             source = root / "safe.py"
-            source.write_text("value = 1\\n", encoding="utf-8")
+            source.write_text("value = 1\n", encoding="utf-8")
             original_open = Path.open
 
             @contextmanager
@@ -880,7 +880,7 @@ def mutate(path, fd):
                 with original_open(path, *args, **kwargs) as handle:
                     yield handle
                 if path == source:
-                    source.write_text("value = 123456789\\n", encoding="utf-8")
+                    source.write_text("value = 123456789\n", encoding="utf-8")
 
             with patch.object(Path, "open", changing_open):
                 with self.assertRaisesRegex(ValueError, "changed during audit"):

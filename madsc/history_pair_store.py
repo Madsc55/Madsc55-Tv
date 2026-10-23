@@ -20,10 +20,11 @@ def encode_pair(pair):
             raise ValueError("Invalid history document")
     try:
         body = json.dumps(pair, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+        digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
     except (TypeError, ValueError, UnicodeError) as exc:
         raise ValueError("History documents must contain valid JSON data") from exc
     return json.dumps({"schema": 1, "payload": pair,
-                       "sha256": hashlib.sha256(body.encode("utf-8")).hexdigest()},
+                       "sha256": digest},
                       ensure_ascii=False, sort_keys=True, allow_nan=False) + "\n"
 
 
@@ -55,9 +56,10 @@ def decode_pair(raw):
     try:
         canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False,
                                separators=(",", ":"), allow_nan=False)
+        computed_digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
     except (TypeError, ValueError, UnicodeError) as exc:
         raise ValueError("Invalid history payload JSON") from exc
-    if hashlib.sha256(canonical.encode("utf-8")).hexdigest() != digest:
+    if computed_digest != digest:
         raise ValueError("History digest mismatch")
     encode_pair(envelope["payload"])
     return envelope["payload"]

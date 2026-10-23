@@ -435,6 +435,7 @@ class _Scanner(ast.NodeVisitor):
         self.scope: list[tuple[str, list[int]]] = []
         self.flag_bindings: list[dict[str, ast.AST]] = []
         self.dominating_guards: list[list[int]] = []
+        self.direct_name_calls: list[dict] = []
         self.rows: list[dict] = []
         self.dispositions: list[dict] = []
 
@@ -519,6 +520,20 @@ class _Scanner(ast.NodeVisitor):
                                             if self.flag_bindings else ())
             if value.lineno < node.lineno
         }
+        if isinstance(node.func, ast.Name):
+            caller_scope = self.scope[-1][0] if self.scope else "<module>"
+            caller_guards = list(self.dominating_guards[-1]
+                                 if self.dominating_guards else ())
+            segment = ast.get_source_segment(self.source, node) or ""
+            self.direct_name_calls.append({
+                "callee": node.func.id,
+                "caller_scope": caller_scope,
+                "line": node.lineno,
+                "dominating_guard_lines_in_scope": caller_guards,
+                "guard_control_flow_verified": bool(caller_guards),
+                "source_segment_sha256": hashlib.sha256(
+                    segment.encode("utf-8")).hexdigest(),
+            })
         classification, api = _classify_call(node, bindings)
         if classification in {"write_candidate", "proven_non_filesystem_text_transform",
                               "proven_read_only_descriptor"}:
@@ -560,6 +575,39 @@ class _Scanner(ast.NodeVisitor):
                 })
         self.generic_visit(node)
 
+    def attach_direct_local_callers(self, tree: ast.Module) -> None:
+        """Attach observed direct callers without claiming a closed call graph."""
+        definitions = {}
+        for statement in tree.body:
+            if isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                definitions[statement.name] = definitions.get(statement.name, 0) + 1
+        module_bindings = _LocalBindingCollector()
+        for statement in tree.body:
+            if not isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                module_bindings.visit(statement)
+        eligible = {name for name, count in definitions.items()
+                    if count == 1 and not module_bindings.stores.get(name)
+                    and name not in module_bindings.external
+                    and not module_bindings.dynamic_scope}
+        by_callee = {
+            name: sorted(({
+                "caller_scope": call["caller_scope"],
+                "line": call["line"],
+                "dominating_guard_lines_in_scope": call[
+                    "dominating_guard_lines_in_scope"],
+                "guard_control_flow_verified": call[
+                    "guard_control_flow_verified"],
+                "source_segment_sha256": call["source_segment_sha256"],
+            } for call in self.direct_name_calls if call["callee"] == name),
+                key=lambda row: (row["line"], row["caller_scope"]))
+            for name in eligible
+        }
+        for row in self.rows:
+            callers = by_callee.get(row["scope"], [])
+            row["direct_local_callers"] = callers
+            row["direct_local_callers_source_bound"] = bool(callers)
+            row["caller_closure_verified"] = False
+
 
 def scan_python_source(source: str, path: str = "<memory>") -> list[dict]:
     """Return deterministic, line-ordered mutation candidates for human review."""
@@ -568,6 +616,7 @@ def scan_python_source(source: str, path: str = "<memory>") -> list[dict]:
     tree = ast.parse(source, filename=path)
     scanner = _Scanner(path, source)
     scanner.visit(tree)
+    scanner.attach_direct_local_callers(tree)
     return sorted(scanner.rows, key=lambda row: (row["line"], row["api"]))
 
 
@@ -608,6 +657,7 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
         tree = ast.parse(source, filename=relative)
         scanner = _Scanner(relative, source)
         scanner.visit(tree)
+        scanner.attach_direct_local_callers(tree)
         rows.extend(scanner.rows)
         dispositions.extend(scanner.dispositions)
     return {
@@ -621,7 +671,7 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
             dispositions, key=lambda row: (row["path"], row["line"], row["api"])),
         "limitations": [
             "Static AST candidates only; not a runtime enforcement proof.",
-            "Guard ordering is lexical and does not prove branch dominance or caller contracts.",
+            "Direct guard dominance is structural only; caller closure and callee contracts remain unverified.",
             "Dynamic aliases, subprocess/shell writes, generated code and non-Python writers need separate review.",
             "Every candidate remains review_required until individually dispositioned.",
             "Non-write dispositions are limited to source-hash-bound syntactic proofs.",

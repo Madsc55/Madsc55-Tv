@@ -40,7 +40,8 @@ _OS_MUTATORS = {
 _PROCESS_LAUNCHERS = {
     "subprocess.run", "subprocess.call", "subprocess.Popen",
     "subprocess.check_call", "subprocess.check_output",
-    "os.system", "os.popen",
+    "os.system", "os.popen", "os.spawnl", "os.spawnle", "os.spawnlp", "os.spawnlpe",
+    "os.spawnv", "os.spawnve", "os.spawnvp", "os.spawnvpe", "os.posix_spawn", "os.posix_spawnp",
 }
 _GUARDED_OPEN_FLAGS = {"O_WRONLY", "O_RDWR", "O_CREAT", "O_TRUNC", "O_APPEND"}
 _READ_ONLY_OPEN_FLAGS = {

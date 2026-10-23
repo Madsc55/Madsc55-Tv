@@ -285,6 +285,16 @@ class LocalOutputGuardTests(unittest.TestCase):
                         enforce_local_turkish_tv_test_playlist(candidate, allowed_root=root)
             self.assertFalse(expected.exists())
 
+    def test_local_output_rejects_nfkc_separator_aliases(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for name in ("report／safe.json", "report＼safe.json", "report：stream.json"):
+                with self.subTest(name=name):
+                    target = root / name
+                    with self.assertRaises(ProtectedWriteRejected):
+                        enforce_local_output_path(target, allowed_root=root)
+                    self.assertFalse(target.exists())
+
     def test_dangling_symlink_parent_is_rejected_before_directory_check(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

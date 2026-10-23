@@ -45,7 +45,8 @@ def build_isolated_test_pool(records):
                   "foreign" if decision.country == "YABANCI_KULLANICI_BILDIRIMI" else
                   "pending" if playback in ("pending", "unknown") else "retained")
         entries.append({"position": i, "source_sha256": digest,
-                        "reported_country": decision.country, "playback": playback,
+                        "reported_country": decision.country, "reported_playback": reported,
+                        "playback": playback,
                         "bucket": bucket, "logo_sha256": logo, "history": clean})
     encoded = json.dumps(entries, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return {"preview_only": True, "production_writes": False, "device_verified": False,

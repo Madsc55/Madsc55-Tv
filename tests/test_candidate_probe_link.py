@@ -5,6 +5,21 @@ from madsc.artifact_handoff import pack
 from madsc.candidate_probe_link import link_candidate_probes, link_candidate_continuity
 
 
+class K2EvidenceFileSafetyTests(unittest.TestCase):
+    def test_hardlinked_evidence_is_rejected(self):
+        import os
+        import tempfile
+        from pathlib import Path
+        from madsc.candidate_probe_link import load_evidence
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder) / 'evidence.json'
+            alias = Path(folder) / 'alias.json'
+            source.write_text('{}', encoding='utf-8')
+            os.link(source, alias)
+            with self.assertRaisesRegex(ValueError, 'singly linked'):
+                load_evidence(source)
+
+
 class CandidateProbeLinkTests(unittest.TestCase):
     def test_matching_candidate_probe_and_unprobed_count(self):
         url = "https://example.org/test.m3u8"

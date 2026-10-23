@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 from madsc import legacy_99_bulk_audit as audit
+from madsc.write_path_audit import ProtectedWriteRejected
 
 
 class Legacy99SourceIntegrityTests(unittest.TestCase):
@@ -61,7 +62,7 @@ class Legacy99SourceIntegrityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp, patch.object(audit, "github") as network:
             output = Path(temp) / "audit.json"
             output.write_text("existing evidence", encoding="utf-8")
-            with self.assertRaises(ValueError):
+            with self.assertRaises(ProtectedWriteRejected):
                 audit.run(output, "")
             network.assert_not_called()
             self.assertEqual(output.read_text(encoding="utf-8"), "existing evidence")

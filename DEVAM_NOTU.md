@@ -997,3 +997,7 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - İlk tam denemede geçersiz HLS test satır sonları nedeniyle 3 K3 testi ve v1/v2 şema uyuşmazlığı nedeniyle 2 offline-gate testi başarısız oldu; HLS fixture düzeltmesi `17fef31`, şema düzeltmesi ve sonraki test uyarlamalarıyla son temiz koşu yeşil. Başarısız ilk koşu kabul kanıtı sayılmadı.
 - Kabul sayaçları değişmedi: davranışsal parity 0/92, runtime güvenlik 0/26, ana görev 0/22. Fixture/statik sınıflandırma üretim kabulü değildir. Canlı probe, cihaz testi, üretim yazısı, korunan playlist/EPG/favori/logo/yedek/arşiv değişikliği, eski depo yazısı, merge veya PR #71 işlemi yapılmadı; Actions elle başlatılmadı.
 - Sıradaki somut iş: değişken bayraklı salt-okunur `os.open` çağrılarını aynı lexical scope içindeki sabit atamalara kaynak-bağlı ve fail-closed çözümle; ardından kalan gerçek writer/subprocess satırlarında K1 guard dominasyonu ve call-chain kanıtını tek tek kapat. Gerçek aynı-input bağımsız execution/artifact çiftleri olmadan 92 kabulünü artırma.
+
+
+### Aynı paket için son HEAD doğrulama güncellemesi
+- Yukarıdaki 1120-test koşusundan sonra eşzamanlı K2/K4/K5 commitleri main'e girdi. En son temiz checkout SHA `5b8d0fb515df8865047a92cdfc12cd856f7c6595` üzerinde tam offline kapı yeniden çalıştırıldı: **1123/1123 test**, beş izole K kapısı, write-callsite v2, kurulum/contract/rapor round-trip ve pinned 92 kapsamı başarılı. Tarama 100 dosya / 142 açık aday / 7 non-write disposition olarak aynı kaldı. Bu da üretim veya 92/26/22 kabulü değildir.

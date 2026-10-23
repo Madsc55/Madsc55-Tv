@@ -21,7 +21,7 @@ class TestK5Pool(unittest.TestCase):
 
     def test_evidenced_failure(self):
         self.records[0].update(playback="broken", history=[{"status": "broken", "evidence_id": "old-1"}])
-        self.assertEqual(build_isolated_test_pool(self.records)["entries"][0]["bucket"], "broken")
+        self.assertEqual(build_isolated_test_pool(self.records)["entries"][0]["playback"], "unknown")
 
     def test_logo_validation(self):
         self.records[0]["logo_sha256"] = "bad"
@@ -42,3 +42,9 @@ class TestK5Pool(unittest.TestCase):
         self.records[0]["history"] = [{"status": "broken", "evidence_id": r"legacy\test"}]
         with self.assertRaises(ValueError):
             build_isolated_test_pool(self.records)
+
+    def test_legacy_working_evidence_is_not_device_proof(self):
+        self.records[0].update(playback="working", history=[{"status": "working", "evidence_id": "old-2"}])
+        pool = build_isolated_test_pool(self.records)
+        self.assertEqual(pool["entries"][0]["playback"], "unknown")
+        self.assertFalse(pool["device_verified"])

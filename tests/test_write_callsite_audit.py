@@ -6,6 +6,22 @@ from pathlib import Path
 from madsc.write_callsite_audit import scan_python_source, scan_python_tree
 
 
+class WorkflowWriteBoundaryTests(unittest.TestCase):
+    """Fail closed if a workflow gains repository write authority."""
+
+    def test_every_workflow_explicitly_read_only_without_checkout_credentials(self):
+        root = Path(__file__).resolve().parents[1] / ".github" / "workflows"
+        workflows = sorted(root.glob("*.yml"))
+        self.assertTrue(workflows, "No workflows found; inventory cannot be certified")
+        for workflow in workflows:
+            source = workflow.read_text(encoding="utf-8")
+            with self.subTest(workflow=workflow.name):
+                self.assertRegex(source, r"(?m)^permissions:\\s*\\n(?:[ \\t]+[^\\n]+\\n)*?[ \\t]+contents:\\s*read\\s*$")
+                self.assertNotRegex(source, r"(?m)^\\s*contents:\\s*write\\s*$")
+                self.assertIn("persist-credentials: false", source)
+                self.assertNotRegex(source, r"(?m)\\bgit\\s+push\\b")
+                self.assertNotRegex(source, r"(?m)^\\s*pull_request_target\\s*:")
+
 class WriteCallsiteAuditTests(unittest.TestCase):
     def test_artifact_transport_writes_have_direct_k1_guard_dominance(self):
         source = (Path(__file__).resolve().parents[1] / "madsc" /

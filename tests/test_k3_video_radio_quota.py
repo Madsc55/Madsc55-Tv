@@ -20,7 +20,7 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
         self.assertTrue(pilot.same_origin_https(base, "https://example.org/segment.ts"))
 
     def test_http_segment_rejected_without_download(self):
-        manifest = b"#EXTM3U\\n#EXTINF:4,\\nhttp://example.org/segment.ts\\n"
+        manifest = b"#EXTM3U\n#EXTINF:4,\nhttp://example.org/segment.ts\n"
         with patch.object(pilot, "safe_curl", return_value=manifest) as curl:
             self.assertEqual(pilot.verify_av("https://example.org/live.m3u8"),
                              (False, False, "cross_host_segment"))

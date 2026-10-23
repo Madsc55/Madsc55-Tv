@@ -4,6 +4,15 @@ from madsc.discovery_batch import parse_m3u, corroborate_sources, build_m3u8_pre
 
 
 class DiscoveryBatchTests(unittest.TestCase):
+    def test_url_padding_is_not_silently_normalized(self):
+        for raw_url in (" https://example.org/live", "https://example.org/live "):
+            with self.subTest(raw_url=repr(raw_url)):
+                feed = "#EXTM3U\\n#EXTINF:-1,News\\n" + raw_url + "\\n"
+                report = parse_m3u(feed, "fixture")
+                self.assertEqual(report["entries"], 0)
+                self.assertEqual(report["parse_errors"][0]["reason"], "invalid_url_whitespace")
+                self.assertFalse(report["live_verified"])
+
     def test_parse_m3u_extracts_metadata_and_rejects_bad_urls(self):
         feed = ('#EXTM3U\n'
                 '#EXTINF:-1 tvg-id="tr.news" group-title="Haber",Haber TV\n'

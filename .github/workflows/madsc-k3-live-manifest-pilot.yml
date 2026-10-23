@@ -1,12 +1,21 @@
 name: Madsc55-Tv K3 Gercek Kanal Baglanti Pilotu
 on:
   workflow_dispatch:
+    inputs:
+      candidate_limit:
+        description: "Read-only HTTPS candidates (1-75)"
+        required: true
+        default: "12"
+        type: choice
+        options:
+          - "12"
+          - "75"
 permissions:
   contents: read
 jobs:
   k3-real-manifest:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -15,7 +24,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Probe bounded real HTTPS manifests without modifying playlists
-        run: python -m madsc.k3_live_manifest_pilot
+        run: python -m madsc.k3_live_manifest_pilot --limit "${{ inputs.candidate_limit }}"
       - name: Upload redacted network evidence
         if: always()
         uses: actions/upload-artifact@v4

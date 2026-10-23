@@ -153,6 +153,10 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
             metadata = root.lstat()
             if not stat.S_ISDIR(metadata.st_mode) or (metadata.st_dev, metadata.st_ino) != identity:
                 inventory_matches = False
+            # A directory can be replaced by a symlink to the same contents
+            # after the manifest reads; fail closed on every ancestor as well.
+            if any(ancestor.is_symlink() for ancestor in (root, *root.parents)):
+                inventory_matches = False
         except OSError:
             inventory_matches = False
     accepted = result["independent_sandbox_restore_matches"] is True and inventory_matches

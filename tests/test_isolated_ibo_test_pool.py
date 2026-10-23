@@ -55,3 +55,11 @@ class TestK5Pool(unittest.TestCase):
         self.assertEqual(entry["reported_playback"], "broken")
         self.assertEqual(entry["playback"], "unknown")
         self.assertEqual(entry["history"][0]["evidence_id"], "legacy-3")
+
+    def test_reported_broken_triage_count_not_verified(self):
+        self.records[0]["playback"] = "broken"
+        pool = build_isolated_test_pool(self.records)
+        self.assertEqual(pool["reported_playback_counts"]["broken"], 1)
+        self.assertEqual(pool["counts"]["broken"], 0)
+        self.assertEqual(sum(pool["reported_playback_counts"].values()), 6115)
+        self.assertEqual(pool["entries"][0]["playback"], "unknown")

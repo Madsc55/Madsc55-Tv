@@ -23,6 +23,8 @@ def normalize_url(value: str) -> str:
             or any(0xD800 <= ord(ch) <= 0xDFFF for ch in host)
             or any(ord(ch) < 33 or ord(ch) == 127 for ch in host)):
         raise ValueError("Invalid candidate host or port")
+    if parts.netloc.endswith(":"):
+        raise ValueError("Empty explicit port is forbidden")
     if parts.fragment:
         raise ValueError("URL fragments are not accepted")
     normalized = urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path or "/", parts.query, ""))

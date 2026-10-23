@@ -23,6 +23,19 @@ class K4WorkflowSafetyContractTests(unittest.TestCase):
         self.assertIn("      - name: Upload K4 restore drill evidence\n        if: ${{ inputs.allow_parity_evidence != true }}\n        uses: actions/upload-artifact@v4", source)
         self.assertIn("      - name: Upload K4 parity manifest (explicit opt-in only)", source)
 
+    def test_fixture_workflow_cannot_gain_write_capability_or_external_upload(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        # Fixture evidence may be uploaded to Actions, but no external provider
+        # credentials or cloud-storage copy steps belong in this workflow.
+        self.assertIn("persist-credentials: false", source)
+        self.assertIn("cancel-in-progress: false", source)
+        self.assertIn("timeout-minutes: 10", source)
+        self.assertNotIn("secrets.", source)
+        self.assertNotIn("aws-actions/configure-aws-credentials", source)
+        self.assertNotIn("google-github-actions/auth", source)
+        self.assertNotIn("azure/login", source)
+        self.assertNotIn("actions/checkout@v4\n        with:\n          persist-credentials: true", source)
+
     def test_fixture_workflow_does_not_claim_external_acceptance(self):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("madsc.restore_drill", source)

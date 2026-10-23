@@ -75,6 +75,13 @@ class WritePathAuditTests(unittest.TestCase):
         with self.assertRaises(ProtectedWriteRejected):
             enforce_write_paths(["reports＼safe.json"])
 
+    def test_c1_unicode_control_characters_are_rejected(self):
+        paths = ["reports/unsafe\u0085name.json", "reports/unsafe\u009bname.json"]
+        result = audit_write_paths(paths)
+        self.assertEqual(result["rejected"], paths)
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths([paths[0]])
+
     def test_nul_and_control_characters_are_rejected(self):
         paths = ["reports/bad" + chr(0) + ".json",
                  "reports/bad" + chr(10) + ".json",

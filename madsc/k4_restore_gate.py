@@ -123,6 +123,11 @@ def audit_k4_restore(source: Path, backup: Path, restored: Path,
                 relative = item.relative_to(root).as_posix()
                 # One no-follow metadata read avoids classifying a replaced
                 # symlink by following it in a subsequent is_dir/is_file call.
+                # Recheck each traversed parent: rglob can encounter a
+                # directory replaced by a symlink after the root check.
+                if any(ancestor.is_symlink() for ancestor in (item, *item.parents)):
+                    inventory_matches = False
+                    break
                 mode = item.lstat().st_mode
                 if stat.S_ISLNK(mode):
                     inventory_matches = False

@@ -194,6 +194,13 @@ def verify_manifest(root: Path, manifest: dict) -> bool:
         raise ValueError("Unsafe backup manifest path characters")
     if len(set(paths)) != len(paths):
         raise ValueError("Duplicate backup manifest paths")
+    import unicodedata
+    portable = [unicodedata.normalize('NFKC', path).casefold() for path in paths]
+    if len(set(portable)) != len(paths):
+        raise ValueError('Ambiguous portable backup manifest path alias')
+    if any(unicodedata.category(character) == 'Cf'
+           for path in paths for character in path):
+        raise ValueError('Invisible formatting character in backup manifest path')
     # A manifest is a canonical snapshot, not an arbitrary subset or reordered list.
     if paths != sorted(paths):
         return False

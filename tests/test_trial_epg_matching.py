@@ -12,19 +12,32 @@ class TrialEpgMatchingTest(unittest.TestCase):
     def test_existing_id(self):
         self.assertEqual(matches('#EXTINF:-1 tvg-id="a",Other', XML)[0]["status"], "existing_valid")
     def test_duplicate_xmltv_channel_ids_fail_closed(self):
-        duplicate = '<tv><channel id="a"><display-name>TRT 1</display-name></channel><channel id="a"><display-name>TRT 2</display-name></channel></tv>'
+        duplicate = '<tv><channel id="a"/><channel id="a"/></tv>'
         with self.assertRaisesRegex(ValueError, "Duplicate XMLTV channel id"):
             matches('#EXTINF:-1 tvg-id="a",TRT 1', duplicate)
-
     def test_invalid_xmltv_root_fails_closed(self):
         with self.assertRaisesRegex(ValueError, "root element"):
-            matches('#EXTINF:-1 tvg-id="a",TRT 1', '<playlist><channel id="a" /></playlist>')
-
+            matches('#EXTINF:-1 tvg-id="a",TRT 1', '<playlist/>')
     def test_missing_xmltv_channel_id_fails_closed(self):
         with self.assertRaisesRegex(ValueError, "missing a nonempty id"):
-            matches('#EXTINF:-1,TRT 1', '<tv><channel><display-name>TRT 1</display-name></channel></tv>')
-
+            matches('#EXTINF:-1,TRT 1', '<tv><channel/></tv>')
     def test_empty(self):
         self.assertEqual(playlist_entries("#EXTM3U"), [])
+    def test_quoted_comma_in_attribute(self):
+        self.assertEqual(playlist_entries('#EXTINF:-1 tvg-name="News, Live" tvg-id="a",TRT 1'), [("TRT 1", "a")])
+    def test_duplicate_tvg_id_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, "Duplicate tvg-id"):
+            playlist_entries('#EXTINF:-1 tvg-id="a" tvg-id="b",TRT 1')
+    def test_malformed_separator_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, "Malformed EXTINF"):
+            playlist_entries('#EXTINF:-1 tvg-id="a" TRT 1')
+    def test_xmltv_entity_declaration_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, "DTD/entity"):
+            matches('#EXTINF:-1,TRT 1', '<!DOCTYPE tv [<!ENTITY x "y">]><tv/>')
+    def test_title_does_not_inject_tvg_id(self):
+        self.assertEqual(playlist_entries('#EXTINF:-1,Title tvg-id="fake"'), [('Title tvg-id="fake"', '')])
+    def test_existing_quality_variant_id_retained(self):
+        m = '#EXTINF:-1 tvg-id="a",TRT 1 HD\n#EXTINF:-1 tvg-id="a",TRT 1 SD'
+        self.assertEqual([r["status"] for r in matches(m, XML)], ["existing_valid", "existing_valid"])
 if __name__ == "__main__":
     unittest.main()

@@ -240,6 +240,16 @@ class LocalOutputGuardTests(unittest.TestCase):
             self.assertEqual(outside.read_text(encoding="utf-8"), "original")
             self.assertEqual(inside.read_text(encoding="utf-8"), "safe")
 
+    def test_local_output_rejects_unicode_noncharacters(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for suffix in ("\ufdd0", "\ufffe", "\U0001fffe"):
+                with self.subTest(codepoint=hex(ord(suffix))):
+                    target = root / ("evidence" + suffix + ".json")
+                    with self.assertRaises(ProtectedWriteRejected):
+                        enforce_local_output_path(target, allowed_root=root)
+                    self.assertFalse(target.exists())
+
     def test_symlinked_parent_and_root_boundary_blocked(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

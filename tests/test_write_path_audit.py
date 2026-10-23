@@ -162,6 +162,15 @@ class LocalOutputGuardTests(unittest.TestCase):
                 enforce_local_turkish_tv_test_playlist(
                     root / "reports/another.m3u8", allowed_root=root)
 
+    def test_local_output_rejects_ambiguous_unicode_and_backslashes(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for name in ("unsafe\\name.json", "unsafe\u0085name.json",
+                         "unsafe\u2028name.json", "unsafe\u2029name.json"):
+                with self.subTest(name=repr(name)):
+                    with self.assertRaises(ProtectedWriteRejected):
+                        enforce_local_output_path(root / name)
+
     def test_safe_absolute_output_is_only_preflight(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "reports"

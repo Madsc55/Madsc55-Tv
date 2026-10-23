@@ -14,6 +14,15 @@ class EpgTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Duplicate or misplaced M3U header"):
                 check_epg_mapping(p, e)
 
+    def test_stream_uri_outer_whitespace_rejected(self):
+        for uri in (" https://example.org/live", "https://example.org/live ", "\thttps://example.org/live"):
+            with self.subTest(uri=uri), tempfile.TemporaryDirectory() as d:
+                p, e = Path(d) / "playlist.m3u8", Path(d) / "xmltv.xml"
+                p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\n' + uri + '\n', encoding="utf-8")
+                e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "invalid stream URI"):
+                    check_epg_mapping(p, e)
+
     def test_stream_uri_fragments_and_controls_rejected(self):
         for uri in ("https://example.org/live#fragment", "https://example.org/li" + chr(0x7f) + "ve"):
             with self.subTest(uri=uri), tempfile.TemporaryDirectory() as d:

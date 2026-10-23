@@ -402,6 +402,15 @@ def mutate(path, fd):
         self.assertTrue(all('dynamic mode' in row['api'] for row in rows))
         self.assertTrue(all(row['review_required'] for row in rows))
 
+    def test_tree_scan_rejects_fifo_python_source(self):
+        if not hasattr(os, "mkfifo"):
+            self.skipTest("FIFO is unavailable on this platform")
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            os.mkfifo(root / "blocked.py")
+            with self.assertRaisesRegex(ValueError, "Non-regular Python source"):
+                scan_python_tree(root)
+
     def test_invalid_python_fails_instead_of_silently_skipping(self):
         with self.assertRaises(SyntaxError):
             scan_python_source("def broken(:")

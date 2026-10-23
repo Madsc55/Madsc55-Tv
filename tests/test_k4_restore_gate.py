@@ -93,6 +93,31 @@ class K4RestoreGateTests(unittest.TestCase):
                 result = audit_k4_restore(*trees, ["file.txt"])
             self.assertFalse(result["sandbox_restore_accepted"])
 
+    def test_change_after_first_manifest_check_blocks_acceptance(self):
+        from unittest.mock import patch
+        from madsc.backup import verify_independent_restore as actual_verify
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            trees = [base / name for name in ("source", "backup", "restored")]
+            for root in trees:
+                root.mkdir()
+                (root / "file.txt").write_bytes(b"same")
+            calls = [0]
+
+            def change_after_verification(*args):
+                result = actual_verify(*args)
+                calls[0] += 1
+                if calls[0] == 1:
+                    (trees[2] / "file.txt").write_bytes(b"changed")
+                return result
+
+            with patch("madsc.k4_restore_gate.verify_independent_restore",
+                       side_effect=change_after_verification):
+                result = audit_k4_restore(*trees, ["file.txt"])
+            self.assertGreaterEqual(calls[0], 2)
+            self.assertFalse(result["sandbox_restore_accepted"])
+            self.assertEqual(result["next_action"], "HALT_AND_INVESTIGATE")
+
     def test_mismatch_fails_closed(self):
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)

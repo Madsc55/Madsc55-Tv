@@ -46,7 +46,12 @@ def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
         # containing non-ASCII data, so verify exactly what we intended to write.
         payload = (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8")
         fd = os.open(target, flags, 0o600)
-        with os.fdopen(fd, "wb") as handle:
+        try:
+            handle = os.fdopen(fd, "wb")
+        except BaseException:
+            os.close(fd)
+            raise
+        with handle:
             handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())

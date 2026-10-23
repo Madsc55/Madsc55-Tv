@@ -8,6 +8,16 @@ from madsc.write_path_audit import (audit_write_paths, enforce_write_paths,
                                     ProtectedWriteRejected)
 
 class WritePathAuditTests(unittest.TestCase):
+    def test_unicode_noncharacters_are_rejected_without_writes(self):
+        for suffix in ("\ufdd0", "\ufffe", "\U0001fffe", "\U0010ffff"):
+            with self.subTest(codepoint=hex(ord(suffix))):
+                path = "reports/evidence" + suffix + ".json"
+                result = audit_write_paths([path])
+                self.assertEqual(result["rejected"], [path])
+                self.assertFalse(result["write_performed"])
+                with self.assertRaises(ProtectedWriteRejected):
+                    enforce_write_paths([path])
+
     def test_protected_paths_blocked(self):
         report = audit_write_paths(["CALISANLAR.m3u", "epg/sample.xml", "logolar/a.png"])
         self.assertTrue(report["blocked"])

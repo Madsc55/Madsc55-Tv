@@ -118,6 +118,17 @@ class K3VideoRadioQuotaTests(unittest.TestCase):
                              (False, False, 'encrypted_hls_unsupported'))
             curl.assert_called_once()
 
+    def test_master_alternate_audio_is_rejected_before_variant_download(self):
+        for tag in ('#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="a",URI="audio.m3u8"',
+                    '#EXT-X-SESSION-DATA:DATA-ID="x",URI="metadata.json"',
+                    '#EXT-X-SESSION-KEY:METHOD=AES-128,URI="key.bin"'):
+            master = ("#EXTM3U\n" + tag +
+                      "\n#EXT-X-STREAM-INF:BANDWIDTH=500000\nvideo.m3u8\n").encode()
+            with self.subTest(tag=tag), patch.object(pilot, "safe_curl", return_value=master) as curl:
+                self.assertEqual(pilot.verify_av("https://example.org/master.m3u8"),
+                                 (False, False, "unsupported_master_metadata"))
+                curl.assert_called_once()
+
     def test_nested_master_fails_before_variant_download(self):
         master = b'#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=100\nchild.m3u8\n'
         with patch.object(pilot, 'safe_curl', side_effect=[master, master]) as curl:

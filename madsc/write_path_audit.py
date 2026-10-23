@@ -176,7 +176,16 @@ def enforce_local_append_path(destination: Path, *, allowed_root: Path | None = 
 
 def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: Path) -> dict:
     """Permit one isolated K3 artifact without weakening the general M3U ban."""
-    root = Path(allowed_root).absolute()
+    # Do not normalize a relative or traversing caller-supplied root before
+    # checking it: the isolated exception must obey the same root policy.
+    raw_root = str(allowed_root)
+    root = Path(allowed_root)
+    if (not root.is_absolute() or chr(92) in raw_root or
+            any(part in (".", "..") for part in raw_root.split("/")) or
+            any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+                or 0xFDD0 <= ord(ch) <= 0xFDEF
+                or (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw_root)):
+        raise ProtectedWriteRejected("Invalid isolated test playlist root")
     expected = root / "reports/MADSC55_TURKCE_TV_ADAY_DENEME.m3u8"
     if Path(destination) != expected:
         raise ProtectedWriteRejected("Only the fixed isolated K3 test playlist is permitted")

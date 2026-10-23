@@ -107,6 +107,7 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
     normalized_raw = unicodedata.normalize("NFKC", raw)
     raw_parts = raw.replace(chr(92), "/").split("/")
     if (chr(92) in raw or chr(92) in normalized_raw
+            or normalized_raw != raw and any(part in (".", "..") for part in normalized_raw.split("/"))
             or normalized_raw.count("/") != raw.count("/")
             or ":" in normalized_raw
             or any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in raw)

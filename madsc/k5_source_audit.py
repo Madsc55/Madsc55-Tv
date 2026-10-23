@@ -13,9 +13,17 @@ EXCLUDED = {
 def audit(root):
     root = Path(root)
     inventory = json.loads((root / "docs/LEGACY_SOURCE_SCOPE.json").read_text(encoding="utf-8"))
-    expected = {r["path"]: r["git_blob_sha"] for r in inventory["workflows"]
-                if Path(r["path"]).name not in EXCLUDED}
     errors = []
+    source_rows = inventory.get("workflows", [])
+    if not isinstance(source_rows, list):
+        source_rows = []
+        errors.append("invalid_inventory")
+    inventory_paths = [r.get("path") for r in source_rows if isinstance(r, dict)]
+    if len(inventory_paths) != len(source_rows) or len(set(inventory_paths)) != len(inventory_paths):
+        errors.append("invalid_or_duplicate_inventory_paths")
+    expected = {r["path"]: r["git_blob_sha"] for r in source_rows
+                if isinstance(r, dict) and isinstance(r.get("path"), str)
+                and Path(r["path"]).name not in EXCLUDED}
     rows = []
     for part in PARTS:
         path = root / ("docs/K5_KAYNAK_DOGRULAMA_" + part + ".json")
@@ -61,8 +69,13 @@ def audit(root):
             errors.append("invalid_signals:" + str(path))
     for path in sorted(set(expected) - seen):
         errors.append("missing:" + path)
-    if len(inventory["workflows"]) != 99 or len(expected) != 92 or len(rows) != 92:
+    if len(source_rows) != 99 or len(expected) != 92 or len(rows) != 92:
         errors.append("wrong_scope_count")
+    signal_counts = {key: sum(1 for row in rows
+                              if isinstance(row, dict)
+                              and isinstance(row.get("signals"), dict)
+                              and row["signals"].get(key) is True)
+                     for key in sorted(required_signals)}
     return {
         "source_commit": inventory["source_commit"],
         "expected": len(expected), "recorded": len(rows),
@@ -72,6 +85,10 @@ def audit(root):
                                     and r.get("expected_sha") == expected[r["path"]]
                                     and r.get("verified") is True),
         "source_audit_passed": not errors,
+        "yaml_signal_counts": signal_counts,
+        "static_mapping_only": True,
+        "independent_old_new_execution_pairs": 0,
+        "behavioral_evidence_missing": len(expected),
         "behavioral_parity_accepted": 0,
         "production_accepted": False,
         "errors": errors,

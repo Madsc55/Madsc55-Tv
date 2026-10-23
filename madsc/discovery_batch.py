@@ -185,8 +185,12 @@ def corroborate_sources(sources: dict[str, str], known_urls: set[str] | None = N
     grouped = defaultdict(lambda: {"sources": set(), "source_fingerprints": set(),
                                     "urls": set(), "names": set()})
     reports = {}
+    total_entries = 0
     for source, text in sorted(sources.items()):
         report = parse_m3u(text, source)
+        total_entries += report["entries"]
+        if total_entries > 20000:
+            raise ValueError("Combined sources exceed bounded candidate limit")
         reports[source] = {"entries": report["entries"], "rejected": len(report["rejected"]),
                            "parse_errors": len(report["parse_errors"])}
         # Labels and serialization order do not prove independence. Fingerprint

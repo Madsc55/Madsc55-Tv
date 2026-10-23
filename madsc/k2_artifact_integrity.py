@@ -72,8 +72,9 @@ def compare_artifact_pair(legacy_path: str | Path, replacement_path: str | Path,
     Both supplied expected hashes must match actual bytes. No path may be reused.
     This is an integrity prerequisite, NOT behavioral equivalence approval.
     """
-    if Path(legacy_path).absolute() == Path(replacement_path).absolute():
-        raise ValueError("Legacy and replacement artifacts must be separate paths")
+    import os
+    if os.path.samefile(legacy_path, replacement_path):
+        raise ValueError("Legacy and replacement artifacts must be distinct files")
     legacy = verify_artifact_bytes(legacy_path, legacy_sha256, max_bytes=max_bytes)
     replacement = verify_artifact_bytes(
         replacement_path, replacement_sha256, max_bytes=max_bytes

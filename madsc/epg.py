@@ -21,8 +21,13 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
     if header != "#EXTM3U" and not header.startswith("#EXTM3U "):
         raise ValueError("Invalid M3U8 playlist")
     ids = []
+    pending_stream = False
     for line in text.splitlines():
+        line = line.strip()
         if line.startswith("#EXTINF:"):
+            if pending_stream:
+                raise ValueError("M3U EXTINF missing stream URI")
+            pending_stream = True
             # The channel-name separator is the first comma outside quoted attributes.
             quoted = False
             separator = None
@@ -43,6 +48,10 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
             if len(matches) > 1:
                 raise ValueError("Duplicate M3U tvg-id attribute")
             ids.append(matches[0].strip() if matches else "")
+        elif pending_stream and line and not line.startswith("#"):
+            pending_stream = False
+    if pending_stream:
+        raise ValueError("M3U EXTINF missing stream URI")
 
     xmltv_raw = xmltv.read_bytes()
     xmltv_upper = xmltv_raw.upper()

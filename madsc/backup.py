@@ -93,6 +93,11 @@ def snapshot_manifest(root: Path, paths: list[str]) -> dict:
         raise ValueError("Backup source exceeds bounded entry limit")
     if any(len(name) > 4096 for name in paths):
         raise ValueError("Backup source path exceeds bounded length")
+    # Reject impossible file/directory inventories before opening source files.
+    declared = set(paths)
+    if any('/'.join(name.split('/')[:depth]) in declared
+           for name in paths for depth in range(1, len(name.split('/')))):
+        raise ValueError('Backup source file conflicts with declared directory')
     entries = []
     for name in sorted(paths):
         if (any(ord(c) < 32 or ord(c) == 127

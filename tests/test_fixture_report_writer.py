@@ -213,9 +213,10 @@ class FixtureReportWriterTests(unittest.TestCase):
             def observed_mkdir(path, mode=0o777, *, dir_fd=None):
                 if path == "reports":
                     self.assertIsNotNone(dir_fd)
-                    self.assertTrue(os.path.samefile(root, f"/proc/self/fd/{dir_fd}")
-                                    if Path("/proc/self/fd").exists() else
-                                    os.fstat(dir_fd).st_ino == root.stat().st_ino)
+                    opened = os.fstat(dir_fd)
+                    expected = root.stat()
+                    self.assertEqual((opened.st_dev, opened.st_ino),
+                                     (expected.st_dev, expected.st_ino))
                     seen.append(path)
                 return real_mkdir(path, mode, dir_fd=dir_fd)
             with patch("madsc.fixture_report_writer.os.mkdir", side_effect=observed_mkdir):

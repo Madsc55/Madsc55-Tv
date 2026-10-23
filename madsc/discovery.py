@@ -45,7 +45,10 @@ def classify_candidates(rows: list[dict], known_urls: set[str] | None = None) ->
         raise ValueError("Known URLs must be a set")
     if known_urls is not None and len(known_urls) > 20000:
         raise ValueError("Too many known URLs")
-    known = {normalize_url(x) for x in (known_urls or set())}
+    try:
+        known = {normalize_url(x) for x in (known_urls or set())}
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Known URLs contain an invalid candidate URL") from exc
     seen = set()
     accepted, duplicates, rejected, alternatives = [], [], [], []
     identities = {}

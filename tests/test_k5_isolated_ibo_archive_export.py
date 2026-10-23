@@ -46,6 +46,20 @@ class K5IboArchiveExportTests(unittest.TestCase):
             export_6115_archive_manifest(self.urls, destination)
             self.assertEqual(destination.stat().st_mode & 0o777, 0o700)
 
+    def test_permission_adjustment_failure_cleans_created_directory(self):
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            original_chmod = Path.chmod
+            def fail_chmod(path, mode, *args, **kwargs):
+                if path == destination:
+                    raise OSError("fixture chmod failure")
+                return original_chmod(path, mode, *args, **kwargs)
+            with patch("madsc.isolated_ibo_archive_export.Path.chmod",
+                       autospec=True, side_effect=fail_chmod):
+                with self.assertRaisesRegex(OSError, "chmod failure"):
+                    export_6115_archive_manifest(self.urls, destination)
+            self.assertFalse(destination.exists())
+
     def test_directory_sync_failure_rolls_back(self):
         if not hasattr(os, "O_DIRECTORY"):
             self.skipTest("Directory fsync unsupported")

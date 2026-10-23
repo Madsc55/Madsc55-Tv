@@ -122,3 +122,16 @@ Değişiklikler `main` üzerine GitHub içerik API'siyle commit edildi; eşzaman
 3. Yüzeysel tekil yol kontrolleri yerine gerçek Python/shell/Actions yazma çağrılarının güvenlik entegrasyonunu ve 26 kabul kanıtını topluca ilerlet.
 4. K2–K5 ile eşzamanlı commit çatışmalarından kaçın; her yazmadan önce dosya blob SHA'sını yeniden al. Üretim dosyası değiştirme.
 
+
+
+## K1 gerçek yazma yolları — doğrulanabilir kapsam açığı (23 Ekim 2026)
+
+Kaynak: main Git ağacı `002d1e6cfaff31b9deaeb7b678aa3ccf6968169b` ve `.github/workflows/madsc-01-guvenlik.yml` dosyasının doğrudan okunması. **Bu bir çalışma zamanı kabul kanıtı değildir.**
+
+- İncelenen Git ağacında **284 Python dosyası**, **19 GitHub Actions workflow dosyası** var. Bunlar *incelenmesi gereken kapsamın sayılarıdır*, 284 yazıcı veya 19 güvensiz workflow olduğu anlamına gelmez.
+- `tools/protected_write_gate.py` **bu main ağacında bulunmuyor**. Önceki legacy/devir notlarında anlatılan gate davranışı, mevcut main'de otomatik yürütüldüğünün kanıtı sayılamaz. Gate'in kaybolduğu tarih veya nedeni bu incelemeyle belirlenmedi.
+- `madsc/write_callsite_audit.py` salt AST envanteridir; `madsc/write_path_audit.py` sadece çağrıldığı kod yolunu kontrol eder. Shell, Actions, doğrudan Git push ve bağımsız Python çağrıları için evrensel zorunlu gate kanıtı yok.
+- `madsc-01-guvenlik.yml` `workflow_dispatch` ile çalışıyor, `contents: read` iznine sahip, `persist-credentials: false` kullanıyor. İzole `reports` çıktıları üretiyor; burada görülen salt-okunur yetki tüm diğer workflow'ları kapsamaz.
+- **Sonuç: “Tüm gerçek yazma yolları kapıdan geçiyor” iddiası KANITLANMADI.** Bu tespit üretim kapısını gevşetme veya canlı yayın izni vermez.
+
+Tam kanıt için: her Python yazıcı ve 19 workflow içindeki shell/Actions yazma davranışlarını gerçek çağrı zinciriyle sınıflandır; her mutasyon için zorunlu gate'i ve deny senaryosunu kaydet; dış sistem/GitHub izinlerini ve üretim dosyası hash değişmezliğini çalışma kimliğiyle kanıtla. Runtime 26/26 tamamlanmadan `production_ready=false` kalmalı.

@@ -789,7 +789,14 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
                 raise ValueError(f"Python source replaced before audit read: {relative}")
             if not stat.S_ISREG(descriptor_stat.st_mode) or descriptor_stat.st_nlink != 1:
                 raise ValueError(f"Unsafe Python source descriptor during audit: {relative}")
-            source = handle.read().decode("utf-8")
+            source_bytes = handle.read()
+            descriptor_after = os.fstat(handle.fileno())
+            if (descriptor_stat.st_dev, descriptor_stat.st_ino, descriptor_stat.st_size,
+                    descriptor_stat.st_mtime_ns, descriptor_stat.st_ctime_ns) != (
+                    descriptor_after.st_dev, descriptor_after.st_ino, descriptor_after.st_size,
+                    descriptor_after.st_mtime_ns, descriptor_after.st_ctime_ns):
+                raise ValueError(f"Python source changed during audit: {relative}")
+            source = source_bytes.decode("utf-8")
         after_stat = file.stat(follow_symlinks=False)
         if not stat.S_ISREG(after_stat.st_mode) or after_stat.st_nlink != 1:
             raise ValueError(f"Python source changed to unsafe file type during audit: {relative}")

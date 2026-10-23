@@ -18,6 +18,14 @@ class WritePathAuditTests(unittest.TestCase):
                 with self.assertRaises(ProtectedWriteRejected):
                     enforce_write_paths([path])
 
+    def test_oversized_path_is_rejected_before_normalization(self):
+        long_path = "reports/" + "x" * 4090 + ".json"
+        report = audit_write_paths([long_path])
+        self.assertTrue(report["blocked"])
+        self.assertEqual(report["rejected"], [long_path])
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_write_paths([long_path])
+
     def test_write_path_audit_rejects_excessive_batch(self):
         paths = ["reports/evidence.json"] * 10001
         with self.assertRaisesRegex(ValueError, "Too many paths"):

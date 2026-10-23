@@ -814,6 +814,15 @@ def mutate(path, fd):
                           "path.setxattr", "path.removexattr", "path.utime"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_scan_tree_rejects_lexical_source_root_traversal(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "safe.py").write_text("value = 1\n", encoding="utf-8")
+            for candidate in (str(root) + "/.", str(root) + "/nested/.."):
+                with self.subTest(candidate=candidate):
+                    with self.assertRaisesRegex(ValueError, "Ambiguous or traversing source root"):
+                        scan_python_tree(candidate)
+
     def test_scan_tree_rejects_symlinked_source_root_ancestor(self):
         with tempfile.TemporaryDirectory() as d:
             base = Path(d)

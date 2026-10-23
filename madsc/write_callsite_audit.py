@@ -8,6 +8,7 @@ and cross-function control flow require human review.
 from __future__ import annotations
 
 import ast
+import unicodedata
 import hashlib
 import stat
 from pathlib import Path
@@ -733,7 +734,17 @@ def scan_python_source(source: str, path: str = "<memory>") -> list[dict]:
 
 def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
     """Scan repository Python sources without executing or changing any file."""
+    raw_root = str(root)
+    normalized_root = unicodedata.normalize("NFKC", raw_root)
     requested_root = Path(root)
+    if (chr(92) in normalized_root or
+            normalized_root.count("/") != raw_root.count("/") or
+            ":" in normalized_root or
+            any(part in (".", "..") for part in normalized_root.split("/")) or
+            any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp")
+                or 0xFDD0 <= ord(ch) <= 0xFDEF
+                or (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw_root)):
+        raise ValueError("Ambiguous or traversing source root requires review")
     if any(part in (".", "..") for part in str(root).replace(chr(92), "/").split("/")):
         raise ValueError("Ambiguous or traversing source root requires review")
     if any(ancestor.is_symlink() for ancestor in (requested_root, *requested_root.parents)):

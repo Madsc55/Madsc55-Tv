@@ -47,10 +47,16 @@ def verify_artifact_bytes(path: str | Path, expected_sha256: str, *, max_bytes: 
                     raise ValueError("Artifact exceeds bounded size")
                 digest.update(block)
         after = os.fstat(fd)
-        if (after.st_size, after.st_mtime_ns, after.st_ctime_ns, after.st_ino) != (
-            info.st_size, info.st_mtime_ns, info.st_ctime_ns, info.st_ino
+        if (after.st_dev, after.st_size, after.st_mtime_ns, after.st_ctime_ns, after.st_ino) != (
+            info.st_dev, info.st_size, info.st_mtime_ns, info.st_ctime_ns, info.st_ino
         ):
             raise ValueError("Artifact changed during verification")
+        # Reject a path replaced while its original inode remained open.
+        current = os.stat(target, follow_symlinks=False)
+        if (current.st_dev, current.st_ino, current.st_size, current.st_mtime_ns, current.st_ctime_ns) != (
+            info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
+        ):
+            raise ValueError("Artifact path changed during verification")
     finally:
         os.close(fd)
     actual = digest.hexdigest()

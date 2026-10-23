@@ -52,6 +52,17 @@ def safe_curl(url, limit):
     return result.stdout if result.returncode == 0 and len(result.stdout) <= limit else None
 
 
+def same_origin_https(parent, child):
+    """Reject scheme downgrade, credentials, nonstandard ports and cross-origin HLS URLs."""
+    a, b = urlsplit(parent), urlsplit(child)
+    try:
+        return (a.scheme == b.scheme == "https" and a.hostname == b.hostname
+                and a.port in (None, 443) and b.port in (None, 443)
+                and not a.username and not a.password and not b.username and not b.password)
+    except ValueError:
+        return False
+
+
 def verify_av(url):
     """Verify codec streams from an HLS segment; audio language is not inferred."""
     manifest = safe_curl(url, 65536)
@@ -66,7 +77,7 @@ def verify_av(url):
         if not variants:
             return False, False, "no_variant"
         nested = urljoin(url, variants[0])
-        if urlsplit(nested).hostname != urlsplit(url).hostname:
+        if not same_origin_https(url, nested):
             return False, False, "cross_host_variant"
         url = nested
         manifest = safe_curl(url, 65536)
@@ -85,7 +96,7 @@ def verify_av(url):
     if not segments:
         return False, False, "no_segments"
     segment_url = urljoin(url, segments[0])
-    if urlsplit(segment_url).hostname != urlsplit(url).hostname:
+    if not same_origin_https(url, segment_url):
         return False, False, "cross_host_segment"
     payload = safe_curl(segment_url, MAX_SEGMENT)
     if not payload or len(payload) < 188:

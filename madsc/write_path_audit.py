@@ -139,6 +139,7 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
         raw_root = str(allowed_root)
         normalized_root = unicodedata.normalize("NFKC", raw_root)
         if (chr(92) in raw_root or chr(92) in normalized_root or
+                any(part in (".", "..") for part in normalized_root.split("/")) or
                 normalized_root.count("/") != raw_root.count("/") or
                 ":" in normalized_root or
                 any(part in (".", "..") for part in raw_root.split("/")) or
@@ -190,6 +191,7 @@ def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: P
     normalized_root = unicodedata.normalize("NFKC", raw_root)
     root = Path(allowed_root)
     if (not root.is_absolute() or chr(92) in normalized_root or
+            any(part in (".", "..") for part in normalized_root.split("/")) or
             normalized_root.count("/") != raw_root.count("/") or
             ":" in normalized_root or
             any(part in (".", "..") for part in raw_root.split("/")) or
@@ -201,6 +203,7 @@ def enforce_local_turkish_tv_test_playlist(destination: Path, *, allowed_root: P
     raw_destination = str(destination)
     normalized_destination = unicodedata.normalize("NFKC", raw_destination)
     if (chr(92) in normalized_destination or
+            any(part in (".", "..") for part in normalized_destination.split("/")) or
             normalized_destination.count("/") != raw_destination.count("/") or
             ":" in normalized_destination or
             any(part in (".", "..") for part in raw_destination.split("/")) or

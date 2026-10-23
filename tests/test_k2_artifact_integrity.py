@@ -49,5 +49,30 @@ class K2ArtifactIntegrityTests(unittest.TestCase):
                 verify_artifact_bytes(root, "0" * 64)
 
 
+    def test_empty_file_and_exact_boundary(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "empty"
+            path.write_bytes(b"")
+            expected = hashlib.sha256(b"").hexdigest()
+            result = verify_artifact_bytes(path, expected, max_bytes=1)
+            self.assertTrue(result["digest_matches"])
+            self.assertEqual(result["bytes"], 0)
+            path.write_bytes(b"abcd")
+            result = verify_artifact_bytes(
+                path, hashlib.sha256(b"abcd").hexdigest(), max_bytes=4
+            )
+            self.assertTrue(result["digest_matches"])
+            self.assertEqual(result["bytes"], 4)
+
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "POSIX FIFO support required")
+    def test_fifo_rejected_without_waiting_for_writer(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "pipe"
+            os.mkfifo(path)
+            with self.assertRaises(ValueError):
+                verify_artifact_bytes(path, "0" * 64)
+
+
+
 if __name__ == "__main__":
     unittest.main()

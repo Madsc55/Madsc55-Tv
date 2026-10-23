@@ -18,10 +18,13 @@ def encode_pair(pair):
                       ("ana_liste_test_gecmisi.json", "channels")):
         if not isinstance(pair[name], dict) or not isinstance(pair[name].get(key), dict):
             raise ValueError("Invalid history document")
-    body = json.dumps(pair, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    try:
+        body = json.dumps(pair, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+    except (TypeError, ValueError, UnicodeError) as exc:
+        raise ValueError("History documents must contain valid JSON data") from exc
     return json.dumps({"schema": 1, "payload": pair,
                        "sha256": hashlib.sha256(body.encode("utf-8")).hexdigest()},
-                      ensure_ascii=False, sort_keys=True) + "\n"
+                      ensure_ascii=False, sort_keys=True, allow_nan=False) + "\n"
 
 
 def _unique_json_object(pairs):
@@ -34,7 +37,11 @@ def _unique_json_object(pairs):
 
 
 def decode_pair(raw):
-    envelope = json.loads(raw, object_pairs_hook=_unique_json_object)
+    def reject_nonfinite(value):
+        raise ValueError("Non-finite history JSON number: " + value)
+
+    envelope = json.loads(raw, object_pairs_hook=_unique_json_object,
+                          parse_constant=reject_nonfinite)
     if not isinstance(envelope, dict) or set(envelope) != {"schema", "payload", "sha256"}:
         raise ValueError("Invalid history envelope")
     if type(envelope["schema"]) is not int or envelope["schema"] != 1:
@@ -45,8 +52,11 @@ def decode_pair(raw):
     digest = envelope["sha256"]
     if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
         raise ValueError("Invalid history digest")
-    canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False,
-                           separators=(",", ":"))
+    try:
+        canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False,
+                               separators=(",", ":"), allow_nan=False)
+    except (TypeError, ValueError, UnicodeError) as exc:
+        raise ValueError("Invalid history payload JSON") from exc
     if hashlib.sha256(canonical.encode("utf-8")).hexdigest() != digest:
         raise ValueError("History digest mismatch")
     encode_pair(envelope["payload"])

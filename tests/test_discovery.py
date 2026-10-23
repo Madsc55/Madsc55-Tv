@@ -16,7 +16,8 @@ class DiscoveryTests(unittest.TestCase):
             normalize_url("https://user:pass@example.org/live")
     def test_invalid_hosts_and_ports_rejected(self):
         for url in ("https://example.org:abc/live", "https://example.org:0/live",
-                    "https://bad host/live", "https://[broken/live"):
+                    "https://bad host/live", "https://[broken/live",
+                    "https://example.org:/live"):
             with self.subTest(url=url), self.assertRaises(ValueError):
                 normalize_url(url)
 

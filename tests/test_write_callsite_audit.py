@@ -252,6 +252,20 @@ async def async_outer(value=path.touch()):
                           "os.removexattr", "path.chown"])
         self.assertTrue(all(row["review_required"] for row in rows))
 
+    def test_archive_extraction_and_legacy_hardlink_are_reviewed(self):
+        source = (
+            "import shutil\n"
+            "def unpack(archive, folder, target):\n"
+            "    shutil.unpack_archive(archive, folder)\n"
+            "    archive.extractall(folder)\n"
+            "    target.link_to(folder)\n"
+        )
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["shutil.unpack_archive", "archive.extractall",
+                          "target.link_to"])
+        self.assertTrue(all(row["review_required"] for row in rows))
+
     def test_tree_scan_rejects_symlinked_python_source(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

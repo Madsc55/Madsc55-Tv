@@ -495,7 +495,7 @@ class DiscoveryBatchTests(unittest.TestCase):
 
     def test_extinf_control_characters_are_rejected_without_url_leak(self):
         feed = ('#EXTM3U\n'
-                '#EXTINF:-1 tvg-id="bad\\x00id",Bad\n'
+                '#EXTINF:-1 tvg-id="bad\x00id",Bad\n'
                 'https://example.org/bad\n'
                 '#EXTINF:-1 tvg-id="good",Good\n'
                 'https://example.org/good\n')

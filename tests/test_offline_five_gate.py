@@ -93,6 +93,23 @@ class OfflineFiveGateTests(unittest.TestCase):
         self.assertEqual(report["categories"]["k5"], "failure")
         self.assertFalse(report["production_ready"])
 
+    def test_wrong_364_classification_metadata_fails_gate(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from madsc.k5_archive_preview import classify_archive_positions
+
+        original = classify_archive_positions
+        def bad_metadata(scenario, entries):
+            result = original(scenario, entries)
+            if scenario == "364":
+                return replace(result, user_classified_foreign_positions=())
+            return result
+        with patch("madsc.core.classify_archive_positions", side_effect=bad_metadata):
+            report = assess_all()
+        self.assertFalse(report["fixture_gate_passed"])
+        self.assertEqual(report["categories"]["k5"], "failure")
+        self.assertFalse(report["production_ready"])
+
     def test_stage_inventory_is_exact_five(self):
         from unittest.mock import patch
         with patch("madsc.offline_five_gate.CATEGORIES", ("k1", "k2", "k3", "k4", "k4")):

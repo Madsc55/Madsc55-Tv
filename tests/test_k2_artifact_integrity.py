@@ -49,6 +49,28 @@ class K2ArtifactIntegrityTests(unittest.TestCase):
                 verify_artifact_bytes(root, "0" * 64)
 
 
+    def test_path_replacement_during_hashing_is_rejected(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "artifact"
+            path.write_bytes(b"original")
+            digest = hashlib.sha256(b"original").hexdigest()
+            real_stat = os.stat
+            replaced = False
+
+            def swapping_stat(target, *args, **kwargs):
+                nonlocal replaced
+                if not replaced and str(target) == str(path):
+                    replaced = True
+                    path.rename(Path(folder) / "moved")
+                    path.write_bytes(b"replacement")
+                return real_stat(target, *args, **kwargs)
+
+            with patch("os.stat", side_effect=swapping_stat):
+                with self.assertRaises(ValueError):
+                    verify_artifact_bytes(path, digest)
+            self.assertTrue(replaced)
+
     def test_empty_file_and_exact_boundary(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "empty"

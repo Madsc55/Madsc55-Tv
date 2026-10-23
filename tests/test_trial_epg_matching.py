@@ -84,6 +84,14 @@ class TrialEpgMatchingTest(unittest.TestCase):
         self.assertEqual(summary["unmatched"], 1)
         self.assertEqual(summary["with_programmes"], 1)
         self.assertEqual(summary["with_current_programmes"], 1)
+    def test_summary_rejects_mixed_current_coverage_measurements(self):
+        xml = '<tv><channel id="a"/><programme channel="a" start="20261023100000 +0000" stop="20261023110000 +0000"/></tv>'
+        playlist = '#EXTINF:-1 tvg-id="a",TRT 1'
+        measured = programme_coverage(playlist, xml, datetime(2026, 10, 23, 10, 30, tzinfo=timezone.utc))[0]
+        unmeasured = programme_coverage(playlist, xml)[0]
+        with self.assertRaisesRegex(ValueError, "Mixed current-guide"):
+            coverage_summary([measured, unmeasured])
+
     def test_existing_id(self):
         self.assertEqual(matches('#EXTINF:-1 tvg-id="a",Other', XML)[0]["status"], "existing_valid")
     def test_duplicate_xmltv_channel_ids_fail_closed(self):

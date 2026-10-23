@@ -41,6 +41,23 @@ class K5IboArchiveExportTests(unittest.TestCase):
                     export_6115_archive_manifest(self.urls, destination)
             self.assertFalse(destination.exists())
 
+    def test_directory_open_uses_nofollow_when_available(self):
+        if not all(hasattr(os, name) for name in ("O_DIRECTORY", "O_NOFOLLOW")):
+            self.skipTest("Directory nofollow unsupported")
+        with TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "isolated-ibo"
+            real_open = os.open
+            directory_flags = []
+            def inspect_open(path, flags, *args, **kwargs):
+                if Path(path) == destination:
+                    directory_flags.append(flags)
+                return real_open(path, flags, *args, **kwargs)
+            with patch("madsc.isolated_ibo_archive_export.os.open", side_effect=inspect_open):
+                export_6115_archive_manifest(self.urls, destination)
+            self.assertEqual(len(directory_flags), 1)
+            self.assertTrue(directory_flags[0] & os.O_DIRECTORY)
+            self.assertTrue(directory_flags[0] & os.O_NOFOLLOW)
+
     def test_export_bytes_end_with_one_real_newline(self):
         with TemporaryDirectory() as tmp:
             destination = Path(tmp) / "isolated-ibo"

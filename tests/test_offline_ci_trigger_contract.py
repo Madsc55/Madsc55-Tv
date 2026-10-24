@@ -42,7 +42,7 @@ class OfflineCITriggerContractTests(unittest.TestCase):
             source,
         )
         self.assertIn("cancel-in-progress: false", source)
-        self.assertNotIn("group: madsc55-offline-unit-tests\\n", source)
+        self.assertNotIn("group: madsc55-offline-unit-tests\n", source)
 
     def test_pr_gate_stays_read_only_and_offline(self):
         source = WORKFLOW.read_text(encoding="utf-8")

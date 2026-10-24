@@ -2,9 +2,81 @@
 
 Bu dosya bir **şablondur**, gerçek yedekleme yapıldığını kanıtlamaz. Gizli anahtar, erişim URL'si, parola, kişisel veri veya üretim playlist içeriği buraya konulmaz.
 
+## 24 Ekim 2026 — K4 ilerleme kanıtı ve açık kabul kapıları
+
+**Doğrulanan yalnızca sentetik işlemler:** Drive hedef klasörü ve ayrı fixture alt klasörü oluşturuldu; Google Docs test belgesi yazılıp geri okundu; 106 baytlık sentetik düz metin dosyası Drive'a ham dosya olarak yüklendi ve geri indirildi. Bağımsız indirilen dosya ile kaynak SHA-256 eşleşmesi `af227eef0e2a924f817911442cc0e5c8af865a1a29b5d10199495eb4780e5dce` olarak raporlandı.
+
+**K4-15 açık:** Sentetik dosya nesnesi, üretim kapsamı ve manifesti içeren gerçek yedek makbuzu değildir. Yetkilendirilmiş kaynak envanteri, sağlayıcı tarafı yedek işi, nesne kapsamı, saklama politikası ve onay beklenir.
+
+**K4-16 açık:** Tek sentetik dosyanın geri indirilmesi, gerçek yedekten bağımsız restore ağacı veya negatif test değildir.
+
+**K4-17 açık:** Korunan VOD/arşivlerin salt-okunur kapsam envanteri ve izinli test kopyası bulunmuyor.
+
+**K4-18 açık:** Ayın 1'i/15'i üretim zamanlayıcısı ve gerçek run kanıtı yok. Fixture-only workflow'u üretim verisine bağlamak veya otomatik tetiklemek yasak.
+
+**Operasyonel engel:** ChatGPT Google Drive bağlantısı, GitHub Actions'a otomatik kimlik bilgisi aktarmaz. Kısıtlı OAuth/iş yükü kimliği ve kullanıcıdan açık üretim izni olmadan yedekleyici devreye alınamaz. Mevcut üretim koruma bayrakları false kalır.
+
+## 24 Ekim 2026 — Sentetik ham dosya Drive yükleme/geri indirme SHA-256 deneyi
+
+- `K4-Fixture-Only` klasöründe Google Docs test içeriği `text/plain` biçiminde dışa aktarıldı, `upload_file` ile yeni bir **ham .txt** Drive nesnesi olarak yüklendi.
+- Drive metadata kontrolü: MIME `text/plain`, boyut **106 bayt**, ebeveyn `K4-Fixture-Only`, `shared=false`. Dosya Google Drive API üzerinden ham biçimde yeniden indirildi.
+- Yükleme kaynak dosyası **ayrıca yeniden dışa aktarılarak** ve geri indirilen nesneden bağımsız dosya olarak karşılaştırılarak SHA-256 doğrulandı:
+  - Kaynak: 106 bayt; SHA-256 `af227eef0e2a924f817911442cc0e5c8af865a1a29b5d10199495eb4780e5dce`
+  - Drive'dan geri indirilen: 106 bayt; SHA-256 `af227eef0e2a924f817911442cc0e5c8af865a1a29b5d10199495eb4780e5dce`
+  - Tam bayt eşitliği: **true**.
+- **Bu yalnızca sentetik, küçük, tek dosyalı manuel Drive smoke testidir.** GitHub Actions üzerinden OAuth/iş yükü kimliği, gerçek yedek manifesti, üretim veri kapsamı, harici sağlayıcı teslim makbuzu, sandbox restore ve zamanlayıcı henüz doğrulanmamıştır. `external_storage_proven=false`, `production_restore_approved=false`, `production_writes=false`, `production_ready=false` korunur.
+- Her iki test dosyası Drive'da kalır; mevcut üretim verisi, paylaşım, silme ve otomatik çalışma değişmemiştir. Hesap kimliği, erişim token'ı ve Drive nesne kimliği GitHub kayıtlarına yazılmadı.
+
+## 24 Ekim 2026 — Sentetik Google Docs yazma ve geri okuma kanıtı
+
+- `K4-Fixture-Only` içinde `K4-FIXTURE-ONLY-2026-10-24` adlı **Google Docs biçiminde** bir belge oluşturuldu; yalnızca `MADSC55 K4 SYNTHETIC FIXTURE`, `No production data. No secrets. No backup acceptance.` ve `Fixture version: 1` gibi zararsız sabit metinler yazıldı.
+- Google Docs `batchUpdate` yanıtında başarılı revizyon kaydı alındı; Drive `update_file` ile yalnız bu yeni belgenin ebeveyni sentetik test klasörüne taşındı.
+- Google Docs `get_document` geri okumasında beklenen üç satır görüldü. Drive klasör listelemesiyle dosyanın hedef test klasöründe bulunduğu doğrulandı.
+- **Test sınırı:** Bu yalnızca *yerel olmayan native Google Docs belge yazma/okuma* testidir. Ham dosya yükleme, SHA-256 bayt karşılaştırması, GitHub Actions'tan API kimliği, sağlayıcıdan bağımsız teslim makbuzu, gerçek yedek ve bağımsız restore **test edilmedi**. Dolayısıyla K4-15/16/17/18 ve `external_storage_proven` kabul edilmiyor.
+- Test belgesi korunmuştur; otomatik silme, paylaşım değişikliği, üretim aktarımı ve zamanlayıcı etkinleştirmesi yapılmadı. Hesap ve dosya kimlikleri açık GitHub kaydına aktarılmadı.
+
+## 24 Ekim 2026 — İzole sentetik test klasörü
+
+- Kullanıcının devam talimatıyla `MADSC55-TV/K4-Backups/K4-Fixture-Only` alt klasörü oluşturuldu. Google Drive metadata okuması ile ebeveyn klasörü, klasör MIME türü ve `shared=false` durumu doğrulandı.
+- Yedek hedefi altındaki bu klasör **yalnızca sentetik fixture** içindir. Gerçek playlist, VOD, EPG, arşiv ve cihaz verileri buraya kopyalanmaz.
+- Sentetik dosya yükleme/geri okuma **henüz gerçekleştirilmedi**: mevcut Google Drive yükleme arayüzü yerel dosya yolu değil, yetkili bir `file_uri` kaynağı gerektiriyor. Henüz böyle bir kaynak üretilip doğrulanmadığından testin başarılı olduğu iddia edilmez.
+- Sonraki aşama: küçük, rastgele olmayan, hassas bilgi içermeyen UTF-8 fixture içeriği için desteklenen dosya referansı oluşturulması, ardından dosyanın bu klasöre yüklenmesi, Drive metadata ve indirilen ham baytların SHA-256 eşitliğinin doğrulanması. Temizlik/silme için ayrıca kullanıcı izni gerekir.
+- GitHub Actions için Drive kimliği, gerçek yedekleme, geri yükleme, üretim yazması ve 1/15 zamanlayıcısı devre dışı kalır.
+
+## 24 Ekim 2026 — Google Drive klasör oluşturma doğrulaması
+
+- Kullanıcı onayı sonrasında Google Drive kökünde `MADSC55-TV` klasörü, onun altında `K4-Backups` klasörü oluşturuldu.
+- Drive meta verisi üzerinden `K4-Backups` türünün klasör olduğu, ebeveyninin `MADSC55-TV` olduğu ve `shared=false` durumunun raporlandığı doğrulandı. Klasör kimlikleri, hesap adresleri ve özel bağlantılar açık GitHub kayıtlarına eklenmedi.
+- **Yalnız klasör oluşturma gerçekleştirildi.** Sentetik fixture yükleme, dosya silme, gerçek yedekleme, VOD/arşiv okuma, restore, GitHub Actions kimlik bilgisi veya 1/15 zamanlayıcı etkinleştirmesi yapılmadı.
+- Google Drive bağlantısının ChatGPT içinden çalışması, GitHub Actions ortamında bağımsız OAuth/iş yükü kimliği bulunduğunu **göstermez**. Sınırlı test yüklemesi için ayrı onay ve uygun yetki doğrulaması gerekir.
+- **K4-15/16/17/18 kabul durumu değişmedi.** Gerçek sağlayıcı yükleme makbuzu ve bağımsız geri yükleme kanıtı henüz bulunmuyor.
+
+## 24 Ekim 2026 — Google Drive bağlantısı salt-okunur ön kontrolü
+
+- Google Drive bağlantısı kullanıcı tarafından etkinleştirildi; erişilebilir dosya adlarında `MADSC55` ve `K4` aramaları sıfır eşleşme döndürdü. Bu arama sonuçları **hedef klasörün bulunmadığını kanıtlamaz**; erişim kapsamı ve klasör yetkisi ayrıca doğrulanmalıdır.
+- K4 için doğrulanmış, kullanıcı tarafından onaylı bir hedef klasör kimliği **henüz yok**. Google Drive'a klasör oluşturma, dosya yükleme, silme, paylaşım değiştirme veya gerçek yedek aktarma işlemi **yapılmadı**.
+- Bu bağlantı ChatGPT üzerinden salt-okunur keşif sağlayabildi; GitHub Actions çalışma zamanı için Google Drive API kimlik bilgileri veya OAuth hizmet yetkisi **kurulmuş sayılmaz**.
+- Sonraki güvenli kapı: belirli K4 hedef klasörünü ve erişim kapsamını kullanıcıyla doğrula; ardından ayrı bir sentetik fixture için sınırlı test yazma izni al. Gerçek kaynak envanteri ve üretim aktarımı için ayrıca açık onay gereklidir.
+
+## 24 Ekim 2026 — Google Drive hedef seçimi ve güvenli ön hazırlık
+
+**Kullanıcı tercihi:** Google Drive. Bu yalnızca hedef sağlayıcı seçimidir; erişim yetkisi, yükleme onayı veya üretim verisi aktarım izni değildir. K4-15/16/17/18 kabul bayrakları değişmez.
+
+### Yetki öncesi kontrol kapısı (fail-closed)
+
+1. Google Drive bağlantısının hesap sahibi tarafından kurulması ve hedef hesabın doğrulanması beklenir. Kişisel Drive alanı yerine kullanıcı tarafından açıkça onaylanan, erişimi sınırlandırılmış bir K4 yedek klasörü seçilir. Klasör kimliği ve paylaşım kapsamı doğrulanmadan hiçbir veri yazılmaz.
+2. Önce yalnızca **sentetik fixture** ile ayrı bir test klasöründe izinli yazma/okuma/silme davranışı doğrulanır; gerçek playlist, EPG, VOD, cihaz verisi, arşiv veya mevcut yedek kullanılmaz. Test klasörü temizliği ayrıca onay gerektirir.
+3. En az yetki ilkesi uygulanır: yalnız onaylanan hedefe erişim, uzun ömürlü servis hesabı anahtarı veya GitHub secret'ı depoya eklenmez. Yetki iptali ve kimlik döndürme prosedürü önceden belgelenir.
+4. Gerçek yedeklemeye geçmeden önce **ayrı kullanıcı onayı**, salt-okunur kaynak envanteri, veri kapsamı, toplam boyut, saklama süresi, erişim/paylaşım politikası ve aktarım maliyeti/riskleri kayda alınır.
+5. İleride yetkilendirilecek aktarım, dosya başına SHA-256 ve byte sayısı, deterministik manifest, sağlayıcı nesne kimliği, yükleme zamanı, API yanıtı ve tekrar çalıştırmada idempotency kanıtı üretmelidir. Sırf dosyanın Drive'da görünmesi kabul için yeterli değildir.
+6. K4-16 için aynı nesne kimliğinden **bağımsız temiz sandbox** alanına indirme, tam envanter ve hash eşitliği, eksik/bozuk dosya negatif testi ve üretime sıfır yazma kanıtı gerekir.
+7. K4-17 için yetkili VOD/arşiv salt-okunur envanteri olmadan kapsam eşdeğerliği ilan edilmez. K4-18 için saat dilimi (UTC veya Europe/Stockholm), DST davranışı, 1/15 takvimi, başarısızlık uyarısı, tekrar deneme ve çift çalıştırma kilidi onaylanmadan scheduler etkinleştirilmez.
+
+**Mevcut durum (24 Ekim son güncelleme):** Google Drive bağlantısı, özel klasör, sentetik belge ve ham dosya yazma/geri indirme testi doğrulandı; gerçek üretim yedeği, bağımsız restore ve GitHub Actions kimliği henüz doğrulanmadı. `.github/workflows/madsc-04-yedek.yml` fixture-only kalır. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.
+
 ## K4-15 — Harici yedek teslimi (BEKLİYOR)
 
-- Sağlayıcı / bağımsız hedef türü: **henüz belirlenmedi**
+- Sağlayıcı / bağımsız hedef türü: **Google Drive seçildi; hedef klasör ve sentetik aktarım doğrulandı, gerçek yedek kapsamı onaysız**
 - Kaynak kapsamı ve salt-okunur envanter kimliği: **kanıt bekleniyor**
 - Başlama / bitiş zamanları, UTC: **kanıt bekleniyor**
 - Gerçek iş kimliği ve sağlayıcı tarafından verilen teslim makbuzu: **kanıt bekleniyor**

@@ -2,6 +2,22 @@
 
 Bu dosya bir **şablondur**, gerçek yedekleme yapıldığını kanıtlamaz. Gizli anahtar, erişim URL'si, parola, kişisel veri veya üretim playlist içeriği buraya konulmaz.
 
+## 24 Ekim 2026 — Google Drive hedef seçimi ve güvenli ön hazırlık
+
+**Kullanıcı tercihi:** Google Drive. Bu yalnızca hedef sağlayıcı seçimidir; erişim yetkisi, yükleme onayı veya üretim verisi aktarım izni değildir. K4-15/16/17/18 kabul bayrakları değişmez.
+
+### Yetki öncesi kontrol kapısı (fail-closed)
+
+1. Google Drive bağlantısının hesap sahibi tarafından kurulması ve hedef hesabın doğrulanması beklenir. Kişisel Drive alanı yerine kullanıcı tarafından açıkça onaylanan, erişimi sınırlandırılmış bir K4 yedek klasörü seçilir. Klasör kimliği ve paylaşım kapsamı doğrulanmadan hiçbir veri yazılmaz.
+2. Önce yalnızca **sentetik fixture** ile ayrı bir test klasöründe izinli yazma/okuma/silme davranışı doğrulanır; gerçek playlist, EPG, VOD, cihaz verisi, arşiv veya mevcut yedek kullanılmaz. Test klasörü temizliği ayrıca onay gerektirir.
+3. En az yetki ilkesi uygulanır: yalnız onaylanan hedefe erişim, uzun ömürlü servis hesabı anahtarı veya GitHub secret'ı depoya eklenmez. Yetki iptali ve kimlik döndürme prosedürü önceden belgelenir.
+4. Gerçek yedeklemeye geçmeden önce **ayrı kullanıcı onayı**, salt-okunur kaynak envanteri, veri kapsamı, toplam boyut, saklama süresi, erişim/paylaşım politikası ve aktarım maliyeti/riskleri kayda alınır.
+5. İleride yetkilendirilecek aktarım, dosya başına SHA-256 ve byte sayısı, deterministik manifest, sağlayıcı nesne kimliği, yükleme zamanı, API yanıtı ve tekrar çalıştırmada idempotency kanıtı üretmelidir. Sırf dosyanın Drive'da görünmesi kabul için yeterli değildir.
+6. K4-16 için aynı nesne kimliğinden **bağımsız temiz sandbox** alanına indirme, tam envanter ve hash eşitliği, eksik/bozuk dosya negatif testi ve üretime sıfır yazma kanıtı gerekir.
+7. K4-17 için yetkili VOD/arşiv salt-okunur envanteri olmadan kapsam eşdeğerliği ilan edilmez. K4-18 için saat dilimi (UTC veya Europe/Stockholm), DST davranışı, 1/15 takvimi, başarısızlık uyarısı, tekrar deneme ve çift çalıştırma kilidi onaylanmadan scheduler etkinleştirilmez.
+
+**Mevcut durum:** Google Drive seçildi; bağlantı, klasör yetkisi, gerçek aktarım ve gerçek restore henüz doğrulanmadı. `.github/workflows/madsc-04-yedek.yml` fixture-only kalır. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.
+
 ## K4-15 — Harici yedek teslimi (BEKLİYOR)
 
 - Sağlayıcı / bağımsız hedef türü: **henüz belirlenmedi**

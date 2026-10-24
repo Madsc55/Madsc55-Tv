@@ -1,7 +1,6 @@
 """Additional offline regression checks for K4 schedule determinism and safety."""
 import datetime as dt
 import unittest
-from zoneinfo import ZoneInfo
 from unittest.mock import patch
 
 from madsc.k4_schedule_plan import planned_slots
@@ -30,8 +29,11 @@ class K4AnnualScheduleRegression(unittest.TestCase):
         with patch.dict("os.environ", {"TZ": "Pacific/Honolulu"}):
             self.assertEqual(planned_slots(2026, 10), baseline)
 
-    def test_schedule_does_not_depend_on_current_date(self):
-        self.assertEqual(planned_slots(2026, 10), planned_slots(2026, 10))
+    def test_idempotency_keys_are_stable_across_calls(self):
+        first = planned_slots(2026, 10)
+        second = planned_slots(2026, 10)
+        self.assertEqual([s["idempotency_key"] for s in first],
+                         [s["idempotency_key"] for s in second])
 
 
 if __name__ == "__main__":

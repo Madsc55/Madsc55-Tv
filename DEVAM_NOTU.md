@@ -1473,3 +1473,13 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 - Bu commit için CI **henüz doğrulanmadı**; son sorguda görülen başarılı CI https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073059557 yalnız `fe90142` SHA'sını doğrular. Daha yeni `main` commit'leri de aynı CI kapsamında sayılmamalı.
 - Açık: TOCTOU yarışlarının bütünü, merkezi writer guard entegrasyonu ve K1 26/26 runtime kabulü; **kanıtlı runtime kabul 0/26**, `production_ready=false`.
 - Üretim playlist, EPG, logo, favori, arşiv, yedek, cihaz ve kanal verileri değiştirilmedi; diğer K kayıtları korunmuştur.
+
+
+---
+
+## K3 — EK DEVİR / 24 Ekim 2026 — pilot ölçüm zamanı düzeltmesi
+- K3 audit dalı `madsc/k3-live-acceptance-audit-20261024` üzerinde `madsc/k3_live_manifest_pilot.py` düzeltildi: `measured_at_utc` artık kaynak keşfinden **önce** değil, probe sonuçları toplandıktan **sonra** yazılıyor. Böylece uzun süren ölçümün başlangıcı yanlışlıkla bitiş zamanı gibi sunulmuyor. Commit: https://github.com/Madsc55/Madsc55-Tv/commit/3501cafc40c3d12968aec50acec54d89f3f0dcf8
+- Bu düzeltme yalnız taslak PR #10 dalındadır: https://github.com/Madsc55/Madsc55-Tv/pull/10 ; main'e merge edilmedi. Yeni commit için CI sonucu bu kayıt anında henüz teyit edilmedi; başarılı sayılmamalı.
+- Önceki K3 offline test run 40073465994 / commit 0c532c96 **SUCCESS**: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073465994 . Bu gerçek canlı HLS, video/ses veya cihaz kanıtı değildir.
+- **K3-13 AÇIK.** 75 gerçek HTTPS aday, altı saat aralıklı üç gerçek snapshot, ffprobe ses/görüntü, Pages/XMLTV, logo ve son IBO Player Pro kabulü bekliyor. Üretim verilerine dokunulmadı; K1/K2/K4/K5 bölümleri korunmalı.
+- Öncelik: yeni commit CI sonucunu doğrula; sonra yetkili read-only pilot ve artifact'leri topla; en son kullanıcı cihaz kabulü. CI veya gerçek kanıt olmadan kabul kapatma.

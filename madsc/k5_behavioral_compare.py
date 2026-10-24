@@ -49,7 +49,9 @@ def _valid(record):
 def compare(document):
     errors = []
     if not isinstance(document, dict) or set(document) != {"workflow", "fixture_sha256", "legacy", "new", "independent_runs", "isolated_fixture", "legacy_run_id", "new_run_id", "legacy_commit_sha", "new_commit_sha"}:
-        return {"accepted": False, "errors": ["invalid_evidence_schema"]}
+        return {"matched_evidence": False, "accepted": False,
+                "requires_independent_execution_verification": False,
+                "errors": ["invalid_evidence_schema"]}
     workflow = document["workflow"]
     if (not _safe_relative_name(workflow) or not workflow.endswith((".yml", ".yaml"))
             or not workflow.startswith(".github/workflows/")
@@ -94,7 +96,9 @@ def main():
         document = json.loads(args.evidence.read_text(encoding="utf-8"))
         result = compare(document)
     except (OSError, ValueError) as exc:
-        result = {"accepted": False, "errors": ["unreadable_evidence:" + type(exc).__name__]}
+        result = {"matched_evidence": False, "accepted": False,
+                  "requires_independent_execution_verification": False,
+                  "errors": ["unreadable_evidence:" + type(exc).__name__]}
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     raise SystemExit(0 if result["accepted"] else 1)
 

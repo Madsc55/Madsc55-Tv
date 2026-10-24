@@ -111,6 +111,31 @@ class CoreFixtureWriterTests(unittest.TestCase):
             self.assertTrue(swapped)
             self.assertEqual(target.read_bytes(), b"original")
 
+    def test_symlinked_stage_before_replace_is_rejected(self):
+        with (tempfile.TemporaryDirectory() as directory,
+              tempfile.TemporaryDirectory() as outside):
+            root = Path(directory)
+            external = Path(outside) / "external.txt"
+            external.write_bytes(b"external")
+            target = write_core_fixture(root, "fixture.txt", b"original")
+            real_stat = os.stat
+            swapped = False
+            def replace_stage_with_symlink(path, *args, **kwargs):
+                nonlocal swapped
+                if (isinstance(path, str) and path.startswith(".fixture-stage-")
+                        and not swapped):
+                    swapped = True
+                    (root / path).unlink()
+                    (root / path).symlink_to(external)
+                return real_stat(path, *args, **kwargs)
+            with mock.patch("madsc.core_fixture_writer.os.stat",
+                            side_effect=replace_stage_with_symlink):
+                with self.assertRaises(PermissionError):
+                    write_core_fixture(root, "fixture.txt", b"new", overwrite=True)
+            self.assertTrue(swapped)
+            self.assertEqual(target.read_bytes(), b"original")
+            self.assertEqual(external.read_bytes(), b"external")
+
     def test_unknown_protected_and_traversing_paths_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

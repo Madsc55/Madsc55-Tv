@@ -138,6 +138,16 @@ class BehavioralCompareTests(unittest.TestCase):
                 doc["workflow"] = name
                 self.assertIn("invalid_workflow", compare(doc)["errors"])
 
+    def test_actual_nul_and_backslash_rejected(self):
+        for name in ("nul" + chr(0) + "name", "a" + chr(92) + "b"):
+            with self.subTest(name=repr(name)):
+                doc = evidence()
+                doc["legacy"]["artifacts"] = {name: digest(b"x")}
+                self.assertIn("invalid_legacy_record", compare(doc)["errors"])
+                doc = evidence()
+                doc["workflow"] = ".github/workflows/" + name + ".yml"
+                self.assertIn("invalid_workflow", compare(doc)["errors"])
+
     def test_boolean_exit_code_rejected(self):
         doc = evidence()
         doc["legacy"]["exit_code"] = False

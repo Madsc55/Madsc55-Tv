@@ -45,7 +45,7 @@ def assess(paths):
         if type(data.get("manifest_seen")) is not int or data.get("manifest_seen") != count:
             raise ValueError("Manifest count mismatch")
         for row in rows:
-            if row.get("hls_manifest_seen") not in (True, False, None):
+            if row.get("hls_manifest_seen") is not True and row.get("hls_manifest_seen") is not False and row.get("hls_manifest_seen") is not None:
                 raise ValueError("Invalid manifest observation type")
             if row.get("hls_manifest_seen") is True:
                 if row.get("status") != "manifest_only" or row.get("https_reachable") is not True:

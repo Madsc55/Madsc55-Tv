@@ -27,6 +27,13 @@ class K4SchedulePlanTests(unittest.TestCase):
         for year, month in [(2024, 2), (2025, 2), (2026, 12), (2027, 1)]:
             self.assertEqual(len(planned_slots(year, month)), 2)
 
+    def test_daylight_saving_transition_months(self):
+        march = planned_slots(2026, 3)
+        october = planned_slots(2026, 10)
+        self.assertTrue(all(slot["local"].endswith("+01:00") for slot in march))
+        self.assertTrue(all(slot["local"].endswith("+02:00") for slot in october))
+        self.assertTrue(all(slot["mode"] == "dry_run_only" for slot in march + october))
+
     def test_invalid_input_fails_closed(self):
         for year, month, hour in [(2026, 0, 3), (2026, 13, 3), (1999, 1, 3),
                                   (2101, 1, 3), (2026, 1, 24), (True, 1, 3),

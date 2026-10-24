@@ -137,7 +137,7 @@ class ProcessGuardTests(unittest.TestCase):
         self.assertEqual(environment, {"LANG": "C", "LC_ALL": "C"})
         validate_parity_process_capability(
             capability, command, cwd=root, timeout_seconds=30, env=environment)
-        for invalid_timeout in (None, "30", True, float("nan"), float("inf"), float("-inf")):
+        for invalid_timeout in (None, "30", True, float("nan"), float("inf"), float("-inf"), 10 ** 1000):
             with self.subTest(timeout=repr(invalid_timeout)):
                 with self.assertRaises(ProtectedWriteRejected):
                     validate_parity_process_capability(

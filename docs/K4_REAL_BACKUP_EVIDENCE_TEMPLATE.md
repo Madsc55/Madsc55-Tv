@@ -2,6 +2,14 @@
 
 Bu dosya bir **şablondur**, gerçek yedekleme yapıldığını kanıtlamaz. Gizli anahtar, erişim URL'si, parola, kişisel veri veya üretim playlist içeriği buraya konulmaz.
 
+## 24 Ekim 2026 — Sentetik Google Docs yazma ve geri okuma kanıtı
+
+- `K4-Fixture-Only` içinde `K4-FIXTURE-ONLY-2026-10-24` adlı **Google Docs biçiminde** bir belge oluşturuldu; yalnızca `MADSC55 K4 SYNTHETIC FIXTURE`, `No production data. No secrets. No backup acceptance.` ve `Fixture version: 1` gibi zararsız sabit metinler yazıldı.
+- Google Docs `batchUpdate` yanıtında başarılı revizyon kaydı alındı; Drive `update_file` ile yalnız bu yeni belgenin ebeveyni sentetik test klasörüne taşındı.
+- Google Docs `get_document` geri okumasında beklenen üç satır görüldü. Drive klasör listelemesiyle dosyanın hedef test klasöründe bulunduğu doğrulandı.
+- **Test sınırı:** Bu yalnızca *yerel olmayan native Google Docs belge yazma/okuma* testidir. Ham dosya yükleme, SHA-256 bayt karşılaştırması, GitHub Actions'tan API kimliği, sağlayıcıdan bağımsız teslim makbuzu, gerçek yedek ve bağımsız restore **test edilmedi**. Dolayısıyla K4-15/16/17/18 ve `external_storage_proven` kabul edilmiyor.
+- Test belgesi korunmuştur; otomatik silme, paylaşım değişikliği, üretim aktarımı ve zamanlayıcı etkinleştirmesi yapılmadı. Hesap ve dosya kimlikleri açık GitHub kaydına aktarılmadı.
+
 ## 24 Ekim 2026 — İzole sentetik test klasörü
 
 - Kullanıcının devam talimatıyla `MADSC55-TV/K4-Backups/K4-Fixture-Only` alt klasörü oluşturuldu. Google Drive metadata okuması ile ebeveyn klasörü, klasör MIME türü ve `shared=false` durumu doğrulandı.

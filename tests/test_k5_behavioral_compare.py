@@ -167,6 +167,14 @@ class BehavioralCompareTests(unittest.TestCase):
         doc["legacy_run_id"] = "legacy" + chr(10) + "forged"
         self.assertIn("invalid_legacy_run_id", compare(doc)["errors"])
 
+    def test_timeout_cannot_claim_success(self):
+        doc = evidence()
+        doc["legacy"]["timed_out"] = True
+        doc["new"]["timed_out"] = True
+        self.assertIn("inconsistent_timeout:legacy", compare(doc)["errors"])
+        self.assertIn("inconsistent_timeout:new", compare(doc)["errors"])
+        self.assertFalse(compare(doc)["matched_evidence"])
+
     def test_boolean_exit_code_rejected(self):
         doc = evidence()
         doc["legacy"]["exit_code"] = False

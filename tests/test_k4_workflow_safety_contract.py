@@ -52,5 +52,22 @@ class K4WorkflowSafetyContractTests(unittest.TestCase):
         self.assertNotIn("id-token: write", source)
 
 
+    def test_fixture_workflow_rejects_alternate_privileged_syntax(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        # A fixture-only drill must not accept alternate secret access,
+        # broad write permissions, or a credential-persisting checkout.
+        self.assertNotIn("secrets[", source)
+        self.assertNotIn("write-all", source)
+        self.assertNotIn("persist-credentials: true", source)
+
+    def test_fixture_workflow_rejects_privileged_triggers_and_cancellation(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        # Privileged events could unexpectedly run this fixture drill.
+        self.assertNotIn("  pull_request_target:", source)
+        self.assertNotIn("  repository_dispatch:", source)
+        self.assertNotIn("  workflow_run:", source)
+        self.assertIn("cancel-in-progress: false", source)
+
+
 if __name__ == "__main__":
     unittest.main()

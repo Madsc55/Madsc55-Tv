@@ -2828,3 +2828,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Hedefli 115/115 ve tam offline 1524/1524 başarılı; beş izole kapı ve tüm offline kapılar geçti. Envanter 113/111/19, subprocess effect acceptance 0/6; kabul 0/92, 0/26, 0/22 ve production false.
 - Belge yayımında bir ara blob aktarımı iki büyük notu 90.060 bayta kesti; `f1f5275304643b8b634deddaf719b3621fcbed5b` tam içerikleri geri yükledi. Uzak boyutlar DEVAM 1186 satır/234134 bayt, HAFIZA 2823 satır/515711 bayt olarak doğrulandı; kesik `bdd1f2f…` güncel kaynak sayılmaz.
 - Sonraki yerel iş sabit curl/ffprobe executable/environment/cwd kökeni ve güncel ilk bağımsız açık K1 caller paketidir. Dış aynı-input artifact/run, harici restore ve son kullanıcı cihaz testi bekleniyor; korunan/dış sistem işlemi yapılmadı.
+
+
+## 24 Ekim 2026 — K1 media process köken sertleştirmesi
+- `af615f6eace58b96417a7d70d517a7c580750b6d`: curl cwd `/`, ffprobe cwd guarded workspace; environment yalnız `/usr/local/bin:/usr/bin` PATH ile `LANG/LC_ALL=C`. `c996626eda2e7440c076fa583cf6b10c6362f5db`: çözülen curl/ffprobe ve parent dizini root-owned, non-symlink/non-writable kimlik kontrolünde.
+- Hedefli 142/142; eşzamanlı K2/K1 commitleri korunmuş exact birleşik içerikte tam offline 1526/1526, beş izole kapı ve bütün offline kapılar başarılı. Envanter 113/111/19; doğrudan guard 110/111, process effect kabulü 0/6.
+- K1-03 ledger evidence güncellendi fakat status in_progress; fixture/statik kanıt 0/26 runtime, 0/92 parity veya 0/22 görev kabulü değildir. Dış sistem/korunan veri işlemi yapılmadı.
+- Sonraki yerel adım generic parity Popen caller capability/call-chain sözleşmesi; gerçek opt-in consumers dışına authority vermeden ve test yardımcılarını production kabulü saymadan ilerletilecek.

@@ -202,7 +202,7 @@ class K3EvidenceTests(unittest.TestCase):
             middle["results"][0]["status"] = "blocked_or_unreachable"
             middle["manifest_seen"] = 74
             paths[1].write_text(json.dumps(middle), encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "HTTPS success"):
+            with self.assertRaisesRegex(ValueError, "HTTPS observation"):
                 assess(paths)
 
     def test_non_utc_snapshot_timestamp_rejected(self):

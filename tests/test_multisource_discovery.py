@@ -51,7 +51,7 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
 
     def test_malformed_category_and_surrogate_name_are_rejected(self):
         for change in ({"source_kind": []}, {"source_kind": {}},
-                       {"name": "Unsafe\\ud800Channel"}):
+                       {"name": "Unsafe" + chr(0xD800) + "Channel"}):
             with self.subTest(change=repr(change)):
                 result = evaluate_discovery([dict(self.item, **change)])
                 self.assertEqual(result["candidates"], [])

@@ -23,6 +23,8 @@ def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = Non
         raise ValueError("Invalid existing URL inventory")
     try:
         existing = {normalize_url(url) for url in (existing_urls or set())}
+        if any(len(url) > 4096 for url in existing):
+            raise ValueError("Existing URL too long")
     except (TypeError, ValueError) as exc:
         raise ValueError("Invalid existing URL inventory") from exc
     seen: set[str] = set()

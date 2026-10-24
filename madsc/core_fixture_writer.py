@@ -102,6 +102,7 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
             # staging write fails, the existing fixture remains untouched.
             staged_fd = None
             staged_name = None
+            staged_identity = None
             try:
                 for attempt in range(16):
                     candidate = f".fixture-stage-{os.getpid()}-{os.urandom(8).hex()}"
@@ -115,6 +116,11 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
                         continue
                 if staged_fd is None:
                     raise PermissionError("Unable to stage fixture overwrite")
+                stage_metadata = os.fstat(staged_fd)
+                if (not stat.S_ISREG(stage_metadata.st_mode)
+                        or stage_metadata.st_nlink != 1):
+                    raise PermissionError("Unsafe staged fixture descriptor")
+                staged_identity = (stage_metadata.st_dev, stage_metadata.st_ino)
                 with os.fdopen(staged_fd, "wb", closefd=False) as stage:
                     stage.write(payload)
                     stage.flush()
@@ -132,9 +138,13 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
             finally:
                 if staged_fd is not None:
                     os.close(staged_fd)
-                if staged_name is not None:
+                if staged_name is not None and staged_identity is not None:
                     try:
-                        os.unlink(staged_name, dir_fd=parent_fd)
+                        staged_current = os.stat(staged_name, dir_fd=parent_fd,
+                                                 follow_symlinks=False)
+                        if ((staged_current.st_dev, staged_current.st_ino)
+                                == staged_identity):
+                            os.unlink(staged_name, dir_fd=parent_fd)
                     except FileNotFoundError:
                         pass
         with os.fdopen(descriptor, "wb", closefd=False) as handle:

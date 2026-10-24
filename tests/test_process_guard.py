@@ -117,6 +117,17 @@ class ProcessGuardTests(unittest.TestCase):
             enforce_parity_consumer_process(k5, consumer="k5", root=root,
                                             run_id="123", commit_sha="A" * 40)
 
+    def test_parity_capability_rejects_nonfinite_timeouts(self):
+        root = Path(__file__).resolve().parents[1]
+        command = [sys.executable, "-m", "src.madsc_guard",
+                   "config/shadow_manifest.json"]
+        for timeout in (float("nan"), float("inf"), float("-inf")):
+            with self.subTest(timeout=repr(timeout)):
+                with self.assertRaises(ProtectedWriteRejected):
+                    authorize_parity_consumer_process(
+                        command, consumer="k1", root=root,
+                        timeout_seconds=timeout)
+
     def test_parity_capability_binds_command_root_identity_and_timeout(self):
         root = Path(__file__).resolve().parents[1]
         command = [sys.executable, "-m", "src.madsc_guard",
@@ -129,6 +140,12 @@ class ProcessGuardTests(unittest.TestCase):
             "PYTHONPATH", "PYTHONDONTWRITEBYTECODE", "LANG", "LC_ALL"})
         validate_parity_process_capability(
             capability, command, cwd=root, timeout_seconds=30, env=environment)
+        for bad_timeout in (float("nan"), float("inf"), float("-inf"), "30", None, True):
+            with self.subTest(timeout=repr(bad_timeout)):
+                with self.assertRaises(ProtectedWriteRejected):
+                    validate_parity_process_capability(
+                        capability, command, cwd=root,
+                        timeout_seconds=bad_timeout, env=environment)
         for changed_command, changed_root, changed_timeout in (
                 (command + ["--extra"], root, 30),
                 (command, root.parent, 30),

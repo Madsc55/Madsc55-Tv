@@ -225,6 +225,30 @@ class K3EvidenceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "UTC snapshot"):
                 assess(paths)
 
+    def test_unverified_requires_explicit_observations(self):
+        with TemporaryDirectory() as folder:
+            paths = []
+            for hour in (0, 6, 12):
+                rows = [{"url_sha256": format(i, "064x"), "hls_manifest_seen": True,
+                         "https_reachable": True, "status": "manifest_only"} for i in range(75)]
+                report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
+                          "measured_at_utc": f"2026-10-23T{hour:02d}:00:00+00:00",
+                          "candidate_limit": 75, "candidate_shortfall": 0,
+                          "production_playlist_modified": False, "probed": 75,
+                          "manifest_seen": 75, "results": rows}
+                path = Path(folder) / f"{hour}.json"
+                path.write_text(json.dumps(report), encoding="utf-8")
+                paths.append(path)
+            for missing in ("hls_manifest_seen", "https_reachable"):
+                middle = json.loads(paths[1].read_text(encoding="utf-8"))
+                middle["results"][0]["hls_manifest_seen"] = False
+                middle["results"][0]["status"] = "unverified"
+                middle["manifest_seen"] = 74
+                middle["results"][0].pop(missing)
+                paths[1].write_text(json.dumps(middle), encoding="utf-8")
+                with self.subTest(missing=missing), self.assertRaisesRegex(ValueError, "Incomplete unverified"):
+                    assess(paths)
+
     def test_short_middle_interval_does_not_pass(self):
         with TemporaryDirectory() as folder:
             files = []

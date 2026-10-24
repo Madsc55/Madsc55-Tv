@@ -1,6 +1,7 @@
 """Exact K1 preflight contracts for fixed read-only helper processes."""
 from __future__ import annotations
 
+import math
 import os
 import shutil
 import stat
@@ -186,6 +187,7 @@ def authorize_parity_consumer_process(command, *, consumer: str, root: Path,
                                       commit_sha: str = "") -> _ParityProcessCapability:
     """Issue an identity-bound capability for one validated opt-in consumer."""
     if (type(timeout_seconds) not in (int, float)
+            or not math.isfinite(timeout_seconds)
             or not 0 < timeout_seconds <= 120):
         raise ProtectedWriteRejected("Unsafe parity consumer timeout")
     root = Path(root)

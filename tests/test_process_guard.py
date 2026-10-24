@@ -14,6 +14,7 @@ from madsc.process_guard import (
     enforce_ffprobe_read_process,
     enforce_parity_consumer_process,
     enforce_reachability_curl_process,
+    parity_process_environment,
     validate_parity_process_capability,
 )
 from madsc.temp_workspace import guarded_temporary_directory
@@ -122,8 +123,12 @@ class ProcessGuardTests(unittest.TestCase):
                    "config/shadow_manifest.json"]
         capability = authorize_parity_consumer_process(
             command, consumer="k1", root=root, timeout_seconds=30)
+        environment = parity_process_environment(capability)
+        self.assertEqual(environment["PYTHONPATH"], str(root))
+        self.assertEqual(set(environment), {
+            "PYTHONPATH", "PYTHONDONTWRITEBYTECODE", "LANG", "LC_ALL"})
         validate_parity_process_capability(
-            capability, command, cwd=root, timeout_seconds=30)
+            capability, command, cwd=root, timeout_seconds=30, env=environment)
         for changed_command, changed_root, changed_timeout in (
                 (command + ["--extra"], root, 30),
                 (command, root.parent, 30),
@@ -131,7 +136,11 @@ class ProcessGuardTests(unittest.TestCase):
             with self.assertRaises(ProtectedWriteRejected):
                 validate_parity_process_capability(
                     capability, changed_command, cwd=changed_root,
-                    timeout_seconds=changed_timeout)
+                    timeout_seconds=changed_timeout, env=environment)
+        with self.assertRaises(ProtectedWriteRejected):
+            validate_parity_process_capability(
+                capability, command, cwd=root, timeout_seconds=30,
+                env={**environment, "HOME": "/tmp/untrusted"})
 
 
 if __name__ == "__main__":

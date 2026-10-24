@@ -16,13 +16,14 @@ class ParityProcessTests(unittest.TestCase):
         # These commands exercise observer mechanics, not production authority.
         with patch('madsc.parity_process.validate_parity_process_capability'):
             return observe_process([sys.executable, '-c', source], cwd='.',
-                                   timeout_seconds=timeout, capability=object())
+                                   timeout_seconds=timeout, env=dict(os.environ),
+                                   capability=object())
 
     def test_missing_capability_never_starts_process(self):
         with patch('madsc.parity_process.subprocess.Popen') as start:
             with self.assertRaises(PermissionError):
                 observe_process([sys.executable, '-c', 'pass'], cwd='.',
-                                timeout_seconds=1)
+                                timeout_seconds=1, env={})
             start.assert_not_called()
 
     def test_nonzero_keeps_binary_streams_and_is_not_timeout(self):

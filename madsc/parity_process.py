@@ -15,7 +15,7 @@ from madsc.process_guard import validate_parity_process_capability
 MAX_CAPTURE_BYTES = 1024 * 1024
 
 
-def observe_process(argv, *, cwd, timeout_seconds, capability=None):
+def observe_process(argv, *, cwd, timeout_seconds, env=None, capability=None):
     """Return actual bounded stdout/stderr bytes and process outcome.
 
     Output overflow raises rather than producing truncated parity evidence.
@@ -32,11 +32,11 @@ def observe_process(argv, *, cwd, timeout_seconds, capability=None):
     if os.name != 'posix':
         raise RuntimeError('Process-group observation requires POSIX')
     validate_parity_process_capability(
-        capability, argv, cwd=cwd, timeout_seconds=timeout_seconds)
+        capability, argv, cwd=cwd, timeout_seconds=timeout_seconds, env=env)
     buffers = {'stdout': bytearray(), 'stderr': bytearray()}
     deadline = time.monotonic() + timeout_seconds
     timed_out = False
-    with subprocess.Popen(argv, cwd=cwd, stdin=subprocess.DEVNULL,
+    with subprocess.Popen(argv, cwd=cwd, env=env, stdin=subprocess.DEVNULL,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                           start_new_session=True) as process:
         def kill_group():

@@ -43,6 +43,10 @@ class _ParityProcessCapability:
     cwd: str
     cwd_device: int
     cwd_inode: int
+    code_root: str
+    code_root_device: int
+    code_root_inode: int
+    environment: tuple[tuple[str, str], ...]
     timeout_seconds: float
 
 
@@ -188,6 +192,14 @@ def authorize_parity_consumer_process(command, *, consumer: str, root: Path,
     enforce_parity_consumer_process(command, consumer=consumer, root=root,
                                     run_id=run_id, commit_sha=commit_sha)
     metadata = root.lstat()
+    code_root = Path(__file__).resolve().parents[1]
+    code_metadata = code_root.lstat()
+    environment = {
+        "PYTHONPATH": os.fspath(code_root),
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "LANG": "C",
+        "LC_ALL": "C",
+    }
     return _ParityProcessCapability(
         seal=_PARITY_CAPABILITY_SEAL,
         consumer=consumer,
@@ -195,25 +207,50 @@ def authorize_parity_consumer_process(command, *, consumer: str, root: Path,
         cwd=os.fspath(root),
         cwd_device=metadata.st_dev,
         cwd_inode=metadata.st_ino,
+        code_root=os.fspath(code_root),
+        code_root_device=code_metadata.st_dev,
+        code_root_inode=code_metadata.st_ino,
+        environment=tuple(sorted(environment.items())),
         timeout_seconds=float(timeout_seconds),
     )
 
 
+def parity_process_environment(capability) -> dict[str, str]:
+    """Return the fixed environment carried by a valid issued capability."""
+    if (not isinstance(capability, _ParityProcessCapability)
+            or capability.seal is not _PARITY_CAPABILITY_SEAL):
+        raise ProtectedWriteRejected("Invalid parity process capability")
+    return dict(capability.environment)
+
+
 def validate_parity_process_capability(capability, command, *, cwd: Path,
-                                       timeout_seconds: float) -> None:
+                                       timeout_seconds: float,
+                                       env: dict[str, str]) -> None:
     """Fail closed unless launch inputs still match the issued capability."""
     cwd = Path(cwd)
     try:
         metadata = cwd.lstat()
     except OSError as exc:
         raise ProtectedWriteRejected("Missing parity capability root") from exc
+    try:
+        code_metadata = Path(capability.code_root).lstat()
+    except (AttributeError, OSError) as exc:
+        raise ProtectedWriteRejected("Missing parity capability code root") from exc
     if (not isinstance(capability, _ParityProcessCapability)
             or capability.seal is not _PARITY_CAPABILITY_SEAL
             or tuple(command) != capability.argv
             or os.fspath(cwd) != capability.cwd
             or float(timeout_seconds) != capability.timeout_seconds
+            or not isinstance(env, dict)
+            or tuple(sorted(env.items())) != capability.environment
             or cwd.is_symlink() or not stat.S_ISDIR(metadata.st_mode)
             or (metadata.st_dev, metadata.st_ino)
             != (capability.cwd_device, capability.cwd_inode)
+            or Path(capability.code_root).is_symlink()
+            or not stat.S_ISDIR(code_metadata.st_mode)
+            or (code_metadata.st_dev, code_metadata.st_ino)
+            != (capability.code_root_device, capability.code_root_inode)
+            or Path(capability.code_root).resolve(strict=True)
+            != Path(capability.code_root)
             or cwd.resolve(strict=True) != cwd):
         raise ProtectedWriteRejected("Invalid parity process capability")

@@ -8,7 +8,8 @@ import sys
 from madsc.fixture_report_writer import _exclusive_bytes, _prepare_fixture_root
 from madsc.parity_manifest_cli import _read_regular_file
 from madsc.parity_process import observe_process
-from madsc.process_guard import authorize_parity_consumer_process
+from madsc.process_guard import (authorize_parity_consumer_process,
+                                 parity_process_environment)
 from madsc.parity_snapshot_writer import OUTPUT_PATH, write_execution_snapshot
 from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
@@ -53,8 +54,9 @@ def run_consumer(consumer, *, root, timeout_seconds=120):
     capability = authorize_parity_consumer_process(
         argv, consumer=consumer, root=root, timeout_seconds=timeout_seconds,
         run_id=run_id, commit_sha=head_sha)
+    child_env = parity_process_environment(capability)
     result = observe_process(argv, cwd=root, timeout_seconds=timeout_seconds,
-                             capability=capability)
+                             env=child_env, capability=capability)
     code = result['exit_code']
     shell_code = code if code >= 0 else 128 - code
     try:

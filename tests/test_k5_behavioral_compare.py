@@ -148,6 +148,13 @@ class BehavioralCompareTests(unittest.TestCase):
                 doc["workflow"] = ".github/workflows/" + name + ".yml"
                 self.assertIn("invalid_workflow", compare(doc)["errors"])
 
+    def test_unbounded_retry_and_exit_code_rejected(self):
+        for field, value in (("retry_count", 101), ("exit_code", 999999)):
+            with self.subTest(field=field):
+                doc = evidence()
+                doc["new"][field] = value
+                self.assertIn("invalid_new_record", compare(doc)["errors"])
+
     def test_boolean_exit_code_rejected(self):
         doc = evidence()
         doc["legacy"]["exit_code"] = False

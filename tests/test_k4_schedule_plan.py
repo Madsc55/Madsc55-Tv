@@ -34,6 +34,22 @@ class K4SchedulePlanTests(unittest.TestCase):
         self.assertTrue(all(slot["local"].endswith("+02:00") for slot in october))
         self.assertTrue(all(slot["mode"] == "dry_run_only" for slot in march + october))
 
+    def test_transition_day_ambiguous_hour_rejected(self):
+        # The planner must reject ambiguous local times if a future schedule
+        # ever lands on a Stockholm DST fallback date.
+        from unittest.mock import patch
+        import madsc.k4_schedule_plan as planner
+        with patch.object(planner, "DAYS", (25,)):
+            with self.assertRaises(ValueError):
+                planner.planned_slots(2026, 10, 2)
+
+    def test_transition_day_nonexistent_hour_rejected(self):
+        from unittest.mock import patch
+        import madsc.k4_schedule_plan as planner
+        with patch.object(planner, "DAYS", (29,)):
+            with self.assertRaises(ValueError):
+                planner.planned_slots(2026, 3, 2)
+
     def test_invalid_input_fails_closed(self):
         for year, month, hour in [(2026, 0, 3), (2026, 13, 3), (1999, 1, 3),
                                   (2101, 1, 3), (2026, 1, 24), (True, 1, 3),

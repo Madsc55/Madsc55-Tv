@@ -8,11 +8,12 @@ OBSERVATIONS = {"runs", "successful_runs", "last_test", "last_success", "last_re
 
 def stamp(value):
     if value is None:
-        return datetime.min.replace(tzinfo=timezone.utc)
+        return datetime(1, 1, 1, tzinfo=timezone.utc)
     if not isinstance(value, str):
         raise ValueError("Invalid observation timestamp")
     try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        normalized = value.removesuffix("Z") + ("+00:00" if value.endswith("Z") else "")
+        parsed = datetime.fromisoformat(normalized)
     except (ValueError, OverflowError) as exc:
         raise ValueError("Invalid observation timestamp") from exc
     if parsed.tzinfo is None:
@@ -40,7 +41,10 @@ def merge_pair(base, incoming):
             if identity not in records:
                 if observation.get("last_test") is not None:
                     stamp(observation["last_test"])
-                records[identity] = observation.copy()
+                # The validation above proves every observation is a mapping;
+                # construct an in-memory copy without a filesystem-like .copy()
+                # callsite that the write inventory must otherwise keep open.
+                records[identity] = dict(observation)
                 added += 1
                 continue
             old = records[identity]

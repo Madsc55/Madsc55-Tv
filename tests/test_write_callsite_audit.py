@@ -395,6 +395,31 @@ def run_commands():
         ]
         self.assertEqual(rows, [])
 
+    def test_legacy_history_merge_has_no_filesystem_mutation_candidate(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        rows = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/legacy_history_merge.py"
+        ]
+        self.assertEqual(rows, [])
+
+    def test_manifest_guard_open_is_source_bound_read_only(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        candidates = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "src/madsc_guard.py"
+        ]
+        self.assertEqual(candidates, [])
+        dispositions = [
+            row for row in report["non_write_dispositions"]
+            if row["path"] == "src/madsc_guard.py"
+        ]
+        self.assertEqual(len(dispositions), 1)
+        self.assertEqual(dispositions[0]["disposition"],
+                         "proven_read_only_descriptor")
+
     def test_legacy_note_atomic_replace_has_direct_k1_guard(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

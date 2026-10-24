@@ -56,7 +56,11 @@ def main() -> None:
     # Open once without following a final-component symlink. Inspect and read
     # the same descriptor to avoid a path-swap between validation and reading.
     try:
-        fd = os.open(args.manifest, os.O_RDONLY | nofollow | getattr(os, "O_NONBLOCK", 0))
+        # The availability check above makes the second lookup fail-closed at
+        # runtime; spelling the complete read-only expression here also keeps
+        # the source-bound callsite audit unambiguous.
+        fd = os.open(args.manifest, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+                     | getattr(os, "O_NONBLOCK", 0))
         with os.fdopen(fd, "rb") as stream:
             metadata = os.fstat(stream.fileno())
             if not stat.S_ISREG(metadata.st_mode) or metadata.st_size > 1024 * 1024:

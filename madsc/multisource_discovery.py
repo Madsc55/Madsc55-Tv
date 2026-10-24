@@ -44,6 +44,8 @@ def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = Non
             # Source pages are evidence references, not playable media endpoints.
             raw_stream = item.get("stream_url")
             stream = normalize_url(raw_stream) if raw_stream is not None else None
+            if stream is not None and urlsplit(stream).scheme != "https":
+                raise ValueError("Stream candidate must use HTTPS")
             license_reference = item.get("license_reference")
             if license_reference is not None:
                 license_reference = normalize_url(license_reference)

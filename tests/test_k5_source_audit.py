@@ -23,6 +23,29 @@ class K5SourceAuditTests(unittest.TestCase):
             with self.assertRaises(ProtectedWriteRejected):
                 write_source_audit_report(destination, "changed\n")
 
+    def test_report_writer_rejects_symlink_target_without_modifying_original(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            original = root / "original.json"
+            original.write_text("protected\\n", encoding="utf-8")
+            destination = root / "report.json"
+            destination.symlink_to(original)
+            with self.assertRaises(ProtectedWriteRejected):
+                write_source_audit_report(destination, "{}\\n")
+            self.assertEqual(original.read_text(encoding="utf-8"), "protected\\n")
+            self.assertTrue(destination.is_symlink())
+
+    def test_report_writer_rejects_symlinked_parent_without_writing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            real = root / "real"
+            real.mkdir()
+            alias = root / "alias"
+            alias.symlink_to(real, target_is_directory=True)
+            with self.assertRaises(ProtectedWriteRejected):
+                write_source_audit_report(alias / "report.json", "{}\\n")
+            self.assertFalse((real / "report.json").exists())
+
     def test_main_uses_guarded_report_writer(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "report.json"

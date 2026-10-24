@@ -25,3 +25,11 @@
 - https://github.com/Madsc55/Madsc55-Tv/pull/20
 - https://github.com/Madsc55/Madsc55-Tv/pull/21
 - https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073166736
+
+## 24 Ekim 2026 — CI yeniden inceleme
+- `899427e38dc957f7843621147a703d1772d5f44e`: GitHub Actions `40078851813` ve `40078848656` başarılı; çevrimdışı regresyon doğrulaması, üretim kabulü değildir.
+- `9d7b6c965126c1101dbc2a49cf744662e3aceabd`: `40082049730` başarısız, `40082047324` iptal.
+- Başarısız çalışmanın `offline-tests` iş günlüğünde 1552 test, 2 başarısızlık raporlandı. Her iki başarısızlık da `test_epg.EpgTests.test_backslash_in_stream_uri_rejected` alt örneklerinde: beklenen `invalid stream URI`, alınan `Invalid M3U8 playlist`. K4 zamanlayıcısına özgü bir hata olarak etiketlenmemeli; EPG sahibine/ana merkeze ayrılmalı.
+- K4 dalında EPG/M3U8 davranışı, üretim verisi, cron ve GitHub workflow concurrency ayarları değiştirilmedi.
+- Son K4 commit'inin tam CI başarısı henüz doğrulanmış değil. K4-15/16/17/18 kabul kapıları açık; `production_ready=false`.
+- Kanıt: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40082049730

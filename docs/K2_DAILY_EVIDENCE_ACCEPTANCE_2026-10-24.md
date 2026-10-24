@@ -27,3 +27,15 @@ Run `python -m madsc.k2_artifact_verify reports/k2-daily-evidence.json --trusted
 For each proposed broadcaster, record its official legal entity and domain, a directly accessible authoritative rights document, territory, exact stream/channel scope, allowed use (personal viewing vs redistribution), expiration/revocation terms, reviewer identity and review date. Verify the document independently against the rights holder. Mark `license_verified` only after a separately reviewed rights ledger has passed; the current automated K2 candidate report deliberately keeps this flag false.
 
 The empty approved registry means **zero actual broadcasters and zero licenses have been verified** in this branch. A scheduled offline scan of this registry cannot create missing legal evidence.
+
+## Signed provenance verification (after a successful scheduled run)
+
+The proposed workflow uses `actions/attest@v4` to attest `reports/k2-daily-evidence.json`. Download the JSON artifact and verify the signed provenance independently:
+
+```bash
+gh attestation verify reports/k2-daily-evidence.json \
+  --repo Madsc55/Madsc55-Tv \
+  --signer-workflow Madsc55/Madsc55-Tv/.github/workflows/k2-daily-discovery.yml
+```
+
+A passing attestation proves a workflow-origin claim for the matching artifact bytes; it does not establish that candidate streams are authorized, playable, or licensed. The schedule remains inactive until merged into the default branch and successfully executed. The current runner does not automatically load the previous day's artifact, so daily added/missing comparisons against yesterday are **not yet end-to-end automated**. No actual rights evidence has been entered into the empty registry.

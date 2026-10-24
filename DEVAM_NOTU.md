@@ -1316,3 +1316,43 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 5. K3/K4/K5 kapıları ve son kullanıcı cihaz kabulü doğrulanmadan merge/üretim tamamlandı deme.
 
 **K2 ana merkeze devir:** Bu bölüm yalnız kayıt/kanıt devridir; K2 canlı/üretim kabulü açık.
+
+
+---
+
+## K3 — ANA MERKEZE DEVİR / 24 Ekim 2026 (bu sohbetin güncel doğrulanmış kaydı)
+
+**Kapsam ve durum:** K3 canlı HLS manifest, gerçek video/ses, EPG/XMLTV, kanal kimliği/logo, altı saatlik ölçüm ve IBO Player Pro son kullanıcı kabulüdür. **K3-13 AÇIK; production kabulü YOK.** Bu kayıt yalnız K3'ü kapsar; önceki K1/K2/K4/K5 bölümleri korunur. Audit değişiklikleri `main`'e alınmış kabul edilmez.
+
+### 1. Tamamlanan geliştirmeler ve 2. hata düzeltmeleri
+- `madsc/k3_acceptance_evidence.py`: üç ayrı JSON snapshot, UTC zaman damgası, 75 benzersiz SHA-256 kanal kimliği, eksiksiz 75 aday/probe ve iki ardışık en az altışar saatlik aralık kontrolü; manifest sayısı, HTTPS/HLS gözlem durumu, engellenmiş ve doğrulanmamış satırlar arasında fail-closed tutarlılık denetimi. Manifest kanıtı asla çözülmüş ses/görüntü veya tam K3 kabulü sayılmaz.
+- `tests/test_k3_acceptance_evidence.py`: hatalı zaman aralığı fixture'ı, çelişkili başarı, sahte ses/görüntü, yanlış tür/sayı, blocked probe gözlemleri ve unverified satırlarda eksik HTTPS/HLS gözlemi regresyonları. Önceki başarısız test fixture'ında blocked probe için yanlış `hls_manifest_seen=False` alanı kaldırıldı.
+- `.github/workflows/madsc-k3-live-manifest-pilot.yml` ve `.github/workflows/madsc-k3-turkish-tv-video.yml`: gerçek ağa çıkmadan offline gate ve iş bağımlılığı, concurrency koruması; `.github/workflows/madsc-03-kanal-test.yml` artifact sözleşmesi; `.github/workflows/madsc-unit-tests.yml` K3 dalı/PR offline regresyon tetikleme.
+- `docs/K3_LIVE_ACCEPTANCE_CHECKLIST_2026-10-24.md`: kabul kapıları, pilot sınırlamaları, kanıt/CI ve PR kayıtları. Eski PR #71 atfı K3 audit PR #10 olarak düzeltildi.
+- Önceki K3 M3U/XMLTV kodu `madsc/epg.py` ve `tests/test_epg.py`: eksik EXTINF URI, hatalı ayraç, tırnak içi virgül, sahte ve tekrarlanan tvg-id denetimleri; geçmiş ayrıntılar bu dosyanın önceki K3 kayıtlarında korunmuştur.
+
+### 3. Branch / PR / commit bağlantıları
+- Çalışma dalı: https://github.com/Madsc55/Madsc55-Tv/tree/madsc/k3-live-acceptance-audit-20261024
+- **Taslak ve açık, birleştirilmemiş PR #10:** https://github.com/Madsc55/Madsc55-Tv/pull/10
+- Önemli düzeltme commitleri: [b4079a95](https://github.com/Madsc55/Madsc55-Tv/commit/b4079a95d09cae84a0d497052909e61f039cc0f2) (blocked fixture), [1996979c](https://github.com/Madsc55/Madsc55-Tv/commit/1996979cc7773bd83239ec65b7f35e6b91005e01) (blocked alan kontrolü), [8793d683](https://github.com/Madsc55/Madsc55-Tv/commit/8793d6831b4250f1db40d9ce19afb7c39719b407) (regresyon), [c420ede4](https://github.com/Madsc55/Madsc55-Tv/commit/c420ede4d211a531ff1ff482b8d8165ed2e1f568) (erişilemeyen kontrol temizliği), [fc60f8df](https://github.com/Madsc55/Madsc55-Tv/commit/fc60f8df54d68fcf37df5df6f48358c1b474d9d7) (unverified alan zorunluluğu), [f056b49f](https://github.com/Madsc55/Madsc55-Tv/commit/f056b49f00fb13cf3921f251e4bb038a53b26093) (regresyon), [0c532c96](https://github.com/Madsc55/Madsc55-Tv/commit/0c532c96cecce9b1d8be3f32c9188b563bd11999) (K3 denetim notu). `96043dbe` adlı ara commitin dosya içeriğini değiştirmediği doğrulandı; gerçek kod düzeltmesi `fc60f8df`'dir.
+
+### 4. CI kanıtları (sonuçlar ilgili commit'e özeldir)
+- **SUCCESS**: [40072187564](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40072187564) (`b4079a95`), [40072311100](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40072311100) (`8793d683`), [40073168033](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073168033) (`f056b49f`), [40073465994](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073465994) (`0c532c96`).
+- **FAILURE**: [40071899872](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40071899872) (`4babb5c7`): blocked probe test fixture'ı yanlış beklenen hata ile uyuşmadı; sonradan düzeltildi ve yeni committe CI geçti.
+- **Sonradan kontrol edilmesi gereken CI**: Bu ana merkeze devir commit'inin kendi workflow sonucu; ayrıca [40073093315](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073093315) (`c420ede4`) sonucu bu kayıt hazırlanırken ayrı teyit edilmedi. Bekleyen/iptal edilmiş koşular başarı sayılmaz. Offline CI gerçek yayın veya cihaz kabulü değildir.
+
+### 5. Eksikler, 6. riskler ve bağımlılıklar
+- İzinli kamuya açık kaynaklarda **gerçek** read-only 75 adaylı HTTPS/HLS manifest pilotu ve üç bağımsız en az altışar saat aralıklı snapshot artifact; ffprobe ile çözülebilen video **ve** audio kanıtı; Pages/XMLTV HTTP/şema/zaman/tvg-id ve kanal logo kimlik eşleşmesi; son aşamada **kullanıcının IBO Player Pro cihaz testi** eksik. Pilot workflow_dispatch bu sohbetin mevcut GitHub aracında bulunmadığından **başlatıldığı iddia edilemez**.
+- Riskler: SSRF, DNS rebinding/redirect, gizli URL/token sızıntısı, hatalı manifest=oynatılabilir yayın çıkarımı, kararsız yayın, yanlış tvg-id/logo, paralel yazım çatışması. K2'nin izinli kaynak keşfi ve K1 offline/CI güvenlik kapıları ön koşul; K4 yedekleri ve K5 genel kabul koordinasyonu korunmalı. Üretim M3U/XMLTV, favori, logo, yedek, arşiv ve cihaz verilerine dokunulmadı; PR otomatik merge edilmedi.
+
+### 7. Gerçekten doğrulanan kabul kriterleri
+- **Yalnız offline kanıt sözleşmesi/regresyonları** yukarıdaki başarılı CI commitlerinde doğrulandı. Üç snapshot'lı sentetik testte 75 aday ve 6+6 saat mantığı sınandı; **gerçek zamanlı 12 saat izleme yapıldığı anlamına gelmez**. Gerçek HLS, decoded video/audio, Pages/XMLTV, logo ve cihaz kabulü **DOĞRULANMADI**. K3-13 **AÇIK**.
+
+### 8. Sonraki öncelik sırası
+1. Güncel `main` ve PR #10 farkını incele; offline CI, merge çatışması ve güvenlik testlerini doğrula.
+2. K2 izinli kaynaklarıyla read-only 75 adaylı manifest pilotunu yetkili workflow üzerinden çalıştır, raporları sakla; HTTPS/SSRF korumalarını kontrol et.
+3. Aynı aday kümesiyle en az altışar saat aralıklı üç gerçek ölçümü ve ffprobe ses/görüntü kanıtlarını topla; çelişkili kanıtı reddet.
+4. Pages/XMLTV, tvg-id, logo ve kanal kimliğini gerçek URL/şema/akış üzerinden denetle; üretim verisini değiştirme.
+5. K1/K2/K4/K5 koordinasyonuyla açık kapıları değerlendir; yalnız tüm önceki kriterler geçerse en son kullanıcı IBO Player Pro cihaz kabulünü iste. Kanıt olmadan K3-13'ü kapatma.
+
+**K3 ana merkeze devir kaydı:** bu bölüm yalnız K3'ü günceller; diğer sistem kayıtları değiştirilmez.

@@ -112,6 +112,14 @@ class BehavioralCompareTests(unittest.TestCase):
         doc["approval"] = True
         self.assertIn("invalid_evidence_schema", compare(doc)["errors"])
 
+    def test_ambiguous_run_ids_rejected(self):
+        for value in (" has spaces ", "a/b", "a\\\\b", "a" + chr(0), "a" + chr(127),
+                      "https://example.com/run", "a" * 201, "é"):
+            with self.subTest(value=repr(value)):
+                doc = evidence()
+                doc["new_run_id"] = value
+                self.assertIn("invalid_new_run_id", compare(doc)["errors"])
+
     def test_same_execution_id_rejected(self):
         doc = evidence()
         doc["new_run_id"] = doc["legacy_run_id"]

@@ -1,0 +1,26 @@
+name: K2 — Offline Multisource Discovery Tests
+
+on:
+  push:
+    branches:
+      - 'k2/multisource-discovery-evidence-20261024'
+  pull_request:
+    paths:
+      - 'madsc/multisource_discovery.py'
+      - 'tests/test_multisource_discovery.py'
+      - '.github/workflows/k2-multisource-offline.yml'
+permissions:
+  contents: read
+jobs:
+  k2-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Offline K2 discovery regressions
+        run: python -B -m unittest discover -s tests -p test_multisource_discovery.py -v

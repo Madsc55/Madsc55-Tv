@@ -11,7 +11,14 @@ def assess(paths):
     snapshots = []
     for path in paths:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
-        stamp = datetime.fromisoformat(data["measured_at_utc"])
+        if not isinstance(data, dict):
+            raise ValueError("Invalid K3 snapshot object")
+        if not isinstance(data.get("measured_at_utc"), str):
+            raise ValueError("Invalid K3 snapshot timestamp")
+        try:
+            stamp = datetime.fromisoformat(data["measured_at_utc"])
+        except ValueError as exc:
+            raise ValueError("Invalid K3 snapshot timestamp") from exc
         if stamp.tzinfo is None or stamp.utcoffset() is None:
             raise ValueError("Timezone required")
         rows = data.get("results")

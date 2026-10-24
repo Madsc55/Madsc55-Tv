@@ -9,6 +9,7 @@ from madsc.process_guard import (
     enforce_bounded_curl_process,
     enforce_dns_resolver_process,
     enforce_ffprobe_read_process,
+    enforce_parity_consumer_process,
     enforce_reachability_curl_process,
 )
 from madsc.temp_workspace import guarded_temporary_directory
@@ -64,6 +65,21 @@ class ProcessGuardTests(unittest.TestCase):
                        "-of", "json", str(segment)]
             with self.assertRaises(ProtectedWriteRejected):
                 enforce_ffprobe_read_process(command, segment)
+
+    def test_parity_consumers_are_exact_and_repository_rooted(self):
+        root = Path(__file__).resolve().parents[1]
+        k1 = [sys.executable, "-m", "src.madsc_guard", "config/shadow_manifest.json"]
+        enforce_parity_consumer_process(k1, consumer="k1", root=root)
+        k5 = [sys.executable, "-m", "madsc.artifact_transport", "produce", "--path",
+              "reports/k2-candidates.json", "--source", "reports/k2-input.m3u",
+              "--run-id", "123", "--commit-sha", "a" * 40]
+        enforce_parity_consumer_process(k5, consumer="k5", root=root,
+                                        run_id="123", commit_sha="a" * 40)
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_parity_consumer_process(k1 + ["--extra"], consumer="k1", root=root)
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_parity_consumer_process(k5, consumer="k5", root=root,
+                                            run_id="123", commit_sha="A" * 40)
 
 
 if __name__ == "__main__":

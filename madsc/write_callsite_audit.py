@@ -29,6 +29,7 @@ _GUARDS = {
     "enforce_reachability_curl_process",
     "enforce_bounded_curl_process",
     "enforce_ffprobe_read_process",
+    "enforce_parity_consumer_process",
 }
 _MUTATING_METHODS = {
     # File-object writes matter too: an open(..., "w") may be wrapped or

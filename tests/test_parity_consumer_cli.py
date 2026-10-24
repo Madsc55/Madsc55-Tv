@@ -36,6 +36,19 @@ def environment():
 
 
 class ParityConsumerTests(unittest.TestCase):
+    def test_consumer_command_drift_is_rejected_before_process_start(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            prepare(root, 'k1')
+            drifted = dict(CONSUMERS)
+            source, output, arguments = drifted['k1']
+            drifted['k1'] = (source, output, [*arguments, '--unexpected'])
+            with patch('madsc.parity_consumer_cli.CONSUMERS', drifted), \
+                 patch('madsc.parity_consumer_cli.observe_process') as execute:
+                with self.assertRaises(PermissionError):
+                    run_consumer('k1', root=root)
+                execute.assert_not_called()
+
     def execute(self, body, root):
         return subprocess.run(['bash', '-e', '-o', 'pipefail', '-c',
                                body.replace('${{ inputs.allow_parity_evidence }}', 'true')],

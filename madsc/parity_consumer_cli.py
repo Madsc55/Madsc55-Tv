@@ -8,6 +8,7 @@ import sys
 from madsc.fixture_report_writer import _exclusive_bytes, _prepare_fixture_root
 from madsc.parity_manifest_cli import _read_regular_file
 from madsc.parity_process import observe_process
+from madsc.process_guard import enforce_parity_consumer_process
 from madsc.parity_snapshot_writer import OUTPUT_PATH, write_execution_snapshot
 from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
@@ -42,12 +43,15 @@ def run_consumer(consumer, *, root, timeout_seconds=120):
     for path in paths:
         enforce_local_output_path(root / path, allowed_root=root)
     argv = [sys.executable, *arguments]
+    run_id = head_sha = ''
     if consumer == 'k5':
         run_id, head_sha = os.environ.get('RUN_ID', ''), os.environ.get('COMMIT_SHA', '')
         if (not run_id.isascii() or not run_id.isdigit() or len(run_id) > 20
                 or len(head_sha) != 40 or any(c not in '0123456789abcdef' for c in head_sha)):
             raise ValueError('Missing isolated K5 execution identity')
         argv += ['--run-id', run_id, '--commit-sha', head_sha]
+    enforce_parity_consumer_process(argv, consumer=consumer, root=root,
+                                    run_id=run_id, commit_sha=head_sha)
     result = observe_process(argv, cwd=root, timeout_seconds=timeout_seconds)
     code = result['exit_code']
     shell_code = code if code >= 0 else 128 - code

@@ -17,6 +17,14 @@ DNS_RESOLVER = (
     "print(json.dumps([x[4][0] for x in a]))"
 )
 
+_PARITY_CONSUMER_ARGUMENTS = {
+    "k1": ["-m", "src.madsc_guard", "config/shadow_manifest.json"],
+    "k4": ["-m", "madsc.restore_drill", "--source", "reports/k4-source",
+           "--file", "nested/sample.txt", "--output", "reports/k4-restore-drill.json"],
+    "k5": ["-m", "madsc.artifact_transport", "produce", "--path",
+           "reports/k2-candidates.json", "--source", "reports/k2-input.m3u"],
+}
+
 
 def _safe_argument(value: str) -> bool:
     return (isinstance(value, str) and bool(value) and "\x00" not in value
@@ -85,3 +93,29 @@ def enforce_ffprobe_read_process(command, segment: Path) -> None:
             or segment.resolve(strict=True) != segment
             or os.path.commonpath((str(segment), str(workspace))) != str(workspace)):
         raise ProtectedWriteRejected("Unsafe ffprobe read process contract")
+
+
+def enforce_parity_consumer_process(command, *, consumer: str, root: Path,
+                                    run_id: str = "", commit_sha: str = "") -> None:
+    """Allow only the three opt-in, repository-rooted parity consumers."""
+    root = Path(root)
+    arguments = _PARITY_CONSUMER_ARGUMENTS.get(consumer)
+    if arguments is None:
+        raise ProtectedWriteRejected("Unknown parity consumer process")
+    expected = [sys.executable, *arguments]
+    if consumer == "k5":
+        if (not run_id.isascii() or not run_id.isdigit() or len(run_id) > 20
+                or len(commit_sha) != 40
+                or any(char not in "0123456789abcdef" for char in commit_sha)):
+            raise ProtectedWriteRejected("Unsafe parity execution identity")
+        expected += ["--run-id", run_id, "--commit-sha", commit_sha]
+    elif run_id or commit_sha:
+        raise ProtectedWriteRejected("Unexpected parity execution identity")
+    try:
+        metadata = root.lstat()
+    except OSError as exc:
+        raise ProtectedWriteRejected("Missing parity process root") from exc
+    if (command != expected or not root.is_absolute() or root.is_symlink()
+            or not stat.S_ISDIR(metadata.st_mode) or metadata.st_nlink < 1
+            or root.resolve(strict=True) != root):
+        raise ProtectedWriteRejected("Unsafe parity consumer process contract")

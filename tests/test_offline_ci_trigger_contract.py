@@ -35,6 +35,15 @@ class OfflineCITriggerContractTests(unittest.TestCase):
                 for path in expected_paths:
                     self.assertIn(f"      - '{path}'", body)
 
+    def test_offline_ci_concurrency_is_scoped_to_pr_or_ref(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn(
+            "group: madsc55-offline-unit-tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}",
+            source,
+        )
+        self.assertIn("cancel-in-progress: false", source)
+        self.assertNotIn("group: madsc55-offline-unit-tests\n", source)
+
     def test_pr_gate_stays_read_only_and_offline(self):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("permissions:\n  contents: read", source)

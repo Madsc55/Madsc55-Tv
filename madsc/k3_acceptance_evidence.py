@@ -21,6 +21,8 @@ def assess(paths):
             raise ValueError("Invalid K3 snapshot timestamp") from exc
         if stamp.tzinfo is None or stamp.utcoffset() is None:
             raise ValueError("Timezone required")
+        if stamp.utcoffset().total_seconds() != 0:
+            raise ValueError("UTC snapshot timestamp required")
         rows = data.get("results")
         if (data.get("stage") != "K3_REAL_NETWORK_MANIFEST_PILOT" or
                 data.get("production_playlist_modified") is not False or

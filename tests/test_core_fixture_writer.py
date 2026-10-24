@@ -72,6 +72,25 @@ class CoreFixtureWriterTests(unittest.TestCase):
             self.assertEqual(target.read_bytes(), b"original")
             self.assertEqual(sorted(p.name for p in root.iterdir()), ["fixture.txt"])
 
+    def test_swapped_staging_name_is_not_unlinked_on_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = write_core_fixture(root, "fixture.txt", b"original")
+            real_replace = os.replace
+            def swap_stage_then_fail(src, dst, **kwargs):
+                staged = root / src
+                staged.unlink()
+                staged.write_bytes(b"attacker replacement")
+                raise OSError("injected replacement failure")
+            with mock.patch("madsc.core_fixture_writer.os.replace",
+                            side_effect=swap_stage_then_fail):
+                with self.assertRaises(OSError):
+                    write_core_fixture(root, "fixture.txt", b"new", overwrite=True)
+            self.assertEqual(target.read_bytes(), b"original")
+            staged = [p for p in root.iterdir() if p.name.startswith(".fixture-stage-")]
+            self.assertEqual(len(staged), 1)
+            self.assertEqual(staged[0].read_bytes(), b"attacker replacement")
+
     def test_unknown_protected_and_traversing_paths_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -189,5 +189,35 @@ class BehavioralCompareTests(unittest.TestCase):
         self.assertFalse(compare(doc)["accepted"])
 
 
+    def test_negative_retry_count_rejected(self):
+        doc = evidence()
+        doc["new"]["retry_count"] = -1
+        self.assertIn("invalid_new_record", compare(doc)["errors"])
+
+    def test_oversized_artifact_collection_rejected(self):
+        doc = evidence()
+        doc["legacy"]["artifacts"] = {f"artifact-{i}.json": digest() for i in range(10001)}
+        self.assertIn("invalid_legacy_record", compare(doc)["errors"])
+
+    def test_missing_and_wrong_type_top_level_fields_rejected(self):
+        for mutation in ("missing", "wrong_type"):
+            with self.subTest(mutation=mutation):
+                doc = evidence()
+                if mutation == "missing":
+                    del doc["legacy"]
+                else:
+                    doc["legacy"] = []
+                result = compare(doc)
+                self.assertFalse(result["accepted"])
+                self.assertTrue(result["errors"])
+
+    def test_matching_json_never_grants_runtime_acceptance(self):
+        doc = evidence()
+        doc["legacy_commit_sha"] = doc["new_commit_sha"]
+        result = compare(doc)
+        self.assertTrue(result["matched_evidence"])
+        self.assertFalse(result["accepted"])
+        self.assertTrue(result["requires_independent_execution_verification"])
+
 if __name__ == "__main__":
     unittest.main()

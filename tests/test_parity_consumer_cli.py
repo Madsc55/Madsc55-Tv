@@ -9,6 +9,8 @@ import unittest
 from unittest.mock import patch
 
 from madsc.parity_consumer_cli import CONSUMERS, DIAGNOSTICS, run_consumer
+from madsc.parity_snapshot_cli import main as snapshot_main
+from madsc.parity_workspace_guard import RECEIPT_PATH
 from madsc.parity_workflow_readiness import preflight_replacement_execution
 from tests.test_parity_input_receipt import ROOT, run_body, steps_for
 from tests.test_parity_workflow_preflight import pair_for
@@ -73,6 +75,23 @@ class ParityConsumerTests(unittest.TestCase):
                 self.assertEqual(code, 0)
                 self.assertTrue((root / CONSUMERS[key][1]).is_file())
                 self.assertTrue((root / DIAGNOSTICS['process_outcome']).is_file())
+                receipt = json.loads((root / RECEIPT_PATH).read_text())
+                self.assertEqual(receipt['consumer'], key)
+                self.assertFalse(receipt['external_effects_verified'])
+                self.assertFalse(receipt['independent_execution_verified'])
+                self.assertFalse(receipt['behavioral_parity_accepted'])
+                expected = [] if key == 'k1' else [
+                    'reports', CONSUMERS[key][1]]
+                self.assertEqual(receipt['observed_changes'], expected)
+                label = {'k1': 'guard', 'k4': 'restore', 'k5': 'candidates'}[key]
+                self.assertEqual(snapshot_main([
+                    '--exit-code', '0', '--output',
+                    f'{label}={root / CONSUMERS[key][1]}', '--side-effect',
+                    f'workspace_effect_receipt={root / RECEIPT_PATH}',
+                    '--output-root', str(root)]), 0)
+                snapshot = json.loads((root / 'reports/madsc-parity-snapshot.json').read_text())
+                self.assertEqual(set(snapshot['side_effects']),
+                                 {'workspace_effect_receipt'})
 
     def execute(self, body, root):
         return subprocess.run(['bash', '-e', '-o', 'pipefail', '-c',
@@ -167,6 +186,7 @@ class ParityConsumerTests(unittest.TestCase):
             snapshot = json.loads((root / 'reports/madsc-parity-snapshot.json').read_text())
             self.assertTrue(snapshot['timed_out'])
             self.assertEqual((root / DIAGNOSTICS['process_stderr']).read_bytes(), b'before controlled timeout')
+            self.assertFalse((root / RECEIPT_PATH).exists())
 
     def test_unexpected_child_write_turns_success_into_measured_failure(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -186,6 +206,7 @@ class ParityConsumerTests(unittest.TestCase):
             self.assertTrue((root / 'unexpected-child-write.txt').exists())
             stderr = (root / DIAGNOSTICS['process_stderr']).read_text()
             self.assertIn('Workspace side-effect rejected', stderr)
+            self.assertFalse((root / RECEIPT_PATH).exists())
             snapshot = json.loads((root / 'reports/madsc-parity-snapshot.json').read_text())
             self.assertEqual(snapshot['exit_code'], 125)
 
@@ -208,6 +229,7 @@ class ParityConsumerTests(unittest.TestCase):
             self.assertFalse((root / output).exists())
             self.assertIn(b'config/shadow_manifest.json',
                           (root / DIAGNOSTICS['process_stderr']).read_bytes())
+            self.assertFalse((root / RECEIPT_PATH).exists())
 
     def test_existing_evidence_prevents_consumer_start(self):
         with tempfile.TemporaryDirectory() as directory:

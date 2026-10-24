@@ -4,6 +4,7 @@ import tempfile
 import unittest
 
 from madsc.parity_workspace_guard import (enforce_workspace_effects,
+                                          build_workspace_effect_receipt,
                                           snapshot_workspace)
 
 
@@ -20,6 +21,14 @@ class ParityWorkspaceGuardTests(unittest.TestCase):
                 enforce_workspace_effects(
                     before, after, expected_output="reports/result.json"),
                 ("reports", "reports/result.json"))
+            changed = enforce_workspace_effects(
+                before, after, expected_output="reports/result.json")
+            receipt = build_workspace_effect_receipt(
+                before, after, consumer="k4",
+                expected_output="reports/result.json",
+                observed_changes=changed)
+            self.assertIn(b'"schema":"madsc-parity-workspace-effects-v1"', receipt)
+            self.assertIn(b'"external_effects_verified":false', receipt)
 
     def test_undeclared_create_delete_and_rewrite_are_rejected(self):
         mutations = ("create", "delete", "rewrite")

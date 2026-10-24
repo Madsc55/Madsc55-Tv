@@ -1,6 +1,8 @@
 """Identity-only workspace side-effect boundary for opt-in parity children."""
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import stat
 from pathlib import Path, PurePosixPath
@@ -9,6 +11,7 @@ from madsc.write_path_audit import ProtectedWriteRejected
 
 
 MAX_WORKSPACE_ENTRIES = 20_000
+RECEIPT_PATH = "reports/parity-workspace-effects.json"
 
 
 def _identity(metadata, *, kind: str, target: str = "") -> tuple:
@@ -155,3 +158,34 @@ def enforce_workspace_effects(before: dict[str, tuple], after: dict[str, tuple],
         raise ProtectedWriteRejected(
             "Unexpected parity workspace effects: " + ", ".join(unexpected[:8]))
     return tuple(sorted(changed))
+
+
+def build_workspace_effect_receipt(before: dict[str, tuple],
+                                   after: dict[str, tuple], *, consumer: str,
+                                   expected_output: str | None,
+                                   observed_changes: tuple[str, ...]) -> bytes:
+    """Serialize a hash-bound, non-accepting receipt for a successful child."""
+    verified = enforce_workspace_effects(
+        before, after, expected_output=expected_output)
+    if verified != observed_changes or consumer not in {"k1", "k4", "k5"}:
+        raise ProtectedWriteRejected("Invalid parity workspace effect receipt")
+
+    def digest(inventory: dict[str, tuple]) -> str:
+        encoded = json.dumps(inventory, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+    receipt = {
+        "schema": "madsc-parity-workspace-effects-v1",
+        "consumer": consumer,
+        "scope": "repository_workspace_persistent_identity",
+        "expected_output": expected_output,
+        "observed_changes": list(observed_changes),
+        "before_inventory_sha256": digest(before),
+        "after_inventory_sha256": digest(after),
+        "external_effects_verified": False,
+        "independent_execution_verified": False,
+        "behavioral_parity_accepted": False,
+        "production_ready": False,
+    }
+    return (json.dumps(receipt, sort_keys=True, separators=(",", ":"))
+            + "\n").encode("utf-8")

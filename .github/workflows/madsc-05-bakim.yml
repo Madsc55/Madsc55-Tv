@@ -175,7 +175,7 @@ jobs:
           retention-days: 14
       - name: Snapshot K2 handoff output (explicit opt-in only)
         if: ${{ inputs.allow_parity_evidence == true }}
-        run: python -m madsc.parity_snapshot_cli --exit-code 0 --output candidates=reports/k2-candidates.json --output-root .
+        run: python -m madsc.parity_snapshot_cli --exit-code 0 --output candidates=reports/k2-candidates.json --side-effect workspace_effect_receipt=reports/parity-workspace-effects.json --output-root .
       - name: Manifest öncesi girdi değişmezliğini doğrula (açık opt-in)
         id: parity_input_before
         if: ${{ always() && !cancelled() && inputs.allow_parity_evidence == true && (steps.parity_consumer.outcome == 'success' || steps.parity_consumer.outcome == 'failure') }}

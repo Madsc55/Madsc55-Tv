@@ -48,6 +48,9 @@ class ParityWorkflowIntegrationTests(unittest.TestCase):
             with self.subTest(workflow=filename):
                 self.assertLess(data.index(producer), data.index(snapshot_output))
                 self.assertLess(data.index(snapshot_output), data.index(manifest_input))
+                self.assertIn(
+                    "--side-effect workspace_effect_receipt=reports/parity-workspace-effects.json",
+                    data)
                 self.assertLess(data.index(manifest_input),
                                 data.index("path: reports/madsc-parity-evidence.json"))
 

@@ -12,7 +12,9 @@ from madsc.process_guard import (authorize_parity_consumer_process,
                                  parity_process_environment,
                                  PARITY_MODULE_RUNNER)
 from madsc.parity_snapshot_writer import OUTPUT_PATH, write_execution_snapshot
-from madsc.parity_workspace_guard import (enforce_workspace_effects,
+from madsc.parity_workspace_guard import (RECEIPT_PATH,
+                                          build_workspace_effect_receipt,
+                                          enforce_workspace_effects,
                                           snapshot_workspace)
 from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
@@ -42,7 +44,7 @@ def run_consumer(consumer, *, root, timeout_seconds=120):
     root = _prepare_fixture_root(Path(root))
     input_path, output_path, arguments = CONSUMERS[consumer]
     _read_regular_file(root / input_path, 2 * 1024 * 1024)
-    paths = [*DIAGNOSTICS.values(), OUTPUT_PATH, output_path]
+    paths = [*DIAGNOSTICS.values(), OUTPUT_PATH, RECEIPT_PATH, output_path]
     enforce_write_paths(paths)
     for path in paths:
         enforce_local_output_path(root / path, allowed_root=root)
@@ -66,8 +68,9 @@ def run_consumer(consumer, *, root, timeout_seconds=120):
     result = observe_process(argv, cwd=root, timeout_seconds=timeout_seconds,
                              env=child_env, capability=capability)
     workspace_after = snapshot_workspace(root)
+    workspace_changes = None
     try:
-        enforce_workspace_effects(
+        workspace_changes = enforce_workspace_effects(
             workspace_before, workspace_after,
             expected_output=None if consumer == 'k1' else output_path)
     except PermissionError as exc:
@@ -80,6 +83,12 @@ def run_consumer(consumer, *, root, timeout_seconds=120):
     code = result['exit_code']
     shell_code = code if code >= 0 else 128 - code
     try:
+        if code == 0 and not result['timed_out']:
+            receipt = build_workspace_effect_receipt(
+                workspace_before, workspace_after, consumer=consumer,
+                expected_output=None if consumer == 'k1' else output_path,
+                observed_changes=workspace_changes)
+            _exclusive_bytes(root / RECEIPT_PATH, receipt, allowed_root=root)
         _exclusive_bytes(root / DIAGNOSTICS['process_stdout'], result['stdout'], allowed_root=root)
         _exclusive_bytes(root / DIAGNOSTICS['process_stderr'], result['stderr'], allowed_root=root)
         outcome = {'schema': 'madsc-local-process-outcome-v1', 'consumer': consumer,

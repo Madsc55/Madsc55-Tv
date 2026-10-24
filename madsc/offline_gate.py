@@ -8,9 +8,24 @@ import subprocess
 import sys
 from pathlib import Path
 
+
+def enforce_offline_unittest_process(command, root: Path) -> None:
+    """Fail closed unless the child is the fixed local unittest discovery."""
+    expected = [sys.executable, "-B", "-m", "unittest", "discover",
+                "-s", "tests", "-v"]
+    repository = Path(__file__).resolve().parent.parent
+    root = Path(root)
+    tests = root / "tests"
+    if (command != expected or not root.is_absolute() or root.is_symlink()
+            or root.resolve(strict=True) != repository
+            or tests.is_symlink() or not tests.is_dir()
+            or tests.resolve(strict=True) != repository / "tests"):
+        raise PermissionError("Unsafe offline unittest subprocess contract")
+
 def main():
     root = Path(__file__).resolve().parent.parent
-    cmd = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"]
+    cmd = [sys.executable, "-B", "-m", "unittest", "discover", "-s", "tests", "-v"]
+    enforce_offline_unittest_process(cmd, root)
     try:
         result = subprocess.run(cmd, cwd=root, capture_output=True, text=True,
                                 timeout=180, check=False, stdin=subprocess.DEVNULL)

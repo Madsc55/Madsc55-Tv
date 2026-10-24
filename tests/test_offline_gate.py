@@ -2,11 +2,25 @@ import unittest
 import subprocess
 import io
 import json
+from pathlib import Path
 from contextlib import redirect_stdout, redirect_stderr
 from unittest.mock import patch
 from madsc.offline_gate import main
 
 class OfflineGateTests(unittest.TestCase):
+    @patch("madsc.offline_gate.subprocess.run")
+    def test_fixed_unittest_child_disables_bytecode_writes(self, run):
+        run.return_value = subprocess.CompletedProcess([], 0, "", "Ran 1 test in 0.1s\nOK\n")
+        with patch("madsc.offline_five_gate.assess_all", return_value={
+                "passed": True, "categories": {
+                    name: {"success": True, "production_ready": False}
+                    for name in ("k1", "k2", "k3", "k4", "k5")}}), \
+             patch("sys.stdout", new_callable=io.StringIO):
+            main()
+        command = run.call_args.args[0]
+        self.assertEqual(command[1:3], ["-B", "-m"])
+        self.assertEqual(run.call_args.kwargs["cwd"],
+                         Path(__file__).resolve().parents[1])
     @patch("madsc.offline_gate.subprocess.run")
     def test_success(self, run):
         run.return_value.returncode = 0

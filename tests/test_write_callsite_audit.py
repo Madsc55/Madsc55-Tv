@@ -377,6 +377,19 @@ def run_commands():
         self.assertEqual(len(rows), 1)
         self.assertTrue(rows[0]["guard_control_flow_verified"])
 
+    def test_offline_unittest_process_has_fixed_guard_but_stays_reviewed(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        rows = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/offline_gate.py"
+            and "process command" in row["api"]
+        ]
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(rows[0]["guard_control_flow_verified"])
+        self.assertFalse(rows[0]["process_effect_verified_read_only"])
+        self.assertTrue(rows[0]["review_required"])
+
     def test_offline_package_mutations_have_direct_k1_guard_dominance(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

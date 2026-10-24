@@ -94,7 +94,8 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
         if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
             raise PermissionError("Core fixture must be an independent regular file")
         if overwrite:
-            current = destination.lstat()
+            current = os.stat(parts[-1], dir_fd=parent_fd,
+                              follow_symlinks=False)
             if ((metadata.st_dev, metadata.st_ino) !=
                     (current.st_dev, current.st_ino)):
                 raise PermissionError("Core fixture changed before overwrite")

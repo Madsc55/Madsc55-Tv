@@ -46,6 +46,8 @@ def main() -> None:
     if not verify_daily_evidence(artifact):
         raise RuntimeError("K2 artifact self-check failed")
     destination = Path(args.output)
+    if destination.is_symlink() or (destination.exists() and not destination.is_file()):
+        raise ValueError("Output must be a regular file, not a symlink")
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(artifact, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
                            encoding="utf-8")

@@ -26,18 +26,18 @@ class OfflineCITriggerContractTests(unittest.TestCase):
         for event in ("pull_request", "push"):
             with self.subTest(event=event):
                 match = re.search(
-                    rf"(?ms)^  {event}:\\n(.*?)(?=^  [a-z_]+:\\n|\\Z)",
+                    rf"(?ms)^  {event}:\n(.*?)(?=^  [a-z_]+:\n|\Z)",
                     trigger_section,
                 )
                 self.assertIsNotNone(match, f"Missing {event} trigger")
                 body = match.group(1)
-                self.assertIn("    paths:\\n", body)
+                self.assertIn("    paths:\n", body)
                 for path in expected_paths:
                     self.assertIn(f"      - '{path}'", body)
 
     def test_pr_gate_stays_read_only_and_offline(self):
         source = WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("permissions:\\n  contents: read", source)
+        self.assertIn("permissions:\n  contents: read", source)
         self.assertIn("persist-credentials: false", source)
         self.assertIn("python -m madsc.offline_gate", source)
         self.assertNotIn("pull_request_target:", source)

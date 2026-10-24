@@ -2,6 +2,17 @@
 
 Bu dosya bir **şablondur**, gerçek yedekleme yapıldığını kanıtlamaz. Gizli anahtar, erişim URL'si, parola, kişisel veri veya üretim playlist içeriği buraya konulmaz.
 
+## 24 Ekim 2026 — Sentetik ham dosya Drive yükleme/geri indirme SHA-256 deneyi
+
+- `K4-Fixture-Only` klasöründe Google Docs test içeriği `text/plain` biçiminde dışa aktarıldı, `upload_file` ile yeni bir **ham .txt** Drive nesnesi olarak yüklendi.
+- Drive metadata kontrolü: MIME `text/plain`, boyut **106 bayt**, ebeveyn `K4-Fixture-Only`, `shared=false`. Dosya Google Drive API üzerinden ham biçimde yeniden indirildi.
+- Yükleme kaynak dosyası **ayrıca yeniden dışa aktarılarak** ve geri indirilen nesneden bağımsız dosya olarak karşılaştırılarak SHA-256 doğrulandı:
+  - Kaynak: 106 bayt; SHA-256 `af227eef0e2a924f817911442cc0e5c8af865a1a29b5d10199495eb4780e5dce`
+  - Drive'dan geri indirilen: 106 bayt; SHA-256 `af227eef0e2a924f817911442cc0e5c8af865a1a29b5d10199495eb4780e5dce`
+  - Tam bayt eşitliği: **true**.
+- **Bu yalnızca sentetik, küçük, tek dosyalı manuel Drive smoke testidir.** GitHub Actions üzerinden OAuth/iş yükü kimliği, gerçek yedek manifesti, üretim veri kapsamı, harici sağlayıcı teslim makbuzu, sandbox restore ve zamanlayıcı henüz doğrulanmamıştır. `external_storage_proven=false`, `production_restore_approved=false`, `production_writes=false`, `production_ready=false` korunur.
+- Her iki test dosyası Drive'da kalır; mevcut üretim verisi, paylaşım, silme ve otomatik çalışma değişmemiştir. Hesap kimliği, erişim token'ı ve Drive nesne kimliği GitHub kayıtlarına yazılmadı.
+
 ## 24 Ekim 2026 — Sentetik Google Docs yazma ve geri okuma kanıtı
 
 - `K4-Fixture-Only` içinde `K4-FIXTURE-ONLY-2026-10-24` adlı **Google Docs biçiminde** bir belge oluşturuldu; yalnızca `MADSC55 K4 SYNTHETIC FIXTURE`, `No production data. No secrets. No backup acceptance.` ve `Fixture version: 1` gibi zararsız sabit metinler yazıldı.

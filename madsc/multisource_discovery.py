@@ -39,16 +39,22 @@ def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = Non
             if type(kind) is not str or kind not in SOURCE_KINDS:
                 raise ValueError("Unknown source category")
             page = normalize_url(page)
+            if len(page) > 4096:
+                raise ValueError("Evidence page URL too long")
             if urlsplit(page).scheme != "https":
                 raise ValueError("Evidence page must use HTTPS")
             # Source pages are evidence references, not playable media endpoints.
             raw_stream = item.get("stream_url")
             stream = normalize_url(raw_stream) if raw_stream is not None else None
+            if stream is not None and len(stream) > 4096:
+                raise ValueError("Stream URL too long")
             if stream is not None and urlsplit(stream).scheme != "https":
                 raise ValueError("Stream candidate must use HTTPS")
             license_reference = item.get("license_reference")
             if license_reference is not None:
                 license_reference = normalize_url(license_reference)
+                if len(license_reference) > 4096:
+                    raise ValueError("License URL too long")
                 if urlsplit(license_reference).scheme != "https":
                     raise ValueError("License reference must use HTTPS")
             rights_verified = item.get("redistribution_permission_verified", False)

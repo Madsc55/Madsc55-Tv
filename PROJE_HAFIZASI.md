@@ -2821,3 +2821,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - İlk audit koşusu nested guard/yerel argv çözüm sınırını **3 failure** ile gösterdi; iki launch sabit yardımcı scope'larına taşındı ve tekrar koşuldu. Son hedefli **141/141**, tam offline **1522/1522**, beş izole K kapısı ve bütün offline kapılar başarılı; stderr boş. Envanter 113 dosya/111 aday/19 disposition. Beş sabit process çağrısı doğrudan guarded, yalnız caller-controlled parity Popen guardsız; altı çağrının read-only etki kabulü 0/6.
 - Fixture/statik sonuçlar kabul değildir: 0/92, 0/26, 0/22 ve production false. Actions/canlı probe/cihaz/üretim/korunan veri/eski repo/PR71/merge işlemi yok.
 - Sonraki yerel iş, parity process'in yalnız opt-in tüketici sözleşmelerini input receipt ve cwd/argv kökenine bağlamak; sabit executable/environment kökenini de kanıtsız read-only disposition vermeden incelemek. Dış bağımsız run/artifact, harici restore ve son kullanıcı cihaz kanıtı bekleniyor.
+
+
+## 24 Ekim 2026 — K1 opt-in parity süreç sözleşmesi
+- `bed931635f2ce7e5967d0575bcce936e3a3c815f`, K1/K4/K5 opt-in tüketicilerinin exact Python modül argv'sini, gerçek repository root'unu ve K5 execution kimliğini child başlangıcından önce doğruluyor. Mapping/argv drift regresyonu process launch yapılmadığını kanıtlıyor; generic `parity_process.Popen` caller-controlled kalıp read-only kabulü almıyor.
+- Hedefli 115/115 ve tam offline 1524/1524 başarılı; beş izole kapı ve tüm offline kapılar geçti. Envanter 113/111/19, subprocess effect acceptance 0/6; kabul 0/92, 0/26, 0/22 ve production false.
+- Belge yayımında bir ara blob aktarımı iki büyük notu 90.060 bayta kesti; `f1f5275304643b8b634deddaf719b3621fcbed5b` tam içerikleri geri yükledi. Uzak boyutlar DEVAM 1186 satır/234134 bayt, HAFIZA 2823 satır/515711 bayt olarak doğrulandı; kesik `bdd1f2f…` güncel kaynak sayılmaz.
+- Sonraki yerel iş sabit curl/ffprobe executable/environment/cwd kökeni ve güncel ilk bağımsız açık K1 caller paketidir. Dış aynı-input artifact/run, harici restore ve son kullanıcı cihaz testi bekleniyor; korunan/dış sistem işlemi yapılmadı.

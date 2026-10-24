@@ -19,6 +19,10 @@ class OfflineCITriggerContractTests(unittest.TestCase):
         expected_paths = (
             ".github/workflows/madsc-unit-tests.yml",
             "madsc/**",
+            "src/**",
+            "scripts/**",
+            "config/**",
+            ".github/workflows/**",
             "tests/**",
             "docs/LEGACY_SOURCE_SCOPE.json",
             "docs/K1_K5_KANITLI_GOREV_DEFTERI.json",

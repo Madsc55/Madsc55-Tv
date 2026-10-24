@@ -280,7 +280,7 @@ def run_commands():
         report = scan_python_tree(root)
         rows = [row for row in report["callsite_inventory"]
                 if row.get("process_shell_status") is not None]
-        self.assertEqual(len(rows), 6)
+        self.assertEqual(len(rows), 6, [(row["path"], row["scope"], row["api"], row["process_command_effect_classification"]) for row in rows])
         self.assertTrue(all(row["process_stdio_bounded_verified"] for row in rows))
         self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
         classes = [row["process_command_effect_classification"] for row in rows]

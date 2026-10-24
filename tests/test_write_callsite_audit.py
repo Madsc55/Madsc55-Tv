@@ -470,6 +470,23 @@ def run_commands():
         self.assertEqual(dispositions[0]["disposition"],
                          "proven_read_only_descriptor")
 
+    def test_parity_workspace_inventory_opens_are_read_only_dispositions(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        candidates = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/parity_workspace_guard.py"
+        ]
+        self.assertEqual(candidates, [])
+        dispositions = [
+            row for row in report["non_write_dispositions"]
+            if row["path"] == "madsc/parity_workspace_guard.py"
+        ]
+        self.assertEqual(len(dispositions), 2)
+        self.assertTrue(all(
+            row["disposition"] == "proven_read_only_descriptor"
+            for row in dispositions))
+
     def test_timestamp_normalizers_have_no_filesystem_mutation_candidate(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

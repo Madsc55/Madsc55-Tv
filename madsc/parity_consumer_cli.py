@@ -12,6 +12,8 @@ from madsc.process_guard import (authorize_parity_consumer_process,
                                  parity_process_environment,
                                  PARITY_MODULE_RUNNER)
 from madsc.parity_snapshot_writer import OUTPUT_PATH, write_execution_snapshot
+from madsc.parity_workspace_guard import (enforce_workspace_effects,
+                                          snapshot_workspace)
 from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
 DIAGNOSTICS = {
@@ -60,8 +62,21 @@ def run_consumer(consumer, *, root, timeout_seconds=120):
         argv, consumer=consumer, root=root, timeout_seconds=timeout_seconds,
         run_id=run_id, commit_sha=head_sha)
     child_env = parity_process_environment(capability)
+    workspace_before = snapshot_workspace(root)
     result = observe_process(argv, cwd=root, timeout_seconds=timeout_seconds,
                              env=child_env, capability=capability)
+    workspace_after = snapshot_workspace(root)
+    try:
+        enforce_workspace_effects(
+            workspace_before, workspace_after,
+            expected_output=None if consumer == 'k1' else output_path)
+    except PermissionError as exc:
+        # Preserve the measured streams, but never let a child that changed an
+        # undeclared repository path produce a successful parity manifest.
+        suffix = f'Workspace side-effect rejected: {exc}\n'.encode('utf-8')
+        result = {**result, 'exit_code': result['exit_code'] or 125,
+                  'timed_out': result['timed_out'],
+                  'stderr': result['stderr'] + suffix}
     code = result['exit_code']
     shell_code = code if code >= 0 else 128 - code
     try:
@@ -73,7 +88,7 @@ def run_consumer(consumer, *, root, timeout_seconds=120):
         _exclusive_bytes(root / DIAGNOSTICS['process_outcome'],
                          (json.dumps(outcome, sort_keys=True) + '\n').encode(),
                          allowed_root=root)
-        if consumer == 'k1':
+        if consumer == 'k1' and code == 0 and not result['timed_out']:
             _exclusive_bytes(root / output_path, result['stdout'], allowed_root=root)
         if code != 0 or result['timed_out']:
             write_execution_snapshot(root, exit_code=code, timed_out=result['timed_out'],

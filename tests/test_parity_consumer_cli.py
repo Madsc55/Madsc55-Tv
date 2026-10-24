@@ -63,6 +63,17 @@ class ParityConsumerTests(unittest.TestCase):
             self.assertIn(b'K1 read-only output gate: PASS', output)
             self.assertNotIn(b'UNTRUSTED CWD SHADOW', output)
 
+    def test_three_real_consumers_allow_only_their_declared_output(self):
+        for key in CONSUMERS:
+            with self.subTest(consumer=key), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                prepare(root, key)
+                with patch.dict(os.environ, environment()):
+                    code = run_consumer(key, root=root, timeout_seconds=5)
+                self.assertEqual(code, 0)
+                self.assertTrue((root / CONSUMERS[key][1]).is_file())
+                self.assertTrue((root / DIAGNOSTICS['process_outcome']).is_file())
+
     def execute(self, body, root):
         return subprocess.run(['bash', '-e', '-o', 'pipefail', '-c',
                                body.replace('${{ inputs.allow_parity_evidence }}', 'true')],
@@ -156,6 +167,47 @@ class ParityConsumerTests(unittest.TestCase):
             snapshot = json.loads((root / 'reports/madsc-parity-snapshot.json').read_text())
             self.assertTrue(snapshot['timed_out'])
             self.assertEqual((root / DIAGNOSTICS['process_stderr']).read_bytes(), b'before controlled timeout')
+
+    def test_unexpected_child_write_turns_success_into_measured_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            prepare(root, 'k1')
+            fixture = dict(CONSUMERS)
+            source, output, _ = fixture['k1']
+            fixture['k1'] = (source, output,
+                             ['-m', 'tests._parity_child_fixture', 'unexpected-write'])
+            with patch('madsc.parity_consumer_cli.CONSUMERS', fixture), \
+                 patch('madsc.parity_consumer_cli.authorize_parity_consumer_process', return_value=object()), \
+                 patch('madsc.parity_consumer_cli.parity_process_environment', return_value=dict(os.environ)), \
+                 patch('madsc.parity_process.validate_parity_process_capability'):
+                code = run_consumer('k1', root=root, timeout_seconds=2)
+            self.assertEqual(code, 125)
+            self.assertFalse((root / output).exists())
+            self.assertTrue((root / 'unexpected-child-write.txt').exists())
+            stderr = (root / DIAGNOSTICS['process_stderr']).read_text()
+            self.assertIn('Workspace side-effect rejected', stderr)
+            snapshot = json.loads((root / 'reports/madsc-parity-snapshot.json').read_text())
+            self.assertEqual(snapshot['exit_code'], 125)
+
+    def test_rewritten_then_restored_input_identity_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = prepare(root, 'k1')
+            original = source.read_bytes()
+            fixture = dict(CONSUMERS)
+            source_name, output, _ = fixture['k1']
+            fixture['k1'] = (source_name, output,
+                             ['-m', 'tests._parity_child_fixture', 'rewrite-revert', source_name])
+            with patch('madsc.parity_consumer_cli.CONSUMERS', fixture), \
+                 patch('madsc.parity_consumer_cli.authorize_parity_consumer_process', return_value=object()), \
+                 patch('madsc.parity_consumer_cli.parity_process_environment', return_value=dict(os.environ)), \
+                 patch('madsc.parity_process.validate_parity_process_capability'):
+                code = run_consumer('k1', root=root, timeout_seconds=2)
+            self.assertEqual(source.read_bytes(), original)
+            self.assertEqual(code, 125)
+            self.assertFalse((root / output).exists())
+            self.assertIn(b'config/shadow_manifest.json',
+                          (root / DIAGNOSTICS['process_stderr']).read_bytes())
 
     def test_existing_evidence_prevents_consumer_start(self):
         with tempfile.TemporaryDirectory() as directory:

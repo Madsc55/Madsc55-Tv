@@ -1,6 +1,13 @@
 name: MADSC55 — Offline Unit Tests
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/madsc-unit-tests.yml'
+      - 'madsc/**'
+      - 'tests/**'
+      - 'docs/LEGACY_SOURCE_SCOPE.json'
+      - 'docs/K1_K5_KANITLI_GOREV_DEFTERI.json'
   push:
     paths:
       - '.github/workflows/madsc-unit-tests.yml'

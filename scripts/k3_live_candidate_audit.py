@@ -32,7 +32,8 @@ def probe(item, timeout):
            "-show_entries", "stream=codec_type,codec_name,width,height,r_frame_rate",
            "-of", "json", item["url"]]
     try:
-        p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout + 5, check=False)
+        p = subprocess.run(cmd, stdin=subprocess.DEVNULL, capture_output=True,
+                           text=True, timeout=timeout + 5, check=False)
         if p.returncode:
             return {"status": "probe_failed", "video": False, "audio": False}
         streams = json.loads(p.stdout).get("streams", [])

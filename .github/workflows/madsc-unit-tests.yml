@@ -5,6 +5,10 @@ on:
     paths:
       - '.github/workflows/madsc-unit-tests.yml'
       - 'madsc/**'
+      - 'src/**'
+      - 'scripts/**'
+      - 'config/**'
+      - '.github/workflows/**'
       - 'tests/**'
       - 'docs/LEGACY_SOURCE_SCOPE.json'
       - 'docs/K1_K5_KANITLI_GOREV_DEFTERI.json'
@@ -18,7 +22,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: madsc55-offline-unit-tests
+  group: madsc55-offline-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 jobs:
   offline-tests:

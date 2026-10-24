@@ -1257,3 +1257,62 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 5. K2–K5 ile legacy workflow ve subprocess etkileri için koordinasyon; üretim verilerine dokunmadan kanıt defterini ve bu notu güncelle.
 
 **Devir durumu:** K1 çalışma geçmişi ve açık riskleri ana merkeze aktarılmıştır; K1 işlevsel/üretim kabulü henüz tamamlanmamıştır.
+
+
+---
+
+## K2 — ANA MERKEZE DEVİR VE KANIT KAYDI (2026-10-24, PR #18)
+
+**Kapsam ve durum:** Bu bölüm yalnız K2 çok kaynaklı kanal keşfi, çevrimdışı doğrulama ve 1.039 kayıtlık envanter denetimine aittir. Diğer K sistemlerinin kayıtları korunmuştur. K2 **üretim/canlı kabulü tamamlanmadı**. Ana dalda bu not dışında üretim verisi değiştirilmedi.
+
+### 1. Tamamlanan geliştirmeler ve değişen dosyalar
+- `madsc/multisource_discovery.py`: beş kaynak türü (resmî yayıncı, lisanslı M3U, TV dizini, resmî YouTube, lisanslı ücretsiz platform), 20.000 kayıt üst sınırı, URL/ad doğrulaması, HTTPS kaynak/akış/lisans bağlantısı şartı, 4.096 karakter URL sınırı, mevcut envanter ve aday mükerrerlik denetimi. Yayın URL'si olmayan farklı kanallar aynı izleme sayfasını paylaşabilir; isimle birlikte kimliklenir. Sonuç yalnız `REVIEW_REQUIRED`; hak, DRM, codec, çözünürlük, canlılık ve üretim uygunluğu **doğrulanmış sayılmaz**. Ağ çağrısı/üretim yazımı yok.
+- `tests/test_multisource_discovery.py`: lisans beyanının doğrulanmış sayılmaması, tekrarlar, geçersiz tür/URL, Unicode görünmez karakter ve ters eğik çizgi, HTTP akış, uzun URL, hatalı mevcut envanter ve ortak kaynak sayfası senaryoları.
+- `docs/K2_COK_KAYNAKLI_KESIF_ONERI_RAPORU_2026-10-24.md`: öneri kaynakları, hak/kalite kanıt sınırları, güncel envanter bağlantısı.
+- `docs/K2_ENVANTER_SALT_OKUNUR_DENETIM_2026-10-24.md`: kaynak dosya üzerinde salt okunur envanter sayımı.
+- `docs/K2_KALICI_DEVIR_NOTU_2026-10-24.md`: K2 ilerleme, açık işler ve güvenlik sınırları.
+- `.github/workflows/k2-multisource-offline.yml` kısa süre eklenip 92 workflow statik envanterini bozduğu için **geri kaldırıldı**; son PR diff'inde yok. Korunan `MADSC55_TV_IBO_CALISANLAR_TEST.m3u8` yalnız **okundu**, değiştirilmedi.
+
+### 2. Düzeltilen hatalar ve commit kanıtları
+- İlk modül `380b138`, testler `3a95f72`, öneri raporu `22162ff`.
+- Geçersiz kaynak kategorisi/Unicode adı `5cfca25`, `91fc6f3`; test literal düzeltmesi `1f4412f`.
+- Mevcut URL envanterindeki geçersiz tipler `e9d01f4`, `cdbe831`.
+- 92 workflow envanteriyle çakışan ek workflow kaldırma `aa239c9`.
+- Unicode biçimlendirme/satır ayırıcıları `5443f8c`, `bf8f7b5`; HTTP akışını reddetme `b650a8a`, `727d026`.
+- Aday URL uzunluğu `f2c4ed9`, `58ce581`; mevcut envanter URL uzunluğu `c6aaecd`, `62066d7`.
+- Ortak kaynak sayfasındaki farklı kanalları koruma `156effa`, `f048e9d`.
+- Kanal adında ters eğik çizgi `e7e4195`, `b516f45`.
+- Envanter denetimi `ce3eed3`, rapor düzeltmesi `6d7724a`, kalıcı devir notu `948d313`, ek HTTP/EPG sayımları `6c335db`.
+- Tam commit ve değişiklik geçmişi: https://github.com/Madsc55/Madsc55-Tv/pull/18/commits
+
+### 3. Dal ve PR
+- Çalışma dalı: `k2/multisource-discovery-evidence-20261024`.
+- Taslak PR: https://github.com/Madsc55/Madsc55-Tv/pull/18 (açık; **merge edilmedi**).
+- Bu kayıt hazırlanırken PR HEAD: `6c335db0a516bdc214a5784037908eb0517635c9`; güncel HEAD değişebilir. PR'ın eski base SHA'sı `76407cb3c8ed75e31d4748aec0bdceb545f357b8`; main ilerlediği için birleştirmeden önce güncel main ile karşılaştırma gerekir.
+
+### 4. CI kanıtı — başarılı / başarısız / iptal / bekleyen
+- **Başarılı** bütünleşik offline CI: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40072347524 ; exact commit `4e5e7cdc1dc72fab9b774075758ab1fad47937c5`.
+- **Başarılı** bütünleşik offline CI: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073466509 ; exact commit `948d313ed631d553971cf8e7f4cb886dd23eb6b7`.
+- **Başarılı** önceki K2 bağımsız CI: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40071266088 ; exact commit `bf8f7b501b1fa060e1448af9e7ad21bfe411d4b0`. Bağımsız workflow daha sonra kaldırıldı.
+- **Başarısız** eski bütünleşik CI: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40071266086 ; `bf8f7b5` üzerinde `test_five_stage_installation` / workflow inventory drift (ek K2 workflow nedeniyle); workflow kaldırılarak giderildi, sonraki bütünleşik başarı yukarıda.
+- **İptal** son PR HEAD `6c335db`: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073500995 . **İptal** önceki `6d7724a`: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073171174 . İptal edilen çalışmaları başarısız veya başarılı sayma.
+- **Bekleyen doğrulama:** son PR HEAD `6c335db` için tamamlanmış başarılı CI kanıtı **yok**; yeni CI çalışması açılırsa exact SHA üzerinden yeniden kontrol et. CI concurrency nedeniyle iptaller yaşandı.
+
+### 5. Gerçekten doğrulanan envanter ve kabul ölçütleri
+- `main:MADSC55_TV_IBO_CALISANLAR_TEST.m3u8` dosyasında **1.039 `#EXTINF`** ve 1.039 HTTP(S) URL satırı sayıldı; 376 benzersiz tam URL, 663 yinelenen URL satırı; 382 benzersiz görünen ad, 657 yinelenen ad satırı.
+- 708 dolu `tvg-id` kaydı içinde 106 benzersiz dolu ID; 331 boş/eksik ID. 784 HTTPS ve 255 HTTP URL satırı. `tvg-logo` ve `group-title` tırnaklı alan varlığı kontrolünde eksik/boş alan görülmedi; gerçek logo erişimi doğrulanmadı.
+- **Doğrulanan kabul:** çevrimdışı ön eleme ve belirli commitlerdeki otomatik testler; dosya düzeyinde envanter sayımı. **Doğrulanmayan:** 1.039 bağımsız/çalışır kanal, URL canlılığı, hak/yeniden dağıtım lisansı, codec, 720p/1080p/4K, DRM, cihazda IBO Player Pro kabulü, üretim dağıtımı.
+
+### 6. Açık işler, riskler ve K bağımlılıkları
+- 663 URL tekrarı / 657 ad tekrarı otomatik silinemez: bölgesel varyantlar ve kanal kimliği tek tek incelenmeli. 331 eksik EPG ID tahmin edilmeden kaynakla eşleştirilmeli. 255 HTTP satırına ancak resmî ve izinli HTTPS alternatif kanıtı varsa öneri sunulmalı.
+- Kaynak sayfasının açık olması yayın hakkı değildir; izinsiz stream probe, DRM aşma, üçüncü taraf yayın yeniden dağıtımı ve otomatik üretim yazımı yasak. URL'lerde token/kimlik bilgisi bulunabilir; rapora ham URL veya sır yazma.
+- **K3:** EPG/kanal kimliği, gerçek HLS video-ses/codec/çözünürlük ve K2→K3 ölçüm kanıtı; **K4:** yedek/geri alma ve korunan yazma sınırları; **K5:** cihaz/IBO Player Pro ve üretim kabul kapısı; **K1:** 92 workflow statik envanteri, process guard ve ortak offline CI. Diğer K sistemlerinin onayı olmadan kabul devretme.
+
+### 7. Sonraki çalışma önceliği
+1. PR #18 güncel HEAD ve main farkını oku; exact HEAD için başarılı CI al, iptalleri başarı sayma.
+2. 1.039 kayıt için kimlik/varyant bazlı salt okunur eşleştirme ve kanıtlı tekrarlama raporu üret; üretim listesini değiştirme.
+3. 331 eksik `tvg-id` için güvenilir EPG eşleştirmesi, 255 HTTP kayıt için izinli HTTPS alternatiflerini belgeye dayalı araştır.
+4. Her öneri için tekil lisans ve operatör kökeni kanıtı; yalnız izinli canlı ölçüm, UTC zaman/codec/çözünürlük/hash kaydı.
+5. K3/K4/K5 kapıları ve son kullanıcı cihaz kabulü doğrulanmadan merge/üretim tamamlandı deme.
+
+**K2 ana merkeze devir:** Bu bölüm yalnız kayıt/kanıt devridir; K2 canlı/üretim kabulü açık.

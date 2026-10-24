@@ -63,7 +63,10 @@ def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = Non
             if type(rights_verified) is not bool:
                 raise ValueError("Invalid rights verification flag")
             # A boolean assertion alone never upgrades evidence to verified rights.
-            fingerprint = sha256((stream or page).encode("utf-8")).hexdigest()
+            # A shared broadcaster landing page may list several distinct channels.
+            # Without a stream URL, include channel identity in the dedup key.
+            identity = stream if stream is not None else page + "\\n" + name.strip().casefold()
+            fingerprint = sha256(identity.encode("utf-8")).hexdigest()
             if fingerprint in seen or (stream is not None and stream in existing):
                 duplicates.append({"index": index, "fingerprint": fingerprint,
                                    "reason": "duplicate_or_existing"})

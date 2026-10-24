@@ -1490,3 +1490,13 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 - `tests/test_multisource_discovery.py` içine localhost, özel IPv4, loopback IPv6, link-local ve metadata IP reddi ile genel IP'nin yalnız inceleme adayı kalması testleri eklendi: commit https://github.com/Madsc55/Madsc55-Tv/commit/dca2a9b075d862b3c4dcd4fe67da163e25dcb4f0 .
 - **CI:** Yeni `dca2a9b` commit'i için başarılı CI kanıtı henüz alınmadı; testler yazılmıştır fakat çalıştıkları doğrulanmadı. Önceki başarılı kanıt: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073466509 (`948d313`). Son PR HEAD CI ve bütünleşik 92-workflow envanter kapısı yeniden kontrol edilmelidir.
 - **Açık risk:** DNS adları sonradan özel IP'ye çözümlenebilir (DNS rebinding). Bu metadata kontrolü canlı ağ erişimine yetki vermez; gelecekte ayrı izinli probe yapılırsa çözümleme/redirect/bağlantı hedefi düzeyinde SSRF koruması gerekir. K3/K4/K5 canlı ve üretim kabul kapıları açık. Diğer K kayıtları değiştirilmedi.
+
+---
+
+## 24 Ekim 2026 — K4 ek denetim ve CLI hata regresyonu
+- PR #20 hâlâ açık, son gözlenen HEAD `65aab93ac2783ca00e26311549f6e0c38dd0f8fb`: https://github.com/Madsc55/Madsc55-Tv/pull/20 .
+- PR #21 hâlâ açık: https://github.com/Madsc55/Madsc55-Tv/pull/21 . Yeni test commit'i `72f1f9d109bc85d54662817ee9362bd0e1dc04b4` (`tests/test_k4_schedule_plan.py`): CLI'ye geçersiz ay verildiğinde `ValueError` ile reddetmesini ve sahte başarılı JSON üretmemesini sınar. `[skip ci]` ile kaydedildi; bu commit için **CI çalıştırıldı/başarılı iddiası yoktur**.
+- Önceki PR #21 devir belgesi SHA'sı `252da775c4da5e80c206f695531e2fa31cff811e` için Actions `40073485895` **completed/cancelled**: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073485895 . `c0b0ba38` için `40073166736` ve `40073169230` de **cancelled**. Daha eski `248e38de` için `40072569431` ve `40072566216` success; güncel commit'in kanıtı değildir.
+- **K4-15/16/17/18 açık**: gerçek dış yedek makbuzu/manifest, bağımsız restore, VOD/arşiv kapsamı ve yetkili üretim zamanlayıcısı kanıtı yok. `external_storage_proven=false`, `production_restore_approved=false`, `production_writes=false`, `production_ready=false`.
+- K1 yazıcı güvenlik sınırları ve K5 bağımsız kabul zinciri korunmalıdır; K2/K3 kaynak yetkisi ve içerik envanteri gerekir. Üretim dosyaları, Google Drive gerçek yedekleri, GitHub secrets, cron ve PR merge işlemleri değiştirilmedi.
+- Sonraki sıra: PR #21 güncel SHA için gerçek CI sonucu; iptal nedeninin workflow concurrency/log denetimi; PR #20 ile entegrasyon diff'i; sonra yalnız açık yetkiyle K4-15→16→17→18 gerçek kanıtları.

@@ -86,6 +86,23 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluate_discovery([self.item], {"https://example.org/" + "a" * 4096})
 
+    def test_local_and_nonpublic_ip_sources_are_rejected(self):
+        blocked = ("https://localhost/live", "https://channel.local/watch",
+                   "https://127.0.0.1/live", "https://10.0.0.2/live",
+                   "https://192.168.1.10/live", "https://[::1]/live",
+                   "https://[fe80::1]/live", "https://169.254.169.254/metadata")
+        for field in ("source_page", "stream_url", "license_reference"):
+            for url in blocked:
+                with self.subTest(field=field, url=url):
+                    report = evaluate_discovery([dict(self.item, **{field: url})])
+                    self.assertEqual(report["candidates"], [])
+                    self.assertEqual(len(report["rejected"]), 1)
+
+    def test_public_ip_literal_is_still_review_only(self):
+        report = evaluate_discovery([dict(self.item, stream_url="https://8.8.8.8/live")])
+        self.assertEqual(len(report["candidates"]), 1)
+        self.assertFalse(report["candidates"][0]["production_ready"])
+
     def test_bounded_input(self):
         with self.assertRaises(ValueError):
             evaluate_discovery([self.item] * 20001)

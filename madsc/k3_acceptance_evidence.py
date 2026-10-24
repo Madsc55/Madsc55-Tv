@@ -22,10 +22,12 @@ def assess(paths):
                 data.get("probed") != 75 or not isinstance(rows, list) or len(rows) != 75):
             raise ValueError("Invalid K3 75-candidate snapshot")
         # A manifest-only snapshot must never claim decoded audio/video.
-        if data.get("audio_video_verified", 0) not in (0, False):
+        if type(data.get("audio_video_verified", 0)) is not int or data.get("audio_video_verified", 0) != 0:
             raise ValueError("Manifest-only snapshot claims audio/video verification")
         if any(r.get("audio_video_verified", False) is not False for r in rows):
             raise ValueError("Manifest-only row claims audio/video verification")
+        if any(not isinstance(r, dict) for r in rows):
+            raise ValueError("Invalid K3 result row")
         ids = [r.get("url_sha256") for r in rows]
         if any(not isinstance(h, str) or len(h) != 64 or
                any(ch not in "0123456789abcdef" for ch in h) for h in ids):

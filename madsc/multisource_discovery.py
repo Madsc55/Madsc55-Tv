@@ -18,6 +18,8 @@ MAX_RECORDS = 20000
 def _public_https_url(value: str, label: str) -> str:
     """Accept public HTTPS references only; never resolve or request a host."""
     url = normalize_url(value)
+    if any(unicodedata.category(ch) in ("Cc", "Cf", "Cs", "Zl", "Zp") for ch in url):
+        raise ValueError(label + " contains invisible or control characters")
     if len(url) > 4096:
         raise ValueError(label + " URL too long")
     parts = urlsplit(url)

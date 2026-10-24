@@ -103,6 +103,15 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
         self.assertEqual(len(report["candidates"]), 1)
         self.assertFalse(report["candidates"][0]["production_ready"])
 
+    def test_invisible_unicode_in_urls_is_rejected(self):
+        for field in ("source_page", "stream_url", "license_reference"):
+            for codepoint in (0x200B, 0x202E, 0x2060, 0x2028, 0x2029):
+                with self.subTest(field=field, codepoint=hex(codepoint)):
+                    url = "https://example.org/" + chr(codepoint) + "watch"
+                    report = evaluate_discovery([dict(self.item, **{field: url})])
+                    self.assertEqual(report["candidates"], [])
+                    self.assertEqual(len(report["rejected"]), 1)
+
     def test_bounded_input(self):
         with self.assertRaises(ValueError):
             evaluate_discovery([self.item] * 20001)

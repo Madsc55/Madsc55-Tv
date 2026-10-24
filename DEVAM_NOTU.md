@@ -1528,3 +1528,14 @@ Kullanıcı bu sohbetin kaydedilmesini ve yeni sohbette K1 işlerine kaldığı 
 **Açık işler:** (1) K1 runtime güvenlik kabulü **0/26 kanıtlı**, `production_ready=false`; (2) staged overwrite ve cleanup TOCTOU riskleri, saldırganın yazabildiği dizin senaryosu; (3) AST envanterinin gerçek tüm writer callsite'larına bağlanması, merkezi protected-write gate entegrasyonu; (4) generic parity Popen read-only caller/capability ve gerçek yan etki kanıtı; (5) K2–K5/legacy workflow davranışsal parity bağımlılıkları. Bunları tamamlanmış gösterme.
 
 **Yeni sohbette yapılacaklar:** Önce güncel `main` HEAD ve en son Actions run/job sonuçlarını oku; ilgili K1 dosyalarını güncel blob SHA ile al; somut açıkları kod+regresyon testiyle gider; CI SHA kapsamını doğrula; `DEVAM_NOTU.md` K1 bölümünü güncelle. Diğer K sistemlerinin eşzamanlı değişikliklerini koru. Üretim M3U/M3U8, XMLTV/EPG, logo, favori, arşiv, yedek, cihaz ve canlı kanallara dokunma; PR #71 merge etme, koruma kapısını gevşetme, Actions manuel dispatch/rerun yapma.
+
+---
+
+## K5 — YENİ SOHBETE GEÇİŞ / 24 EKİM 2026, SON CI DOĞRULAMASI
+
+- Kullanıcı K5 sohbetini sonlandırıp yeni sohbette aynı yerden devam etmek istiyor. K5 dalı `k5/fail-closed-evidence-20261023`, taslak PR #6; üretim ve diğer K sistemleri değiştirilmedi.
+- **Yeni doğrulanan en güncel K5 dal SHA'sı:** `17ecf189a90fe19995e50f19a683d82a535d6e61`. [Frozen Source Integrity 40074650847](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40074650847) **completed/success**; [Offline Unit Tests 40074650857](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40074650857) **completed/success**.
+- Önceki `baf4887` için offline run `40074630913` **success**; aynı SHA'daki `40074634916` **cancelled**, kaynak run `40074634919` **success**. İptal test başarısızlığı değildir.
+- Son değişiklikler: `madsc/k5_behavioral_compare.py` run ID fail-closed doğrulama (commit `14175a0`), `tests/test_k5_behavioral_compare.py` regresyonları (`baf4887`), `docs/K5_DEVIR_NOTU_2026-10-24.md` (`17ecf18`). Ana merkez önceki devir commitleri `9a8f4ca` ve `76d8f0e`.
+- **Kabul sayıları değişmedi:** 92/92 ilk YAML kaynak incelemesi, **0/92** bağımsız eski/yeni davranışsal parity, K1 **0/26** runtime, genel **0/22**. K5 üretim hazır değil.
+- **Yeni sohbetin ilk işi:** main ve K5 dal HEAD'lerini, PR #6 ve CI'ları yeniden kontrol et; sonra gerçek bağımsız izole fixture runner/provenance ve workflow eşleştirme eksiklerini güvenli biçimde ilerlet. Canlı kanal taraması, main kod merge veya korunan dosya yazımı yapma.

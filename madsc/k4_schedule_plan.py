@@ -26,6 +26,9 @@ def planned_slots(year: int, month: int, hour: int = 3) -> list[dict]:
     slots = []
     for day in DAYS:
         local = dt.datetime(year, month, day, hour, tzinfo=zone)
+        # Both folds must agree; otherwise this wall clock is ambiguous or skipped.
+        if local.utcoffset() != local.replace(fold=1).utcoffset():
+            raise ValueError("ambiguous or nonexistent local time")
         utc = local.astimezone(dt.timezone.utc)
         if utc.astimezone(zone).replace(fold=0) != local:
             raise ValueError("ambiguous or nonexistent local time")

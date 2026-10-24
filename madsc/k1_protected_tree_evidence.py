@@ -18,7 +18,7 @@ def main() -> int:
     tracked = subprocess.run(
         ["git", "ls-files", "-z"], cwd=root, check=True, capture_output=True
     ).stdout
-    paths = [p.decode("utf-8", "surrogateescape") for p in tracked.split(b"\\0") if p]
+    paths = [p.decode("utf-8", "surrogateescape") for p in tracked.split(bytes([0])) if p]
     protected = [p for p in paths if audit_write_paths([p])["blocked"]]
     def snapshot():
         evidence = {}

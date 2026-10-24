@@ -63,3 +63,13 @@ Audit dalı değişiklikleri PR olarak incelemeye sunulsun; Actions CI doğrulam
 - Fixture, gerçek blocked probe çıktısına uygun olarak manifest gözlem alanı kaldırılarak düzeltildi (b4079a95). Run 40072187564 kontrol sırasında devam ediyordu; başarı iddiası yok.
 - K3-13 AÇIK: gerçek ağda 75 aday, altı saat aralıklı üç bağımsız kanıt, ffprobe video/ses, Pages/XMLTV, logolar ve son IBO Player Pro cihaz kabulü gerekir.
 - Manifest-only raporu decoded video/audio veya tam üretim kabulü kanıtı değildir.
+
+
+## 24 Ekim 2026 — K3 güncel devir notu
+- Aktif çalışma dalı: `madsc/k3-live-acceptance-audit-20261024`; taslak PR: https://github.com/Madsc55/Madsc55-Tv/pull/10. PR açık, main'e birleştirilmedi.
+- Son doğrulanan CI: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073168033 — **SUCCESS**, commit `f056b49f00fb13cf3921f251e4bb038a53b26093`.
+- K3 kabul raporu denetimi: üç farklı UTC zamanlı snapshot, her biri 75 farklı SHA-256 aday, iki ardışık ölçüm aralığının her biri en az 6 saat, tutarlı manifest sayımları ve kanıt durumları. Manifest-only kanıtı çözülmüş ses/görüntü kanıtı sayılmaz.
+- Son düzeltme: `unverified` durumundaki kanal satırında hem `hls_manifest_seen=False` hem de bool türünde `https_reachable` zorunlu; eksik alanlar fail-closed. `blocked_or_unreachable` satırlarında gözlem alanları bulunamaz. İlgili regresyon testleri CI'dan geçti.
+- **K3-13 AÇIK:** Gerçek izinli ağ kaynaklarında 75 adaylı manifest pilotu ve en az altı saat aralıklı üç bağımsız ölçüm; gerçek video/ses ffprobe kanıtı; Pages/XMLTV ve tvg-id eşleşmeleri; logo/kanal kimliği; son aşamada IBO Player Pro cihaz kabulü henüz kanıtlanmadı.
+- **Sonraki adım:** İzinli kaynaklarla read-only workflow_dispatch pilotları çalıştırılmalı, artifact'ler karşılaştırılmalı, ardından gerçek cihazda manuel kabul yapılmalı. Workflow dispatch bu sohbetin mevcut GitHub araçlarında bulunmadığından çalıştırıldı denemez.
+- **Sınır:** Üretim M3U, XMLTV, logolar, favoriler, yedekler, cihazlar değiştirilmez; PR otomatik merge edilmez; offline CI canlı yayın kabulü olarak sunulmaz.

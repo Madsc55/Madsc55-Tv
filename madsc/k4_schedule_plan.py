@@ -22,8 +22,6 @@ def planned_slots(year: int, month: int, hour: int = 3) -> list[dict]:
         raise ValueError("invalid month")
     if type(hour) is not int or not 0 <= hour <= 23:
         raise ValueError("invalid hour")
-    if DAYS != (1, 15):
-        raise ValueError("K4 schedule days must remain the 1st and 15th")
     zone = ZoneInfo(ZONE)
     slots = []
     for day in DAYS:

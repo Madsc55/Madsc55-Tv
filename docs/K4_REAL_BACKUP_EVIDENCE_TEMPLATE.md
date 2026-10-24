@@ -2,6 +2,13 @@
 
 Bu dosya bir **şablondur**, gerçek yedekleme yapıldığını kanıtlamaz. Gizli anahtar, erişim URL'si, parola, kişisel veri veya üretim playlist içeriği buraya konulmaz.
 
+## 24 Ekim 2026 — Google Drive bağlantısı salt-okunur ön kontrolü
+
+- Google Drive bağlantısı kullanıcı tarafından etkinleştirildi; erişilebilir dosya adlarında `MADSC55` ve `K4` aramaları sıfır eşleşme döndürdü. Bu arama sonuçları **hedef klasörün bulunmadığını kanıtlamaz**; erişim kapsamı ve klasör yetkisi ayrıca doğrulanmalıdır.
+- K4 için doğrulanmış, kullanıcı tarafından onaylı bir hedef klasör kimliği **henüz yok**. Google Drive'a klasör oluşturma, dosya yükleme, silme, paylaşım değiştirme veya gerçek yedek aktarma işlemi **yapılmadı**.
+- Bu bağlantı ChatGPT üzerinden salt-okunur keşif sağlayabildi; GitHub Actions çalışma zamanı için Google Drive API kimlik bilgileri veya OAuth hizmet yetkisi **kurulmuş sayılmaz**.
+- Sonraki güvenli kapı: belirli K4 hedef klasörünü ve erişim kapsamını kullanıcıyla doğrula; ardından ayrı bir sentetik fixture için sınırlı test yazma izni al. Gerçek kaynak envanteri ve üretim aktarımı için ayrıca açık onay gereklidir.
+
 ## 24 Ekim 2026 — Google Drive hedef seçimi ve güvenli ön hazırlık
 
 **Kullanıcı tercihi:** Google Drive. Bu yalnızca hedef sağlayıcı seçimidir; erişim yetkisi, yükleme onayı veya üretim verisi aktarım izni değildir. K4-15/16/17/18 kabul bayrakları değişmez.

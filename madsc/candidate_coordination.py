@@ -14,11 +14,11 @@ def coordinate(rows: list[dict], probes: dict, attempts: dict,
     if (not isinstance(rows, list) or len(rows) > 20000 or not isinstance(probes, dict)
             or len(probes) > 20000 or not isinstance(attempts, dict) or len(attempts) > 20000):
         raise ValueError("Invalid evidence mapping")
-    if epg_ids is not None and (not isinstance(epg_ids, set) or any(not isinstance(x, str) for x in epg_ids)):
+    if epg_ids is not None and (not isinstance(epg_ids, set) or len(epg_ids) > 20000 or any(not isinstance(x, str) for x in epg_ids)):
         raise ValueError("Invalid EPG identifiers")
-    if logo_ids is not None and (not isinstance(logo_ids, set) or any(not isinstance(x, str) for x in logo_ids)):
+    if logo_ids is not None and (not isinstance(logo_ids, set) or len(logo_ids) > 20000 or any(not isinstance(x, str) for x in logo_ids)):
         raise ValueError("Invalid logo identifiers")
-    if ibo_results is not None and not isinstance(ibo_results, dict):
+    if ibo_results is not None and (not isinstance(ibo_results, dict) or len(ibo_results) > 20000):
         raise ValueError("Invalid IBO evidence")
     discovery = classify_candidates(rows)
     if any(type(value) is not str or not value.strip() for value in (epg_ids or set())):

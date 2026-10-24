@@ -153,6 +153,27 @@ class CoreFixtureWriterTests(unittest.TestCase):
             self.assertTrue(checked)
             self.assertEqual(target.read_bytes(), b"new")
 
+    def test_target_swapped_during_staging_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = write_core_fixture(root, "fixture.txt", b"original")
+            real_fsync = os.fsync
+            swapped = False
+            def swap_target_on_stage_sync(fd):
+                nonlocal swapped
+                if not swapped:
+                    swapped = True
+                    target.unlink()
+                    target.write_bytes(b"replacement by another writer")
+                return real_fsync(fd)
+            with mock.patch("madsc.core_fixture_writer.os.fsync",
+                            side_effect=swap_target_on_stage_sync):
+                with self.assertRaises(PermissionError):
+                    write_core_fixture(root, "fixture.txt", b"unsafe", overwrite=True)
+            self.assertTrue(swapped)
+            self.assertEqual(target.read_bytes(), b"replacement by another writer")
+            self.assertEqual(sorted(p.name for p in root.iterdir()), ["fixture.txt"])
+
     def test_unknown_protected_and_traversing_paths_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

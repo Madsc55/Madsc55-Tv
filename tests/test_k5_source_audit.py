@@ -123,6 +123,23 @@ class K5SourceAuditTests(unittest.TestCase):
         self.assertFalse(result["source_audit_passed"])
         self.assertTrue(any(x.startswith("invalid_signals:") for x in result["errors"]))
 
+    def test_duplicate_verified_row_not_counted_twice(self):
+        original = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            value = original(path, *args, **kwargs)
+            if str(path).endswith("K5_KAYNAK_DOGRULAMA_91_92.json"):
+                data = json.loads(value)
+                data["rows"][1] = dict(data["rows"][0])
+                return json.dumps(data)
+            return value
+
+        with patch.object(Path, "read_text", read_text):
+            result = audit(self.root)
+        self.assertFalse(result["source_audit_passed"])
+        self.assertEqual(result["verified_source_rows"], 91)
+        self.assertTrue(any(x.startswith("duplicate:") for x in result["errors"]))
+
     def test_tampered_source_sha_fails_closed(self):
         original = Path.read_text
 

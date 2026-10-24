@@ -25,3 +25,10 @@ Bu dosya mevcut kaynaklardan çıkarılmış kontrol listesidir; üretim yedeği
 - Kabul şartları: `docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md`
 
 Bu matrisi ekleyen commit için CI ayrıca kontrol edilmelidir.
+
+## 24 Ekim 2026 — yeni VOD doğrulayıcı ve CI kabulü
+- `madsc/k4_vod_equivalence.py`: iki salt-okunur manifestte göreli yol, byte, SHA-256, saklama ve erişim politikasını karşılaştırır. Bilinmeyen alan, yol kaçışı, Unicode taşınabilir ad çakışması ve sahte üretim kabulü fail-closed.
+- `tests/test_k4_vod_equivalence.py`: eşleşme, eksik/fazla dosya, bozuk hash, erişim/saklama farkı ve geçersiz veri testleri.
+- Commit `79189f99d13625a69a68b225fd18d53aba324065` için GitHub Actions `40091242333` **success**: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40091242333
+- Google Drive `MADSC55-TV/K4-Backups` altında yalnız `K4-Fixture-Only` klasörü gözlendi; bu klasörde 106 baytlık sentetik .txt ve Google Docs fixture var. Gerçek kaynak envanteri veya sağlayıcı yedek makbuzu gözlenmedi.
+- K4-15/16/17/18 gerçek üretim kabulü hâlâ açık. Test kodu ve fixture sonuçları gerçek VOD veya bağımsız harici restore kanıtı değildir.

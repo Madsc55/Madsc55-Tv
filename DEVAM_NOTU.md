@@ -1458,3 +1458,11 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 5. PR #6'yı yalnız onay ve doğrulanmış kabul sonrasında değerlendir; `main` üzerindeki diğer K kayıtlarını koru.
 
 **K5 devir durumu:** Ana merkeze kayıt için hazır; K5 işlevsel ve üretim kabulü **tamamlanmış değildir**.
+
+
+## 24 Ekim 2026 — K1 parity process capability ve environment izolasyonu
+- Başlangıçta doğrulanan uzak `main` `fe90142f421071f6df2ad3639b0bceff07d0f12d`; aradaki fixture-writer yarış düzeltmeleri korundu. `e00a01b5af8aace2a361a447dd4157d7e112d4ca`, düşük seviyeli `parity_process.Popen` çağrısını mühürlü capability olmadan başlatmıyor. Capability yalnız K1/K4/K5 exact opt-in komutu doğrulandıktan sonra üretiliyor ve argv, cwd metni, cwd dev/inode kimliği ile timeout'a bağlanıyor; değiştirilmiş komut/kök/timeout child başlamadan reddediliyor.
+- `250942deb5ad95534b14cffd169f7449e47323c4`, child'ın çağıran environment'ını miras almasını kaldırdı. Popen yalnız doğrulanmış kaynak köküne bağlı `PYTHONPATH`, `PYTHONDONTWRITEBYTECODE=1`, `LANG=C`, `LC_ALL=C` ortamını alıyor; HOME/proxy ve diğer çağıran değişkenleri capability eşleşmesini bozup fail-closed reddediliyor. İlk ref denemesi eşzamanlı K2–K5 devir commitleri nedeniyle lease ile durdu; dört commit korunup paket yeni başa bağlandı.
+- Hedefli process/consumer/audit paketi iki aşamada **119/119**; son exact içerikte tam `python -B -m madsc.offline_gate` **1538/1538**, beş izole K kapısı ve bütün offline kapılar başarılı. Statik envanter **113 dosya / 116 aday / 19 disposition**; **116/116** aday doğrudan yapısal guard baskınlığı taşıyor. Generic Popen yine `process_effect_verified_read_only=false`, `caller_closure_verified=false` ve review-required; bu sonuç gerçek süreç etkisi kabulü değildir.
+- Kabul değişmedi: parity **0/92**, runtime güvenlik **0/26**, ana görev **0/22**, production false. Actions tetiklenmedi; canlı probing, cihaz, üretim/korunan veri, eski depo, PR #71 veya merge işlemi yapılmadı.
+- Sıradaki somut yerel iş: parity Python modül kökenini cwd gölgelemesine karşı sabit kaynak kimliğine bağlamak; ardından altı subprocess çağrısının bağımsız runtime etkisi için kanıt şemasını ilerletmek. Gerçek aynı-input bağımsız execution/artifact, harici restore ve kullanıcı cihaz kanıtı dış engel olarak açık.

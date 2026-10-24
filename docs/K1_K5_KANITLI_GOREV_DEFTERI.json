@@ -21,9 +21,11 @@
     "evidence": [
       "dc18d2244f76a29b1e2fc6471aa4ed28be2b70a9: fixed DNS/curl/ffprobe argv preflight; static/offline evidence only",
       "bed931635f2ce7e5967d0575bcce936e3a3c815f: exact opt-in parity consumer command/root/identity contract; no runtime acceptance",
-      "c996626eda2e7440c076fa583cf6b10c6362f5db: curl/ffprobe fixed cwd, minimal environment and root-owned executable origin; offline evidence only"
+      "c996626eda2e7440c076fa583cf6b10c6362f5db: curl/ffprobe fixed cwd, minimal environment and root-owned executable origin; offline evidence only",
+      "e00a01b5af8aace2a361a447dd4157d7e112d4ca: sealed parity capability binds opt-in argv/cwd/root inode/timeout before Popen; offline evidence only",
+      "250942deb5ad95534b14cffd169f7449e47323c4: parity child receives only source-root-bound PYTHONPATH, no-bytecode and fixed locale environment; no runtime acceptance"
     ],
-    "note": "Güncel statik audit 111 adayı izliyor: 110 doğrudan yapısal K1 guard baskınlığı taşıyor; caller-controlled düşük seviye parity Popen review-required ve process effect acceptance 0/6 kalıyor. Tüm gerçek runtime çağrı yolları ve 26 kural bağımsız kanıtlanmadan görev tamamlanmış sayılmaz."
+    "note": "Güncel statik audit 113 dosyada 116 adayı izliyor ve 116/116 doğrudan yapısal K1 guard baskınlığı taşıyor. Generic parity Popen capability gerektiriyor; buna rağmen caller closure false, process effect acceptance 0/6 ve gerçek runtime kabul 0/26 kaldığından görev in_progress."
   },
   {
     "id": "K1-04",

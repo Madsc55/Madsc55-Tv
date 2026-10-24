@@ -2835,3 +2835,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Hedefli 142/142; eşzamanlı K2/K1 commitleri korunmuş exact birleşik içerikte tam offline 1526/1526, beş izole kapı ve bütün offline kapılar başarılı. Envanter 113/111/19; doğrudan guard 110/111, process effect kabulü 0/6.
 - K1-03 ledger evidence güncellendi fakat status in_progress; fixture/statik kanıt 0/26 runtime, 0/92 parity veya 0/22 görev kabulü değildir. Dış sistem/korunan veri işlemi yapılmadı.
 - Sonraki yerel adım generic parity Popen caller capability/call-chain sözleşmesi; gerçek opt-in consumers dışına authority vermeden ve test yardımcılarını production kabulü saymadan ilerletilecek.
+
+
+## 24 Ekim 2026 — K1 parity process capability ve sabit child environment
+- `e00a01b5af8aace2a361a447dd4157d7e112d4ca`: genel parity Popen artık yalnız exact K1/K4/K5 consumer preflight'ından çıkan mühürlü capability ile çalışır; argv/cwd/root dev-inode/timeout drift'i child başlamadan reddedilir. Test mekaniklerinin validator mock'u üretim yetkisi veya runtime kabulü değildir.
+- `250942deb5ad95534b14cffd169f7449e47323c4`: parity child environment mirası kaldırıldı; yalnız doğrulanmış source-root `PYTHONPATH`, bytecode kapatma ve sabit C locale aktarılır. HOME/proxy/çağıran env ekleri fail-closed. Eşzamanlı K2–K5 devir commitleri lease ile korunarak yeni HEAD üzerine yayımlandı.
+- Hedefli **119/119**, tam offline **1538/1538**; beş izole kapı ve bütün offline kapılar başarılı. Envanter 113/116/19 ve doğrudan yapısal guard 116/116. Popen dış etki ve caller closure kanıtı verilmedi: 0/6 süreç etkisi, 0/26 runtime, 0/92 parity, 0/22 görev, production false.
+- Sonraki yerel iş cwd kaynaklı Python module shadowing olasılığını sabit kaynak kimliğiyle kapatmak; gerçek bağımsız run/artifact, restore ve cihaz kanıtı bekleniyor. Dış/korunan sistem işlemi yapılmadı.

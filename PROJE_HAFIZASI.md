@@ -2800,3 +2800,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `ea3e5939f443e379cbc1d9f729251f0f3b1f3997`: K5 kaynak denetimi `--output` dosyasını doğrudan `write_text` yerine K1-guarded exclusive evidence writer ile oluşturuyor; overwrite yok. Exact içerikte hedefli 112 ve 94 test ile tam offline **1504/1504** başarılı. Envanter 111 dosya / 138 aday / 18 disposition.
 - İlk CSV hedefli koşudaki `StringIO(newline="")` kaynak biçimi 1 failure verdi ve düzeltilmeden kabul edilmedi. Son koşular yeşil. Kabul 0/92, 0/26, 0/22, production false; Actions/canlı probe/cihaz/üretim veya korunan veri işlemi yok.
 - Sonraki yerel adım mapping `.copy` false-positive'ını kaynak-bağlı ayırmak ve `src/madsc_guard.py` salt-okunur descriptor adayını incelemektir. Bağımsız gerçek execution/artifact, restore ve son kullanıcı cihaz kanıtı bekleniyor.
+
+
+## 24 Ekim 2026 — K1 non-write envanter temizliği
+- `df3597ac89655e9a1549d6f7f77aeb620495b147`: history mapping kopyası ve tarih dönüşümleri filesystem-benzeri adlardan ayrıldı; `src/madsc_guard.py` manifest açışı kaynak-bağlı salt-okunur descriptor disposition oldu.
+- `c282ac352e4e3e69d4466b7429945eab4a64e6e2`: beş timestamp normalizasyonu explicit son-ek dönüşümüne taşındı. `5e35212f18459ede14b222d7447339c79c316217`: kalan 17 belirsiz text `.replace` callsite'ı davranışı koruyan `translate`/CRLF/helper sözleşmeleriyle in-memory hale getirildi.
+- Hedefli sonuçlar 116, 168 ve son düzeltmeden sonra 332 test; tam offline **1508/1508**. İlk 332-test denemesinde eski kaynak-string assertion'ı 1 failure verdi ve başarı sayılmadan davranış testine çevrildi. Envanter 111 dosya / 112 aday / 19 disposition; guard'sız kalanlar yalnız 6 subprocess ve 2 temporary-directory oluşturucusu.
+- Kabul 0/92, 0/26, 0/22 ve production false. Actions/canlı probe/cihaz/üretim/korunan veri işlemi yok. Sonraki yerel iş iki temporary-directory lifecycle/kök sözleşmesi, sonra altı subprocess adayının fail-closed etki kanıtıdır; bağımsız gerçek artifact/run, restore ve kullanıcı cihaz kabulü bekleniyor.

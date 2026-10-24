@@ -25,6 +25,10 @@ _GUARDS = {
     "enforce_offline_package_path",
     "enforce_local_temporary_root",
     "enforce_offline_unittest_process",
+    "enforce_dns_resolver_process",
+    "enforce_reachability_curl_process",
+    "enforce_bounded_curl_process",
+    "enforce_ffprobe_read_process",
 }
 _MUTATING_METHODS = {
     # File-object writes matter too: an open(..., "w") may be wrapped or

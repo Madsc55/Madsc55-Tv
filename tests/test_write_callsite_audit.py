@@ -54,6 +54,22 @@ class WorkflowWriteBoundaryRegressionTests(unittest.TestCase):
 
 
 class WriteCallsiteAuditTests(unittest.TestCase):
+    def test_fixed_network_helpers_have_direct_process_preflight(self):
+        root = Path(__file__).resolve().parents[1]
+        expected = {
+            "madsc/https_head_probe.py": 1,
+            "madsc/k3_live_manifest_pilot.py": 1,
+            "madsc/k3_turkish_tv_video_pilot.py": 2,
+        }
+        for relative, count in expected.items():
+            rows = [row for row in scan_python_source(
+                (root / relative).read_text(encoding="utf-8"), relative)
+                    if row["api"].startswith("subprocess.run")]
+            with self.subTest(relative=relative):
+                self.assertEqual(len(rows), count)
+                self.assertTrue(all(row["guard_control_flow_verified"] for row in rows))
+                self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
+
     def test_artifact_transport_writes_have_direct_k1_guard_dominance(self):
         source = (Path(__file__).resolve().parents[1] / "madsc" /
                   "artifact_transport.py").read_text(encoding="utf-8")

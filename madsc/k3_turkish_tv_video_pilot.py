@@ -10,6 +10,7 @@ from urllib.parse import urljoin, urlsplit
 
 from madsc.k3_live_manifest_pilot import candidates, probe
 from madsc.probe_target_gate import validate_probe_target
+from madsc.process_guard import enforce_bounded_curl_process, enforce_ffprobe_read_process
 
 LIMIT = 12
 MAX_SOURCE_ROWS = 120  # Bound source scanning even when every row is radio.
@@ -47,6 +48,7 @@ def safe_curl(url, limit):
     resolver = f"{p.hostname}:443:{'[' + pin + ']' if ':' in pin else pin}"
     cmd = ["curl", "-q", "-fsS", "--noproxy", "*", "--proto", "=https", "--max-time", "9",
            "--connect-timeout", "4", "--max-filesize", str(limit), "--resolve", resolver, url]
+    enforce_bounded_curl_process(cmd, url, resolver, limit)
     result = subprocess.run(cmd, capture_output=True, timeout=11,
                             stdin=subprocess.DEVNULL)
     return result.stdout if result.returncode == 0 and len(result.stdout) <= limit else None
@@ -64,6 +66,14 @@ def same_origin_https(parent, child):
                             for char in parent + child))
     except ValueError:
         return False
+
+
+def _read_stream_types(segment):
+    command = ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
+               "-of", "json", str(segment)]
+    enforce_ffprobe_read_process(command, segment)
+    return subprocess.run(command, capture_output=True, timeout=8,
+                          stdin=subprocess.DEVNULL)
 
 
 def verify_av(url):
@@ -143,10 +153,7 @@ def verify_av(url):
         segment = folder / "sample.ts"
         write_exclusive_bytes(segment, payload, allowed_root=folder)
         try:
-            result = subprocess.run(
-                ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
-                 "-of", "json", str(segment)], capture_output=True, timeout=8,
-                stdin=subprocess.DEVNULL)
+            result = _read_stream_types(segment)
             if result.returncode != 0:
                 return False, False, "probe_error"
             decoded = json.loads(result.stdout or b"{}")

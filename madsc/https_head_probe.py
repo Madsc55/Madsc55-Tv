@@ -14,6 +14,15 @@ import math
 from urllib.parse import urlsplit
 
 from madsc.probe_target_gate import validate_probe_handoff, validate_resolved_addresses
+from madsc.process_guard import DNS_RESOLVER, enforce_dns_resolver_process
+
+
+def _resolve_host(host: str, timeout: float):
+    command = [sys.executable, "-I", "-B", "-c", DNS_RESOLVER, host]
+    enforce_dns_resolver_process(command, host)
+    return subprocess.run(
+        command, capture_output=True, text=True, timeout=timeout, check=True,
+        stdin=subprocess.DEVNULL, env={"PYTHONIOENCODING": "utf-8"})
 
 
 def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str,
@@ -35,10 +44,6 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
         literal_ip = None
     # Resolve DNS in a separate bounded process: unlike a thread, a stuck
     # getaddrinfo can be killed at the deadline. The child opens no TCP socket.
-    resolver = ("import json,socket,sys; "
-                "a=socket.getaddrinfo(sys.argv[1],443,type=socket.SOCK_STREAM,"
-                "proto=socket.IPPROTO_TCP); "
-                "print(json.dumps([x[4][0] for x in a]))")
     try:
         if literal_ip is not None:
             ips = validate_resolved_addresses([str(literal_ip)])
@@ -46,11 +51,7 @@ def observe_https_headers(url: str, envelope: dict, run_id: str, commit_sha: str
             budget = deadline - time.monotonic()
             if budget <= 0:
                 raise TimeoutError("DNS deadline exceeded")
-            completed = subprocess.run(
-                [sys.executable, "-I", "-c", resolver, host],
-                capture_output=True, text=True, timeout=budget, check=True,
-                stdin=subprocess.DEVNULL,
-                env={"PYTHONIOENCODING": "utf-8"})
+            completed = _resolve_host(host, budget)
             if len(completed.stdout) > 16384:
                 raise ValueError("Oversized DNS response")
             ips = validate_resolved_addresses(json.loads(completed.stdout))

@@ -65,6 +65,14 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
             with self.subTest(inventory=inventory), self.assertRaises(ValueError):
                 evaluate_discovery([self.item], inventory)
 
+    def test_overlong_urls_are_rejected(self):
+        long_url = "https://example.org/" + "a" * 4096
+        for field in ("source_page", "stream_url", "license_reference"):
+            with self.subTest(field=field):
+                report = evaluate_discovery([dict(self.item, **{field: long_url})])
+                self.assertEqual(report["candidates"], [])
+                self.assertEqual(len(report["rejected"]), 1)
+
     def test_bounded_input(self):
         with self.assertRaises(ValueError):
             evaluate_discovery([self.item] * 20001)

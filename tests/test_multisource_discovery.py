@@ -65,6 +65,14 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
             with self.subTest(inventory=inventory), self.assertRaises(ValueError):
                 evaluate_discovery([self.item], inventory)
 
+    def test_shared_source_page_preserves_distinct_channel_names(self):
+        first = dict(self.item, stream_url=None, name="Channel One")
+        second = dict(self.item, stream_url=None, name="Channel Two")
+        repeated = dict(self.item, stream_url=None, name="channel one")
+        report = evaluate_discovery([first, second, repeated])
+        self.assertEqual(len(report["candidates"]), 2)
+        self.assertEqual(len(report["duplicates"]), 1)
+
     def test_overlong_urls_are_rejected(self):
         long_url = "https://example.org/" + "a" * 4096
         for field in ("source_page", "stream_url", "license_reference"):

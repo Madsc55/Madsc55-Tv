@@ -142,3 +142,31 @@ Tam kanıt için: her Python yazıcı ve 19 workflow içindeki shell/Actions yaz
 Mevcut `main` ağacındaki 19 GitHub Actions YAML dosyası ayrı ayrı okundu: **19/19** açık `contents: read`, **0/19** açık `contents: write`, **19/19** `persist-credentials: false`, **0/19** doğrudan `git push` metni, **17/19** `upload-artifact`, **0/19** doğrudan `protected_write_gate` veya `enforce_write_paths` metni.
 
 Bu bir **metin kalıbı taramasıdır**; çağrılan betiklerin dosya mutasyonları, shell dolaylı komutları, farklı kimlik bilgileri, artifact yazmaları ve runtime gate yürütmesi hakkında güvenlik kabulü değildir. GitHub token kısıtlamaları, tüm gerçek yazma yolları için zorunlu K1 gate kanıtının yerini tutmaz. **Sonuç: NOT PROVEN; production_ready=false; runtime kabul 26/26 kanıtlanmadı.**
+
+
+## EK DEVİR — 24 Ekim 2026, 09:15 (+02:00)
+
+Kullanıcı K1 eksiklerinin tamamlanmasını, hataların düzeltilmesini ve yapılanların not alınmasını istedi. Bu bölüm önceki tarihli CI bilgilerini günceller.
+
+- Güncel `main` HEAD: `fe90142f421071f6df2ad3639b0bceff07d0f12d` (kontrol anında).
+- GitHub Actions run `40073059557`: **success**, HEAD `fe90142f421071f6df2ad3639b0bceff07d0f12d`. Bağlantı: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073059557
+- Önceki CI `40071674823` de başarılı; aradaki bazı koşular `cancelled`, bunları başarısız test veya başarı olarak yorumlama.
+
+### Son K1 düzeltmeleri ve testleri
+- `0e568ed`: Windows üst simgeli aygıt takma adları engellendi; `a231f07` testleri.
+- `90b2077`: fixture dosya ve üst dizin fsync; `93e3629` ve `75635dc` testleri.
+- `f21ec67`: FIFO değiştirme saldırısında bloklamayı engellemek için O_NONBLOCK; `a28bb72` testi.
+- `e4609d2`, `e8f6850`: ffprobe çalıştırılabilir dosya güven sınırının negatif testi ve CI ortamından bağımsız pozitif kontrat testi.
+- `23dcc66`: başarısız yeni fixture yazımında inode kimlik kontrollü temizlik; `6268537` testi.
+- `7fac4ff`: mevcut fixture üzerine yazmada ayrı dosyada hazırlama + os.replace ile atomik değiştirme; `ac52f79`, `f688c09` hata enjeksiyonu testleri.
+- `214c5a3`: stage temizliğinde inode kontrolü; `330f5d8` testi.
+- `2a021ce`: stage dosyası değiştirilmişse os.replace öncesi kimlik reddi; `3eaf695` testi.
+- `2bb0790`: stage dosyasının sembolik bağlantıya çevrilmesi regresyon testi.
+- `c6ef5bb`: overwrite kimlik kontrolünü dir_fd ile bağlama; `fe90142` testi.
+
+### Kalan işler ve sınırlamalar
+1. **K1 runtime kabul: 0/26 kanıtlı**; izole/offline CI bunun yerine geçmez. `production_ready=false`.
+2. Merkezi korunan yazma kapısının tüm gerçek yazıcılara ve legacy workflow davranışlarına entegrasyonu eksik. AST envanteri tek başına runtime güvenlik garantisi değildir.
+3. `os.stat` / `os.replace` arasındaki TOCTOU yarışları, staged isimlerin saldırgan tarafından değiştirilebilmesi ve unlink sırasında yarışlar tümüyle çözülmüş değil. Bu güvenlik garantisini kanıtlanmadan iddia etme.
+4. Üretim M3U/M3U8, EPG, logo, favori, arşiv, yedek, cihaz verileri ve canlı kanallar **değiştirilmedi**. Koruma kapılarını gevşetme, CI manuel dispatch/rerun yapma.
+5. Devamda önce main HEAD ve CI doğrula; somut hata için kod+test düzelt; her dosya yazımı öncesinde güncel blob SHA çek. K2–K5 eşzamanlı değişikliklerini koru.

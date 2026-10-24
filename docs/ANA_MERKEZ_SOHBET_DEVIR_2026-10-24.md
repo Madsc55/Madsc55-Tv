@@ -31,3 +31,15 @@ Bu kayıt yeni sohbetten devam etmek için hazırlanmıştır. Kaynak: ortak `ma
 Üretim playlist/M3U8, EPG/XMLTV, favoriler, logolar, yedekler, arşiv/VOD, cihaz verileri ve eski repo. Yetkisiz canlı probe, workflow dispatch/rerun, gerçek restore, secret/erişim izni değişikliği ve onaysız PR merge yapılmaz.
 
 Bu dosya yeni sohbet için bağımsız, sürümlenmiş devirdir; `main` üzerine henüz taşınmamıştır.
+
+
+## 24 Ekim 2026 — Ana merkez güncel CI denetimi (10:22 Europe/Stockholm)
+
+- Son gözlenen `main` SHA: `efa6399338296110058435297e0132f379442ea8`; branch protection kapalı. Son gözlenen main başarılı offline CI `40074564285`, ancak `345392a780a8...` SHA'sına ait; güncel main SHA'sını kanıtlamaz.
+- Açık PR sayısı: **15** (#1, #2, #3, #6, #7, #10, #12, #14, #16, #17, #18, #20, #21, #22, #23).
+- K5 PR #6 güncel SHA `17ecf189a90fe19995e50f19a683d82a535d6e61`; offline `40074650857` ve frozen-source `40074650847` başarıyla tamamlandı. Bu 0/92 gerçek parity kabulünü değiştirmez.
+- K3 PR #10 `3501cafc40c3...` SHA'sı için offline `40074591188` başarılı; canlı yayın/cihaz kabulü yok.
+- K2 PR #18 `dca2a9b075d8...` için `40074621666` ve `40074617690` **cancelled**; güncel SHA'da success yok. K4 PR #21 güncel `72f1f9d109bc...`; son SHA için CI ayrıca doğrulanmalı.
+- Ana merkez PR #22'de ek somut düzeltme: `9291e5e393df0dc5ccb275cfb8ef22a6dc25c74e` commit'iyle `.github/workflows/madsc-unit-tests.yml` push ve PR path filtrelerine `src/**`, `scripts/**`, `config/**`, `.github/workflows/**` eklendi. Önceden `src/madsc_guard.py`, `scripts/birlestir_eski_sistem_notlari.py` veya yalnız workflow/config değişiklikleri offline CI tetiklemeyebilirdi. `60e1bbca587bb1cbcc7beed57be536dbc1ab13d0` commit'iyle `tests/test_offline_ci_trigger_contract.py` regresyonları genişletildi.
+- PR #22 güncel SHA `60e1bbca...` için `40077803907` ve `40077806742` son kontrolde **pending**; eski `2c6ee71...` SHA'sındaki `40074531578` / `40074534071` success yeni SHA'ya aktarılmaz. PR #17 ile aynı workflow satırındaki çakışma hâlâ incelenmeli.
+- Hiçbir PR birleştirilmedi, manuel workflow dispatch/rerun yapılmadı, canlı probe/restore/üretim veri yazımı olmadı. K1 0/26, K5 0/92, genel 0/22 kabul açık.

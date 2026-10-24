@@ -5,10 +5,12 @@ Evidence must come from separately executed, isolated fixture runs.
 """
 import argparse
 import json
+import re
 from pathlib import Path, PurePosixPath
 
 FIELDS = ("exit_code", "stdout_sha256", "stderr_sha256", "artifacts", "side_effects", "timed_out", "retry_count")
 DIGEST = set("0123456789abcdef")
+RUN_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$")
 
 
 def _digest(value):
@@ -59,8 +61,7 @@ def compare(document):
         errors.append("independence_or_isolation_unproven")
     for field in ("legacy_run_id", "new_run_id"):
         value = document[field]
-        if (not isinstance(value, str) or not value.strip() or len(value) > 200
-                or any(ord(char) < 32 or ord(char) == 127 for char in value)):
+        if not isinstance(value, str) or not RUN_ID_PATTERN.fullmatch(value):
             errors.append("invalid_" + field)
     if document.get("legacy_run_id") == document.get("new_run_id"):
         errors.append("run_ids_not_independent")

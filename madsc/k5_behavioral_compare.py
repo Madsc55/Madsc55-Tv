@@ -72,6 +72,10 @@ def compare(document):
         if not _valid(document[side]):
             errors.append("invalid_" + side + "_record")
     if not errors:
+        for side in ("legacy", "new"):
+            record = document[side]
+            if record["timed_out"] and record["exit_code"] == 0:
+                errors.append("inconsistent_timeout:" + side)
         for field in FIELDS:
             if document["legacy"][field] != document["new"][field]:
                 errors.append("mismatch:" + field)

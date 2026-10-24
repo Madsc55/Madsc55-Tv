@@ -57,6 +57,11 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
                 self.assertEqual(result["candidates"], [])
                 self.assertEqual(len(result["rejected"]), 1)
 
+    def test_existing_inventory_rejects_malformed_urls(self):
+        for inventory in ({"file:///tmp/playlist"}, {None}, {123}):
+            with self.subTest(inventory=inventory), self.assertRaises(ValueError):
+                evaluate_discovery([self.item], inventory)
+
     def test_bounded_input(self):
         with self.assertRaises(ValueError):
             evaluate_discovery([self.item] * 20001)

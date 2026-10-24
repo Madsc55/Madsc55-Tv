@@ -10,7 +10,8 @@ def _time(value: str, now: datetime) -> datetime:
     if not isinstance(value, str):
         raise ValueError("Missing measurement time")
     try:
-        stamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+        stamp = datetime.fromisoformat(normalized)
     except ValueError as exc:
         raise ValueError("Invalid measurement time") from exc
     if stamp.tzinfo is None:

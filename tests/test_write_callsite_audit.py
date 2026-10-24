@@ -420,6 +420,22 @@ def run_commands():
         self.assertEqual(dispositions[0]["disposition"],
                          "proven_read_only_descriptor")
 
+    def test_timestamp_normalizers_have_no_filesystem_mutation_candidate(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        timestamp_modules = {
+            "madsc/channel_test.py",
+            "madsc/k3_three_stage_gate.py",
+            "madsc/legacy_priority_retest.py",
+            "madsc/legacy_stability.py",
+            "madsc/maintenance.py",
+        }
+        rows = [
+            row for row in report["callsite_inventory"]
+            if row["path"] in timestamp_modules
+        ]
+        self.assertEqual(rows, [])
+
     def test_legacy_note_atomic_replace_has_direct_k1_guard(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

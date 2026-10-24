@@ -117,7 +117,8 @@ def evaluate_three_stage_continuity(samples: list[dict], minimum_hours: float = 
         if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})", stamp):
             raise ValueError("Observation must use RFC3339 timestamp")
         try:
-            instant = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+            normalized_stamp = stamp[:-1] + "+00:00" if stamp.endswith("Z") else stamp
+            instant = datetime.fromisoformat(normalized_stamp)
         except ValueError as exc:
             raise ValueError("Invalid observation time") from exc
         if instant.tzinfo is None or instant.utcoffset() is None:

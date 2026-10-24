@@ -83,7 +83,8 @@ def assess_failure_history(pages: list[dict], *, current_run_id: int,
         if not base_shape or not zone_shape:
             raise ValueError("Invalid failure history timestamp")
         try:
-            value = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+            normalized = raw[:-1] + "+00:00" if raw.endswith("Z") else raw
+            value = datetime.fromisoformat(normalized)
         except ValueError as exc:
             raise ValueError("Invalid failure history timestamp") from exc
         if value.tzinfo is None or value.utcoffset() is None:

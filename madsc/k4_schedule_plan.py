@@ -27,6 +27,8 @@ def planned_slots(year: int, month: int, hour: int = 3) -> list[dict]:
     for day in DAYS:
         local = dt.datetime(year, month, day, hour, tzinfo=zone)
         utc = local.astimezone(dt.timezone.utc)
+        if utc.astimezone(zone).replace(fold=0) != local:
+            raise ValueError("ambiguous or nonexistent local time")
         slots.append({
             "idempotency_key": f"k4:{year:04d}-{month:02d}-{day:02d}:{hour:02d}:{ZONE}",
             "local": local.isoformat(),

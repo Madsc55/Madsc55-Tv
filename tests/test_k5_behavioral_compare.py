@@ -122,6 +122,22 @@ class BehavioralCompareTests(unittest.TestCase):
         doc["new_commit_sha"] = "unknown"
         self.assertIn("invalid_new_commit_sha", compare(doc)["errors"])
 
+    def test_unsafe_artifact_and_side_effect_paths_rejected(self):
+        for field in ("artifacts", "side_effects"):
+            for name in ("", "../escape", "/absolute", "a//b", "a/./b", "a/../b", "a\\\\b", "nul\\x00name"):
+                with self.subTest(field=field, name=name):
+                    doc = evidence()
+                    doc["legacy"][field] = {name: digest(b"x")}
+                    self.assertIn("invalid_legacy_record", compare(doc)["errors"])
+
+    def test_noncanonical_workflow_paths_rejected(self):
+        for name in (".github/workflows//test.yml", ".github/workflows/./test.yml",
+                     ".github/workflows/sub/test.yml", ".github/workflows/a\\\\b.yml"):
+            with self.subTest(name=name):
+                doc = evidence()
+                doc["workflow"] = name
+                self.assertIn("invalid_workflow", compare(doc)["errors"])
+
     def test_boolean_exit_code_rejected(self):
         doc = evidence()
         doc["legacy"]["exit_code"] = False

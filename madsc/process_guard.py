@@ -73,13 +73,15 @@ def _safe_argument(value: str) -> bool:
 def _parity_module_identity(code_root: Path, consumer: str):
     relative = _PARITY_CONSUMER_MODULE_PATHS.get(consumer)
     nofollow = getattr(os, "O_NOFOLLOW", None)
-    nonblock = getattr(os, "O_NONBLOCK", 0)
     if relative is None or not isinstance(nofollow, int):
         raise ProtectedWriteRejected("Unsafe parity module identity contract")
     path = code_root / relative
     try:
         before = path.lstat()
-        descriptor = os.open(path, os.O_RDONLY | nofollow | nonblock)
+        # Keep the complete read-only flag expression at the callsite so the
+        # source-bound audit can disposition this descriptor without aliases.
+        descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+                             | getattr(os, "O_NONBLOCK", 0))
     except OSError as exc:
         raise ProtectedWriteRejected("Cannot open parity module source") from exc
     try:

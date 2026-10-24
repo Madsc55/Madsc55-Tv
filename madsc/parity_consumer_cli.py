@@ -9,7 +9,8 @@ from madsc.fixture_report_writer import _exclusive_bytes, _prepare_fixture_root
 from madsc.parity_manifest_cli import _read_regular_file
 from madsc.parity_process import observe_process
 from madsc.process_guard import (authorize_parity_consumer_process,
-                                 parity_process_environment)
+                                 parity_process_environment,
+                                 PARITY_MODULE_RUNNER)
 from madsc.parity_snapshot_writer import OUTPUT_PATH, write_execution_snapshot
 from madsc.write_path_audit import enforce_local_output_path, enforce_write_paths
 
@@ -43,7 +44,11 @@ def run_consumer(consumer, *, root, timeout_seconds=120):
     enforce_write_paths(paths)
     for path in paths:
         enforce_local_output_path(root / path, allowed_root=root)
-    argv = [sys.executable, *arguments]
+    code_root = Path(__file__).resolve().parents[1]
+    if arguments[:1] != ['-m'] or len(arguments) < 2:
+        raise PermissionError('Invalid isolated consumer module contract')
+    argv = [sys.executable, '-I', '-B', '-c', PARITY_MODULE_RUNNER,
+            str(code_root), arguments[1], *arguments[2:]]
     run_id = head_sha = ''
     if consumer == 'k5':
         run_id, head_sha = os.environ.get('RUN_ID', ''), os.environ.get('COMMIT_SHA', '')

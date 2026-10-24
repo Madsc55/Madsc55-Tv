@@ -104,9 +104,12 @@ class ProcessGuardTests(unittest.TestCase):
 
     def test_parity_consumers_are_exact_and_repository_rooted(self):
         root = Path(__file__).resolve().parents[1]
-        k1 = [sys.executable, "-m", "src.madsc_guard", "config/shadow_manifest.json"]
+        from madsc.process_guard import PARITY_MODULE_RUNNER
+        k1 = [sys.executable, "-I", "-B", "-c", PARITY_MODULE_RUNNER,
+              str(root), "src.madsc_guard", "config/shadow_manifest.json"]
         enforce_parity_consumer_process(k1, consumer="k1", root=root)
-        k5 = [sys.executable, "-m", "madsc.artifact_transport", "produce", "--path",
+        k5 = [sys.executable, "-I", "-B", "-c", PARITY_MODULE_RUNNER,
+              str(root), "madsc.artifact_transport", "produce", "--path",
               "reports/k2-candidates.json", "--source", "reports/k2-input.m3u",
               "--run-id", "123", "--commit-sha", "a" * 40]
         enforce_parity_consumer_process(k5, consumer="k5", root=root,
@@ -119,14 +122,13 @@ class ProcessGuardTests(unittest.TestCase):
 
     def test_parity_capability_binds_command_root_identity_and_timeout(self):
         root = Path(__file__).resolve().parents[1]
-        command = [sys.executable, "-m", "src.madsc_guard",
-                   "config/shadow_manifest.json"]
+        from madsc.process_guard import PARITY_MODULE_RUNNER
+        command = [sys.executable, "-I", "-B", "-c", PARITY_MODULE_RUNNER,
+                   str(root), "src.madsc_guard", "config/shadow_manifest.json"]
         capability = authorize_parity_consumer_process(
             command, consumer="k1", root=root, timeout_seconds=30)
         environment = parity_process_environment(capability)
-        self.assertEqual(environment["PYTHONPATH"], str(root))
-        self.assertEqual(set(environment), {
-            "PYTHONPATH", "PYTHONDONTWRITEBYTECODE", "LANG", "LC_ALL"})
+        self.assertEqual(environment, {"LANG": "C", "LC_ALL": "C"})
         validate_parity_process_capability(
             capability, command, cwd=root, timeout_seconds=30, env=environment)
         for changed_command, changed_root, changed_timeout in (
@@ -141,6 +143,22 @@ class ProcessGuardTests(unittest.TestCase):
             validate_parity_process_capability(
                 capability, command, cwd=root, timeout_seconds=30,
                 env={**environment, "HOME": "/tmp/untrusted"})
+
+    def test_parity_capability_rejects_module_source_identity_change(self):
+        root = Path(__file__).resolve().parents[1]
+        from madsc.process_guard import PARITY_MODULE_RUNNER
+        command = [sys.executable, "-I", "-B", "-c", PARITY_MODULE_RUNNER,
+                   str(root), "src.madsc_guard", "config/shadow_manifest.json"]
+        first = (1, 2, 3, 4, 5, 1, "a" * 64)
+        changed = (1, 2, 4, 4, 6, 1, "b" * 64)
+        with patch("madsc.process_guard._parity_module_identity",
+                   side_effect=[first, changed]):
+            capability = authorize_parity_consumer_process(
+                command, consumer="k1", root=root, timeout_seconds=30)
+            with self.assertRaises(ProtectedWriteRejected):
+                validate_parity_process_capability(
+                    capability, command, cwd=root, timeout_seconds=30,
+                    env=parity_process_environment(capability))
 
 
 if __name__ == "__main__":

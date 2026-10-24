@@ -49,6 +49,20 @@ class ParityConsumerTests(unittest.TestCase):
                     run_consumer('k1', root=root)
                 execute.assert_not_called()
 
+    def test_consumer_module_cannot_be_shadowed_from_workspace_cwd(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            prepare(root, 'k1')
+            (root / 'src').mkdir()
+            (root / 'src/__init__.py').write_text('')
+            (root / 'src/madsc_guard.py').write_text(
+                "print('UNTRUSTED CWD SHADOW'); raise SystemExit(97)")
+            code = run_consumer('k1', root=root, timeout_seconds=5)
+            self.assertEqual(code, 0)
+            output = (root / CONSUMERS['k1'][1]).read_bytes()
+            self.assertIn(b'K1 read-only output gate: PASS', output)
+            self.assertNotIn(b'UNTRUSTED CWD SHADOW', output)
+
     def execute(self, body, root):
         return subprocess.run(['bash', '-e', '-o', 'pipefail', '-c',
                                body.replace('${{ inputs.allow_parity_evidence }}', 'true')],
@@ -113,11 +127,15 @@ class ParityConsumerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             prepare(root, 'k1')
-            (root / 'src').mkdir()
-            (root / 'src/__init__.py').write_text('')
-            (root / 'src/madsc_guard.py').write_text("import sys; print('measured stderr',file=sys.stderr); raise SystemExit(124)")
-            result = self.execute('python -m madsc.parity_consumer_cli --consumer k1 --timeout-seconds 2', root)
-            self.assertEqual(result.returncode, 124)
+            fixture = dict(CONSUMERS)
+            source, output, _ = fixture['k1']
+            fixture['k1'] = (source, output, ['-m', 'tests._parity_child_fixture', 'exit-124'])
+            with patch('madsc.parity_consumer_cli.CONSUMERS', fixture), \
+                 patch('madsc.parity_consumer_cli.authorize_parity_consumer_process', return_value=object()), \
+                 patch('madsc.parity_consumer_cli.parity_process_environment', return_value=dict(os.environ)), \
+                 patch('madsc.parity_process.validate_parity_process_capability'):
+                code = run_consumer('k1', root=root, timeout_seconds=2)
+            self.assertEqual(code, 124)
             outcome = json.loads((root / DIAGNOSTICS['process_outcome']).read_text())
             self.assertFalse(outcome['timed_out'])
             self.assertIn(b'measured stderr', (root / DIAGNOSTICS['process_stderr']).read_bytes())
@@ -126,12 +144,15 @@ class ParityConsumerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             prepare(root, 'k1')
-            (root / 'src').mkdir()
-            (root / 'src/__init__.py').write_text('')
-            (root / 'src/madsc_guard.py').write_text(
-                "import os,time; os.write(2,b'before controlled timeout'); time.sleep(10)")
-            result = self.execute('python -m madsc.parity_consumer_cli --consumer k1 --timeout-seconds .25', root)
-            self.assertEqual(result.returncode, 124)
+            fixture = dict(CONSUMERS)
+            source, output, _ = fixture['k1']
+            fixture['k1'] = (source, output, ['-m', 'tests._parity_child_fixture', 'timeout'])
+            with patch('madsc.parity_consumer_cli.CONSUMERS', fixture), \
+                 patch('madsc.parity_consumer_cli.authorize_parity_consumer_process', return_value=object()), \
+                 patch('madsc.parity_consumer_cli.parity_process_environment', return_value=dict(os.environ)), \
+                 patch('madsc.parity_process.validate_parity_process_capability'):
+                code = run_consumer('k1', root=root, timeout_seconds=.25)
+            self.assertEqual(code, 124)
             snapshot = json.loads((root / 'reports/madsc-parity-snapshot.json').read_text())
             self.assertTrue(snapshot['timed_out'])
             self.assertEqual((root / DIAGNOSTICS['process_stderr']).read_bytes(), b'before controlled timeout')

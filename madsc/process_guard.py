@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import hashlib
 import shutil
 import stat
 import sys
@@ -24,12 +25,24 @@ FIXED_TOOL_ENV = {
     "LC_ALL": "C",
 }
 
+PARITY_MODULE_RUNNER = (
+    "import runpy,sys; "
+    "root=sys.argv.pop(1); module=sys.argv.pop(1); "
+    "sys.path.insert(0,root); runpy.run_module(module,run_name='__main__')"
+)
+
 _PARITY_CONSUMER_ARGUMENTS = {
     "k1": ["-m", "src.madsc_guard", "config/shadow_manifest.json"],
     "k4": ["-m", "madsc.restore_drill", "--source", "reports/k4-source",
            "--file", "nested/sample.txt", "--output", "reports/k4-restore-drill.json"],
     "k5": ["-m", "madsc.artifact_transport", "produce", "--path",
            "reports/k2-candidates.json", "--source", "reports/k2-input.m3u"],
+}
+
+_PARITY_CONSUMER_MODULE_PATHS = {
+    "k1": "src/madsc_guard.py",
+    "k4": "madsc/restore_drill.py",
+    "k5": "madsc/artifact_transport.py",
 }
 
 _PARITY_CAPABILITY_SEAL = object()
@@ -46,6 +59,8 @@ class _ParityProcessCapability:
     code_root: str
     code_root_device: int
     code_root_inode: int
+    module_path: str
+    module_identity: tuple[int, int, int, int, int, int, str]
     environment: tuple[tuple[str, str], ...]
     timeout_seconds: float
 
@@ -53,6 +68,44 @@ class _ParityProcessCapability:
 def _safe_argument(value: str) -> bool:
     return (isinstance(value, str) and bool(value) and "\x00" not in value
             and not any(ord(char) < 0x20 or ord(char) == 0x7f for char in value))
+
+
+def _parity_module_identity(code_root: Path, consumer: str):
+    relative = _PARITY_CONSUMER_MODULE_PATHS.get(consumer)
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    nonblock = getattr(os, "O_NONBLOCK", 0)
+    if relative is None or not isinstance(nofollow, int):
+        raise ProtectedWriteRejected("Unsafe parity module identity contract")
+    path = code_root / relative
+    try:
+        before = path.lstat()
+        descriptor = os.open(path, os.O_RDONLY | nofollow | nonblock)
+    except OSError as exc:
+        raise ProtectedWriteRejected("Cannot open parity module source") from exc
+    try:
+        opened = os.fstat(descriptor)
+        if (path.is_symlink() or not stat.S_ISREG(opened.st_mode)
+                or opened.st_nlink != 1 or opened.st_size > 2 * 1024 * 1024
+                or (before.st_dev, before.st_ino) != (opened.st_dev, opened.st_ino)):
+            raise ProtectedWriteRejected("Unsafe parity module source")
+        payload = bytearray()
+        while True:
+            chunk = os.read(descriptor, 65536)
+            if not chunk:
+                break
+            payload.extend(chunk)
+            if len(payload) > 2 * 1024 * 1024:
+                raise ProtectedWriteRejected("Parity module source exceeds limit")
+        after = os.fstat(descriptor)
+    finally:
+        os.close(descriptor)
+    path_after = path.lstat()
+    identity = lambda item: (item.st_dev, item.st_ino, item.st_size,
+                             item.st_mtime_ns, item.st_ctime_ns)
+    if (len(payload) != after.st_size or identity(opened) != identity(after)
+            or identity(before) != identity(path_after)):
+        raise ProtectedWriteRejected("Parity module source changed during read")
+    return (*identity(after), after.st_nlink, hashlib.sha256(payload).hexdigest())
 
 
 def _fixed_runtime(cwd: Path, env: dict[str, str], expected_cwd: Path) -> bool:
@@ -162,7 +215,11 @@ def enforce_parity_consumer_process(command, *, consumer: str, root: Path,
     arguments = _PARITY_CONSUMER_ARGUMENTS.get(consumer)
     if arguments is None:
         raise ProtectedWriteRejected("Unknown parity consumer process")
-    expected = [sys.executable, *arguments]
+    code_root = Path(__file__).resolve().parents[1]
+    if arguments[:1] != ["-m"] or len(arguments) < 2:
+        raise ProtectedWriteRejected("Unsafe parity module contract")
+    expected = [sys.executable, "-I", "-B", "-c", PARITY_MODULE_RUNNER,
+                os.fspath(code_root), arguments[1], *arguments[2:]]
     if consumer == "k5":
         if (not run_id.isascii() or not run_id.isdigit() or len(run_id) > 20
                 or len(commit_sha) != 40
@@ -194,9 +251,9 @@ def authorize_parity_consumer_process(command, *, consumer: str, root: Path,
     metadata = root.lstat()
     code_root = Path(__file__).resolve().parents[1]
     code_metadata = code_root.lstat()
+    module_path = _PARITY_CONSUMER_MODULE_PATHS[consumer]
+    module_identity = _parity_module_identity(code_root, consumer)
     environment = {
-        "PYTHONPATH": os.fspath(code_root),
-        "PYTHONDONTWRITEBYTECODE": "1",
         "LANG": "C",
         "LC_ALL": "C",
     }
@@ -210,6 +267,8 @@ def authorize_parity_consumer_process(command, *, consumer: str, root: Path,
         code_root=os.fspath(code_root),
         code_root_device=code_metadata.st_dev,
         code_root_inode=code_metadata.st_ino,
+        module_path=module_path,
+        module_identity=module_identity,
         environment=tuple(sorted(environment.items())),
         timeout_seconds=float(timeout_seconds),
     )
@@ -236,6 +295,8 @@ def validate_parity_process_capability(capability, command, *, cwd: Path,
         code_metadata = Path(capability.code_root).lstat()
     except (AttributeError, OSError) as exc:
         raise ProtectedWriteRejected("Missing parity capability code root") from exc
+    current_module_identity = _parity_module_identity(
+        Path(capability.code_root), capability.consumer)
     if (not isinstance(capability, _ParityProcessCapability)
             or capability.seal is not _PARITY_CAPABILITY_SEAL
             or tuple(command) != capability.argv
@@ -252,5 +313,8 @@ def validate_parity_process_capability(capability, command, *, cwd: Path,
             != (capability.code_root_device, capability.code_root_inode)
             or Path(capability.code_root).resolve(strict=True)
             != Path(capability.code_root)
+            or capability.module_path
+            != _PARITY_CONSUMER_MODULE_PATHS.get(capability.consumer)
+            or current_module_identity != capability.module_identity
             or cwd.resolve(strict=True) != cwd):
         raise ProtectedWriteRejected("Invalid parity process capability")

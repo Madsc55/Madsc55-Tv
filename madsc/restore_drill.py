@@ -7,13 +7,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import tempfile
 from pathlib import Path
 
 from madsc.backup import (snapshot_manifest, verify_independent_restore,
                           backup_to_new_sandbox, restore_to_new_sandbox)
 from madsc.fixture_report_writer import write_stage_report
 from madsc.write_path_audit import enforce_local_output_path
+from madsc.temp_workspace import guarded_temporary_directory
 
 
 def run_drill(source: Path, names: list[str]) -> dict:
@@ -21,8 +21,7 @@ def run_drill(source: Path, names: list[str]) -> dict:
     baseline = snapshot_manifest(source, names)
     if not baseline["entries"]:
         raise ValueError("Restore drill requires nonempty file selection")
-    with tempfile.TemporaryDirectory(prefix="madsc-k4-") as tmp:
-        base = Path(tmp)
+    with guarded_temporary_directory("madsc-k4-") as base:
         backup, restored = base / "backup", base / "restored"
         backup_result = backup_to_new_sandbox(source, backup, names)
         restore_result = restore_to_new_sandbox(backup, restored, names)

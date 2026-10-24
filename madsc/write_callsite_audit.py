@@ -23,6 +23,7 @@ _GUARDS = {
     "enforce_local_evidence_path",
     "enforce_core_fixture_path",
     "enforce_offline_package_path",
+    "enforce_local_temporary_root",
 }
 _MUTATING_METHODS = {
     # File-object writes matter too: an open(..., "w") may be wrapped or

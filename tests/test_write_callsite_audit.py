@@ -364,9 +364,18 @@ def run_commands():
         ]
         apis = [row["api"] for row in mutations]
         self.assertNotIn("segment.write_bytes", apis)
-        self.assertEqual([api for api in apis if "process command" not in api], [
-            "tempfile.TemporaryDirectory [temporary filesystem creation requires review]"
-        ])
+        self.assertEqual([api for api in apis if "process command" not in api], [])
+
+    def test_temporary_workspace_creator_has_direct_k1_guard(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        rows = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/temp_workspace.py"
+            and "TemporaryDirectory" in row["api"]
+        ]
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(rows[0]["guard_control_flow_verified"])
 
     def test_offline_package_mutations_have_direct_k1_guard_dominance(self):
         root = Path(__file__).resolve().parents[1]

@@ -73,6 +73,10 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
                 self.assertEqual(report["candidates"], [])
                 self.assertEqual(len(report["rejected"]), 1)
 
+    def test_overlong_existing_inventory_is_rejected(self):
+        with self.assertRaises(ValueError):
+            evaluate_discovery([self.item], {"https://example.org/" + "a" * 4096})
+
     def test_bounded_input(self):
         with self.assertRaises(ValueError):
             evaluate_discovery([self.item] * 20001)

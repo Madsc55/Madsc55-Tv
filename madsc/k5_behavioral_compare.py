@@ -16,7 +16,9 @@ def _digest(value):
 
 
 def _safe_relative_name(name):
-    if not isinstance(name, str) or not name or chr(0) in name or chr(92) in name:
+    if (not isinstance(name, str) or not name or len(name) > 1024
+            or any(ord(char) < 32 or ord(char) == 127 for char in name)
+            or chr(92) in name):
         return False
     path = PurePosixPath(name)
     return (not path.is_absolute() and all(part not in ("", ".", "..") for part in name.split("/"))
@@ -57,7 +59,8 @@ def compare(document):
         errors.append("independence_or_isolation_unproven")
     for field in ("legacy_run_id", "new_run_id"):
         value = document[field]
-        if not isinstance(value, str) or not value.strip() or len(value) > 200:
+        if (not isinstance(value, str) or not value.strip() or len(value) > 200
+                or any(ord(char) < 32 or ord(char) == 127 for char in value)):
             errors.append("invalid_" + field)
     if document.get("legacy_run_id") == document.get("new_run_id"):
         errors.append("run_ids_not_independent")

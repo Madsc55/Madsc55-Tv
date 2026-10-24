@@ -1146,5 +1146,4 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 
 ## 24 Ekim 2026 — Devir belgeleri kesilme onarımı
 - Büyük devir dosyaları connector'a tek parça komut çıktısından aktarılırken çıktı sınırı metni iki belgeye gömülmüş ve orta bölümler kesilmişti. `0fadad010e3cbc5846a97466944d7b613b2b851c` (`[skip ci]`) yalnız `DEVAM_NOTU.md` ile `PROJE_HAFIZASI.md`yi onardı: DEVAM son sağlam `ff74d555…`, PROJE son sağlam `1c57c6ca…` gövdesi üzerine sonraki tarihli bölümler eksiksiz yeniden eklendi.
-- Uzak commit yeniden okunarak hiçbir `Warning: truncated output`/`tokens truncated` izi kalmadığı, DEVAM'ın 1144 ve PROJE_HAFIZASI'nın 2790 satır olduğu doğrulandı. Eşzamanlı `518cbbf…` K1–K5 kod/test geçmişi korundu; bu belge onarımı test veya kabul sayacı değildir.
-- Son doğrulanmış kod paketi `08ae448288ca488ce54caeea1993f787eca75e87`; 139 hedefli ve 1438 tam offline test başarılıydı. Kabul 0/92, 0/26, 0/22 ve production false kalır. Sıradaki turda güncel main yeniden okunup belgede kayıtlı ilk bağımsız yerel işe ilerlenmelidir.
+- Uzak commit yeniden okunarak hiçbir araç kesilme belirteci kalmadığı, DEVAM'ın 1144 ve PROJE_HAFIZASI'nın 2790 satır olduğu doğrulandı. Eşzamanlı `518cbbf…` K1–K5 kod/test geçmişi korundu; bu belge onarımı test veya kabul sayacı değildir.

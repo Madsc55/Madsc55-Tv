@@ -1466,3 +1466,10 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 - Hedefli process/consumer/audit paketi iki aşamada **119/119**; son exact içerikte tam `python -B -m madsc.offline_gate` **1538/1538**, beş izole K kapısı ve bütün offline kapılar başarılı. Statik envanter **113 dosya / 116 aday / 19 disposition**; **116/116** aday doğrudan yapısal guard baskınlığı taşıyor. Generic Popen yine `process_effect_verified_read_only=false`, `caller_closure_verified=false` ve review-required; bu sonuç gerçek süreç etkisi kabulü değildir.
 - Kabul değişmedi: parity **0/92**, runtime güvenlik **0/26**, ana görev **0/22**, production false. Actions tetiklenmedi; canlı probing, cihaz, üretim/korunan veri, eski depo, PR #71 veya merge işlemi yapılmadı.
 - Sıradaki somut yerel iş: parity Python modül kökenini cwd gölgelemesine karşı sabit kaynak kimliğine bağlamak; ardından altı subprocess çağrısının bağımsız runtime etkisi için kanıt şemasını ilerletmek. Gerçek aynı-input bağımsız execution/artifact, harici restore ve kullanıcı cihaz kanıtı dış engel olarak açık.
+
+
+### K1 EK GÜNCELLEME — 24 Ekim 2026 (hedef inode yarış testi)
+- Kod/test commit: https://github.com/Madsc55/Madsc55-Tv/commit/345392a780a8f0e08bbccfab40b3d5204146fadb — `tests/test_core_fixture_writer.py` dosyasına staged overwrite sırasında hedef inode değiştirilirse işlemin reddedilmesi ve dış yazıcının yeni içeriğinin korunması regresyonu eklendi.
+- Bu commit için CI **henüz doğrulanmadı**; son sorguda görülen başarılı CI https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073059557 yalnız `fe90142` SHA'sını doğrular. Daha yeni `main` commit'leri de aynı CI kapsamında sayılmamalı.
+- Açık: TOCTOU yarışlarının bütünü, merkezi writer guard entegrasyonu ve K1 26/26 runtime kabulü; **kanıtlı runtime kabul 0/26**, `production_ready=false`.
+- Üretim playlist, EPG, logo, favori, arşiv, yedek, cihaz ve kanal verileri değiştirilmedi; diğer K kayıtları korunmuştur.

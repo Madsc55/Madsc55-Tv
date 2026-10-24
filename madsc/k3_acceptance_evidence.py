@@ -24,9 +24,9 @@ def assess(paths):
         rows = data.get("results")
         if (data.get("stage") != "K3_REAL_NETWORK_MANIFEST_PILOT" or
                 data.get("production_playlist_modified") is not False or
-                data.get("candidate_limit") != 75 or
-                data.get("candidate_shortfall") != 0 or
-                data.get("probed") != 75 or not isinstance(rows, list) or len(rows) != 75):
+                type(data.get("candidate_limit")) is not int or data.get("candidate_limit") != 75 or
+                type(data.get("candidate_shortfall")) is not int or data.get("candidate_shortfall") != 0 or
+                type(data.get("probed")) is not int or data.get("probed") != 75 or not isinstance(rows, list) or len(rows) != 75):
             raise ValueError("Invalid K3 75-candidate snapshot")
         # A manifest-only snapshot must never claim decoded audio/video.
         if type(data.get("audio_video_verified", 0)) is not int or data.get("audio_video_verified", 0) != 0:

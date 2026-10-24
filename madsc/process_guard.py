@@ -292,8 +292,14 @@ def validate_parity_process_capability(capability, command, *, cwd: Path,
     if (not isinstance(capability, _ParityProcessCapability)
             or capability.seal is not _PARITY_CAPABILITY_SEAL):
         raise ProtectedWriteRejected("Invalid parity process capability")
-    if (type(timeout_seconds) not in (int, float)
-            or not math.isfinite(timeout_seconds)):
+    if type(timeout_seconds) not in (int, float):
+        raise ProtectedWriteRejected("Invalid parity process capability timeout")
+    try:
+        finite_timeout = math.isfinite(timeout_seconds)
+        numeric_timeout = float(timeout_seconds)
+    except (OverflowError, ValueError, TypeError) as exc:
+        raise ProtectedWriteRejected("Invalid parity process capability timeout") from exc
+    if not finite_timeout:
         raise ProtectedWriteRejected("Invalid parity process capability timeout")
     cwd = Path(cwd)
     try:

@@ -16,6 +16,10 @@
 | Benzersiz görünen kanal adı | 382 |
 | Tekrarlanan görünen kanal adı (ilk görünüm hariç) | 657 |
 | Boş/eksik `tvg-id` alanı | 331 |
+| Dolu `tvg-id` kaydı | 708 |
+| Benzersiz dolu `tvg-id` | 106 |
+| HTTPS URL satırı | 784 |
+| HTTP URL satırı | 255 |
 | Boş/eksik `tvg-logo` alanı | 0 |
 | Boş/eksik `group-title` alanı | 0 |
 | HTTP(S) olmayan yorum dışı satır | 0 |

@@ -95,11 +95,11 @@ class EpgTests(unittest.TestCase):
                     check_epg_mapping(p, e)
 
     def test_backslash_in_stream_uri_rejected(self):
-        for uri in ("https://example.org\\\\evil.example/live",
-                    "https://example.org/live\\\\segment.m3u8"):
+        for uri in ("https://example.org\\evil.example/live",
+                    "https://example.org/live\\segment.m3u8"):
             with self.subTest(uri=uri), tempfile.TemporaryDirectory() as d:
                 p, e = Path(d) / "playlist.m3u8", Path(d) / "xmltv.xml"
-                p.write_text('#EXTM3U\\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\\n' + uri + '\\n', encoding="utf-8")
+                p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="trt1.tr",TRT 1\n' + uri + '\n', encoding="utf-8")
                 e.write_text('<tv><channel id="trt1.tr"/></tv>', encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "invalid stream URI"):
                     check_epg_mapping(p, e)

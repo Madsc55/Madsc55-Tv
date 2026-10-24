@@ -36,7 +36,7 @@ def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = Non
             name, kind, page = item["name"], item["source_kind"], item["source_page"]
             if type(name) is not str or not name.strip() or len(name) > 256:
                 raise ValueError("Invalid channel name")
-            if any(unicodedata.category(c) in ("Cc", "Cf", "Cs", "Zl", "Zp") for c in name):
+            if any(unicodedata.category(c) in ("Cc", "Cf", "Cs", "Zl", "Zp") or c == "\\\\" for c in name):
                 raise ValueError("Invalid channel name")
             if type(kind) is not str or kind not in SOURCE_KINDS:
                 raise ValueError("Unknown source category")

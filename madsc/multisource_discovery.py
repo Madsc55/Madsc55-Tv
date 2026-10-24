@@ -20,7 +20,10 @@ def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = Non
     if existing_urls is not None and (not isinstance(existing_urls, (set, frozenset))
                                       or len(existing_urls) > MAX_RECORDS):
         raise ValueError("Invalid existing URL inventory")
-    existing = {normalize_url(url) for url in (existing_urls or set())}
+    try:
+        existing = {normalize_url(url) for url in (existing_urls or set())}
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Invalid existing URL inventory") from exc
     seen: set[str] = set()
     proposals, duplicates, rejected = [], [], []
     for index, item in enumerate(records):

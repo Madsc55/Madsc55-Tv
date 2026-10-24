@@ -61,6 +61,17 @@ class CoreFixtureWriterTests(unittest.TestCase):
             self.assertEqual(target.read_bytes(), b"original")
             self.assertEqual(sorted(p.name for p in root.iterdir()), ["fixture.txt"])
 
+    def test_staged_overwrite_keeps_original_if_stage_sync_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = write_core_fixture(root, "fixture.txt", b"original")
+            with mock.patch("madsc.core_fixture_writer.os.fsync",
+                            side_effect=OSError("injected stage sync failure")):
+                with self.assertRaises(OSError):
+                    write_core_fixture(root, "fixture.txt", b"replacement", overwrite=True)
+            self.assertEqual(target.read_bytes(), b"original")
+            self.assertEqual(sorted(p.name for p in root.iterdir()), ["fixture.txt"])
+
     def test_unknown_protected_and_traversing_paths_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

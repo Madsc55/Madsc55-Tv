@@ -33,3 +33,19 @@ class K1ImmutabilityEvidenceTests(unittest.TestCase):
                 snapshot(root, ["missing"])
             with self.assertRaises(ValueError):
                 snapshot(root, ["x", "x"])
+
+    def test_root_symlink_and_empty_snapshot_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            root = base / "root"
+            root.mkdir()
+            (root / "x").write_bytes(b"safe")
+            (base / "alias").symlink_to(root, target_is_directory=True)
+            with self.assertRaises(ValueError):
+                snapshot(base / "alias", ["x"])
+            before = snapshot(root, ["x"])
+            with self.assertRaises(ValueError):
+                compare(before, {"schema": before["schema"], "root": before["root"], "files": []})
+            duplicate = {**before, "files": before["files"] * 2}
+            with self.assertRaises(ValueError):
+                compare(before, duplicate)

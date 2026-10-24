@@ -198,7 +198,7 @@ class K3EvidenceTests(unittest.TestCase):
                 path.write_text(json.dumps(report), encoding="utf-8")
                 paths.append(path)
             middle = json.loads(paths[1].read_text(encoding="utf-8"))
-            middle["results"][0]["hls_manifest_seen"] = False
+            middle["results"][0].pop("hls_manifest_seen")
             middle["results"][0]["status"] = "blocked_or_unreachable"
             middle["manifest_seen"] = 74
             paths[1].write_text(json.dumps(middle), encoding="utf-8")

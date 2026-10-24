@@ -2,6 +2,14 @@
 
 Bu dosya bir **şablondur**, gerçek yedekleme yapıldığını kanıtlamaz. Gizli anahtar, erişim URL'si, parola, kişisel veri veya üretim playlist içeriği buraya konulmaz.
 
+## 24 Ekim 2026 — Google Drive klasör oluşturma doğrulaması
+
+- Kullanıcı onayı sonrasında Google Drive kökünde `MADSC55-TV` klasörü, onun altında `K4-Backups` klasörü oluşturuldu.
+- Drive meta verisi üzerinden `K4-Backups` türünün klasör olduğu, ebeveyninin `MADSC55-TV` olduğu ve `shared=false` durumunun raporlandığı doğrulandı. Klasör kimlikleri, hesap adresleri ve özel bağlantılar açık GitHub kayıtlarına eklenmedi.
+- **Yalnız klasör oluşturma gerçekleştirildi.** Sentetik fixture yükleme, dosya silme, gerçek yedekleme, VOD/arşiv okuma, restore, GitHub Actions kimlik bilgisi veya 1/15 zamanlayıcı etkinleştirmesi yapılmadı.
+- Google Drive bağlantısının ChatGPT içinden çalışması, GitHub Actions ortamında bağımsız OAuth/iş yükü kimliği bulunduğunu **göstermez**. Sınırlı test yüklemesi için ayrı onay ve uygun yetki doğrulaması gerekir.
+- **K4-15/16/17/18 kabul durumu değişmedi.** Gerçek sağlayıcı yükleme makbuzu ve bağımsız geri yükleme kanıtı henüz bulunmuyor.
+
 ## 24 Ekim 2026 — Google Drive bağlantısı salt-okunur ön kontrolü
 
 - Google Drive bağlantısı kullanıcı tarafından etkinleştirildi; erişilebilir dosya adlarında `MADSC55` ve `K4` aramaları sıfır eşleşme döndürdü. Bu arama sonuçları **hedef klasörün bulunmadığını kanıtlamaz**; erişim kapsamı ve klasör yetkisi ayrıca doğrulanmalıdır.

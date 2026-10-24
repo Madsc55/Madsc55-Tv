@@ -2807,3 +2807,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `c282ac352e4e3e69d4466b7429945eab4a64e6e2`: beş timestamp normalizasyonu explicit son-ek dönüşümüne taşındı. `5e35212f18459ede14b222d7447339c79c316217`: kalan 17 belirsiz text `.replace` callsite'ı davranışı koruyan `translate`/CRLF/helper sözleşmeleriyle in-memory hale getirildi.
 - Hedefli sonuçlar 116, 168 ve son düzeltmeden sonra 332 test; tam offline **1508/1508**. İlk 332-test denemesinde eski kaynak-string assertion'ı 1 failure verdi ve başarı sayılmadan davranış testine çevrildi. Envanter 111 dosya / 112 aday / 19 disposition; guard'sız kalanlar yalnız 6 subprocess ve 2 temporary-directory oluşturucusu.
 - Kabul 0/92, 0/26, 0/22 ve production false. Actions/canlı probe/cihaz/üretim/korunan veri işlemi yok. Sonraki yerel iş iki temporary-directory lifecycle/kök sözleşmesi, sonra altı subprocess adayının fail-closed etki kanıtıdır; bağımsız gerçek artifact/run, restore ve kullanıcı cihaz kabulü bekleniyor.
+
+
+## 24 Ekim 2026 — K1 geçici çalışma alanı ve offline subprocess guard'ı
+- `1f909e2434b0d3a9bf2053322b70525ab41e1090`: K3/K4 geçici dizinleri sabit prefix, gerçek sistem-temp kökü, direct-child ve inode-bağlı cleanup sözleşmesine alındı. Replacement workspace silinmiyor; fail-closed. İlk audit denemesi atama içi guard nedeniyle 1 failure verdi, ayrı doğrudan guard sonrası hedefli 140 test geçti.
+- `962102454c5493a99209ef55e2a245ffccf0d66b`: offline unit child exact komut/repo/tests köküyle preflight ediliyor ve `-B` ile bytecode yazmıyor. Child test etkileri read-only kanıtlanmadığından process adayı review-required kaldı. İkinci hedefli paket 107 test, tam offline **1514/1514** başarılı.
+- Envanter 112 dosya / 111 aday / 19 disposition; guard'sız kalanlar yalnız 5 subprocess satırı. Bu statik sonuç 0/92, 0/26, 0/22 veya production kabulünü değiştirmez. Actions/canlı probe/cihaz/üretim/korunan veri işlemi yok.
+- Sonraki yerel adım iki curl, DNS child ve ffprobe için exact process preflight; caller-controlled parity process fail-closed kalacak. Gerçek bağımsız artifact/run, restore ve kullanıcı cihaz kanıtı dış engeldir.

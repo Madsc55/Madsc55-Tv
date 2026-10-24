@@ -69,6 +69,7 @@ def check_epg_mapping(playlist: Path, xmltv: Path) -> dict:
                 parsed_uri = urlsplit(line)
                 valid_uri = (not any(ord(char) < 0x20 or ord(char) == 0x7f for char in line)
                              and not any(char.isspace() for char in line)
+                             and "\\" not in line
                              and not parsed_uri.fragment
                              and parsed_uri.scheme in ("https", "http")
                              and bool(parsed_uri.hostname)

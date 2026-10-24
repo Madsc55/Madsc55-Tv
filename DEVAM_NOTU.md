@@ -1200,3 +1200,60 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - İlk hedefli paket ve executable köken genişletmesi sonrası hedefli **142/142** başarılı. Eşzamanlı K2 koleksiyon sınırı ve K1 fsync test commitleri korunup güncel `75635dc…` üzerine yeniden tabanlandı; exact birleşik içerikte tam offline **1526/1526**, beş izole K kapısı ve tüm offline kapılar başarılı, stderr boş. Envanter 113 dosya/111 aday/19 disposition; 110/111 doğrudan guarded, generic parity Popen review-required.
 - K1-03 görev defterine üç somut statik/offline commit kanıtı işlendi ancak durum `in_progress`; process effect 0/6, kabul 0/92, 0/26, 0/22 ve production false. Actions/canlı probe/cihaz/üretim/korunan veri/eski repo/PR71/merge işlemi yok.
 - Sıradaki yerel iş: K1-03'te kalan generic parity Popen için caller capability/call-chain sözleşmesini gerçek opt-in tüketicilerle sınırlarken test yardımcılarını ayrı tutmak; kanıtsız read-only disposition veya runtime kabulü vermemek. Dış bağımsız run/artifact, restore ve son kullanıcı cihaz testi açık.
+
+
+---
+
+## K1 ANA MERKEZE DEVİR — 24 Ekim 2026
+
+**Sorumlu sistem:** K1 — korunan yazma güvenliği, AST mutasyon envanteri, izinler, subprocess okuma sözleşmeleri, izole fixture yazıcıları ve runtime güvenlik kabulü.
+**Depo/dal:** https://github.com/Madsc55/Madsc55-Tv — `main`. Bu bölüm K2–K5 kayıtlarına dokunmadan eklenmiştir.
+**Ayrıntılı geçmiş:** `docs/K1_DEVIR_NOTU_2026-10-23.md`; görev kanıtları: `docs/K1_K5_KANITLI_GOREV_DEFTERI.json`.
+
+### 1. Tamamlanan geliştirmeler ve düzeltilen hatalar
+- `madsc/write_callsite_audit.py` ve `tests/test_write_callsite_audit.py`: AST envanterine definition-time/lambda varsayılanı, dosya tanıtıcısı aktarımı, spawn/exec, xattr, özel dosya API'leri, serializer/csv ve metadata mutasyon yolları ile bunların statik regresyonları eklendi. Bu **envanterdir**, evrensel runtime yazma engeli değildir.
+- `madsc/write_path_audit.py`, `tests/test_write_path_audit.py`: lexical traversal, Unicode NFKC ayracı, C1/Cc, Zl/Zp, Windows aygıt takma adları ve belirsiz yerel çıktı adları için fail-closed doğrulamalar/testler.
+- `madsc/core_fixture_writer.py`, `tests/test_core_fixture_writer.py`: yalnız allowlist'li geçici fixture yolları; no-follow descriptor, FIFO bloklamasına karşı O_NONBLOCK, dosya+dizin fsync, yeni dosyada hata sonrası kimlik kontrollü temizlik, overwrite için stage+os.replace, stage/target inode ve dir_fd kontrolleri; başarısız fsync, replace, stage swap, symlink ve FIFO testleri.
+- `madsc/process_guard.py`, `tests/test_process_guard.py`: curl/ffprobe için sabit cwd/env, executable kökeni ve okuma sözleşmesi denetimleri; ffprobe'un CI runner'da kurulu olmamasından etkilenmeyen pozitif test ve güvenilmeyen tool için negatif test. Statik sözleşme dış süreçlerin tüm etkilerinin kanıtı değildir.
+- Korunan playlist/EPG/logo/favori/arşiv/yedek/cihaz/kanal üretim verilerine müdahale edilmedi. Koruma kapıları gevşetilmedi.
+
+### 2–3. Kod, test, commit, dal ve PR kanıtları
+Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
+- Unicode/Windows cihaz alias: https://github.com/Madsc55/Madsc55-Tv/commit/0e568ed25390849d328db23961b7335f56e22d36 ve https://github.com/Madsc55/Madsc55-Tv/commit/a231f0785d2ebcfe7f43c9d3359e34da906647a4
+- fsync: https://github.com/Madsc55/Madsc55-Tv/commit/90b2077c16d8673ae0fe8cb2611612d5c85abee5 ; testler `93e3629`, `75635dc`.
+- FIFO: https://github.com/Madsc55/Madsc55-Tv/commit/f21ec6792c69af07cd2334d52bbb0903031b0658 ; test `a28bb72`.
+- ffprobe CI sözleşmesi: https://github.com/Madsc55/Madsc55-Tv/commit/e8f68505fd2418ceea39f2dde41eb2fa693a8d62 ; negatif test `e4609d2`.
+- Yeni dosya başarısızlık temizliği: https://github.com/Madsc55/Madsc55-Tv/commit/23dcc6619b3a39f1456da9a811630fce8c82d92 ; test https://github.com/Madsc55/Madsc55-Tv/commit/6268537bafcd583be7a0ae83aff6b6c36f2b6aa3
+- Atomik overwrite: https://github.com/Madsc55/Madsc55-Tv/commit/7fac4ff8391ce5af908baa1bcfaedb0df22fe738 ; testler `ac52f79`, `f688c09`.
+- Stage cleanup ve kimlik kontrolü: `214c5a3`, `330f5d8`, `2a021ce`, `3eaf695`, `2bb0790`.
+- Descriptor-relative overwrite kontrolü: https://github.com/Madsc55/Madsc55-Tv/commit/c6ef5bb72fb56223d85d3f0c0cb43d8fac860cf3 ; test https://github.com/Madsc55/Madsc55-Tv/commit/fe90142f421071f6df2ad3639b0bceff07d0f12d
+- Ayrıntılı devir kaydı güncellemesi: https://github.com/Madsc55/Madsc55-Tv/commit/5cf19cc474182c6fbdbce875fc748509ee35b01f
+- K1 kapsamında yeni PR açılmadı veya merge edilmedi. **PR #71**: https://github.com/Madsc55/Madsc55-Tv/pull/71 — bu devirde merge edilmedi; açık/kapalı güncel durumu ayrıca doğrulanmadı.
+
+### 4. CI sonuçları ve kapsam sınırı
+- **Başarılı**: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073059557 — SHA `fe90142f421071f6df2ad3639b0bceff07d0f12d`; https://github.com/Madsc55/Madsc55-Tv/actions/runs/40071674823 — `f688c092`; https://github.com/Madsc55/Madsc55-Tv/actions/runs/40071447399 — `6268537b`; https://github.com/Madsc55/Madsc55-Tv/actions/runs/40071198374 — `e8f68505`.
+- **Başarısız geçmiş çalışma**: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40070580268 — `f21ec679`, ffprobe pozitif sözleşme testi runner ortamında hata verdi; sonraki test ayrıştırmasıyla `40071198374` başarılı.
+- **İptal edilenler**: `40071618551`, `40071879329`, `40072103659`, `40072284762` ve `40070592279`. İptal, test başarısızlığı veya test başarısı kanıtı değildir.
+- Kontrol anında `40073059557` son görülen tamamlanmış başarılı K1 CI çalışmasıydı; bu devir notunun commit'i [skip ci] olduğu için kendi commit'inin CI'sı ayrıca kanıtlanmış sayılmaz. Daha yeni main için SHA eşleşmesiyle yeniden doğrula.
+
+### 5–6. Açık işler, riskler, bağımlılıklar
+1. **K1 gerçek runtime güvenlik kabulü 0/26 kanıtlı; `production_ready=false`.** Statik/offline CI bunu tamamlamaz.
+2. Merkezi korunan yazma kapısının tüm gerçek writer ve legacy workflow callsite'larına bağlanması, kapsam ve davranışsal parity kanıtı eksik; ilgili çelişki: `docs/K1_KORUNAN_YAZMA_KAPISI_CELISKI_2026-10-22.md`.
+3. `os.stat`→`os.replace` ve stat→unlink arasındaki TOCTOU yarışları tümüyle giderilmedi; aynı geçici dizini değiştirebilen saldırgan modeli için race testleri ve platforma uygun atomik primitifler değerlendirilmeli.
+4. Generic parity Popen caller capability/call-chain ve subprocess dış etki kanıtları eksik; K2–K5 workflow/fixture ve kabul bağımlılıkları koordinasyon gerektiriyor.
+5. 92 eski workflow davranışsal kabulü, diğer K sistemlerinin uçtan uca/cihaz/canlı yayın kabulü ve 22 genel kabul için doğrulanmış tamamlama kanıtı yok. K1 adına tamamlandı yazma.
+6. Üretim M3U/M3U8, XMLTV/EPG, logo, favori, arşiv, yedek, cihaz ve canlı kanalları değiştirme; PR #71 merge, workflow manuel dispatch/rerun veya koruma gevşetme işlemlerini açık izin olmadan yapma.
+
+### 7. Gerçekten doğrulanan kabul kriterleri
+- `fe90142` SHA'sında GitHub Actions CI **success**: izole kod ve regresyon testleri doğrulandı.
+- Dosya fsync/dir fsync, FIFO, stage overwrite, hata enjeksiyonu ve descriptor-relative kontrolleri test kapsamına alındı; bunlar **offline test kanıtıdır**.
+- **Runtime K1 kabul: 0/26 kanıtlı.** Diğer K sistemlerinin kabulü ve üretim hazırlığı bu kayıtla doğrulanmış sayılmaz.
+
+### 8. Bir sonraki çalışma önceliği
+1. `main` HEAD, son Actions run/job ve blob SHA'larını yeniden oku; yeni CI hatasını sınıflandır.
+2. K1 stage/overwrite TOCTOU modelini daralt; doğrulanabilir güvenli tasarım ve fail-closed kod+regresyon testleri oluştur.
+3. AST envanteri ile gerçek writer callsite'larını eşleştir; merkezi guard bypass'larını izole testlerle kapat.
+4. K1 26 runtime kabulünü gerçek ortam ve artifact kanıtlarıyla tek tek doğrula; kanıtsız maddeleri açık bırak.
+5. K2–K5 ile legacy workflow ve subprocess etkileri için koordinasyon; üretim verilerine dokunmadan kanıt defterini ve bu notu güncelle.
+
+**Devir durumu:** K1 çalışma geçmişi ve açık riskleri ana merkeze aktarılmıştır; K1 işlevsel/üretim kabulü henüz tamamlanmamıştır.

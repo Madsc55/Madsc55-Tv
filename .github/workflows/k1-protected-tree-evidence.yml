@@ -19,6 +19,6 @@ jobs:
         with:
           python-version: '3.12'
       - name: Verify 26 sandbox denial cases
-        run: python -B -m unittest -v tests.test_k1_runtime_26_immutability
+        run: python -B -m unittest discover -s tests -p test_k1_runtime_26_immutability.py -v
       - name: Read-only protected tracked file SHA256 evidence
         run: python -B -m madsc.k1_protected_tree_evidence

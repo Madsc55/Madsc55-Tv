@@ -63,6 +63,22 @@ class CoreFixtureWriterTests(unittest.TestCase):
                 write_core_fixture(root, "legacy_history/gecmis.json", b"blocked")
             self.assertEqual(list(target.iterdir()), [])
 
+    def test_fifo_swapped_at_descriptor_open_cannot_block_writer(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "fixture.txt"
+            target.write_bytes(b"original")
+            real_open = os.open
+            def swap_then_open(path, flags, *args, **kwargs):
+                if path == "fixture.txt":
+                    target.unlink()
+                    os.mkfifo(target)
+                return real_open(path, flags, *args, **kwargs)
+            with mock.patch("madsc.core_fixture_writer.os.open", side_effect=swap_then_open):
+                with self.assertRaises(OSError):
+                    write_core_fixture(root, "fixture.txt", b"new", overwrite=True)
+            self.assertTrue(target.is_fifo())
+
     def test_symlinked_overwrite_target_is_rejected_without_mutation(self):
         with (tempfile.TemporaryDirectory() as directory,
               tempfile.TemporaryDirectory() as outside):

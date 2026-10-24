@@ -32,3 +32,11 @@ Bu matrisi ekleyen commit için CI ayrıca kontrol edilmelidir.
 - Commit `79189f99d13625a69a68b225fd18d53aba324065` için GitHub Actions `40091242333` **success**: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40091242333
 - Google Drive `MADSC55-TV/K4-Backups` altında yalnız `K4-Fixture-Only` klasörü gözlendi; bu klasörde 106 baytlık sentetik .txt ve Google Docs fixture var. Gerçek kaynak envanteri veya sağlayıcı yedek makbuzu gözlenmedi.
 - K4-15/16/17/18 gerçek üretim kabulü hâlâ açık. Test kodu ve fixture sonuçları gerçek VOD veya bağımsız harici restore kanıtı değildir.
+
+## 24 Ekim 2026 — Google Drive sentetik kopyalama ve okuma kontrolü
+- Kaynak: `K4-FIXTURE-ONLY-2026-10-24.txt`, 106 bayt, MIME `text/plain`, özel.
+- Ayrı Drive nesnesi olarak `K4-ISOLATED-RESTORE-FIXTURE-2026-10-24.txt` oluşturuldu ve tekrar okundu.
+- Sağlayıcı metadata kontrolünde iki nesne de 106 bayt, MIME `text/plain`, `shared=false`; nesne kimlikleri farklı, içerik metinleri eşit. Kopya aynı `K4-Fixture-Only` klasöründe; farklı sağlayıcı veya bağımsız sandbox değil.
+- Bu bir **sentetik Drive copy/readback smoke test**; üretim yedeği, harici sağlayıcıdan gerçek restore, byte-seviyesi bağımsız SHA-256 geri indirme testi veya K4-16 kabulü olarak sayılmamalıdır.
+- Bir önceki commit `32da8cd0672bbe41ddfe940235489270f1d41be6` CI `40098821814` **success**: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40098821814
+- K4-15/16/17/18 üretim kabul kapıları açık ve tüm production bayrakları false.

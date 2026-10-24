@@ -25,6 +25,15 @@ class CoreFixtureWriterTests(unittest.TestCase):
             write_core_fixture(root, "fixture.txt", b"second", overwrite=True)
             self.assertEqual(output.read_bytes(), b"second")
 
+    def test_overwrite_fsyncs_file_and_parent_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_core_fixture(root, "fixture.txt", b"first")
+            with mock.patch("madsc.core_fixture_writer.os.fsync", wraps=os.fsync) as sync:
+                write_core_fixture(root, "fixture.txt", b"second", overwrite=True)
+            self.assertEqual(sync.call_count, 2)
+            self.assertEqual((root / "fixture.txt").read_bytes(), b"second")
+
     def test_unknown_protected_and_traversing_paths_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

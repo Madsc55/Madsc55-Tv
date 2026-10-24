@@ -98,7 +98,45 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
             if ((metadata.st_dev, metadata.st_ino) !=
                     (current.st_dev, current.st_ino)):
                 raise PermissionError("Core fixture changed before overwrite")
-            os.ftruncate(descriptor, 0)
+            # Stage the replacement before truncating the original. If the
+            # staging write fails, the existing fixture remains untouched.
+            staged_fd = None
+            staged_name = None
+            try:
+                for attempt in range(16):
+                    candidate = f".fixture-stage-{os.getpid()}-{os.urandom(8).hex()}"
+                    try:
+                        staged_fd = os.open(candidate, os.O_WRONLY | os.O_CREAT |
+                                            os.O_EXCL | nofollow | nonblock,
+                                            0o600, dir_fd=parent_fd)
+                        staged_name = candidate
+                        break
+                    except FileExistsError:
+                        continue
+                if staged_fd is None:
+                    raise PermissionError("Unable to stage fixture overwrite")
+                with os.fdopen(staged_fd, "wb", closefd=False) as stage:
+                    stage.write(payload)
+                    stage.flush()
+                    os.fsync(stage.fileno())
+                current = os.stat(parts[-1], dir_fd=parent_fd,
+                                  follow_symlinks=False)
+                if ((current.st_dev, current.st_ino) !=
+                        (metadata.st_dev, metadata.st_ino)):
+                    raise PermissionError("Core fixture changed during staging")
+                os.replace(staged_name, parts[-1], src_dir_fd=parent_fd,
+                           dst_dir_fd=parent_fd)
+                os.fsync(parent_fd)
+                completed = True
+                return destination
+            finally:
+                if staged_fd is not None:
+                    os.close(staged_fd)
+                if staged_name is not None:
+                    try:
+                        os.unlink(staged_name, dir_fd=parent_fd)
+                    except FileNotFoundError:
+                        pass
         with os.fdopen(descriptor, "wb", closefd=False) as handle:
             handle.write(payload)
             handle.flush()

@@ -75,6 +75,7 @@ jobs:
         with:
           name: madsc-k3-turkish-tv-video-pilot
           path: reports/k3-turkish-tv-video-pilot.json
+          if-no-files-found: warn
           retention-days: 14
       - name: Yardımcı paket sözleşmesini koru — madsc-turkish-tv-batch.yml
         if: ${{ always() && !cancelled() && inputs.allow_bulk_turkish_tv == true }}

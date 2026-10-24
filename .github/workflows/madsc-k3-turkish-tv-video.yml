@@ -3,8 +3,24 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: madsc55-k3-turkish-tv-video-pilot
+  cancel-in-progress: false
 jobs:
+  offline-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate K1-K5 offline regression gate before network access
+        run: python -m madsc.offline_gate
   video-pilot:
+    needs: offline-regression
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -24,4 +40,5 @@ jobs:
         with:
           name: madsc-k3-turkish-tv-video-pilot
           path: reports/k3-turkish-tv-video-pilot.json
+          if-no-files-found: warn
           retention-days: 14

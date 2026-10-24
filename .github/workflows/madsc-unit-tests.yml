@@ -11,14 +11,27 @@ on:
   push:
     paths:
       - '.github/workflows/madsc-unit-tests.yml'
+      - '.github/workflows/madsc-k3-live-manifest-pilot.yml'
+      - '.github/workflows/madsc-k3-turkish-tv-video.yml'
       - 'madsc/**'
       - 'tests/**'
       - 'docs/LEGACY_SOURCE_SCOPE.json'
       - 'docs/K1_K5_KANITLI_GOREV_DEFTERI.json'
+      - 'docs/K3_LIVE_ACCEPTANCE_CHECKLIST_2026-10-24.md'
+  pull_request:
+    paths:
+      - '.github/workflows/madsc-unit-tests.yml'
+      - '.github/workflows/madsc-k3-live-manifest-pilot.yml'
+      - '.github/workflows/madsc-k3-turkish-tv-video.yml'
+      - 'madsc/**'
+      - 'tests/**'
+      - 'docs/LEGACY_SOURCE_SCOPE.json'
+      - 'docs/K1_K5_KANITLI_GOREV_DEFTERI.json'
+      - 'docs/K3_LIVE_ACCEPTANCE_CHECKLIST_2026-10-24.md'
 permissions:
   contents: read
 concurrency:
-  group: madsc55-offline-unit-tests
+  group: madsc55-offline-unit-tests-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 jobs:
   offline-tests:
@@ -45,10 +58,3 @@ jobs:
           path: reports/offline-gate.log
           if-no-files-found: warn
           retention-days: 14
-
-
-# CI audit: validate latest K1-K5 changes including post-run K2 and K5 regressions.
-
-# CI audit: verify K1 caller closure, K2 encoded URLs, and K5 chmod rollback.
-
-# CI audit: validate K1 xattr/serializer and K2 parent inspection regressions.

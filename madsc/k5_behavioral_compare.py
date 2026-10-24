@@ -28,13 +28,16 @@ def _valid(record):
         return False
     if type(record["exit_code"]) is not int or type(record["retry_count"]) is not int or record["retry_count"] < 0:
         return False
+    if record["retry_count"] > 100 or not (-255 <= record["exit_code"] <= 255):
+        return False
     if type(record["timed_out"]) is not bool:
         return False
     if not _digest(record["stdout_sha256"]) or not _digest(record["stderr_sha256"]):
         return False
     for field in ("artifacts", "side_effects"):
         value = record[field]
-        if not isinstance(value, dict) or any(not _safe_relative_name(k) or not _digest(v) for k, v in value.items()):
+        if (not isinstance(value, dict) or len(value) > 10000
+                or any(not _safe_relative_name(k) or not _digest(v) for k, v in value.items())):
             return False
     return True
 

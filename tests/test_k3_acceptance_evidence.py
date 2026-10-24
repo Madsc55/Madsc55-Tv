@@ -160,6 +160,29 @@ class K3EvidenceTests(unittest.TestCase):
                 with self.subTest(field=field, value=value), self.assertRaises(ValueError):
                     assess(paths)
 
+    def test_candidate_accounting_rejects_float_and_boolean_aliases(self):
+        with TemporaryDirectory() as folder:
+            paths = []
+            for hour in (0, 6, 12):
+                rows = [{"url_sha256": format(i, "064x"), "hls_manifest_seen": True,
+                         "https_reachable": True, "status": "manifest_only"} for i in range(75)]
+                report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
+                          "measured_at_utc": f"2026-10-23T{hour:02d}:00:00+00:00",
+                          "candidate_limit": 75, "candidate_shortfall": 0,
+                          "production_playlist_modified": False, "probed": 75,
+                          "manifest_seen": 75, "results": rows}
+                path = Path(folder) / f"{hour}.json"
+                path.write_text(json.dumps(report), encoding="utf-8")
+                paths.append(path)
+            original = json.loads(paths[1].read_text(encoding="utf-8"))
+            for field, value in (("candidate_limit", 75.0),
+                                 ("candidate_shortfall", False),
+                                 ("probed", 75.0)):
+                altered = {**original, field: value}
+                paths[1].write_text(json.dumps(altered), encoding="utf-8")
+                with self.subTest(field=field), self.assertRaisesRegex(ValueError, "75-candidate"):
+                    assess(paths)
+
     def test_short_middle_interval_does_not_pass(self):
         with TemporaryDirectory() as folder:
             files = []

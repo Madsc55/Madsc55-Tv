@@ -1539,3 +1539,15 @@ Kullanıcı bu sohbetin kaydedilmesini ve yeni sohbette K1 işlerine kaldığı 
 - Son değişiklikler: `madsc/k5_behavioral_compare.py` run ID fail-closed doğrulama (commit `14175a0`), `tests/test_k5_behavioral_compare.py` regresyonları (`baf4887`), `docs/K5_DEVIR_NOTU_2026-10-24.md` (`17ecf18`). Ana merkez önceki devir commitleri `9a8f4ca` ve `76d8f0e`.
 - **Kabul sayıları değişmedi:** 92/92 ilk YAML kaynak incelemesi, **0/92** bağımsız eski/yeni davranışsal parity, K1 **0/26** runtime, genel **0/22**. K5 üretim hazır değil.
 - **Yeni sohbetin ilk işi:** main ve K5 dal HEAD'lerini, PR #6 ve CI'ları yeniden kontrol et; sonra gerçek bağımsız izole fixture runner/provenance ve workflow eşleştirme eksiklerini güvenli biçimde ilerlet. Canlı kanal taraması, main kod merge veya korunan dosya yazımı yapma.
+
+
+---
+
+## K3 — YENİ SOHBETE DEVİR / 24 Ekim 2026
+- Bu sohbetten yeni sohbete geçiliyor. Önceki ayrıntılı K3 kayıtları bu dosyada korunuyor.
+- En son K3 kod düzeltmesi: `madsc/k3_live_manifest_pilot.py` ölçüm zamanı artık pilot probe sonuçları tamamlandıktan sonra alınır. Audit branch commit: https://github.com/Madsc55/Madsc55-Tv/commit/3501cafc40c3d12968aec50acec54d89f3f0dcf8
+- **GÜNCEL CI DOĞRULANDI: SUCCESS** — run https://github.com/Madsc55/Madsc55-Tv/actions/runs/40074591188 , tested SHA `3501cafc40c3d12968aec50acec54d89f3f0dcf8`. Bu offline CI kanıtıdır, canlı yayın veya cihaz kabulü değildir.
+- Önceki ana merkeze devir commitleri: https://github.com/Madsc55/Madsc55-Tv/commit/813f771edec1b3574704bcd426ff2dbbb6ad76fd ve https://github.com/Madsc55/Madsc55-Tv/commit/a4e676ebc312f81dd20787c1bef8f68a212da7b2
+- Aktif K3 branch: `madsc/k3-live-acceptance-audit-20261024`; taslak açık PR #10: https://github.com/Madsc55/Madsc55-Tv/pull/10 . Main'e merge edilmedi.
+- **K3-13 AÇIK:** 75 gerçek HTTPS/HLS adaylı pilot, altışar saat aralıklı üç gerçek ölçüm, ffprobe ile gerçek ses/görüntü, Pages/XMLTV ve tvg-id, kanal/logo eşleşmesi ve en son kullanıcının IBO Player Pro cihaz kabulü eksik. Workflow dispatch ve gerçek canlı test çalıştırıldığı iddia edilmez.
+- Yeni sohbet önceliği: önce güncel main/PR #10 ve CI durumunu yeniden doğrula; sonra izinli read-only canlı pilot kanıtını ve artifact'leri topla; gerçek ölçüm/EPG/logo kanıtlarını değerlendir; en son cihaz kabulü. Üretim M3U/XMLTV, favori, logo, yedek, arşiv ve cihaz verilerini değiştirme; diğer K kayıtlarını koru, PR'ı otomatik merge etme.

@@ -1,4 +1,8 @@
 import datetime as dt
+import io
+import json
+from contextlib import redirect_stdout
+from unittest.mock import patch
 import unittest
 
 from madsc.k4_schedule_plan import planned_slots
@@ -49,6 +53,18 @@ class K4SchedulePlanTests(unittest.TestCase):
         with patch.object(planner, "DAYS", (29,)):
             with self.assertRaises(ValueError):
                 planner.planned_slots(2026, 3, 2)
+
+    def test_cli_reports_dry_run_without_enabling_scheduler(self):
+        from madsc.k4_schedule_plan import main
+        buffer = io.StringIO()
+        with patch("sys.argv", ["k4_schedule_plan", "--year", "2026", "--month", "10"]):
+            with redirect_stdout(buffer):
+                main()
+        report = json.loads(buffer.getvalue())
+        self.assertIs(report["production_writes"], False)
+        self.assertIs(report["scheduler_enabled"], False)
+        self.assertEqual(len(report["slots"]), 2)
+        self.assertTrue(all(s["mode"] == "dry_run_only" for s in report["slots"]))
 
     def test_invalid_input_fails_closed(self):
         for year, month, hour in [(2026, 0, 3), (2026, 13, 3), (1999, 1, 3),

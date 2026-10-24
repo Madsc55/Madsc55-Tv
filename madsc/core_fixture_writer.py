@@ -130,6 +130,11 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
                 if ((current.st_dev, current.st_ino) !=
                         (metadata.st_dev, metadata.st_ino)):
                     raise PermissionError("Core fixture changed during staging")
+                staged_current = os.stat(staged_name, dir_fd=parent_fd,
+                                         follow_symlinks=False)
+                if ((staged_current.st_dev, staged_current.st_ino)
+                        != staged_identity):
+                    raise PermissionError("Staged fixture changed before replacement")
                 os.replace(staged_name, parts[-1], src_dir_fd=parent_fd,
                            dst_dir_fd=parent_fd)
                 os.fsync(parent_fd)

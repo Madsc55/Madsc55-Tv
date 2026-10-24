@@ -65,6 +65,8 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
     root_fd = os.open(root, directory_flags)
     parent_fd = root_fd
     descriptor = None
+    created_identity = None
+    completed = False
     try:
         root_metadata = os.fstat(root_fd)
         path_metadata = root.lstat()
@@ -87,6 +89,8 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
                                                      else os.O_CREAT | os.O_EXCL)
         descriptor = os.open(parts[-1], flags, 0o600, dir_fd=parent_fd)
         metadata = os.fstat(descriptor)
+        if not overwrite:
+            created_identity = (metadata.st_dev, metadata.st_ino)
         if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
             raise PermissionError("Core fixture must be an independent regular file")
         if overwrite:
@@ -102,7 +106,18 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
         # Persist the directory entry as well as the file contents before
         # reporting success. This is required for durable fixture evidence.
         os.fsync(parent_fd)
+        completed = True
     finally:
+        if not completed and created_identity is not None:
+            # Never unlink a different inode swapped into the fixture path.
+            try:
+                current = os.stat(parts[-1], dir_fd=parent_fd,
+                                  follow_symlinks=False)
+                if (current.st_dev, current.st_ino) == created_identity:
+                    os.unlink(parts[-1], dir_fd=parent_fd)
+                    os.fsync(parent_fd)
+            except OSError:
+                pass
         if descriptor is not None:
             os.close(descriptor)
         if parent_fd != root_fd:

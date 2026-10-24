@@ -51,8 +51,10 @@ def assess(paths):
                 raise ValueError("Invalid manifest observation type")
             if row.get("status") not in ("manifest_only", "unverified", "blocked_or_unreachable"):
                 raise ValueError("Unknown probe status")
-            if row.get("status") == "blocked_or_unreachable" and row.get("hls_manifest_seen") is not None:
+            if row.get("status") == "blocked_or_unreachable" and "hls_manifest_seen" in row:
                 raise ValueError("Blocked probe claims manifest observation")
+            if row.get("status") == "blocked_or_unreachable" and "https_reachable" in row:
+                raise ValueError("Blocked probe claims HTTPS observation")
             if row.get("hls_manifest_seen") is True:
                 if row.get("status") != "manifest_only" or row.get("https_reachable") is not True:
                     raise ValueError("Inconsistent successful probe evidence")

@@ -2793,3 +2793,10 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 ## 24 Ekim 2026 — Devir geçmişi bütünlük onarımı
 - `0fadad010e3cbc5846a97466944d7b613b2b851c` iki büyük devir belgesine önceki aktarım sınırından gömülen kesilme metnini kaldırdı; son sağlam gövdeler ve sonraki bölümler birleştirilerek tarihçe korundu. Uzak doğrulama: DEVAM 1144 satır, PROJE_HAFIZASI 2790 satır, kesilme belirteci yok.
 - Kod/test değişmedi; eşzamanlı main `518cbbf…` korunmuştur. Son K1 kod paketi `08ae448…`, kabul 0/92, 0/26, 0/22 ve production false.
+
+
+## 24 Ekim 2026 — K1 offline rapor ve K5 source-audit çıktı kapıları
+- `52585d3f14ae35b1114f38bb57c4b7467023e915`: offline beşli rapor paket dizinleri sabit temp-root/category, no-follow descriptor, inode kontrolü, exclusive create ve directory fsync ile oluşturuluyor. `legacy_retest_390` CSV satır yazıları yalnız kaynak-bağlı `csv.writer(io.StringIO(...))` zincirinde non-filesystem disposition; shadow/rebind/external buffer fail-closed.
+- `ea3e5939f443e379cbc1d9f729251f0f3b1f3997`: K5 kaynak denetimi `--output` dosyasını doğrudan `write_text` yerine K1-guarded exclusive evidence writer ile oluşturuyor; overwrite yok. Exact içerikte hedefli 112 ve 94 test ile tam offline **1504/1504** başarılı. Envanter 111 dosya / 138 aday / 18 disposition.
+- İlk CSV hedefli koşudaki `StringIO(newline="")` kaynak biçimi 1 failure verdi ve düzeltilmeden kabul edilmedi. Son koşular yeşil. Kabul 0/92, 0/26, 0/22, production false; Actions/canlı probe/cihaz/üretim veya korunan veri işlemi yok.
+- Sonraki yerel adım mapping `.copy` false-positive'ını kaynak-bağlı ayırmak ve `src/madsc_guard.py` salt-okunur descriptor adayını incelemektir. Bağımsız gerçek execution/artifact, restore ve son kullanıcı cihaz kanıtı bekleniyor.

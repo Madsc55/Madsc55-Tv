@@ -86,6 +86,33 @@ class K3EvidenceTests(unittest.TestCase):
                 altered["results"][0]["audio_video_verified"] = False
                 paths[1].write_text(json.dumps(altered), encoding="utf-8")
 
+    def test_malformed_row_and_counter_fail_closed(self):
+        with TemporaryDirectory() as folder:
+            paths = []
+            for hour in (0, 6, 12):
+                rows = [{"url_sha256": format(i, "064x"), "hls_manifest_seen": True,
+                         "https_reachable": True, "status": "manifest_only"} for i in range(75)]
+                report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
+                          "measured_at_utc": f"2026-10-23T{hour:02d}:00:00+00:00",
+                          "candidate_limit": 75, "candidate_shortfall": 0,
+                          "production_playlist_modified": False, "probed": 75,
+                          "manifest_seen": 75, "results": rows}
+                path = Path(folder) / f"{hour}.json"
+                path.write_text(json.dumps(report), encoding="utf-8")
+                paths.append(path)
+            original = json.loads(paths[1].read_text(encoding="utf-8"))
+            for mutation in ("null_row", "string_row", "boolean_counter"):
+                altered = json.loads(json.dumps(original))
+                if mutation == "null_row":
+                    altered["results"][0] = None
+                elif mutation == "string_row":
+                    altered["results"][0] = "bad"
+                else:
+                    altered["audio_video_verified"] = False
+                paths[1].write_text(json.dumps(altered), encoding="utf-8")
+                with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                    assess(paths)
+
     def test_short_middle_interval_does_not_pass(self):
         with TemporaryDirectory() as folder:
             files = []

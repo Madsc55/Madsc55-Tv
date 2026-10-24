@@ -16,7 +16,7 @@ def _digest(value):
 
 
 def _safe_relative_name(name):
-    if not isinstance(name, str) or not name or "\\x00" in name or "\\\\" in name:
+    if not isinstance(name, str) or not name or chr(0) in name or chr(92) in name:
         return False
     path = PurePosixPath(name)
     return (not path.is_absolute() and all(part not in ("", ".", "..") for part in name.split("/"))

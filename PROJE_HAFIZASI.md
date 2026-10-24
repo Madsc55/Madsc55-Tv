@@ -2847,3 +2847,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 ## 24 Ekim 2026 — Exact güncel main regresyonu
 - Uzak exact `09f7db8fbac7575311e1b3ac18c4ef1e25b8d002` içeriğinde tam offline **1540/1540**, beş izole K kapısı ve bütün offline kapılar başarılı. Bu SHA, `250942d` sonrasındaki K1 target-swap testini ve K3 EPG ters eğik çizgi düzeltmelerini de içerir.
 - Kabul sayaçları değişmedi: 0/92, 0/26, 0/22; production false. Sonraki yerel K1 işi Python module origin/cwd-shadow bağıdır; dış kanıt gerektiren işler açık kalır.
+
+
+## 24 Ekim 2026 — K1 parity module origin kapısı
+- `472e996a766a202742b7239329490d1cfd560c80`: `-I -B` sabit runpy bootstrap workspace cwd gölgelemesini engelliyor; capability exact ana modül dosyasının descriptor kimliği ve SHA-256'sına bağlı. `a4d4efe7bea084810e41204bd0aebaec68a6f9b5`: bu descriptor salt-okunur disposition oldu.
+- İlk hedefli çalışmadaki eski argv beklentisi 1 error verdi ve düzeltilmeden başarı sayılmadı. Son hedefli 121/121 ile 102/102; tam offline 1542/1542 ve beş izole kapı başarılı. Envanter 113/116/20, guard 116/116.
+- Sayaçlar sabit: süreç etkisi 0/6, runtime 0/26, parity 0/92, görev 0/22, production false. Sonraki yerel iş beklenen/beklenmeyen workspace yan etkilerinin pre/post kimlik ölçümüdür; dış kanıtlar açık kalır.

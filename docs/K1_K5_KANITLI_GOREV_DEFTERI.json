@@ -23,9 +23,10 @@
       "bed931635f2ce7e5967d0575bcce936e3a3c815f: exact opt-in parity consumer command/root/identity contract; no runtime acceptance",
       "c996626eda2e7440c076fa583cf6b10c6362f5db: curl/ffprobe fixed cwd, minimal environment and root-owned executable origin; offline evidence only",
       "e00a01b5af8aace2a361a447dd4157d7e112d4ca: sealed parity capability binds opt-in argv/cwd/root inode/timeout before Popen; offline evidence only",
-      "250942deb5ad95534b14cffd169f7449e47323c4: parity child receives only source-root-bound PYTHONPATH, no-bytecode and fixed locale environment; no runtime acceptance"
+      "250942deb5ad95534b14cffd169f7449e47323c4: parity child receives only source-root-bound PYTHONPATH, no-bytecode and fixed locale environment; no runtime acceptance",
+      "472e996a766a202742b7239329490d1cfd560c80 + a4d4efe7bea084810e41204bd0aebaec68a6f9b5: isolated -I/-B module runner, cwd-shadow rejection and descriptor/SHA-bound module origin; offline evidence only"
     ],
-    "note": "Güncel statik audit 113 dosyada 116 adayı izliyor ve 116/116 doğrudan yapısal K1 guard baskınlığı taşıyor. Generic parity Popen capability gerektiriyor; buna rağmen caller closure false, process effect acceptance 0/6 ve gerçek runtime kabul 0/26 kaldığından görev in_progress."
+    "note": "Güncel statik audit 113 dosyada 116 adayı ve 20 non-write disposition izliyor; 116/116 aday doğrudan yapısal K1 guard baskınlığı taşıyor. Parity Popen capability ile exact module source kimliği gerektiriyor; buna rağmen caller closure false, process effect acceptance 0/6 ve gerçek runtime kabul 0/26 kaldığından görev in_progress."
   },
   {
     "id": "K1-04",

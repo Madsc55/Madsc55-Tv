@@ -1406,3 +1406,55 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 6. Her aşamayı `DEVAM_NOTU.md` K4 bölümüne gerçek commit/run bağlantılarıyla güncelle; diğer K sistemlerinin kayıtlarını koru.
 
 <!-- K4_2026_10_24_HANDOFF_END -->
+
+---
+
+## K5 — ANA MERKEZ DEVİR VE KAYIT (24 Ekim 2026)
+
+**Kapsam:** Yalnız K5. Diğer K sistemlerinin önceki kayıtları aynen korunmuştur. Kaynak depo `Madsc55/Madsc55-Tv`; K5 dalı [k5/fail-closed-evidence-20261023](https://github.com/Madsc55/Madsc55-Tv/tree/k5/fail-closed-evidence-20261023), [taslak PR #6](https://github.com/Madsc55/Madsc55-Tv/pull/6). Eski salt okunur kaynak `Madsc55/madsc-tv@ca374df3b9585c0d76a078db9536150ebbc260f7`.
+
+### 1. Tamamlanan geliştirmeler ve incelemeler
+- Eski 99 workflow YAML'ından 7 kapsam dışı, **92/92 ilk kaynak/YAML incelemesi** yapıldı; alt inceleme dosyaları: `docs/K5_LEGACY_FIRST10_CONTRACT_REVIEW_2026-10-24.md`, `docs/K5_LEGACY_WORKFLOWS_11_20_CONTRACT_REVIEW_2026-10-24.md`, `...21_30...`, `...31_40...`, `...41_47...`, `...48_57...`, `...58_67...`, `...68_77...`, `...78_92...`. İlk inceleme **tam script çağrı grafiği veya davranışsal entegrasyon değildir**.
+- `madsc/k5_behavioral_compare.py` offline, fail-closed karşılaştırıcı: kesin JSON şeması, fixture SHA256, ayrı eski/yeni run ID ve commit SHA, stdout/stderr/artifact/yan etki hash, exit code, timeout, retry; **bağımsız yürütme doğrulanmadığı için her zaman `accepted=false`**.
+- `madsc/k5_source_audit.py` ve `docs/LEGACY_SOURCE_SCOPE.json` kaynak kapsam/sha denetimi ile `docs/K5_KAYNAK_DOGRULAMA_*.json` kanıtları; K5 Frozen Source Integrity CI.
+- Workflow #92 `.github/workflows/yeniler-guvenli-arama.yml` tam YAML ve `kaynak_kesfet.py`, `yeni_kanal_tara.py` giriş dosyaları incelendi; 66 batch × 30 = 1.980 aday indeks sınırı, canlı ağ/FFprobe ve dış URL riskleri belgelendi.
+- Açık kabul kapıları `docs/K5_COMPLETION_BLOCKERS_AND_ACCEPTANCE_2026-10-24.md`; ayrıntı `docs/K5_LEGACY_WORKFLOW_92_DEPENDENCY_REVIEW_2026-10-24.md`; devir özeti `docs/K5_DEVIR_NOTU_2026-10-24.md`.
+
+### 2. Hatalar ve değişen dosyalar
+- `madsc/k5_behavioral_compare.py`: gerçek NUL/backslash karakterleri ile kontrol karakterleri ve aşırı uzun yollar reddedildi; mutlak/parent/noncanonical workflow yolları engellendi; artifact/yan etki anahtarları, tekrar sayısı ve exit-code sınırları sıkılaştırıldı; `timed_out=true` ve `exit_code=0` çelişkisi reddedildi.
+- `tests/test_k5_behavioral_compare.py`: path traversal, gerçek NUL/backslash, kontrol karakterleri, büyük sayaçlar ve çelişkili timeout için regresyon testleri eklendi.
+- Belge değişiklikleri: `docs/K5_LEGACY_WORKFLOWS_78_92_CONTRACT_REVIEW_2026-10-24.md`, `docs/K5_COMPLETION_BLOCKERS_AND_ACCEPTANCE_2026-10-24.md`, `docs/K5_LEGACY_WORKFLOW_92_DEPENDENCY_REVIEW_2026-10-24.md`, `docs/K5_DEVIR_NOTU_2026-10-24.md` ve önceki aralık inceleme dosyaları.
+
+### 3. Commit, dal ve PR kanıtları
+- Kaynak inceleme: [bdff3c0](https://github.com/Madsc55/Madsc55-Tv/commit/bdff3c05387c32996580bd88851e4ef95efe2ece), [1ed7181](https://github.com/Madsc55/Madsc55-Tv/commit/1ed7181a0a60520733f064f2059653a530202179), [26f9d2c](https://github.com/Madsc55/Madsc55-Tv/commit/26f9d2c35428f66f8f22fa6829e47ed38013dd1f), [e9b63e4](https://github.com/Madsc55/Madsc55-Tv/commit/e9b63e49c36f2c80ae34cac1cbe6490434bf80e1), [827fe3c](https://github.com/Madsc55/Madsc55-Tv/commit/827fe3c5e7098a1a5fffa9cf075800ef7a732abe), [f59687e](https://github.com/Madsc55/Madsc55-Tv/commit/f59687e81af88eb71876a27505cc3e05201a2632), [ac0205f](https://github.com/Madsc55/Madsc55-Tv/commit/ac0205f117b5436644458a7585edc09380f16bb9), [f3affc8](https://github.com/Madsc55/Madsc55-Tv/commit/f3affc869a07b7f00eff4c1dc37bcb14fdb8c8b7), [c65065e](https://github.com/Madsc55/Madsc55-Tv/commit/c65065ed987989753768e408d6e6351891720321).
+- Kod/test: [5d98cb9](https://github.com/Madsc55/Madsc55-Tv/commit/5d98cb9beb2d70f527cf6186fd4f9a8c6df9d47b), [5f6ad4b](https://github.com/Madsc55/Madsc55-Tv/commit/5f6ad4b7b62bdb75131a1ba5e04bad3b4ea329f9), [7c81ebe](https://github.com/Madsc55/Madsc55-Tv/commit/7c81ebe6b948577b0497183e129409573f088883), [7971eec](https://github.com/Madsc55/Madsc55-Tv/commit/7971eecd95c240a4830e80f8d9810f09bde3bebc), [69f6209](https://github.com/Madsc55/Madsc55-Tv/commit/69f62092ff7cd161c63e4d7d31ec36e72a4c48fb), [1260399](https://github.com/Madsc55/Madsc55-Tv/commit/12603990ca1991f9ad4db21785938d3770dba72e), [7a804d3](https://github.com/Madsc55/Madsc55-Tv/commit/7a804d3f3451c6a85f1d4e814213c20cfaf7a3eb), [a41cab0](https://github.com/Madsc55/Madsc55-Tv/commit/a41cab06fd86e9d97b0b82abb9bd1f6fce687304), [5163428](https://github.com/Madsc55/Madsc55-Tv/commit/51634289defbc2764dbbb579a047e56f4cf1d0dd), [0faee1c](https://github.com/Madsc55/Madsc55-Tv/commit/0faee1c8d37a28280447a0085adad60c19c13c49).
+- Belgeler: [726da61](https://github.com/Madsc55/Madsc55-Tv/commit/726da619741639d9b0b6c5ea3f6373d5eebab62a), [b2e3adf](https://github.com/Madsc55/Madsc55-Tv/commit/b2e3adff0b379ebbcccf833720c97d045230efde), [51f1f0a](https://github.com/Madsc55/Madsc55-Tv/commit/51f1f0a04a8aa44a50777e34b9893a47f0a968ad), [f20c9d4](https://github.com/Madsc55/Madsc55-Tv/commit/f20c9d4789ae7c984ec2ebb45e8ea57c6590648e).
+- K5 dalındaki PR #6 **birleştirilmedi**; bu kayıt `main` üzerindeki **yalnızca not güncellemesidir**, K5 kodunun `main` dalına taşındığı anlamına gelmez.
+
+### 4. CI — başarı, başarısızlık, iptal ve bekleme
+- **Son doğrulanan K5 dalı commit'i:** `f20c9d4789ae7c984ec2ebb45e8ea57c6590648e`. [Frozen Source Integrity run 40073505914](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073505914) **success**; [Offline Unit Tests run 40073505783](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073505783) **success**.
+- Önceki kod/test commit'i `0faee1c8`: [40073192129](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073192129) ve [40073192074](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073192074) **success**.
+- Önceki **başarısız** offline run [40071127032](https://github.com/Madsc55/Madsc55-Tv/actions/runs/40071127032): `test_ffprobe_contract_requires_identity_bound_guarded_sample` / `ProtectedWriteRejected`. Sonraki K5 CI yeşil olsa da hatanın kök nedeni ve ilgili dal ilişkisi ayrıca incelenmeli; bu sonucu silme.
+- **İptal edilenler**: `40073187687`, `40073185231`, `40073181566`, `40072310473`, `40071925830`. İptal, başarılı veya başarısız test sonucu değildir.
+- **Bekleyen:** Bu notun `main` commit'i ve K5 dalında gelecekteki SHA'lar için yeni CI sonucu henüz yok; kontrol anında son K5 dalı run'ları tamamlanmıştı.
+
+### 5–6. Açık işler, güvenlik riskleri ve diğer K sistemlerine bağımlılıklar
+1. **Bağımsız eski/yeni yürütme çifti 0/92**; her workflow için aynı sabit fixture, iki gerçek bağımsız runner/run ID, stdout/stderr, artifact ve yan etki hash'leri, timeout/retry, negatif test, korunan dosya hash değişmezliği ve insan incelemesi gerekiyor.
+2. Eski workflow YAML ve Python/script bağımlılıklarının tam çağrı grafiği ve yeni K1–K5 davranış eşlemesi tamamlanmadı; #92'nin dolaylı modülleri dahil.
+3. Dış URL ve yönlendirmelerde SSRF/özel ağ, kaynak lisansı/izin, medya kimliği ve ffprobe/stream testleri; canlı ağ ve coğrafi erişim doğrulanmadı.
+4. **K1:** merkezi korunan yazma ve gerçek runtime kabul (son bilinen 0/26). **K2:** kaynak keşfi, tarama ve adayların doğrulanması. **K3:** HLS video/ses, XMLTV/EPG/logo ve en son kullanıcı cihaz testi. **K4:** harici Google Drive backup/restore yetkileri ve gerçek kurtarma kanıtı. K5 bu bağımlılıkları kendiliğinden tamamlanmış sayamaz.
+5. Genel uçtan uca kabul **0/22**; üretim hazırlığı onayı yok. `main` merge, canlı workflow dispatch/rerun, korunan playlist/EPG/logo/VOD/favori/yedek/cihaz yazımı ayrı onay olmadan yapılmamalı.
+
+### 7. Gerçekten doğrulanan kabul kriterleri
+- **Kaynak/YAML ilk inceleme: 92/92** ve sabit kaynak bütünlüğü CI başarılı.
+- **K5 offline test kapıları:** yalnızca yukarıda belirtilen commit SHA'larında başarılı.
+- **Davranışsal parity kabulü: 0/92. K1 runtime: 0/26. Genel kabul: 0/22. Üretim kabulü: YOK.** JSON eşleşmesi veya CI yeşili bu sayaçları yükseltmez.
+
+### 8. Bir sonraki çalışma öncelikleri
+1. Güncel `main` ve K5 dal SHA/CI durumunu yeniden oku; önceki ffprobe başarısızlığının dal/kök nedenini ayır.
+2. Gerçek, izole, read-only fixture koşucusu ve güvenilir provenance/manifest kanıtı üret; ilk küçük workflow'u bağımsız karşılaştır.
+3. 92 workflow için script çağrı grafiği, side-effect envanteri, K1–K5 karşılıkları ve negatif senaryoları tek tek kapat.
+4. K2/K3/K4 ile dış ağ/medya/backup yetkilerini koordine et; gerçek kanıt gelmeden kabul açma.
+5. PR #6'yı yalnız onay ve doğrulanmış kabul sonrasında değerlendir; `main` üzerindeki diğer K kayıtlarını koru.
+
+**K5 devir durumu:** Ana merkeze kayıt için hazır; K5 işlevsel ve üretim kabulü **tamamlanmış değildir**.

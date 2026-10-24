@@ -68,7 +68,6 @@ def probe(url):
 def run(source_file=None, limit=LIMIT):
     if not isinstance(limit, int) or not 1 <= limit <= MAX_LIMIT:
         raise ValueError("Candidate limit must be between 1 and 75")
-    measured_at_utc = datetime.now(timezone.utc).isoformat()
     results = []
     seen_hashes = set()
     source_evidence = {}
@@ -96,6 +95,8 @@ def run(source_file=None, limit=LIMIT):
                       "status": "blocked_or_unreachable", "error_type": type(exc).__name__,
                       "audio_video_verified": False}
         results.append(result)
+    # Timestamp the completed observation, not the beginning of source discovery.
+    measured_at_utc = datetime.now(timezone.utc).isoformat()
     report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT", "source": SOURCE,
               "measured_at_utc": measured_at_utc, "candidate_limit": limit,
               "candidate_shortfall": max(0, limit - len(results)),

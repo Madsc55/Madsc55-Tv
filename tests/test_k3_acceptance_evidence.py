@@ -56,6 +56,36 @@ class K3EvidenceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Inconsistent successful"):
                 assess(files)
 
+    def test_manifest_only_cannot_claim_decoded_audio_video(self):
+        with TemporaryDirectory() as folder:
+            paths = []
+            for hour in (0, 6, 12):
+                rows = [{"url_sha256": format(i, "064x"), "hls_manifest_seen": True,
+                         "https_reachable": True, "status": "manifest_only",
+                         "audio_video_verified": False} for i in range(75)]
+                report = {"stage": "K3_REAL_NETWORK_MANIFEST_PILOT",
+                          "measured_at_utc": f"2026-10-23T{hour:02d}:00:00+00:00",
+                          "candidate_limit": 75, "candidate_shortfall": 0,
+                          "production_playlist_modified": False, "probed": 75,
+                          "manifest_seen": 75, "audio_video_verified": 0,
+                          "results": rows}
+                path = Path(folder) / f"{hour}.json"
+                path.write_text(json.dumps(report), encoding="utf-8")
+                paths.append(path)
+            self.assertTrue(assess(paths)["manifest_acceptance"])
+            for scope in ("report", "row"):
+                altered = json.loads(paths[1].read_text(encoding="utf-8"))
+                if scope == "report":
+                    altered["audio_video_verified"] = 1
+                else:
+                    altered["results"][0]["audio_video_verified"] = True
+                paths[1].write_text(json.dumps(altered), encoding="utf-8")
+                with self.subTest(scope=scope), self.assertRaisesRegex(ValueError, "audio/video"):
+                    assess(paths)
+                altered["audio_video_verified"] = 0
+                altered["results"][0]["audio_video_verified"] = False
+                paths[1].write_text(json.dumps(altered), encoding="utf-8")
+
     def test_short_middle_interval_does_not_pass(self):
         with TemporaryDirectory() as folder:
             files = []

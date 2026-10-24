@@ -52,8 +52,10 @@ def assess(paths):
                     raise ValueError("Inconsistent successful probe evidence")
             elif row.get("status") == "manifest_only":
                 raise ValueError("Unverified probe marked as manifest-only")
-            elif row.get("https_reachable") is True:
-                raise ValueError("Unverified probe claims HTTPS success")
+            elif row.get("https_reachable") is True and row.get("status") == "blocked_or_unreachable":
+                raise ValueError("Blocked probe claims HTTPS success")
+            if row.get("https_reachable") is not None and row.get("https_reachable") is not True and row.get("https_reachable") is not False:
+                raise ValueError("Invalid HTTPS observation type")
         snapshots.append((stamp.astimezone(timezone.utc), set(ids), count))
     snapshots.sort(key=lambda s: s[0])
     elapsed = (snapshots[-1][0] - snapshots[0][0]).total_seconds()

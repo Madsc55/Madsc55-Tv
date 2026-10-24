@@ -5,6 +5,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  id-token: write
+  attestations: write
 concurrency:
   group: k2-daily-discovery-evidence
   cancel-in-progress: false
@@ -31,6 +33,10 @@ jobs:
             --output reports/k2-daily-evidence.json \
             --day "$(date -u +%F)"
           sha256sum reports/k2-daily-evidence.json > reports/k2-daily-evidence.sha256
+      - name: Attest evidence artifact provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: reports/k2-daily-evidence.json
       - name: Preserve evidence
         if: ${{ always() && !cancelled() }}
         uses: actions/upload-artifact@v4

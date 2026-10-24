@@ -15,6 +15,12 @@ TURKISH_FEEDS = ("-TR", "TURKCE", "TURKIYE", "TURK_KANAL", "iptv-turk")
 def eligible_source(name):
     return any(term in name.upper() for term in ("-TR", "TURKCE", "TURKIYE")) or name == "iptv-turk-tr"
 
+
+def sanitize_title(title):
+    if not isinstance(title, str):
+        raise ValueError("Channel title must be text")
+    return title.translate(str.maketrans({"\r": " ", "\n": " ", '"': "'"}))[:100]
+
 def run():
     root = Path.cwd()
     # Refuse unsafe/existing evidence before any network discovery or probing.
@@ -83,7 +89,7 @@ def run():
         if not (result["video"] and result["audio"]):
             continue
         title, url = by_digest[result["sha256"]]
-        safe_title = title.replace("\r", " ").replace("\n", " ").replace('"', "'")[:100]
+        safe_title = sanitize_title(title)
         group = category(safe_title)
         if not group:
             continue

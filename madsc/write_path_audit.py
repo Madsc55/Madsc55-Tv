@@ -36,7 +36,7 @@ def audit_write_paths(paths: list[str]) -> dict:
         if len(prefix) >= 2 and prefix[0].isascii() and prefix[0].isalpha() and prefix[1] == ":":
             rejected.append(raw)
             continue
-        name = raw.replace(chr(92), "/")
+        name = raw.translate({92: 47})
         normalized = unicodedata.normalize("NFKC", name).casefold()
         duplicate = normalized in seen
         seen.add(normalized)
@@ -127,7 +127,7 @@ def _enforce_local_path(destination: Path, *, allowed_root: Path | None,
     if len(raw) > 4096:
         raise ProtectedWriteRejected("Output path exceeds size limit")
     normalized_raw = unicodedata.normalize("NFKC", raw)
-    raw_parts = raw.replace(chr(92), "/").split("/")
+    raw_parts = raw.translate({92: 47}).split("/")
     if (chr(92) in raw or chr(92) in normalized_raw
             or normalized_raw != raw and any(part in (".", "..") for part in normalized_raw.split("/"))
             or normalized_raw.count("/") != raw.count("/")

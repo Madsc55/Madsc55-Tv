@@ -853,7 +853,8 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
                 or 0xFDD0 <= ord(ch) <= 0xFDEF
                 or (ord(ch) & 0xFFFE) == 0xFFFE for ch in raw_root)):
         raise ValueError("Ambiguous or traversing source root requires review")
-    if any(part in (".", "..") for part in str(root).replace(chr(92), "/").split("/")):
+    slash_root = str(root).translate({92: 47})
+    if any(part in (".", "..") for part in slash_root.split("/")):
         raise ValueError("Ambiguous or traversing source root requires review")
     if any(ancestor.is_symlink() for ancestor in (requested_root, *requested_root.parents)):
         raise ValueError("Symlinked source root or ancestor requires review")

@@ -7,10 +7,10 @@ import xml.etree.ElementTree as ET
 ATTR = re.compile(r'(?:^|\s)([A-Za-z][\w-]*)="([^"]*)"(?=\s|$)')
 
 def norm(value):
-    value = (value or "").casefold().replace("ı", "i")
+    value = (value or "").casefold().translate({ord("ı"): "i"})
     value = unicodedata.normalize("NFKD", value)
     value = "".join(char for char in value if not unicodedata.combining(char))
-    value = value.replace("ı", "i")
+    value = value.translate({ord("ı"): "i"})
     return re.sub(r"[^a-z0-9]+", "", value)
 
 def xmltv_channels(xml_data):

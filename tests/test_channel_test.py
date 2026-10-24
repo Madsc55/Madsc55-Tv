@@ -233,10 +233,11 @@ class ChannelTests(unittest.TestCase):
 
 
     def test_bulk_playlist_sanitizes_real_newlines(self):
-        from pathlib import Path
-        source = Path("madsc/turkish_tv_batch_validation.py").read_text(encoding="utf-8")
-        self.assertIn('title.replace("\\r", " ").replace("\\n", " ")', source)
-        self.assertNotIn('title.replace("\\\\r", " ").replace("\\\\n", " ")', source)
+        from madsc.turkish_tv_batch_validation import sanitize_title
+        self.assertEqual(sanitize_title('a\r\nb"c'), "a  b'c")
+        self.assertEqual(len(sanitize_title("x" * 101)), 100)
+        with self.assertRaises(ValueError):
+            sanitize_title(None)
 
 
     def test_bulk_playlist_is_sha256_bound_to_json_report(self):

@@ -43,7 +43,7 @@ def check_stream(item, runner=subprocess.run):
         if sample.returncode == 0:
             return meta, url, name, "TEKNIK_VIDEO_SES_20SN", (
                 "20 saniye medya cozumleme basarili; kanal kimligi dogrulanmadi")
-        return meta, url, name, "DOGRULANAMADI", sample.stderr[-180:].replace("\n", " ")
+        return meta, url, name, "DOGRULANAMADI", sample.stderr[-180:].translate({10: 32})
     except Exception as exc:
         return meta, url, name, "DOGRULANAMADI", str(exc)[:180]
 

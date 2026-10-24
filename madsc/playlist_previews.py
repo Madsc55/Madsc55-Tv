@@ -11,7 +11,7 @@ BUCKETS = ("IBO_ONAYLI_CALISAN", "CALISAN_ADAY", "CALISMAYAN_ADAY",
 def _attribute(value: str) -> str:
     if not isinstance(value, str) or any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
         raise ValueError("Unsafe M3U metadata")
-    return value.replace("&", "&amp;").replace('"', "&quot;")
+    return value.translate(str.maketrans({"&": "&amp;", '"': "&quot;"}))
 
 
 def render_playlist_previews(catalog: dict, source_rows: list[dict]) -> dict:

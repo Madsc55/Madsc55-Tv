@@ -14,10 +14,11 @@ from madsc.write_path_audit import enforce_write_paths
 def export_6115_archive_manifest(urls: list[str], destination: Path) -> dict:
     """Export one JSON preview to a fresh directory; no M3U or network writes."""
     raw = str(destination)
+    slash_normalized = raw.translate({92: 47})
     if len(raw.encode("utf-8", "surrogatepass")) > 4096 or any(len(part.encode("utf-8", "surrogatepass")) > 255
-                              for part in raw.replace(chr(92), "/").split("/") if part):
+                              for part in slash_normalized.split("/") if part):
         raise PermissionError("Oversized destination path")
-    if any(part in (".", "..") for part in raw.replace(chr(92), "/").split("/")):
+    if any(part in (".", "..") for part in slash_normalized.split("/")):
         raise PermissionError("Ambiguous destination")
     if any(unicodedata.category(ch) in ('Cc', 'Cf', 'Cs', 'Zl', 'Zp')
            or 0xFDD0 <= ord(ch) <= 0xFDEF

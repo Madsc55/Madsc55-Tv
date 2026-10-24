@@ -436,6 +436,28 @@ def run_commands():
         ]
         self.assertEqual(rows, [])
 
+    def test_proven_text_transform_modules_leave_no_write_candidates(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        text_only_modules = {
+            "madsc/channel_presentation.py",
+            "madsc/discovery_batch.py",
+            "madsc/isolated_ibo_archive_export.py",
+            "madsc/legacy_retest_390.py",
+            "madsc/playlist_previews.py",
+            "madsc/trial_epg_matching.py",
+            "madsc/turkish_tv_batch_validation.py",
+            "madsc/write_callsite_audit.py",
+            "madsc/write_path_audit.py",
+        }
+        rows = [
+            row for row in report["callsite_inventory"]
+            if row["path"] in text_only_modules
+            and not row.get("guard_control_flow_verified")
+            and "subprocess" not in row["api"]
+        ]
+        self.assertEqual(rows, [])
+
     def test_legacy_note_atomic_replace_has_direct_k1_guard(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

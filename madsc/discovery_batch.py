@@ -46,10 +46,11 @@ def parse_m3u(text: str, source: str, *, max_entries: int = 20000) -> dict:
         raise ValueError("M3U contains unsupported line separators")
     # Bare carriage returns can also split an EXTINF row. Accept CRLF,
     # but fail closed on standalone CR instead of silently changing records.
-    if "\r" in text.replace("\r\n", ""):
+    crlf_chunks = text.split("\r\n")
+    if any("\r" in chunk for chunk in crlf_chunks):
         raise ValueError("M3U contains unsupported bare carriage returns")
     # A consistent CRLF feed may include transport padding around rows.
-    transport_crlf = "\r\n" in text and "\n" not in text.replace("\r\n", "")
+    transport_crlf = "\r\n" in text and all("\n" not in chunk for chunk in crlf_chunks)
     lines = text.removeprefix("\ufeff").splitlines()
     if not lines or lines[0] != "#EXTM3U":
         raise ValueError("Missing M3U header")

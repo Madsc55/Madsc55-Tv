@@ -105,9 +105,9 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
 
     def test_invisible_unicode_in_urls_is_rejected(self):
         for field in ("source_page", "stream_url", "license_reference"):
-            for marker in ("\u200b", "\u202e", "\u2060", "\u2028", "\u2029"):
-                with self.subTest(field=field, marker=repr(marker)):
-                    url = "https://example.org/" + marker + "watch"
+            for codepoint in (0x200B, 0x202E, 0x2060, 0x2028, 0x2029):
+                with self.subTest(field=field, codepoint=hex(codepoint)):
+                    url = "https://example.org/" + chr(codepoint) + "watch"
                     report = evaluate_discovery([dict(self.item, **{field: url})])
                     self.assertEqual(report["candidates"], [])
                     self.assertEqual(len(report["rejected"]), 1)

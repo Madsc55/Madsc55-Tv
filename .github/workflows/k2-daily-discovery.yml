@@ -1,0 +1,47 @@
+name: K2 Daily Offline Discovery Evidence
+on:
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+concurrency:
+  group: k2-daily-discovery-evidence
+  cancel-in-progress: false
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate review-only evidence
+        shell: bash
+        env:
+          PYTHONPATH: .
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_k2_daily_evidence.py' -v
+          python -m madsc.k2_daily_runner \
+            --registry config/k2_approved_source_registry.json \
+            --output reports/k2-daily-evidence.json \
+            --day "$(date -u +%F)"
+          sha256sum reports/k2-daily-evidence.json > reports/k2-daily-evidence.sha256
+      - name: Attest evidence artifact provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: reports/k2-daily-evidence.json
+      - name: Preserve evidence
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: k2-daily-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/k2-daily-evidence.*
+          if-no-files-found: warn
+          retention-days: 30

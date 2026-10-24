@@ -1516,3 +1516,15 @@ Bu kayıt yalnızca K5 içindir; önceki K1–K4/K5 notları korunmuştur. K5 ç
 - **Risk ve bağımlılık:** JSON'daki run ID biçimi gerçek bağımsız yürütmeyi kanıtlamaz; fixture runner ve imzalı/provenance kanıtı eksik. K1 korunan yazma, K2 kaynak, K3 HLS/EPG/cihaz, K4 bağımsız backup/restore kabulüne bağımlı. Dış URL/SSRF, yönlendirme ve lisans/izin kontrolü açık.
 - **Sonraki öncelik:** son K5 CI'ları sonuçlandırılmış mı kontrol et; güvenli izole runner ile gerçek legacy/yeni aynı fixture kanıtı üret; yan etki manifestlerini ve negatif senaryoları karşılaştır; kabul sayısını yalnız gerçek kanıtla artır.
 - **Sınır:** `main` kodu, üretim playlist/EPG/yedek/cihaz dosyaları değiştirilmedi; PR merge edilmedi. Bu kayıt yalnız `DEVAM_NOTU.md` ekidir.
+
+
+### K1 YENİ SOHBETE DEVİR — 24 Ekim 2026 10:18 (+02:00)
+Kullanıcı bu sohbetin kaydedilmesini ve yeni sohbette K1 işlerine kaldığı yerden devam edilmesini istedi. K1'e ait tüm ayrıntılı geçmiş `docs/K1_DEVIR_NOTU_2026-10-23.md` ve bu dosyanın önceki `K1 ANA MERKEZE DEVİR` / `K1 EK GÜNCELLEME` bölümlerinde yer alıyor. K2–K5 bölümlerini değiştirme.
+
+**En yeni doğrulanmış K1 CI:** https://github.com/Madsc55/Madsc55-Tv/actions/runs/40074564285 — `345392a780a8f0e08bbccfab40b3d5204146fadb` SHA'sı için **completed/success**. Önceki başarılı CI: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073059557 — `fe90142f421071f6df2ad3639b0bceff07d0f12d`. Son not commit'leri [skip ci] olduğundan bu CI'lar daha yeni `main` SHA'larını kanıtlamaz.
+
+**Son gerçek geliştirme:** https://github.com/Madsc55/Madsc55-Tv/commit/345392a780a8f0e08bbccfab40b3d5204146fadb — `tests/test_core_fixture_writer.py` staged overwrite sırasında hedef inode'un değiştirilmesi halinde reddi ve başka yazıcının içeriğinin korunmasını doğrulayan test. Önceki ana merkez notu: https://github.com/Madsc55/Madsc55-Tv/commit/990df4068d1a1b9ab6da2a1b7a49cc6b8193967c ; son K1 not eklemesi: https://github.com/Madsc55/Madsc55-Tv/commit/787fc3a71d06c6ff270872fff4de2568d65015f2 .
+
+**Açık işler:** (1) K1 runtime güvenlik kabulü **0/26 kanıtlı**, `production_ready=false`; (2) staged overwrite ve cleanup TOCTOU riskleri, saldırganın yazabildiği dizin senaryosu; (3) AST envanterinin gerçek tüm writer callsite'larına bağlanması, merkezi protected-write gate entegrasyonu; (4) generic parity Popen read-only caller/capability ve gerçek yan etki kanıtı; (5) K2–K5/legacy workflow davranışsal parity bağımlılıkları. Bunları tamamlanmış gösterme.
+
+**Yeni sohbette yapılacaklar:** Önce güncel `main` HEAD ve en son Actions run/job sonuçlarını oku; ilgili K1 dosyalarını güncel blob SHA ile al; somut açıkları kod+regresyon testiyle gider; CI SHA kapsamını doğrula; `DEVAM_NOTU.md` K1 bölümünü güncelle. Diğer K sistemlerinin eşzamanlı değişikliklerini koru. Üretim M3U/M3U8, XMLTV/EPG, logo, favori, arşiv, yedek, cihaz ve canlı kanallara dokunma; PR #71 merge etme, koruma kapısını gevşetme, Actions manuel dispatch/rerun yapma.

@@ -18,7 +18,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: madsc55-offline-unit-tests
+  group: madsc55-offline-unit-tests-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   offline-tests:

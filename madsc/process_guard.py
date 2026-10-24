@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import math
 import hashlib
 import shutil
 import stat
@@ -288,6 +289,18 @@ def validate_parity_process_capability(capability, command, *, cwd: Path,
                                        timeout_seconds: float,
                                        env: dict[str, str]) -> None:
     """Fail closed unless launch inputs still match the issued capability."""
+    if (not isinstance(capability, _ParityProcessCapability)
+            or capability.seal is not _PARITY_CAPABILITY_SEAL):
+        raise ProtectedWriteRejected("Invalid parity process capability")
+    if type(timeout_seconds) not in (int, float):
+        raise ProtectedWriteRejected("Invalid parity process capability timeout")
+    try:
+        finite_timeout = math.isfinite(timeout_seconds)
+        numeric_timeout = float(timeout_seconds)
+    except (OverflowError, ValueError, TypeError) as exc:
+        raise ProtectedWriteRejected("Invalid parity process capability timeout") from exc
+    if not finite_timeout:
+        raise ProtectedWriteRejected("Invalid parity process capability timeout")
     cwd = Path(cwd)
     try:
         metadata = cwd.lstat()

@@ -128,9 +128,21 @@ class ProcessGuardTests(unittest.TestCase):
         capability = authorize_parity_consumer_process(
             command, consumer="k1", root=root, timeout_seconds=30)
         environment = parity_process_environment(capability)
+        for invalid_capability in (None, object(), {}, "forged", 0):
+            with self.subTest(capability=repr(invalid_capability)):
+                with self.assertRaises(ProtectedWriteRejected):
+                    validate_parity_process_capability(
+                        invalid_capability, command, cwd=root,
+                        timeout_seconds=30, env=environment)
         self.assertEqual(environment, {"LANG": "C", "LC_ALL": "C"})
         validate_parity_process_capability(
             capability, command, cwd=root, timeout_seconds=30, env=environment)
+        for invalid_timeout in (None, "30", True, float("nan"), float("inf"), float("-inf"), 10 ** 1000):
+            with self.subTest(timeout=repr(invalid_timeout)):
+                with self.assertRaises(ProtectedWriteRejected):
+                    validate_parity_process_capability(
+                        capability, command, cwd=root,
+                        timeout_seconds=invalid_timeout, env=environment)
         for changed_command, changed_root, changed_timeout in (
                 (command + ["--extra"], root, 30),
                 (command, root.parent, 30),

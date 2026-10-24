@@ -74,6 +74,17 @@ class ProcessGuardTests(unittest.TestCase):
                     command[:-2] + ["default=nw=1", str(segment)], segment,
                     cwd=workspace, env=dict(FIXED_TOOL_ENV))
 
+    def test_ffprobe_rejects_untrusted_executable_without_relaxing_contract(self):
+        with guarded_temporary_directory("madsc-k3-video-") as workspace:
+            segment = workspace / "sample.ts"
+            write_exclusive_bytes(segment, b"x" * 188, allowed_root=workspace)
+            command = ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
+                       "-of", "json", str(segment)]
+            with patch("madsc.process_guard._trusted_tool", return_value=False):
+                with self.assertRaises(ProtectedWriteRejected):
+                    enforce_ffprobe_read_process(command, segment, cwd=workspace,
+                                                 env=dict(FIXED_TOOL_ENV))
+
     def test_ffprobe_rejects_ordinary_temp_directory(self):
         with tempfile.TemporaryDirectory() as folder:
             segment = Path(folder) / "sample.ts"

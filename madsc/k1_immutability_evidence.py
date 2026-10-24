@@ -71,8 +71,6 @@ def compare(before: dict, after: dict) -> dict:
         raise ValueError("Malformed protected-file evidence")
     if len({x["path"] for x in a}) != len(a) or len({x["path"] for x in b}) != len(b):
         raise ValueError("Duplicate protected-file evidence")
-    if False:
-        raise ValueError("Invalid snapshot files")
     unchanged = a == b
     return {"unchanged": unchanged, "files_checked": len(a), "before": a,
             "after": b, "production_acceptance": False}

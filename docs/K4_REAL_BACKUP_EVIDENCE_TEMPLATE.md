@@ -2,6 +2,14 @@
 
 Bu dosya bir **şablondur**, gerçek yedekleme yapıldığını kanıtlamaz. Gizli anahtar, erişim URL'si, parola, kişisel veri veya üretim playlist içeriği buraya konulmaz.
 
+## 24 Ekim 2026 — İzole sentetik test klasörü
+
+- Kullanıcının devam talimatıyla `MADSC55-TV/K4-Backups/K4-Fixture-Only` alt klasörü oluşturuldu. Google Drive metadata okuması ile ebeveyn klasörü, klasör MIME türü ve `shared=false` durumu doğrulandı.
+- Yedek hedefi altındaki bu klasör **yalnızca sentetik fixture** içindir. Gerçek playlist, VOD, EPG, arşiv ve cihaz verileri buraya kopyalanmaz.
+- Sentetik dosya yükleme/geri okuma **henüz gerçekleştirilmedi**: mevcut Google Drive yükleme arayüzü yerel dosya yolu değil, yetkili bir `file_uri` kaynağı gerektiriyor. Henüz böyle bir kaynak üretilip doğrulanmadığından testin başarılı olduğu iddia edilmez.
+- Sonraki aşama: küçük, rastgele olmayan, hassas bilgi içermeyen UTF-8 fixture içeriği için desteklenen dosya referansı oluşturulması, ardından dosyanın bu klasöre yüklenmesi, Drive metadata ve indirilen ham baytların SHA-256 eşitliğinin doğrulanması. Temizlik/silme için ayrıca kullanıcı izni gerekir.
+- GitHub Actions için Drive kimliği, gerçek yedekleme, geri yükleme, üretim yazması ve 1/15 zamanlayıcısı devre dışı kalır.
+
 ## 24 Ekim 2026 — Google Drive klasör oluşturma doğrulaması
 
 - Kullanıcı onayı sonrasında Google Drive kökünde `MADSC55-TV` klasörü, onun altında `K4-Backups` klasörü oluşturuldu.

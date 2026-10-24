@@ -2859,3 +2859,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `58b68ca7586fa03978faeaa0d78b9ae7be9e3ca6`, yalnız opt-in K1/K4/K5 parity child'ı çevresinde bounded pre/post workspace kimlik envanteri uygular. Descriptor-relative `O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_NONBLOCK` yürüyüş symlink takip etmez, özel dosyada bloklanmaz ve içerik okumaz. K1 için sıfır, K4/K5 için yalnız exact tek output create + parent metadata etkisi izinlidir.
 - Create/delete/rewrite-and-restore, symlink retarget ve FIFO negatifleri ile üç gerçek consumer pozitif koşusu doğrulandı. İlk hedefli negatif koşu 2 failure verdi; K1 normal output'un failure halinde yazılması engellenerek son paketler 127/127 ve 111/111 oldu. Exact içerikte tam offline **1550/1550**, beş K kapısı ve audit başarılı; envanter 114/116/22, yeni iki descriptor proven-read-only.
 - Bu mekanizma yalnız repository içi kalıcı etkileri kapatır; dış filesystem veya bağımsız gerçek execution/artifact kökeni kanıtı değildir. Sayaçlar 0/6 süreç etkisi, 0/26 runtime, 0/92 parity, 0/22 görev ve production false. Sonraki adım izinli etki ölçüm receipt'ini başarı snapshot/manifest hash zincirine bağlamaktır.
+
+
+## 24 Ekim 2026 — K1 workspace receipt hash zinciri
+- `07510b4be65fc1c6421ebb68c5f56427202e6bbd`, başarılı opt-in consumer'ın doğrulanmış pre/post workspace değişimlerini guarded `parity-workspace-effects.json` receipt'ine yazıp üç workflow başarı snapshot'ında `workspace_effect_receipt` side-effect hashine bağladı. Failure diagnostic şeması değişmedi ve failure/timeout/rejection receipt üretmiyor.
+- İlk hedefli snapshot testi göreli cwd nedeniyle 3 error verdi; düzeltilen hedefli paket 130/130, tam offline 1550/1550, beş K kapısı ve audit başarılı. Envanter 114/116/22; runtime/independent/external kabul yok.
+- Sayaçlar 0/6, 0/26, 0/92, 0/22 ve production false. Sonraki yerel adım receipt'i strict tüketici/preflight doğrulamasına bağlayıp consumer/workflow substitution'ı reddetmektir.

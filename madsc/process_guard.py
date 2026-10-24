@@ -16,6 +16,11 @@ DNS_RESOLVER = (
     "proto=socket.IPPROTO_TCP); "
     "print(json.dumps([x[4][0] for x in a]))"
 )
+FIXED_TOOL_ENV = {
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+}
 
 _PARITY_CONSUMER_ARGUMENTS = {
     "k1": ["-m", "src.madsc_guard", "config/shadow_manifest.json"],
@@ -31,6 +36,17 @@ def _safe_argument(value: str) -> bool:
             and not any(ord(char) < 0x20 or ord(char) == 0x7f for char in value))
 
 
+def _fixed_runtime(cwd: Path, env: dict[str, str], expected_cwd: Path) -> bool:
+    cwd, expected_cwd = Path(cwd), Path(expected_cwd)
+    try:
+        metadata = cwd.lstat()
+    except OSError:
+        return False
+    return (env == FIXED_TOOL_ENV and cwd.is_absolute() and not cwd.is_symlink()
+            and stat.S_ISDIR(metadata.st_mode) and metadata.st_nlink >= 1
+            and cwd.resolve(strict=True) == expected_cwd.resolve(strict=True))
+
+
 def enforce_dns_resolver_process(command, host: str) -> None:
     """Allow only the fixed isolated resolver child and one safe host argument."""
     expected = [sys.executable, "-I", "-B", "-c", DNS_RESOLVER, host]
@@ -38,7 +54,8 @@ def enforce_dns_resolver_process(command, host: str) -> None:
         raise ProtectedWriteRejected("Unsafe DNS resolver process contract")
 
 
-def enforce_reachability_curl_process(command, url: str, resolve: str) -> None:
+def enforce_reachability_curl_process(command, url: str, resolve: str, *,
+                                      cwd: Path, env: dict[str, str]) -> None:
     """Allow the fixed stdout-only curl used by the manifest reachability pilot."""
     expected = [
         "curl", "-q", "--silent", "--show-error", "--fail", "--noproxy", "*",
@@ -46,12 +63,14 @@ def enforce_reachability_curl_process(command, url: str, resolve: str) -> None:
         "--max-filesize", "65536", "--range", "0-65535",
         "--resolve", resolve, url,
     ]
-    if not _safe_argument(url) or not _safe_argument(resolve) or command != expected:
+    if (not _safe_argument(url) or not _safe_argument(resolve) or command != expected
+            or not _fixed_runtime(cwd, env, Path("/"))):
         raise ProtectedWriteRejected("Unsafe reachability curl process contract")
 
 
 def enforce_bounded_curl_process(command, url: str, resolve: str,
-                                 byte_limit: int) -> None:
+                                 byte_limit: int, *, cwd: Path,
+                                 env: dict[str, str]) -> None:
     """Allow the fixed stdout-only curl used for HLS manifests and segments."""
     if (isinstance(byte_limit, bool) or not isinstance(byte_limit, int)
             or not 1 <= byte_limit <= 1_500_000):
@@ -61,11 +80,13 @@ def enforce_bounded_curl_process(command, url: str, resolve: str,
         "--max-time", "9", "--connect-timeout", "4", "--max-filesize",
         str(byte_limit), "--resolve", resolve, url,
     ]
-    if not _safe_argument(url) or not _safe_argument(resolve) or command != expected:
+    if (not _safe_argument(url) or not _safe_argument(resolve) or command != expected
+            or not _fixed_runtime(cwd, env, Path("/"))):
         raise ProtectedWriteRejected("Unsafe bounded curl process contract")
 
 
-def enforce_ffprobe_read_process(command, segment: Path) -> None:
+def enforce_ffprobe_read_process(command, segment: Path, *, cwd: Path,
+                                 env: dict[str, str]) -> None:
     """Bind ffprobe to the one regular sample in a guarded K3 workspace."""
     segment = Path(segment)
     expected = [
@@ -91,7 +112,8 @@ def enforce_ffprobe_read_process(command, segment: Path) -> None:
             or workspace.is_symlink()
             or not stat.S_ISDIR(workspace_metadata.st_mode)
             or segment.resolve(strict=True) != segment
-            or os.path.commonpath((str(segment), str(workspace))) != str(workspace)):
+            or os.path.commonpath((str(segment), str(workspace))) != str(workspace)
+            or not _fixed_runtime(cwd, env, workspace)):
         raise ProtectedWriteRejected("Unsafe ffprobe read process contract")
 
 

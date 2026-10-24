@@ -6,6 +6,7 @@ from pathlib import Path
 from madsc.fixture_report_writer import write_exclusive_bytes
 from madsc.process_guard import (
     DNS_RESOLVER,
+    FIXED_TOOL_ENV,
     enforce_bounded_curl_process,
     enforce_dns_resolver_process,
     enforce_ffprobe_read_process,
@@ -32,9 +33,12 @@ class ProcessGuardTests(unittest.TestCase):
             "--proto", "=https", "--max-time", "9", "--connect-timeout", "4",
             "--max-filesize", "65536", "--range", "0-65535", "--resolve", resolve, url,
         ]
-        enforce_reachability_curl_process(command, url, resolve)
+        enforce_reachability_curl_process(command, url, resolve,
+                                          cwd=Path("/"), env=dict(FIXED_TOOL_ENV))
         with self.assertRaises(ProtectedWriteRejected):
-            enforce_reachability_curl_process(command[:-1] + ["-o", "out", url], url, resolve)
+            enforce_reachability_curl_process(
+                command[:-1] + ["-o", "out", url], url, resolve,
+                cwd=Path("/"), env=dict(FIXED_TOOL_ENV))
 
     def test_bounded_curl_contract_is_limit_bound(self):
         url, resolve, limit = "https://example.org/a.ts", "example.org:443:8.8.8.8", 188
@@ -43,9 +47,14 @@ class ProcessGuardTests(unittest.TestCase):
             "--max-time", "9", "--connect-timeout", "4", "--max-filesize", "188",
             "--resolve", resolve, url,
         ]
-        enforce_bounded_curl_process(command, url, resolve, limit)
+        enforce_bounded_curl_process(command, url, resolve, limit,
+                                     cwd=Path("/"), env=dict(FIXED_TOOL_ENV))
         with self.assertRaises(ProtectedWriteRejected):
-            enforce_bounded_curl_process(command, url, resolve, limit + 1)
+            enforce_bounded_curl_process(command, url, resolve, limit + 1,
+                                         cwd=Path("/"), env=dict(FIXED_TOOL_ENV))
+        with self.assertRaises(ProtectedWriteRejected):
+            enforce_bounded_curl_process(command, url, resolve, limit,
+                                         cwd=Path("/"), env={**FIXED_TOOL_ENV, "HOME": "/tmp"})
 
     def test_ffprobe_contract_requires_identity_bound_guarded_sample(self):
         with guarded_temporary_directory("madsc-k3-video-") as workspace:
@@ -53,9 +62,12 @@ class ProcessGuardTests(unittest.TestCase):
             write_exclusive_bytes(segment, b"x" * 188, allowed_root=workspace)
             command = ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
                        "-of", "json", str(segment)]
-            enforce_ffprobe_read_process(command, segment)
+            enforce_ffprobe_read_process(command, segment, cwd=workspace,
+                                         env=dict(FIXED_TOOL_ENV))
             with self.assertRaises(ProtectedWriteRejected):
-                enforce_ffprobe_read_process(command[:-2] + ["default=nw=1", str(segment)], segment)
+                enforce_ffprobe_read_process(
+                    command[:-2] + ["default=nw=1", str(segment)], segment,
+                    cwd=workspace, env=dict(FIXED_TOOL_ENV))
 
     def test_ffprobe_rejects_ordinary_temp_directory(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -64,7 +76,8 @@ class ProcessGuardTests(unittest.TestCase):
             command = ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
                        "-of", "json", str(segment)]
             with self.assertRaises(ProtectedWriteRejected):
-                enforce_ffprobe_read_process(command, segment)
+                enforce_ffprobe_read_process(command, segment, cwd=Path(folder),
+                                             env=dict(FIXED_TOOL_ENV))
 
     def test_parity_consumers_are_exact_and_repository_rooted(self):
         root = Path(__file__).resolve().parents[1]

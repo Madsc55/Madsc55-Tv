@@ -12,7 +12,7 @@ from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 from madsc.probe_target_gate import validate_probe_target, validate_resolved_addresses
-from madsc.process_guard import enforce_reachability_curl_process
+from madsc.process_guard import FIXED_TOOL_ENV, enforce_reachability_curl_process
 from madsc.discovery import normalize_url
 
 SOURCE = "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/tr.m3u"
@@ -57,9 +57,12 @@ def probe(url):
         "--max-filesize", "65536", "--range", "0-65535",
         "--resolve", resolve, url,
     ]
-    enforce_reachability_curl_process(command, url, resolve)
+    process_cwd = Path("/")
+    process_env = dict(FIXED_TOOL_ENV)
+    enforce_reachability_curl_process(command, url, resolve,
+                                      cwd=process_cwd, env=process_env)
     result = subprocess.run(command, capture_output=True, timeout=11, check=False,
-                            stdin=subprocess.DEVNULL)
+                            stdin=subprocess.DEVNULL, cwd=process_cwd, env=process_env)
     body = result.stdout[:65536]
     is_manifest = result.returncode == 0 and body.lstrip().startswith(b"#EXTM3U")
     return {"url_sha256": gate["url_sha256"], "https_reachable": result.returncode == 0,

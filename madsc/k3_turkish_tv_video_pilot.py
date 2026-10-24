@@ -10,7 +10,8 @@ from urllib.parse import urljoin, urlsplit
 
 from madsc.k3_live_manifest_pilot import candidates, probe
 from madsc.probe_target_gate import validate_probe_target
-from madsc.process_guard import enforce_bounded_curl_process, enforce_ffprobe_read_process
+from madsc.process_guard import (FIXED_TOOL_ENV, enforce_bounded_curl_process,
+                                 enforce_ffprobe_read_process)
 
 LIMIT = 12
 MAX_SOURCE_ROWS = 120  # Bound source scanning even when every row is radio.
@@ -48,9 +49,12 @@ def safe_curl(url, limit):
     resolver = f"{p.hostname}:443:{'[' + pin + ']' if ':' in pin else pin}"
     cmd = ["curl", "-q", "-fsS", "--noproxy", "*", "--proto", "=https", "--max-time", "9",
            "--connect-timeout", "4", "--max-filesize", str(limit), "--resolve", resolver, url]
-    enforce_bounded_curl_process(cmd, url, resolver, limit)
+    process_cwd = Path("/")
+    process_env = dict(FIXED_TOOL_ENV)
+    enforce_bounded_curl_process(cmd, url, resolver, limit,
+                                 cwd=process_cwd, env=process_env)
     result = subprocess.run(cmd, capture_output=True, timeout=11,
-                            stdin=subprocess.DEVNULL)
+                            stdin=subprocess.DEVNULL, cwd=process_cwd, env=process_env)
     return result.stdout if result.returncode == 0 and len(result.stdout) <= limit else None
 
 
@@ -71,9 +75,11 @@ def same_origin_https(parent, child):
 def _read_stream_types(segment):
     command = ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
                "-of", "json", str(segment)]
-    enforce_ffprobe_read_process(command, segment)
+    process_cwd = Path(segment).parent
+    process_env = dict(FIXED_TOOL_ENV)
+    enforce_ffprobe_read_process(command, segment, cwd=process_cwd, env=process_env)
     return subprocess.run(command, capture_output=True, timeout=8,
-                          stdin=subprocess.DEVNULL)
+                          stdin=subprocess.DEVNULL, cwd=process_cwd, env=process_env)
 
 
 def verify_av(url):

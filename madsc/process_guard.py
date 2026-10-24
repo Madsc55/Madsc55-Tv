@@ -289,6 +289,9 @@ def validate_parity_process_capability(capability, command, *, cwd: Path,
                                        timeout_seconds: float,
                                        env: dict[str, str]) -> None:
     """Fail closed unless launch inputs still match the issued capability."""
+    if (not isinstance(capability, _ParityProcessCapability)
+            or capability.seal is not _PARITY_CAPABILITY_SEAL):
+        raise ProtectedWriteRejected("Invalid parity process capability")
     if (type(timeout_seconds) not in (int, float)
             or not math.isfinite(timeout_seconds)):
         raise ProtectedWriteRejected("Invalid parity process capability timeout")

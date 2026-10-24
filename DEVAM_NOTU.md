@@ -1500,3 +1500,19 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 - **K4-15/16/17/18 açık**: gerçek dış yedek makbuzu/manifest, bağımsız restore, VOD/arşiv kapsamı ve yetkili üretim zamanlayıcısı kanıtı yok. `external_storage_proven=false`, `production_restore_approved=false`, `production_writes=false`, `production_ready=false`.
 - K1 yazıcı güvenlik sınırları ve K5 bağımsız kabul zinciri korunmalıdır; K2/K3 kaynak yetkisi ve içerik envanteri gerekir. Üretim dosyaları, Google Drive gerçek yedekleri, GitHub secrets, cron ve PR merge işlemleri değiştirilmedi.
 - Sonraki sıra: PR #21 güncel SHA için gerçek CI sonucu; iptal nedeninin workflow concurrency/log denetimi; PR #20 ile entegrasyon diff'i; sonra yalnız açık yetkiyle K4-15→16→17→18 gerçek kanıtları.
+
+---
+
+## K5 — 24 EKİM 2026 EK ÇALIŞMA KAYDI (ANA MERKEZ)
+
+Bu kayıt yalnızca K5 içindir; önceki K1–K4/K5 notları korunmuştur. K5 çalışma dalı: https://github.com/Madsc55/Madsc55-Tv/tree/k5/fail-closed-evidence-20261023 ; taslak PR: https://github.com/Madsc55/Madsc55-Tv/pull/6 .
+
+- **Kod:** `madsc/k5_behavioral_compare.py` yürütme kimliği doğrulaması ASCII kanonik `[A-Za-z0-9][A-Za-z0-9._:-]{0,199}` biçimine sıkılaştırıldı; boşluk, slash, URL, kontrol karakteri, Unicode belirsizliği reddediliyor. Commit: https://github.com/Madsc55/Madsc55-Tv/commit/14175a0cc0ed4602af5e86d70a6b0e61170ba8b5 .
+- **Test:** `tests/test_k5_behavioral_compare.py` kötü biçimli run ID regresyonları eklendi. Commit: https://github.com/Madsc55/Madsc55-Tv/commit/baf48870249ce3f04b94fe80c587c1fd7cc16658 .
+- **K5 dalı devir notu:** `docs/K5_DEVIR_NOTU_2026-10-24.md` güncellendi. Commit: https://github.com/Madsc55/Madsc55-Tv/commit/17ecf189a90fe19995e50f19a683d82a535d6e61 .
+- **CI kontrol anı:** `baf4887` için K5 Frozen Source Integrity run https://github.com/Madsc55/Madsc55-Tv/actions/runs/40074634919 **success**; aynı SHA offline run `40074634916` **cancelled**, run `40074630913` **in_progress**. Son `17ecf18` SHA için kaynak bütünlüğü run `40074650847` **queued**, offline run `40074650857` **pending**. Bunlar **başarılı sayılmaz**; sonraki turda tekrar kontrol et.
+- **Son iki başarılı kapı aynı SHA üzerinde:** `f20c9d4` için https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073505914 ve https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073505783 .
+- **Gerçek kabul:** 92/92 ilk kaynak incelemesi; bağımsız davranışsal parity **0/92**, K1 runtime **0/26**, genel **0/22**. Üretim kabulü yok.
+- **Risk ve bağımlılık:** JSON'daki run ID biçimi gerçek bağımsız yürütmeyi kanıtlamaz; fixture runner ve imzalı/provenance kanıtı eksik. K1 korunan yazma, K2 kaynak, K3 HLS/EPG/cihaz, K4 bağımsız backup/restore kabulüne bağımlı. Dış URL/SSRF, yönlendirme ve lisans/izin kontrolü açık.
+- **Sonraki öncelik:** son K5 CI'ları sonuçlandırılmış mı kontrol et; güvenli izole runner ile gerçek legacy/yeni aynı fixture kanıtı üret; yan etki manifestlerini ve negatif senaryoları karşılaştır; kabul sayısını yalnız gerçek kanıtla artır.
+- **Sınır:** `main` kodu, üretim playlist/EPG/yedek/cihaz dosyaları değiştirilmedi; PR merge edilmedi. Bu kayıt yalnız `DEVAM_NOTU.md` ekidir.

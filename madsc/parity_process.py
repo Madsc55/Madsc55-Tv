@@ -10,10 +10,12 @@ import signal
 import subprocess
 import time
 
+from madsc.process_guard import validate_parity_process_capability
+
 MAX_CAPTURE_BYTES = 1024 * 1024
 
 
-def observe_process(argv, *, cwd, timeout_seconds):
+def observe_process(argv, *, cwd, timeout_seconds, capability=None):
     """Return actual bounded stdout/stderr bytes and process outcome.
 
     Output overflow raises rather than producing truncated parity evidence.
@@ -29,6 +31,8 @@ def observe_process(argv, *, cwd, timeout_seconds):
         raise ValueError('Expected finite positive timeout')
     if os.name != 'posix':
         raise RuntimeError('Process-group observation requires POSIX')
+    validate_parity_process_capability(
+        capability, argv, cwd=cwd, timeout_seconds=timeout_seconds)
     buffers = {'stdout': bytearray(), 'stderr': bytearray()}
     deadline = time.monotonic() + timeout_seconds
     timed_out = False

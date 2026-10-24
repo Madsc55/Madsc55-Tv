@@ -9,10 +9,12 @@ from madsc.process_guard import (
     DNS_RESOLVER,
     FIXED_TOOL_ENV,
     enforce_bounded_curl_process,
+    authorize_parity_consumer_process,
     enforce_dns_resolver_process,
     enforce_ffprobe_read_process,
     enforce_parity_consumer_process,
     enforce_reachability_curl_process,
+    validate_parity_process_capability,
 )
 from madsc.temp_workspace import guarded_temporary_directory
 from madsc.write_path_audit import ProtectedWriteRejected
@@ -113,6 +115,23 @@ class ProcessGuardTests(unittest.TestCase):
         with self.assertRaises(ProtectedWriteRejected):
             enforce_parity_consumer_process(k5, consumer="k5", root=root,
                                             run_id="123", commit_sha="A" * 40)
+
+    def test_parity_capability_binds_command_root_identity_and_timeout(self):
+        root = Path(__file__).resolve().parents[1]
+        command = [sys.executable, "-m", "src.madsc_guard",
+                   "config/shadow_manifest.json"]
+        capability = authorize_parity_consumer_process(
+            command, consumer="k1", root=root, timeout_seconds=30)
+        validate_parity_process_capability(
+            capability, command, cwd=root, timeout_seconds=30)
+        for changed_command, changed_root, changed_timeout in (
+                (command + ["--extra"], root, 30),
+                (command, root.parent, 30),
+                (command, root, 31)):
+            with self.assertRaises(ProtectedWriteRejected):
+                validate_parity_process_capability(
+                    capability, changed_command, cwd=changed_root,
+                    timeout_seconds=changed_timeout)
 
 
 if __name__ == "__main__":

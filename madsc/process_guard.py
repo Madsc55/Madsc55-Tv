@@ -6,6 +6,7 @@ import shutil
 import stat
 import sys
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 
 from madsc.write_path_audit import ProtectedWriteRejected
@@ -30,6 +31,19 @@ _PARITY_CONSUMER_ARGUMENTS = {
     "k5": ["-m", "madsc.artifact_transport", "produce", "--path",
            "reports/k2-candidates.json", "--source", "reports/k2-input.m3u"],
 }
+
+_PARITY_CAPABILITY_SEAL = object()
+
+
+@dataclass(frozen=True)
+class _ParityProcessCapability:
+    seal: object
+    consumer: str
+    argv: tuple[str, ...]
+    cwd: str
+    cwd_device: int
+    cwd_inode: int
+    timeout_seconds: float
 
 
 def _safe_argument(value: str) -> bool:
@@ -161,3 +175,45 @@ def enforce_parity_consumer_process(command, *, consumer: str, root: Path,
             or not stat.S_ISDIR(metadata.st_mode) or metadata.st_nlink < 1
             or root.resolve(strict=True) != root):
         raise ProtectedWriteRejected("Unsafe parity consumer process contract")
+
+
+def authorize_parity_consumer_process(command, *, consumer: str, root: Path,
+                                      timeout_seconds: float, run_id: str = "",
+                                      commit_sha: str = "") -> _ParityProcessCapability:
+    """Issue an identity-bound capability for one validated opt-in consumer."""
+    if (type(timeout_seconds) not in (int, float)
+            or not 0 < timeout_seconds <= 120):
+        raise ProtectedWriteRejected("Unsafe parity consumer timeout")
+    root = Path(root)
+    enforce_parity_consumer_process(command, consumer=consumer, root=root,
+                                    run_id=run_id, commit_sha=commit_sha)
+    metadata = root.lstat()
+    return _ParityProcessCapability(
+        seal=_PARITY_CAPABILITY_SEAL,
+        consumer=consumer,
+        argv=tuple(command),
+        cwd=os.fspath(root),
+        cwd_device=metadata.st_dev,
+        cwd_inode=metadata.st_ino,
+        timeout_seconds=float(timeout_seconds),
+    )
+
+
+def validate_parity_process_capability(capability, command, *, cwd: Path,
+                                       timeout_seconds: float) -> None:
+    """Fail closed unless launch inputs still match the issued capability."""
+    cwd = Path(cwd)
+    try:
+        metadata = cwd.lstat()
+    except OSError as exc:
+        raise ProtectedWriteRejected("Missing parity capability root") from exc
+    if (not isinstance(capability, _ParityProcessCapability)
+            or capability.seal is not _PARITY_CAPABILITY_SEAL
+            or tuple(command) != capability.argv
+            or os.fspath(cwd) != capability.cwd
+            or float(timeout_seconds) != capability.timeout_seconds
+            or cwd.is_symlink() or not stat.S_ISDIR(metadata.st_mode)
+            or (metadata.st_dev, metadata.st_ino)
+            != (capability.cwd_device, capability.cwd_inode)
+            or cwd.resolve(strict=True) != cwd):
+        raise ProtectedWriteRejected("Invalid parity process capability")

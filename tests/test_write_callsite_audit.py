@@ -290,6 +290,18 @@ def run_commands():
         self.assertEqual(classes.count("python_module_payload"), 1)
         self.assertEqual(classes.count("caller_controlled_command"), 1)
 
+    def test_generic_parity_popen_requires_capability_but_stays_effect_open(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        row = next(item for item in report["callsite_inventory"]
+                   if item["path"] == "madsc/parity_process.py"
+                   and item["api"].startswith("subprocess.Popen"))
+        self.assertTrue(row["guard_control_flow_verified"])
+        self.assertTrue(row["recognized_guard_precedes_write_in_scope"])
+        self.assertFalse(row["process_effect_verified_read_only"])
+        self.assertFalse(row["caller_closure_verified"])
+        self.assertTrue(row["review_required"])
+
     def test_backup_source_opens_are_read_only_dispositions_but_creates_stay_open(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

@@ -2788,3 +2788,8 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - Kod/test SHA `08ae448288ca488ce54caeea1993f787eca75e87`: K3 video pilotunun temporary `sample.ts` yazısı doğrudan `write_bytes` yerine açık allowed-root kullanan ortak exclusive/no-follow K1 writer'a bağlandı. Canlı probe yapılmadı.
 - Exact uzak doğrulama hedefli 139/139, tam offline 1438/1438 ve bütün kapılar başarılı; aday sayısı 140'tan 139'a indi. İlk audit beklentisindeki 1 failure başarı sayılmadan düzeltildi.
 - Kabul 0/92, 0/26, 0/22 ve production false. Sıradaki yerel iş geçici roundtrip paket dizini ile `StringIO` CSV false-positive ayrımıdır; dış bağımsız kanıtlar ve cihaz testi açıktır.
+
+
+## 24 Ekim 2026 — Devir geçmişi bütünlük onarımı
+- `0fadad010e3cbc5846a97466944d7b613b2b851c` iki büyük devir belgesine önceki aktarım sınırından gömülen kesilme metnini kaldırdı; son sağlam gövdeler ve sonraki bölümler birleştirilerek tarihçe korundu. Uzak doğrulama: DEVAM 1144 satır, PROJE_HAFIZASI 2790 satır, kesilme belirteci yok.
+- Kod/test değişmedi; eşzamanlı main `518cbbf…` korunmuştur. Son K1 kod paketi `08ae448…`, kabul 0/92, 0/26, 0/22 ve production false.

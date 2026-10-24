@@ -219,5 +219,18 @@ class BehavioralCompareTests(unittest.TestCase):
         self.assertFalse(result["accepted"])
         self.assertTrue(result["requires_independent_execution_verification"])
 
+    def test_invalid_schema_has_complete_fail_closed_result(self):
+        doc = evidence()
+        del doc["legacy"]
+        result = compare(doc)
+        self.assertEqual(set(result), {
+            "matched_evidence", "accepted",
+            "requires_independent_execution_verification", "errors",
+        })
+        self.assertFalse(result["matched_evidence"])
+        self.assertFalse(result["accepted"])
+        self.assertFalse(result["requires_independent_execution_verification"])
+        self.assertIn("invalid_evidence_schema", result["errors"])
+
 if __name__ == "__main__":
     unittest.main()

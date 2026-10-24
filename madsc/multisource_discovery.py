@@ -30,9 +30,9 @@ def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = Non
             name, kind, page = item["name"], item["source_kind"], item["source_page"]
             if type(name) is not str or not name.strip() or len(name) > 256:
                 raise ValueError("Invalid channel name")
-            if any(ord(c) < 32 or ord(c) == 127 for c in name):
+            if any(ord(c) < 32 or ord(c) == 127 or 0xD800 <= ord(c) <= 0xDFFF for c in name):
                 raise ValueError("Invalid channel name")
-            if kind not in SOURCE_KINDS:
+            if type(kind) is not str or kind not in SOURCE_KINDS:
                 raise ValueError("Unknown source category")
             page = normalize_url(page)
             if urlsplit(page).scheme != "https":

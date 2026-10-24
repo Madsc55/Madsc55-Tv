@@ -2842,3 +2842,8 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `250942deb5ad95534b14cffd169f7449e47323c4`: parity child environment mirası kaldırıldı; yalnız doğrulanmış source-root `PYTHONPATH`, bytecode kapatma ve sabit C locale aktarılır. HOME/proxy/çağıran env ekleri fail-closed. Eşzamanlı K2–K5 devir commitleri lease ile korunarak yeni HEAD üzerine yayımlandı.
 - Hedefli **119/119**, tam offline **1538/1538**; beş izole kapı ve bütün offline kapılar başarılı. Envanter 113/116/19 ve doğrudan yapısal guard 116/116. Popen dış etki ve caller closure kanıtı verilmedi: 0/6 süreç etkisi, 0/26 runtime, 0/92 parity, 0/22 görev, production false.
 - Sonraki yerel iş cwd kaynaklı Python module shadowing olasılığını sabit kaynak kimliğiyle kapatmak; gerçek bağımsız run/artifact, restore ve cihaz kanıtı bekleniyor. Dış/korunan sistem işlemi yapılmadı.
+
+
+## 24 Ekim 2026 — Exact güncel main regresyonu
+- Uzak exact `09f7db8fbac7575311e1b3ac18c4ef1e25b8d002` içeriğinde tam offline **1540/1540**, beş izole K kapısı ve bütün offline kapılar başarılı. Bu SHA, `250942d` sonrasındaki K1 target-swap testini ve K3 EPG ters eğik çizgi düzeltmelerini de içerir.
+- Kabul sayaçları değişmedi: 0/92, 0/26, 0/22; production false. Sonraki yerel K1 işi Python module origin/cwd-shadow bağıdır; dış kanıt gerektiren işler açık kalır.

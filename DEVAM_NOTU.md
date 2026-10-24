@@ -1562,3 +1562,9 @@ Kullanıcı bu sohbetin kaydedilmesini ve yeni sohbette K1 işlerine kaldığı 
 - Bu sohbette `main:DEVAM_NOTU.md` içine K2 tam devir kaydı `42111d9142d67d780252bae18f306a203ea23c07` ve güvenlik ek notu `b0c6e60d98aed03e3c33d9de95e00967482bfa2f` commitleriyle yazıldı. Diğer K kayıtları korunur; eşzamanlı güncellemede her zaman güncel blob SHA'yı yeniden oku.
 - **Yeni sohbetin ilk işi:** PR #18 HEAD/main/CI durumunu yeniden oku, son committe bütünleşik CI başarısını sağla; iptal edilen testleri başarılı gösterme. Sonra güvenli offline envanter/kimlik eşleştirme testlerini genişlet, 331 EPG ID eksikliğini kaynak kanıtıyla araştır, 663 tekrarın gerçek varyantlarını ayır, 255 HTTP URL için yalnız lisanslı/resmî HTTPS seçeneklerini değerlendir. K3 EPG/codec, K4 backup/write guard, K5 cihaz/üretim ve K1 92-workflow kabul kapıları açık. Yetkisiz canlı stream probe, DRM aşma, otomatik kanal ekleme, playlist/EPG/üretim verisi değişikliği veya izinsiz merge yapma.
 - **Kabul:** yalnız offline kod/regresyon (önceki başarılı SHA'lar) ve depo metin sayımları; K2 canlı/üretim kabulü **tamamlanmadı**.
+
+
+## 24 Ekim 2026 — Güncel birleşik main doğrulaması
+- K1 parity capability/environment paketleri ile sonradan eklenen K1 target-swap ve K3 EPG URL sertleştirmeleri dahil uzak `main` exact SHA `09f7db8fbac7575311e1b3ac18c4ef1e25b8d002` üzerinde `python -B -m madsc.offline_gate` **1540/1540** başarılı; beş izole K kapısı ve bütün offline kapılar geçti.
+- Bu doğrulama fixture/statik/offline kapsamındadır: parity 0/92, runtime güvenlik 0/26, ana görev 0/22 ve production false kalır. Actions yeniden çalıştırılmadı; canlı probing, cihaz veya üretim/korunan veri işlemi yapılmadı.
+- Sıradaki güvenli yerel iş parity Python modül kökenini cwd gölgelemesine karşı sabit kaynak kimliğine bağlamak; dış bağımsız execution/artifact, restore ve cihaz kanıtı bekleniyor.

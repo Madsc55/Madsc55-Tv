@@ -65,7 +65,7 @@ def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = Non
             # A boolean assertion alone never upgrades evidence to verified rights.
             # A shared broadcaster landing page may list several distinct channels.
             # Without a stream URL, include channel identity in the dedup key.
-            identity = stream if stream is not None else page + "\\n" + name.strip().casefold()
+            identity = stream if stream is not None else page + chr(10) + name.strip().casefold()
             fingerprint = sha256(identity.encode("utf-8")).hexdigest()
             if fingerprint in seen or (stream is not None and stream in existing):
                 duplicates.append({"index": index, "fingerprint": fingerprint,

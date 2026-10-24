@@ -42,6 +42,7 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
         for change in ({"source_kind": "pirated"},
                        {"source_page": "http://example.org"},
                        {"stream_url": "file:///etc/passwd"},
+                       {"stream_url": "http://example.org/live.m3u8"},
                        {"redistribution_permission_verified": "yes"},
                        {"license_reference": "http://example.org/rights"}):
             with self.subTest(change=change):

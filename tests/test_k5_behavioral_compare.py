@@ -155,6 +155,18 @@ class BehavioralCompareTests(unittest.TestCase):
                 doc["new"][field] = value
                 self.assertIn("invalid_new_record", compare(doc)["errors"])
 
+    def test_control_characters_and_overlong_paths_rejected(self):
+        for name in ("a" + chr(10) + "b", "a" + chr(127) + "b", "a" * 1025):
+            with self.subTest(name=repr(name[:30])):
+                doc = evidence()
+                doc["new"]["side_effects"] = {name: digest(b"x")}
+                self.assertIn("invalid_new_record", compare(doc)["errors"])
+
+    def test_control_characters_in_run_id_rejected(self):
+        doc = evidence()
+        doc["legacy_run_id"] = "legacy" + chr(10) + "forged"
+        self.assertIn("invalid_legacy_run_id", compare(doc)["errors"])
+
     def test_boolean_exit_code_rejected(self):
         doc = evidence()
         doc["legacy"]["exit_code"] = False

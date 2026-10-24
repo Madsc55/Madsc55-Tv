@@ -1483,3 +1483,10 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 - Önceki K3 offline test run 40073465994 / commit 0c532c96 **SUCCESS**: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073465994 . Bu gerçek canlı HLS, video/ses veya cihaz kanıtı değildir.
 - **K3-13 AÇIK.** 75 gerçek HTTPS aday, altı saat aralıklı üç gerçek snapshot, ffprobe ses/görüntü, Pages/XMLTV, logo ve son IBO Player Pro kabulü bekliyor. Üretim verilerine dokunulmadı; K1/K2/K4/K5 bölümleri korunmalı.
 - Öncelik: yeni commit CI sonucunu doğrula; sonra yetkili read-only pilot ve artifact'leri topla; en son kullanıcı cihaz kabulü. CI veya gerçek kanıt olmadan kabul kapatma.
+
+
+### K2 — Ek güvenlik düzeltmesi ve takip notu (2026-10-24)
+- K2 dalı `k2/multisource-discovery-evidence-20261024`, taslak PR https://github.com/Madsc55/Madsc55-Tv/pull/18 üzerinde `madsc/multisource_discovery.py` dosyasına **yerel/non-public IP ve localhost/.local adreslerini reddeden salt okunur HTTPS aday kontrolü** eklendi: commit https://github.com/Madsc55/Madsc55-Tv/commit/f6366cb609707325ed3e347be8eaddc348a78539 . DNS çözümleme, canlı istek veya üretim yazımı yapılmaz.
+- `tests/test_multisource_discovery.py` içine localhost, özel IPv4, loopback IPv6, link-local ve metadata IP reddi ile genel IP'nin yalnız inceleme adayı kalması testleri eklendi: commit https://github.com/Madsc55/Madsc55-Tv/commit/dca2a9b075d862b3c4dcd4fe67da163e25dcb4f0 .
+- **CI:** Yeni `dca2a9b` commit'i için başarılı CI kanıtı henüz alınmadı; testler yazılmıştır fakat çalıştıkları doğrulanmadı. Önceki başarılı kanıt: https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073466509 (`948d313`). Son PR HEAD CI ve bütünleşik 92-workflow envanter kapısı yeniden kontrol edilmelidir.
+- **Açık risk:** DNS adları sonradan özel IP'ye çözümlenebilir (DNS rebinding). Bu metadata kontrolü canlı ağ erişimine yetki vermez; gelecekte ayrı izinli probe yapılırsa çözümleme/redirect/bağlantı hedefi düzeyinde SSRF koruması gerekir. K3/K4/K5 canlı ve üretim kabul kapıları açık. Diğer K kayıtları değiştirilmedi.

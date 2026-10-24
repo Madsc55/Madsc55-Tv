@@ -1,21 +1,3 @@
-Warning: truncated output (original token count: 50399)
-Total output lines: 1067
-
-Warning: truncated output (original token count: 52876)
-Total output lines: 1115
-
-Warning: truncated output (original token count: 50702)
-Total output lines: 1070
-
-Warning: truncated output (original token count: 50616)
-Total output lines: 1066
-
-Warning: truncated output (original token count: 51235)
-Total output lines: 1071
-
-Warning: truncated output (original token count: 50209)
-Total output lines: 1050
-
 # K3 YEREL HEDEFLİ TEST KANITI — 2026-10-23
 - GitHub `madsc/epg.py` blob `29fac7a619b198c6207767ba113e6a9d7c6629cf` esas alınarak ayrıştırıcı mantığı geçici yerel ortamda yeniden kuruldu. `python -m py_compile` geçti; 6 odaklı senaryo geçti: geçerli eşleşme, tırnaklı virgül, eksik stream URI, çift tvg-id, eksik tvg-id, sahte tvg-id.
 - Bunlar GitHub test dosyasının tamamının koşulduğu veya birebir kaynak dosyanın çalıştırıldığı anlamına gelmez. Tam unittest suite / CI hâlâ doğrulanmadı. GitHub clone denemesi DNS kısıtıyla başarısız oldu.
@@ -549,7 +531,118 @@ Bu dosyayı, BIRLESIK_KALICI_CALISMA_KURALLARI.md ve PROJE_HAFIZASI.md son böl�
 - Tam bitmiş değildir: kurulumda 16 YAML vardır (beş ana + ekler); on yardımcı komut ana sisteme bağlıdır fakat 11 statik sözleşme farkı açık. 125 statik yazıcı çağrı adayı tümü runtime denetlendi sayılmaz. Defter 0 completed/7 in_progress/15 pending; kabul 0/92, 0/26, 0/22. Eski bağımsız aynı-input execution/artifact, canlı/zaman aralıklı K3, kullanıcının IBO cihaz testi, harici yedek/restore ve gerçek uçtan uca güvenlik kanıtları eksik. Gerçek kabul olmadan eski otomasyonları kapatma veya defteri completed yapma.
 - Actions/merge/PR71/canlı probing/korunan IPTV-EPG-yedek-favori-logo-arşiv ve eski repo yazısı yapılmadı. Bu [skip ci] paketinin SHA'sı Git geçmişindedir. Sonraki iş rapordaki bağımsız dış kanıt engellerini ve 11 kaynak sözleşme farkını ana beşli sistem içinde çözmek; küçük fixture testlerini gerçek 92 davranış tamamlandı gibi sunmamak.
 
-- Yayın sırasında diğer sohbetin yalnız docs/K1_K5_KURULUM_DURUMU_2026-10-22.md ekleyen a39cdfa commit'i geldi; içerik okundu ve korundu. Test edilen Python/test/workflow kay…399 tokens truncated…3e3142867: ikinci kontrol sonrasında sembolik bağlantı değişiminde hedefin korunmasını denetleyen regresyon eklendi.
+- Yayın sırasında diğer sohbetin yalnız docs/K1_K5_KURULUM_DURUMU_2026-10-22.md ekleyen a39cdfa commit'i geldi; içerik okundu ve korundu. Test edilen Python/test/workflow kaynakları değişmedi; dal eski HEAD üzerine zorlanmadı.
+
+
+## 22 Ekim 2026 — Bu sohbetin son devri
+Kullanıcı tüm ilerlemenin kaydedilip yeni sohbete geçilmesini istedi. Ayrıntılı toplu devir: SOHBET_DEVIR_2026-10-22_SON.md. Yanlış eski repo çalışması ve yeni sisteme aktarım, bütün ilgili commit/kanıt dosyaları, başarısız testler ve düzeltmeleri, 757 test+5 kapı+5 dosya/K5 doğrulaması, açık 11 sözleşme farkı ve 92/26/22 bağımsız kabul eksikleri kaydedildi. Bu devir hazırlanırken HEAD 3c228e7340b090ae4edf49d3d7b49382a4ef6d69; bu HEAD'in eklediği five_stage_installation modülü ve iki testi okundu ama çalıştırılmadı. İlk iş güncel HEAD'de bunları ve tam offline_gate'i doğrulamak. 757 testi sonraki kaynak sürümüne otomatik mal etme. Korunan veriler/eski repo/PR71/izinsiz Actions ve canlı test sınırları değişmedi; IBO testi kullanıcıda. Bu commit yalnız dokümandır, yeni test sonucu değildir.
+
+
+## Eşzamanlı diğer devirle mutabakat
+Devir yazılırken aeee8354c1e55f398c1f194650475d15769688bf yalnız YENI_SOHBET_DEVIR_2026-10-22.md ekledi; metin okundu ve korundu. O belgedeki 707 test bilgisi tarihsel kaldı: 1b30eee paketi 757 test+5 kapı+5 rapor/K5 ile doğrulandı, daha sonraki 3c228e7 dosyaları henüz sınanmadı. Diğer belgenin kullanıcı ekranından aktardığı K4 EPG/logo ve K5 arşiv/bakım hedefleri ile repo teknik K4 yedek/K5 bakım adlandırması arasındaki fark yeni sohbette açık görev eşlemesiyle uzlaştırılmalı; repo isimleri varsayımla değiştirilmemeli. Bu devir kaydı bütün önceki notları tamamlar.
+
+## 22 Ekim 2026 — kurulum kapısı ve zamanlama regresyonu doğrulaması
+- Son kod/test/kanıt commit SHA: `e4f68c0b6bf597da1ab21c5ebd8c9480d5b85991`; taban `554ec5f07a10dcf81041c1cc18a2081a04dc9e4c`. Eşzamanlı gelen `4fa9cf7` ve `554ec5f` kurulum-envanteri fail-closed testini ekledi/düzeltti; eski HEAD üzerine yazılmadı.
+- Güncel kaynakta kurulum envanteri genel offline kapının zorunlu parçası olarak doğrulandı. Odaklı kurulum/offline/round-trip seti 14/14 geçti. Nihai `python -m madsc.offline_gate` sonucu 760/760 test, beş izole K1–K5 kapısı, kurulum envanteri, beş gerçek yerel rapor/K5 byte-koruyan round-trip ve 92+7/10 komut/22 görev envanteri başarılıdır.
+- İlk tam koşu host yükü altında FIFO snapshot 2 saniye ve K1 workflow simülasyonu 10 saniye sınırında iki timeout verdi; ikisi izole tekrarında geçti. İkinci tam koşu, öldürülen alt süreç için PID numarasının yeniden kullanılmasını ayırt etmeyen `/proc` kontrolünde 1 saniyelik sınırı yaklaşık 10 ms aştı. Sadece bekleme süresini artıran ilk deneme yeterli olmadı.
+- Nihai test düzeltmesi süreç kimliğini Linux `/proc/<pid>/stat` starttime alanına bağladı; yeniden kullanılan PID artık eski alt süreç sanılmıyor. Gerçek aynı süreç canlıysa test hâlâ kırmızı kalır. FIFO ve workflow simülasyonu test-harness zamanlama üst sınırları 5 ve 30 saniyeye çıkarıldı; üretim timeout/kill/fail-closed davranışı değiştirilmedi. Üç süreç-kapatma tekrarı ve iki ilgili sınır testi 5/5 geçti.
+- Kanıt: `docs/FIVE_STAGE_INSTALLATION_GATE_KANIT_2026-10-22.json`. `git diff --check` temiz. GitHub Actions, canlı stream probing, cihaz testi, üretim yazma, eski depo yazısı, merge veya PR #71 işlemi yapılmadı; korunan veri değişmedi.
+- Açık işler/engeller: gerçek 92 aynı-input çifti için bağımsız legacy ve replacement execution/artifact kökeni hâlâ yok; K2/K3 canlı/harici kaynaklar, IBO kullanıcı cihaz sonucu ve K4 bağımsız harici restore kanıtı eksik. Tam kabuller 0/92, 0/26, 0/22; fixture sonuçları bu sayaçları artırmaz.
+- Sıradaki somut adım: `five_stage_installation` raporundaki 11 statik sözleşme farkını kaynak gerekçeleriyle gözden geçir; güvenle yerel çözülebilenleri beş ana workflow sözleşmesine taşı. Gerçek aynı-input/bağımsız run-artifact bulunmadan 92 davranış kabulü verme ve mevcut kanıt zincirini sahte metadata ile doldurma.
+
+
+## 22 Ekim 2026 — Güncel kurulum ve operasyon sözleşmeleri topluca doğrulandı
+- Tek hedef Madsc55/Madsc55-Tv/main; taban 554ec5f07a10dcf81041c1cc18a2081a04dc9e4c. Sonraki kurulum modülü/kapı değişiklikleri ilk kez bu turda gerçek yerel toplu testle kapsandı.
+- İlk 760 test: 1 failure/1 error. K1 preflight alt süreç başlatması 5 saniyeyi aştı; ilgili 15 test kod gevşetilmeden 0.868 saniyede geçti. Süreç sonlandırma testi toplu koşuda tekrar başarısızdı (763 test/1 failure). Kapsayıcı getpid kimliklerinin host /proc dizininde ilgisiz sync_share.sh/sites-preview süreçlerine karşılık geldiği gerçek tanı çıktısıyla bulundu. Test artık çocukların /proc/self/stat PID ve başlangıç zamanını kullanır, iki ayrı sürecin gerçekten başladığını zorunlu doğrular; üretim süreç öldürme kodu gevşetilmedi.
+- K5 25 dakika eski kaynak audit + 15 dakika not birleştirme opt-in adımlarının 10 dakika job limiti altında kalması düzeltildi: job 45, adımlar 25/15 dakika. Bu üst sınır süre tüketimi değildir; dispatch yapılmadı. Opt-in rapor upload artık failure durumunda da always() && !cancelled() ile denenir; kaynaklar/izinler/cron/korunan veri değişmedi.
+- Sözleşme denetimi süreyi yalnız ilgili komutun bulunduğu job ile karşılaştırır; ilgisiz uzun job komutu maskeleyemez. Komut, süre, rapor yolu, actions izni veya failure-upload kaybı contract_gate ve mevcut offline_gate başarısını engeller. Artifact ad farkı ayrı inceleme olarak görünür; otomatik eşdeğerlik verilmez. Yeni kapı entegrasyon regresyonu dahil dört test eklendi. Önceki süre fixture'ı gerçek komutu içermediğinden düzeltildi; eksik komut süre uyumluluğu sayılmıyor.
+- Nihai python -m madsc.offline_gate: 764 test, beş izole K1–K5 kapısı, kurulum envanteri, 92+7 kaynak/10 yardımcı komut/22 görev ve beş gerçek yerel raporun K5 tüketimi başarılı. git diff --check temiz. Kanıt, test edilen kaynak SHA256 ve rapor hashleri: docs/FIVE_STAGE_CONTRACT_VALIDATION_2026-10-22.json.
+- 11 statik farktan iki süre farkı giderildi; dokuz artifact isim değişikliği inceleme olarak açık. Bunlar çalışma zamanı byte zinciri kabulü değildir. Davranış 0/92, runtime güvenlik 0/26, görev tam kabulü 0/22 korunur. Korunan listeler/EPG/favoriler/yedek/logo/arşiv, eski depo, PR71 ve merge işlemi yok. Actions başlatılmadı; kullanıcının ilettiği izin kotayı harcamak için gereksiz tekrar gerekçesi sayılmadı. IBO cihaz testi kullanıcıda.
+- Sıradaki bağlantılı iş: dokuz yeniden adlandırılan artifact için gerçek üretici/tüketici dosya ve byte zinciri ile bağımsız aynı-input eski/yeni run/artifact kanıtını bağlamak; eksik dış kaynağı fixture ile tamamlanmış göstermemek. K2/K3 canlı ölçüm ve bağımsız geçmiş, K4 dış backup/restore, K1 26 runtime kuralı ve K5 gerçek uçtan uca kabul açık. Kod/kanıt/notlar aynı [skip ci] commitindedir; kendi SHA'sı Git geçmişindedir.
+
+- Yayın öncesi main e4f68c0b6bf597da1ab21c5ebd8c9480d5b85991 commitine ilerledi: FIFO/receipt test süreleri ve bağımsız 760-test kanıtı okundu/korundu. Aynı process testinin starttime ve beş saniye bekleme düzeltmesi procfs PID kimliği ve iki süreç zorunluluğu ile uzlaştırıldı. Son toplu test bu birleşik kaynaklar üzerinde yeniden çalıştırıldı.
+
+
+## 22 Ekim 2026 — Dokuz artifact sözleşmesi ve ana K2 geçmiş zinciri
+- Tek hedef Madsc55/Madsc55-Tv/main, taban 60031b9bc46728b7773ad8037fe398b3c1d50814. Önceki test/kanıt/notlar korundu. Paket SHA Git geçmişindedir; kod/test/kanıt/devir tek [skip ci] commitinde.
+- Dokuz artifact adı farkı yalnız rapordan gizlenmedi: eski yardımcıların upload-artifact adları, dosya yolları ve ZIP common-root yerleşimi ana K2/K3/K5 işlerine opt-in upload adımları olarak eklendi. Mevcut birleşik paketler korundu; yeni workflow/job/cron açılmadı, yardımcılar kapatılmadı. Paket isimleri artık contract_gate tarafından zorunlu; silinirse toplu offline kapı başarısız olur. Statik sözleşme farkı 9→0; bu çalışma zamanı eşdeğerlik kabulü değildir.
+- Somut K2 kopukluğu: tüketici madsc-k2-history-source beklerken ana K2 yalnız madsc-k2-isolated-evidence üretiyordu. Ana K2 artık kaynak çiftini eski tüketicinin beklediği ad ve iki kök ZIP üyesiyle saklar. Kaynak üretimi allow_history_source_publish, bağımsız eski kaynağı doğrulama allow_verified_history ile ayrı default-false izinlerdir; kaynak üretmek için zorunlu olarak eski manifest doğrulatılmaz. Hassas komutların açık izin regresyonu bu yeni iki ayrı flag'i zorunlu denetler.
+- history_verified_pipeline/CLI açık source_workflow_path/--source-workflow seçeneği alır; yalnız eski gerçek-kaynak yardımcı workflow'u veya ana K2 kabul edilir. Varsayılan eski kaynak uyumluluğunu korur. Seçim API run.path ile birebir doğrulanır; K5 fixture CI ve keyfi workflow, doğrulamadan önce reddedilir. Manifest şeması, token zorunluluğu, repo/dal/başarı/ancestor/artifact kökeni ve bayt hash denetimleri gevşetilmedi.
+- Gerçek yerel zincir testi publish_source → iki dosyalı ZIP → gerçek provenance client (API fixture) → gerçek downloader/extractor → gerçek verified pipeline → mevcut-run handoff çalıştırır; kaynak/paket baytları aynı kalır. Generic paket adı, yanlış workflow ve bozuk ZIP baytı çıktı üretmeden reddedilir; izinsiz workflow ağdan önce durur. Dokuz kaynak upload sözleşmesi birebir karşılaştırılır; source artifact adı kaldırıldığında contract gate kırmızı olur. Beş yeni test eklendi.
+- Odaklı ilk set 38/38 geçti. İlk toplu 769 testte 1 failure: eski opt-in testi yayın komutunu eski doğrulama flag'inde bekliyordu. Test, yeni default-false yayın flag'ini ayrıca zorunlu kılacak biçimde güncellendi. Nihai python -m madsc.offline_gate: 769 test + beş izole K1–K5 kapısı + kurulum + beş gerçek yerel rapor/K5 + 92+7 kaynak/10 komut/22 görev envanteri başarılı; contract gaps=0; git diff --check temiz. Kanıt: docs/MAIN_ARTIFACT_CHAIN_KANIT_2026-10-22.json.
+- Sınırlar: API cevapları ve geçmiş girdileri fixture'dır; gerçek Actions upload/download kökeni bu tur ölçülmedi. Statik 0 fark, eski 92 otomasyonun aynı-input bağımsız runtime kabulü değildir. Tam kabul 0/92, 0/26, 0/22 kalır. Korunan kanal/EPG/favori/logo/arşiv/yedek ve eski depo değiştirilmedi; Actions, canlı probe, merge/PR71 veya IBO cihaz işlemi yok. IBO kullanıcıdadır.
+- Sıradaki gerçek engeller: bağımsız eski/yeni aynı-input yürütme ve artifact çiftleri; 26 kuralın gerçek writer yollarında runtime kanıtı; K2/K3 harici geçmiş ve zaman aralıklı medya ölçümleri; kullanıcı IBO testi; K4 bağımsız harici backup/restore. Bunlar fixture veya yeni test sayısı artırılarak tamamlanmış gösterilmeyecek. İzinli gerçek koşu için kaynak girdileri/manifest ve harici kanıt sağlanmadan genel sistem bitti denmeyecek.
+
+
+## 22 Ekim 2026 — Gerçek pair toplama için API ve ZIP bayt zinciri mevcut toplu CLI'ye bağlandı
+- Tek hedef Madsc55/Madsc55-Tv/main; taban cffae104160b69866b2da69d8b9130d99dd5649f. Önceki dokuz artifact entegrasyonu ve statik 0 fark korundu. Bu paketin SHA'sı Git geçmişindedir; tek [skip ci] kod/test/kanıt/devir kaydıdır.
+- Kalan somut kopukluk giderildi: verify_provenance_pair_api ve verify_provenance_pair_artifacts daha önce ayrı çağrılardı. Mevcut github_legacy_pair_client artık verify_provenance_pair_evidence ile altı bağımsız API kaydı, iki sınırlı ZIP indirmesi, archive SHA256, strict manifest, same-input ve snapshot bağlarını tek zincirde doğrular. Yeni standalone script/workflow/zamanlayıcı yok.
+- Mevcut legacy_parity_cli --verify-github-artifacts açık opt-in seçeneğiyle sağlanan pinned kapsam pair'lerini topluca doğrular; token yalnız GITHUB_TOKEN ortamından gelir. Varsayılan mod tamamen ağsız ve eski çıktı uyumludur. Boş pair veya provenance dışı snapshot bu modda reddedilir; eksik 91/92 satır başarılı kabul edilmez. Bütün supplied pair'ler doğrulanmadan çıktı yazılmaz; raporda supplied_pairs_verified ve her pair'in API/bayt kanıtı ayrı alanlardır. Davranışsal kabul 0 kalır.
+- K1 rapor hedefini artık kaynak okumadan ve ağdan önce denetler; yazmadan hemen önce tekrar denetler ve exclusive open kullanır. ZIP indirmesi repo/id/token kontrolü, 30sn timeout ve 2MiB+1 bounded read ile sınırlıdır; diske ZIP/extract yazmaz. Signed storage redirect'inde GitHub Authorization başlığı silinir, HTTPS dışı redirect reddedilir.
+- Yedi yeni testte gerçek mevcut CLI/karşılaştırıcı, gerçek downloader'ın yerel HTTP fixture'ı ve gerçek ZIP parser birlikte çalışır. Altı API okuması ve iki indirme doğrulanır; yanlış workflow blob'u indirmeden, bozuk ZIP çıktıdan önce, eksik token/korunan yol ağdan önce durur. HTTP redirect/token sızıntısı, büyük paket, bool id, varsayılan ağsız mod ve boş pair negatifleri denetlenir. Odaklı 16/16; nihai python -m madsc.offline_gate 776 test ve bütün offline alt kapılar başarılı. git diff --check temiz. Kanıt docs/PAIR_API_BYTE_CHAIN_KANIT_2026-10-22.json.
+- Gerçek salt-okunur GitHub sorgusu da yapıldı: yeni depoda event=workflow_dispatch toplam 9, tamamı döndü; hepsi K5, 21 Ekim sürümleridir. Son 10 genel run yalnız offline unit CI'dır; bunlar güncel runtime pair kanıtı değildir. Son K5 run39686179902 ve eski discovery run39768459333 artifact metadata örnekleri okundu; yenide Ekim22 kaynak çifti yok, eski örnek main dalında olduğundan pinned legacy karşılaştırma dalına bağlanamaz. Bu örnekler aynı-input v1 manifest çifti sağlamaz. Eski deponun bütün artifact geçmişi tarandı denmez.
+- Araç sınırları kaydedildi: repo-geneli artifact ve workflow-spesifik run URL'leri connector allowlist tarafından reddedildi; desteklenen run collection + artifact-by-run araçları kullanıldı. Artifact wrapper yalnız ilk sayfayı/total_count olmadan verir; tam artifact envanteri iddiası yok. Gerçek ZIP baytları bu üretim sorgusunda indirilmedi; metadata başarıları bayt doğrulaması sayılmadı. Sorgular test/Actions çalıştırmadı.
+- Kullanım hazır olduğunda: python -m madsc.legacy_parity_cli --inventory docs/LEGACY_SOURCE_SCOPE.json --snapshots actual-pairs.json --output reports/parity-api-byte-proof.json --replacement-workflow-root . --verify-github-artifacts ; reports gerçek/mevcut güvenli dizin ve actual-pairs.json bağımsız gerçek origin/manifest kaydı olmalıdır. Bu komut gerçek pair bulunmadığı için bu tur üretim ağına karşı çalıştırılmadı; fixture testi gerçek kabul sayılmaz.
+- Tam kabul 0/92, 0/26, 0/22. Korunan kanal/EPG/favori/yedek/logo/arşiv, eski repo, PR71, merge, Actions dispatch, canlı probing ve cihaz testi değişmedi/yapılmadı. IBO testi kullanıcıdadır. Gerçek aynı-input pair, semantik bağımsız inceleme/yan etki, K1 gerçek writer/runtime26, K2/K3 canlı/zamanlı ölçümler ve K4 harici restore açık. Sıradaki iş gerçek v1 pair kanıtını bu mevcut birleşik CLI'ye vermek; eski raporu yeni manifest gibi yeniden etiketlememek.
+
+
+## 22 Ekim 2026 — GitHub istemcilerinde ortak token/yönlendirme koruması
+- Kaynak tabanı 21a9146cd09feccb19084f78965652142ea82f31; bu bölümün bulunduğu commit kod/test/kanıt paketidir.
+- K1 güvenlik çapraz etkisi: K2 geçmiş artifact indirmesi, GitHub köken JSON istemcisi, K5 eski kaynak denetimi ve legacy pair ZIP indirmesi aynı HTTPS yönlendirme politikasına bağlandı. API JSON başka origin'e yönlendirilirse ikinci bağlantıdan önce reddedilir. İmzalı artifact depolama adresine geçişte Authorization kaldırılır; geri yönlendirmede geri eklenmez. HTTP ve URL kullanıcı bilgisi reddedilir. Eski 99 kaynak denetimindeki sınırsız JSON okuma da 2 MiB sınırına bağlandı. K3/K4 tüketici ve veri biçimleri değişmedi, beşli entegrasyon geçti.
+- Doğrulama: 19/19 odaklı test; gerçek urllib redirect dispatch sahte HTTPS yanıtlarıyla, ağsız sınandı. Nihai python -m madsc.offline_gate: 783/783 test, beş izole kapı, kurulum envanteri, beş rapor/K5 round-trip başarılı; statik sözleşme farkı 0. Kanıt: docs/GITHUB_TRANSPORT_KANIT_2026-10-22.json; değiştirilmiş kaynak SHA256 ve tam kapı sonucu içerir. Bu pakette başarısız test yok.
+- Otomatik devam görevi 6ad2b2e925bc8191a91b01728e57d707 mevcut saatlik takviminde etkin doğrulandı. Eski 605 test/eski görev öncelikleri kaldırıldı; her çalışmada güncel main/devir esas alınacak, küçük paket sonrası güvenli bağlantılı işe devam edilecek. next_run_time araçta null döndü; kesin sonraki saat veya kesintisiz çalışma iddiası yok. Yinelenen görev oluşturulmadı.
+- Gerçek kabul 0/92, 0/26, 0/22 olarak kaldı. Korunan üretim verisi, eski depo, PR71, merge ve cihaz testi değişmedi. Actions veya canlı probing çalıştırılmadı.
+- Sıradaki somut işler: K1-03 gerçek yazıcı çağrı yollarının kalanlarını görev defteriyle eşleştir; K4 harici geri-yükleme kanıtının mevcut tüketicilere bağlanmasındaki gerçek eksikleri incele. Gerçek v1 bağımsız aynı-input pair bulunduğunda mevcut --verify-github-artifacts CLI'yi kullan; eski metadata taramasını sebep olmadan tekrarlama. Harici/cihaz kanıtı yoksa kabul artırma.
+
+
+## 22 Ekim 2026 — K4 rapor hedefi işlem öncesi kontrolü
+- Başlangıç main SHA: 54b76d5dd03fe41a017fd5c7b23834ef7d0a1d18. Kod commit: 7dd644cf307eed79394cd70be4a65d2fab1fe83d [skip ci].
+- madsc/restore_drill.py: isolated-report-root için beklenen yol ve K1 yerel çıktı kapısı, run_drill çağrısından önce denetlenir. Normal --output hedefi de tatbikat başlamadan kontrol edilir; yazma öncesi mevcut kontrol korunur.
+- Bu oturumda offline regresyon çalıştırılmadı; değişiklik henüz testle doğrulanmış değildir. Actions dispatch yok. 783 önceki SHA'nın sonucudur, yeni commit sonucu değildir.
+- Açık işler: yeni SHA'da offline_gate, K4 hatalı yolun tatbikatı başlatmadığını gösteren negatif test, K4 kanıt dosyası TOCTOU incelemesi, K1-03 gerçek writer haritası ve bağımsız harici restore kanıtı. Kabul 0/92, 0/26, 0/22.
+- Korunan IPTV/EPG/playlist/favoriler/logo/yedek/arşiv, eski depo, PR #71 ve cihaz testi değiştirilmedi. Sıradaki somut adım: K4 negatif testleri ve tam offline regresyon; engel varsa açıkça kaydet.
+
+
+## 22 Ekim 2026 — K4 erken red negatif testleri
+- Kod 7dd644cf307eed79394cd70be4a65d2fab1fe83d üzerine tests/test_restore_drill.py negatif testleri eklendi: commit 56ca20984f043263579179ee810b04b53f0304ef [skip ci]. Yanlış izole rapor adı ve mevcut normal çıktı hedefi, run_drill çağrılmadan reddedilmelidir. Önceki tekrar-yazma beklentisi K1 ProtectedWriteRejected ile eşleştirildi.
+- Bu çalışma ortamında GitHub deposu yerel kopyalanamadı (github.com DNS erişimi yok). Testler çalıştırılmadı; yeşil sonuç veya 783 yeni test iddiası yok. Actions dispatch yapılmadı. Öncelik: erişilebilir ortamda python -m unittest tests.test_restore_drill ve python -m madsc.offline_gate doğrulaması, sonra K4 tüketici yarış koşulu incelemesi.
+- Korunan veri, eski depo ve cihaz testi değişmedi; gerçek kabul 0/92, 0/26, 0/22.
+
+
+## 22 Ekim 2026 — K4 kanıt okuyucu sertleştirme
+- madsc/k4_evidence.py commit 37f74521295d84705a702da4d4b13d696f50fcb8 [skip ci]: çıktı yolu okumadan önce denetlenir; kanıt os.open/O_NOFOLLOW (varsa), fstat ile regular/single-link, 1 MiB bounded read kullanır. Symlink parent kontrolü korunur. Test commit 80972e5badcc47173df7f4d613891b268daeade5: mevcut çıktı, symlink ve büyük kanıt negatif senaryoları.
+- Kod/test GitHub'a kaydedildi; bu turda yerel test ve offline_gate çalıştırılmadı, Actions tetiklenmedi. O_NOFOLLOW olmayan platformlarda yarış koruması sınırlıdır; parent değişimi yarışına karşı tam fd-tabanlı dizin zinciri henüz yoktur.
+- Öncelik: test_restore_drill ve test_k4_evidence + tüm offline_gate çalıştırıp gerçek sonuçları kaydet; K1-03 gerçek writer denetimine devam et. Gerçek kabul 0/92, 0/26, 0/22; korunan veriye dokunulmadı.
+
+
+## 22 Ekim 2026 — K4 doğrulayıcı çıktısında ikinci kapı
+- madsc/k4_evidence.py commit d8e5e1925c7ea9994f3e0649b4640cf5569b038a: parse/doğrulama sonrası çıktı yolunu tekrar denetle; os.open(O_EXCL|O_CREAT|O_NOFOLLOW varsa) ile tek seferlik çıktı oluştur. tests/test_k4_evidence.py commit bc21ebd0954250b65b0ae4665d40775242ecee91: geçerli kanıttan çıktı, production_ready=false, external_storage_proven=false ve ikinci yazmayı reddetme senaryosu.
+- Yerel depo indirme github.com DNS hatası nedeniyle mümkün olmadı; bu yeni SHA için testler/offline_gate çalıştırılmış değildir, GitHub Actions tetiklenmedi. Elde doğrulanmış yeni test sonucu yoktur. Tam parent-ancestor TOCTOU koruması halen açık; K1 runtime kabul iddiası yok.
+- Sonraki öncelik: erişilebilir çalıştırma ortamında test_restore_drill, test_k4_evidence ve python -m madsc.offline_gate; gerçek sonuçlar gelmeden 783 sayısını güncel sayma. Gerçek kabul 0/92, 0/26, 0/22. Korunan dosyalar, eski depo ve IBO cihaz testi değişmedi.
+
+
+## 22 Ekim 2026 — K4 JSON/üst-dizin negatif testleri
+- tests/test_k4_evidence.py commit b853106868f1cc13bc2172051c22bd71641ec7a8 [skip ci]: yinelenen files_checked JSON anahtarı ve sembolik bağlantılı kanıt üst dizini reddi; başarısız doğrulamada çıktı yokluğu. Kod davranışı değişmedi.
+- Yerel ortam github.com DNS çözümleyemiyor; testler/offline_gate bu yeni SHA'da çalıştırılmadı, Actions dispatch yok. Gerçek kabul 0/92, 0/26, 0/22. Öncelik erişilebilir test koşucusunda odaklı testler ve tam offline_gate; test sonucu olmadan yeşil iddia edilmez.
+
+
+## 22 Ekim 2026 — K4 hardlink negatif testi
+- tests/test_k4_evidence.py commit 9facdef81be2553e145465e9c65cbff889b11b2f [skip ci]: kanıt dosyasının stat.st_nlink != 1 durumunda reddi ve çıktı yokluğu kontrolü; üretim verisine dokunulmadı.
+- Bu oturumda git ls-remote github.com DNS çözümleme hatası verdi. Yerel testler/offline_gate çalıştırılmadı, GitHub Actions tetiklenmedi. Test sonucu doğrulanana kadar gerçek kabul 0/92, 0/26, 0/22 olarak kalır.
+
+
+## 22 Ekim 2026 — K4 O_NOFOLLOW kapısı
+- madsc/k4_evidence.py b0f1d0a49966608c8e63ad291f46a9fb043c2cd4 [skip ci]: os.O_NOFOLLOW yoksa kanıt okuma fail-closed. tests/test_k4_evidence.py eadb7e40a412679c30108a0260c6ada76fa12a71 [skip ci]: bu durumu ve çıktı üretilmediğini kontrol eden test.
+- Yerel git ls-remote: github.com DNS çözümlenemiyor; testler ve offline_gate yeni HEAD üzerinde çalıştırılmadı. Actions tetiklenmedi. Üst dizin TOCTOU sertleştirmesi ve gerçek kabul kanıtı açık; 0/92, 0/26, 0/22.
+
+
+## 22 Ekim 2026 — K4 sahte üretim iddiası reddi
+- K4 verify(): production_ready=True/1 ve category='k3' gibi sahte alanları reddetme, opsiyonel category yoksa eski run_drill raporuyla uyum; kod c189cde33a47690373eddc6c502b4e14cfb82fd6, test afe19df9646868a0153a19c4c9895c4bf90c29d1 [skip ci].
+- Yerel git ls-remote denemesi github.com DNS çözümleme hatasıyla başarısız. Bu SHA için test ve offline_gate doğrulaması yapılmadı, Actions tetiklenmedi. Gerçek kabul 0/92, 0/26, 0/22; korunan veriye dokunulmadı.
+
+
+## 22 Ekim 2026 — K5 davranış karşılaştırma çıktısı, test bekliyor
+- madsc/legacy_parity_cli.py commit 108de8e7c049bf8abab52fa69ae587133ba420f4: K5 karşılaştırma raporu exclusive os.open(O_CREAT|O_EXCL, varsa O_NOFOLLOW) ile açılıyor; ikinci yol kontrolü korunuyor. tests/test_legacy_parity_cli.py commit 1f4d31a03f3ca7b61bd06b28c4693bd3e3142867: ikinci kontrol sonrasında sembolik bağlantı değişiminde hedefin korunmasını denetleyen regresyon eklendi.
 - Bu SHA için test sonucu yok; GitHub Actions tetiklenmedi. K5 gerçek davranış eşdeğerliği 0/92, 26 runtime güvenlik 0/26, görev kabulü 0/22. Öncelik test_legacy_parity_cli, tam offline_gate, sonra eksik gerçek eski/yeni çalışma çiftlerini toplu kanıtlama. Korunan veriye dokunulmadı.
 
 
@@ -947,8 +1040,6 @@ K4 kaynağı `.github/workflows/madsc-04-yedek.yml` blob `28910baa5840da87c97834
 - Temiz uzak main `c16f25d230b411ac100411a113a125b0b8f6b3fa` doğrulaması: **1157/1157 test**, beş izole K kapısı ve bütün offline kapılar başarılı; 140 adayın 104'ünde doğrudan yerel çağıran, 16'sında en az bir guarded çağıran gözlendi. Dış/import/callback çağrıları kapanmadığı için `caller_closure_verified=0`; subprocess read-only etki kanıtı da 0/6.
 - Kabul değişmedi: 0/92 davranış parity, 0/26 runtime güvenlik, 0/22 ana görev. Sıradaki iş 16 kısmi guarded çağıran kaydında tüm gerçek giriş yollarını ve altı subprocess komutunun etkisini tek tek kaynak-bağlı kapatmak; statik çağıran gözlemini runtime kabulü saymamak.
 - Korunan üretim verisi, eski depo, PR #71, canlı probe, cihaz ve Actions tetiklenmedi. Gerçek bağımsız execution/artifact, harici restore ve en son kullanıcı cihaz kanıtı hâlâ dış engel.
-
-
 ## 23 Ekim 2026 — K1 artifact yazıcısı ebeveyn-değiştirme yarışı kapatıldı
 - Başlangıç `main` SHA'sı `fb4b00a88af5a1257eeb92bc531f2f94348e786c`; bu SHA'daki bağımsız M3U8 önizleme çalışmasına dokunulmadı. Güvenli descriptor-relative evidence yazıcısı public yardımcı olarak açıldı: `ce830b31d3fde66ebd63c853de54c4268a304ebd`. `artifact_transport._write_json_exclusive`, iki doğrudan K1 preflight sonrasında `O_NOFOLLOW|O_EXCL` ve dizin-descriptor traversal kullanan bu yazıcıya bağlandı: `083ef2dd1e98d3ff8ccfbc708391d73365ac09d1`.
 - Ebeveyn `reports` dizininin preflight dönüşünde dış dizine symlink olarak değiştirilmesi regresyonu eklendi; dışarıda dosya oluşmadığı doğrulandı. Test commitleri `40c58fbbb6ea4c7a14ed76b0e4f154b726f538bf` ve `f8c32a3a2bdf278ac627571e4118dd5bc07821e7`.

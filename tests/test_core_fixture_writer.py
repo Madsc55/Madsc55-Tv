@@ -50,6 +50,17 @@ class CoreFixtureWriterTests(unittest.TestCase):
                     write_core_fixture(root, "fixture.txt", b"partial")
             self.assertFalse((root / "fixture.txt").exists())
 
+    def test_failed_staged_overwrite_preserves_original_fixture(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = write_core_fixture(root, "fixture.txt", b"original")
+            with mock.patch("madsc.core_fixture_writer.os.replace",
+                            side_effect=OSError("injected replacement failure")):
+                with self.assertRaises(OSError):
+                    write_core_fixture(root, "fixture.txt", b"replacement", overwrite=True)
+            self.assertEqual(target.read_bytes(), b"original")
+            self.assertEqual(sorted(p.name for p in root.iterdir()), ["fixture.txt"])
+
     def test_unknown_protected_and_traversing_paths_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

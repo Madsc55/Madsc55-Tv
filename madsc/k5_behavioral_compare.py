@@ -15,6 +15,14 @@ def _digest(value):
     return isinstance(value, str) and len(value) == 64 and set(value) <= DIGEST
 
 
+def _safe_relative_name(name):
+    if not isinstance(name, str) or not name or "\\x00" in name or "\\\\" in name:
+        return False
+    path = PurePosixPath(name)
+    return (not path.is_absolute() and all(part not in ("", ".", "..") for part in name.split("/"))
+            and path.as_posix() == name)
+
+
 def _valid(record):
     if not isinstance(record, dict) or set(record) != set(FIELDS):
         return False
@@ -26,7 +34,7 @@ def _valid(record):
         return False
     for field in ("artifacts", "side_effects"):
         value = record[field]
-        if not isinstance(value, dict) or any(not isinstance(k, str) or not _digest(v) for k, v in value.items()):
+        if not isinstance(value, dict) or any(not _safe_relative_name(k) or not _digest(v) for k, v in value.items()):
             return False
     return True
 
@@ -36,10 +44,9 @@ def compare(document):
     if not isinstance(document, dict) or set(document) != {"workflow", "fixture_sha256", "legacy", "new", "independent_runs", "isolated_fixture", "legacy_run_id", "new_run_id", "legacy_commit_sha", "new_commit_sha"}:
         return {"accepted": False, "errors": ["invalid_evidence_schema"]}
     workflow = document["workflow"]
-    if (not isinstance(workflow, str) or not workflow.endswith((".yml", ".yaml"))
-            or PurePosixPath(workflow).is_absolute()
-            or ".." in PurePosixPath(workflow).parts
-            or not workflow.startswith(".github/workflows/")):
+    if (not _safe_relative_name(workflow) or not workflow.endswith((".yml", ".yaml"))
+            or not workflow.startswith(".github/workflows/")
+            or len(PurePosixPath(workflow).parts) != 3):
         errors.append("invalid_workflow")
     if not _digest(document["fixture_sha256"]):
         errors.append("invalid_fixture_digest")

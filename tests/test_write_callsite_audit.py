@@ -280,7 +280,7 @@ def run_commands():
         report = scan_python_tree(root)
         rows = [row for row in report["callsite_inventory"]
                 if row.get("process_shell_status") is not None]
-        self.assertEqual(len(rows), 6)
+        self.assertEqual(len(rows), 7)
         self.assertTrue(all(row["process_stdio_bounded_verified"] for row in rows))
         self.assertTrue(all(not row["process_effect_verified_read_only"] for row in rows))
         classes = [row["process_command_effect_classification"] for row in rows]
@@ -289,6 +289,9 @@ def run_commands():
         self.assertEqual(classes.count("python_inline_payload"), 1)
         self.assertEqual(classes.count("python_module_payload"), 1)
         self.assertEqual(classes.count("caller_controlled_command"), 1)
+        # K1 protected-tree inventory uses a fixed git ls-files command.
+        # It remains open for process-effect review, not production certification.
+        self.assertEqual(sum(classes.count(name) for name in set(classes)), 7)
 
     def test_generic_parity_popen_requires_capability_but_stays_effect_open(self):
         root = Path(__file__).resolve().parents[1]

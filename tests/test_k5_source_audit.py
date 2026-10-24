@@ -1,15 +1,39 @@
 """Offline regression tests for K5 frozen-source coverage and tamper detection."""
+import io
 import json
+import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
-from madsc.k5_source_audit import audit
+from madsc.k5_source_audit import audit, main, write_source_audit_report
+from madsc.write_path_audit import ProtectedWriteRejected
 
 
 class K5SourceAuditTests(unittest.TestCase):
     def setUp(self):
         self.root = Path(__file__).resolve().parents[1]
+
+    def test_report_writer_is_exclusive_and_guarded(self):
+        with tempfile.TemporaryDirectory() as directory:
+            destination = Path(directory) / "k5-source-audit.json"
+            write_source_audit_report(destination, "{}\n")
+            self.assertEqual(destination.read_text(encoding="utf-8"), "{}\n")
+            with self.assertRaises(ProtectedWriteRejected):
+                write_source_audit_report(destination, "changed\n")
+
+    def test_main_uses_guarded_report_writer(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "report.json"
+            with patch("sys.argv", ["k5_source_audit", "--root", str(self.root),
+                                    "--output", str(output)]):
+                with redirect_stdout(io.StringIO()):
+                    with self.assertRaises(SystemExit) as stopped:
+                        main()
+            self.assertEqual(stopped.exception.code, 0)
+            self.assertTrue(json.loads(output.read_text(encoding="utf-8"))[
+                "source_audit_passed"])
 
     def test_all_92_source_rows_pinned(self):
         result = audit(self.root)

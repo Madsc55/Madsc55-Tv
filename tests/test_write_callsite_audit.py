@@ -386,6 +386,15 @@ def run_commands():
         ]
         self.assertEqual(roundtrip_mutations, [])
 
+    def test_k5_source_audit_has_no_direct_write_candidate(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        rows = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/k5_source_audit.py"
+        ]
+        self.assertEqual(rows, [])
+
     def test_legacy_note_atomic_replace_has_direct_k1_guard(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)

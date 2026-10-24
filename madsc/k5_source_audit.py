@@ -2,12 +2,22 @@
 import json
 from pathlib import Path
 
+from madsc.fixture_report_writer import write_exclusive_bytes
+from madsc.write_path_audit import enforce_local_output_path
+
 PARTS = ("01_18", "19_36", "37_54", "55_72", "73_90", "91_92")
 EXCLUDED = {
     "madsc-01-guvenlik.yml", "madsc-02-kesif.yml", "madsc-03-kanal-test.yml",
     "madsc-04-arsiv-yedek.yml", "madsc-05-genel-bakim.yml",
     "k1-protected-write-tests.yml", "madsc-hizli-on-kontrol.yml",
 }
+
+
+def write_source_audit_report(destination: Path, payload: str) -> None:
+    """Create one K1-guarded audit report without following output links."""
+    destination = Path(destination).absolute()
+    enforce_local_output_path(destination)
+    write_exclusive_bytes(destination, payload.encode("utf-8"))
 
 
 def audit(root):
@@ -129,7 +139,7 @@ def main():
     result = audit(args.root)
     payload = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
     if args.output:
-        Path(args.output).write_text(payload, encoding="utf-8")
+        write_source_audit_report(Path(args.output), payload)
     print(payload, end="")
     raise SystemExit(0 if result["source_audit_passed"] else 1)
 

@@ -19,6 +19,10 @@ class OfflineCITriggerContractTests(unittest.TestCase):
         expected_paths = (
             ".github/workflows/madsc-unit-tests.yml",
             "madsc/**",
+            "src/**",
+            "scripts/**",
+            "config/**",
+            ".github/workflows/**",
             "tests/**",
             "docs/LEGACY_SOURCE_SCOPE.json",
             "docs/K1_K5_KANITLI_GOREV_DEFTERI.json",
@@ -34,6 +38,15 @@ class OfflineCITriggerContractTests(unittest.TestCase):
                 self.assertIn("    paths:\n", body)
                 for path in expected_paths:
                     self.assertIn(f"      - '{path}'", body)
+
+    def test_concurrency_scoped_by_pr_or_ref(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn(
+            "group: madsc55-offline-unit-tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}",
+            source,
+        )
+        self.assertIn("cancel-in-progress: false", source)
+        self.assertNotIn("group: madsc55-offline-unit-tests\\n", source)
 
     def test_pr_gate_stays_read_only_and_offline(self):
         source = WORKFLOW.read_text(encoding="utf-8")

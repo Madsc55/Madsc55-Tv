@@ -42,9 +42,11 @@ def assess(paths):
         if len(set(ids)) != 75:
             raise ValueError("Duplicate channel identities")
         count = sum(r.get("hls_manifest_seen") is True for r in rows)
-        if data.get("manifest_seen") != count:
+        if type(data.get("manifest_seen")) is not int or data.get("manifest_seen") != count:
             raise ValueError("Manifest count mismatch")
         for row in rows:
+            if row.get("hls_manifest_seen") not in (True, False, None):
+                raise ValueError("Invalid manifest observation type")
             if row.get("hls_manifest_seen") is True:
                 if row.get("status") != "manifest_only" or row.get("https_reachable") is not True:
                     raise ValueError("Inconsistent successful probe evidence")

@@ -1356,3 +1356,53 @@ Aşağıdaki bağlantılar `main` üzerindeki K1 değişiklikleridir:
 5. K1/K2/K4/K5 koordinasyonuyla açık kapıları değerlendir; yalnız tüm önceki kriterler geçerse en son kullanıcı IBO Player Pro cihaz kabulünü iste. Kanıt olmadan K3-13'ü kapatma.
 
 **K3 ana merkeze devir kaydı:** bu bölüm yalnız K3'ü günceller; diğer sistem kayıtları değiştirilmez.
+
+---
+
+<!-- K4_2026_10_24_HANDOFF_BEGIN -->
+## 24 Ekim 2026 — K4 ana merkeze devir (bu sohbetin doğrulanmış kapsamı)
+
+**Kapsam:** K4 dış Google Drive yedek hazırlığı, sentetik sağlayıcı aktarımı, bağımsız restore ön koşulları ve çevrimdışı 1/15 zamanlama planlayıcısı. Bu bölüm yalnız K4 içindir; diğer K1/K2/K3/K5 kayıtları aynen korunur. Bu kayıt **üretim kabulü değildir**.
+
+### 1. Tamamlanan geliştirmeler ve gerçekten doğrulanan kanıtlar
+- Google Drive salt okunur keşif ve erişim denetimi yapıldı; özel `MADSC55-TV/K4-Backups/K4-Fixture-Only` dizin hiyerarşisi oluşturuldu. Sahip dışı paylaşım gözlenmedi; paylaşım izinleri değiştirilmedi. Klasörler ve fixture'lar yalnız sentetik amaçlıdır; GitHub'a erişim kimlik bilgisi veya klasör ID'si gömülmedi.
+- Sentetik Google Doc oluşturulup okundu; sentetik düz metin dosyası sağlayıcıya yazıldı, tekrar indirildi ve kaynak/indirilen SHA-256 eşleşti: `af227eef0e2a924f817911442cc0e5c8af865a1a29b5d10199495eb4780e5dce`. Bu yalnız **tek sentetik dosya round-trip** kanıtıdır; gerçek dış yedek, gerçek manifest, bağımsız sandbox restore veya üretim kabulü değildir.
+- PR #20 üzerinde fail-closed dış sağlayıcı preflight, sentetik kanıt ve belge güncellemeleri: `docs/K4_REAL_BACKUP_EVIDENCE_TEMPLATE.md`; önceki K4 kabul raporu `docs/K4_EXTERNAL_BACKUP_RESTORE_ACCEPTANCE_2026-10-23.md`. Google Drive hazırlık commitleri sırasıyla `da612295`, `2f6a8938`, `d8c1a4d0`, `9c3671a0`, `939b52a9`, `717baad1`, `65aab93ac2783ca00e26311549f6e0c38dd0f8fb`.
+- PR #21 üzerinde yeni `madsc/k4_schedule_plan.py` ve `tests/test_k4_schedule_plan.py`: ayın 1'i/15'i, `Europe/Stockholm`, UTC dönüşümü, idempotency key, dry-run-only rapor, DST gap/fold fail-closed, tarih/saat sınırı ve CLI güvenlik regresyonları. `docs/K4_DEVIR_NOTU_2026-10-24.md` devir dosyası eklendi. Gerçek cron, provider API, secret veya üretim yazması **eklenmedi**.
+- PR #21 kod/test commitleri: `d96cbcdc` (modül), `183bd9c2` (testler), `c95f15f2` (DST ay testleri), `e0b40929` (UTC round-trip guard), `95e68234` (DST negatif testler), `248e38def13d03414bc138207b3e95acf47b94db` (DST düzeltmesi), `a9d3e9a4` (geçici gün koruması), `2778c5ac` (hata enjeksiyonuyla çakışan gün korumasını geri alma), `c0b0ba3854c8d674fcad66086a05fb9dc10d5009` (CLI dry-run regresyonu), `252da775` (devir belgesi). PR #21 için sonraki commit varsa HEAD yeniden sorgulanmalıdır.
+- Hata düzeltmesi: İlk DST guard belirsiz geri-saat dilimini yeterince reddetmiyordu; iki `fold` UTC offset'i karşılaştırması eklendi. Geçici sabit-gün guard'ı, geçiş günü hata enjeksiyon testini bozduğu için geri alındı. Geçersiz saat/tarih ve DST gap/fold için testler mevcut.
+
+### 2. Branch, PR, commit bağlantıları
+- PR #20 (Google Drive preflight): https://github.com/Madsc55/Madsc55-Tv/pull/20 ; branch `k4/google-drive-preflight-20261024`; son gözlenen HEAD `65aab93ac2783ca00e26311549f6e0c38dd0f8fb`; **open, unmerged**.
+- PR #21 (offline schedule): https://github.com/Madsc55/Madsc55-Tv/pull/21 ; branch `k4/offline-schedule-planner-20261024`; bu sohbetin son devir belgesi commit'i `252da775`; **open, unmerged**.
+- İlgili commitler GitHub'da `https://github.com/Madsc55/Madsc55-Tv/commit/<SHA>` adreslerinden denetlenebilir. PR'lar main'e merge edilmedi; main üzerinde bu kayıt dışında K4 koduna müdahale yapılmadı.
+
+### 3. CI kanıtları — başarı, başarısızlık, iptal, bekleme ayrımı
+- **Başarılı (yalnız test edilen eski SHA):** Actions `40072569431` ve `40072566216`, commit `248e38def13d03414bc138207b3e95acf47b94db`, completed/success. https://github.com/Madsc55/Madsc55-Tv/actions/runs/40072569431 ve https://github.com/Madsc55/Madsc55-Tv/actions/runs/40072566216 .
+- **Başarısız:** Actions `40072322407`, commit `95e682347e4c670f45941eceb2bdbb0c86646db6`, completed/failure. Sonraki DST düzeltmesi bu commit'in ardından geldi; ilk başarısızlığın log kök nedeni bu sohbette bağımsız olarak kesinleştirilmedi.
+- **İptal:** Actions `40073166736` ve `40073169230`, commit `c0b0ba3854c8d674fcad66086a05fb9dc10d5009`, completed/cancelled. https://github.com/Madsc55/Madsc55-Tv/actions/runs/40073166736 . Diğer ara commitlerin koşuları da concurrency nedeniyle iptal edildi. **Cancelled = success değildir.**
+- **Bekleyen/doğrulanmamış:** `252da775` devir commit'i ve daha yeni branch HEAD için başarılı CI bu devir anında doğrulanmadı. PR #20 branch'inin güncel SHA'sı için başarılı Actions sonucu bu sohbetten doğrulanmadı. PR #21'de en son başarılı CI, güncel CLI testi ve devir belgesinden **önceki** commit'e aittir.
+- CI iptallerinin kesin kök nedeni incelenmedi; eşzamanlı commit/concurrency olasıdır fakat doğrulanmış kök neden olarak kaydedilmez. Actions manuel dispatch/rerun yapılmadı.
+
+### 4. Eksikler ve gerçek kabul kapıları
+- **K4-15 AÇIK:** Onaylı gerçek harici yedek; kapsamlı kaynak envanteri, manifest, sağlayıcı receipt ve hash zinciri yok.
+- **K4-16 AÇIK:** Aynı gerçek dış yedeğin bağımsız izole ortamda restore'u, doğrulama ve negatif test kanıtları yok.
+- **K4-17 AÇIK:** Yetkili VOD/arşiv kapsamı, içerik eşdeğerliği ve kaynak lisans/izin kanıtı yok.
+- **K4-18 AÇIK:** Ayın 1'i/15'i gerçek zamanlayıcı, DST, kilit/çakışma önleme, gerçek koşu kanıtı ve açık üretim onayı yok. Offline zamanlama kodu bu kapıyı kapatmaz.
+- Kabul bayrakları **`external_storage_proven=false`, `production_restore_approved=false`, `production_writes=false`, `production_ready=false`** kalır. K4'ün tüm üretim kabulü **tamamlanmadı**.
+
+### 5. Güvenlik, bağımlılıklar ve değiştirilmeyenler
+- GitHub Actions Google Drive kimlik bilgileri/secrets, yetkili erişim kapsamı, servis hesabı ve saklama politikası henüz onaylı değil. Bunlar olmadan gerçek üretim aktarımı veya otomatik cron etkinleştirilmez.
+- Canlı playlist, EPG/XMLTV, YEDEKLER, YENİLER, FAVORİLER, cihaz favorileri, logo, arşiv ve üretim yedekleri değiştirilmedi; gerçek restore ve silme yapılmadı; PR merge edilmedi.
+- **K1:** korunan yazma yolları, dosya kökeni ve güvenli sandbox çıkış kapısı. **K2/K3:** kaynak/kanal envanteri, yetki ve canlı içerik kapsamı. **K5:** gerçek manifest–receipt–restore kanıtlarının bağımsız uçtan uca kabulü. Bunlar tamamlanmadan K4 üretim hazır denemez.
+- Sentetik sağlayıcı aktarımı ve offline CI, gerçek üretim restore'u veya canlı kaynakların güvenliğini kanıtlamaz.
+
+### 6. Bir sonraki çalışma önceliği
+1. Güncel main, PR #20/#21 HEAD ve Actions durumlarını tekrar oku; özellikle güncel commit için CI başarı kanıtı edin, iptallerin gerçek sebebini loglardan incele.
+2. PR #20/#21 diff ve ortak K1/K5 güvenlik sözleşmelerini incele; test edilen SHA ile güncel SHA'yı karıştırma.
+3. K4-15 için yalnız yetkili kapsam ve credentials onaylandıktan sonra gerçek dış yedek manifest/receipt planını uygula.
+4. K4-16 bağımsız sandbox restore ve negatif testleri, ardından K4-17 VOD/arşiv eşdeğerliğini gerçek kanıtla doğrula.
+5. K4-18 gerçek 1/15 zamanlayıcısını yalnız açık üretim onayı, kilitleme, idempotency, DST ve rollback kanıtıyla etkinleştir.
+6. Her aşamayı `DEVAM_NOTU.md` K4 bölümüne gerçek commit/run bağlantılarıyla güncelle; diğer K sistemlerinin kayıtlarını koru.
+
+<!-- K4_2026_10_24_HANDOFF_END -->

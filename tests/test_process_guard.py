@@ -2,6 +2,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from madsc.fixture_report_writer import write_exclusive_bytes
 from madsc.process_guard import (
@@ -55,6 +56,10 @@ class ProcessGuardTests(unittest.TestCase):
         with self.assertRaises(ProtectedWriteRejected):
             enforce_bounded_curl_process(command, url, resolve, limit,
                                          cwd=Path("/"), env={**FIXED_TOOL_ENV, "HOME": "/tmp"})
+        with patch("madsc.process_guard.shutil.which", return_value=None), \
+             self.assertRaises(ProtectedWriteRejected):
+            enforce_bounded_curl_process(command, url, resolve, limit,
+                                         cwd=Path("/"), env=dict(FIXED_TOOL_ENV))
 
     def test_ffprobe_contract_requires_identity_bound_guarded_sample(self):
         with guarded_temporary_directory("madsc-k3-video-") as workspace:

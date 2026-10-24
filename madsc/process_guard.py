@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import stat
 import sys
 import tempfile
@@ -17,7 +18,7 @@ DNS_RESOLVER = (
     "print(json.dumps([x[4][0] for x in a]))"
 )
 FIXED_TOOL_ENV = {
-    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "PATH": "/usr/local/bin:/usr/bin",
     "LANG": "C",
     "LC_ALL": "C",
 }
@@ -47,6 +48,24 @@ def _fixed_runtime(cwd: Path, env: dict[str, str], expected_cwd: Path) -> bool:
             and cwd.resolve(strict=True) == expected_cwd.resolve(strict=True))
 
 
+def _trusted_tool(name: str) -> bool:
+    """Require a root-owned executable in the fixed, non-writable search path."""
+    resolved = shutil.which(name, path=FIXED_TOOL_ENV["PATH"])
+    if not resolved:
+        return False
+    executable = Path(resolved)
+    try:
+        metadata = executable.lstat()
+        parent = executable.parent.lstat()
+    except OSError:
+        return False
+    return (executable.is_absolute() and not executable.is_symlink()
+            and stat.S_ISREG(metadata.st_mode) and metadata.st_nlink >= 1
+            and metadata.st_uid == 0 and metadata.st_mode & 0o022 == 0
+            and not executable.parent.is_symlink() and stat.S_ISDIR(parent.st_mode)
+            and parent.st_uid == 0 and parent.st_mode & 0o022 == 0)
+
+
 def enforce_dns_resolver_process(command, host: str) -> None:
     """Allow only the fixed isolated resolver child and one safe host argument."""
     expected = [sys.executable, "-I", "-B", "-c", DNS_RESOLVER, host]
@@ -64,7 +83,7 @@ def enforce_reachability_curl_process(command, url: str, resolve: str, *,
         "--resolve", resolve, url,
     ]
     if (not _safe_argument(url) or not _safe_argument(resolve) or command != expected
-            or not _fixed_runtime(cwd, env, Path("/"))):
+            or not _fixed_runtime(cwd, env, Path("/")) or not _trusted_tool("curl")):
         raise ProtectedWriteRejected("Unsafe reachability curl process contract")
 
 
@@ -81,7 +100,7 @@ def enforce_bounded_curl_process(command, url: str, resolve: str,
         str(byte_limit), "--resolve", resolve, url,
     ]
     if (not _safe_argument(url) or not _safe_argument(resolve) or command != expected
-            or not _fixed_runtime(cwd, env, Path("/"))):
+            or not _fixed_runtime(cwd, env, Path("/")) or not _trusted_tool("curl")):
         raise ProtectedWriteRejected("Unsafe bounded curl process contract")
 
 
@@ -113,7 +132,8 @@ def enforce_ffprobe_read_process(command, segment: Path, *, cwd: Path,
             or not stat.S_ISDIR(workspace_metadata.st_mode)
             or segment.resolve(strict=True) != segment
             or os.path.commonpath((str(segment), str(workspace))) != str(workspace)
-            or not _fixed_runtime(cwd, env, workspace)):
+            or not _fixed_runtime(cwd, env, workspace)
+            or not _trusted_tool("ffprobe")):
         raise ProtectedWriteRejected("Unsafe ffprobe read process contract")
 
 

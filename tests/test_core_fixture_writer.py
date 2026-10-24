@@ -34,6 +34,22 @@ class CoreFixtureWriterTests(unittest.TestCase):
             self.assertEqual(sync.call_count, 2)
             self.assertEqual((root / "fixture.txt").read_bytes(), b"second")
 
+    def test_failed_new_fixture_fsync_removes_partial_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            real_fsync = os.fsync
+            calls = 0
+            def fail_first_sync(fd):
+                nonlocal calls
+                calls += 1
+                if calls == 1:
+                    raise OSError("injected fixture sync failure")
+                return real_fsync(fd)
+            with mock.patch("madsc.core_fixture_writer.os.fsync", side_effect=fail_first_sync):
+                with self.assertRaises(OSError):
+                    write_core_fixture(root, "fixture.txt", b"partial")
+            self.assertFalse((root / "fixture.txt").exists())
+
     def test_unknown_protected_and_traversing_paths_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

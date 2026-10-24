@@ -5,6 +5,7 @@ A public watch page is NOT permission to redistribute a stream.
 from __future__ import annotations
 
 from hashlib import sha256
+from ipaddress import ip_address
 import unicodedata
 from urllib.parse import urlsplit
 from madsc.discovery import normalize_url
@@ -12,6 +13,27 @@ from madsc.discovery import normalize_url
 SOURCE_KINDS = frozenset({"official_broadcaster", "licensed_m3u", "tv_directory",
                           "official_youtube", "licensed_free_platform"})
 MAX_RECORDS = 20000
+
+
+def _public_https_url(value: str, label: str) -> str:
+    """Accept public HTTPS references only; never resolve or request a host."""
+    url = normalize_url(value)
+    if len(url) > 4096:
+        raise ValueError(label + " URL too long")
+    parts = urlsplit(url)
+    if parts.scheme != "https":
+        raise ValueError(label + " must use HTTPS")
+    host = parts.hostname or ""
+    if host == "localhost" or host.endswith(".localhost") or host.endswith(".local"):
+        raise ValueError(label + " cannot use a local hostname")
+    try:
+        address = ip_address(host)
+    except ValueError:
+        pass  # DNS names are metadata only; no DNS resolution occurs.
+    else:
+        if not address.is_global:
+            raise ValueError(label + " cannot use a non-public IP address")
+    return url
 
 
 def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = None) -> dict:
@@ -40,25 +62,13 @@ def evaluate_discovery(records: list[dict], existing_urls: set[str] | None = Non
                 raise ValueError("Invalid channel name")
             if type(kind) is not str or kind not in SOURCE_KINDS:
                 raise ValueError("Unknown source category")
-            page = normalize_url(page)
-            if len(page) > 4096:
-                raise ValueError("Evidence page URL too long")
-            if urlsplit(page).scheme != "https":
-                raise ValueError("Evidence page must use HTTPS")
+            page = _public_https_url(page, "Evidence page")
             # Source pages are evidence references, not playable media endpoints.
             raw_stream = item.get("stream_url")
-            stream = normalize_url(raw_stream) if raw_stream is not None else None
-            if stream is not None and len(stream) > 4096:
-                raise ValueError("Stream URL too long")
-            if stream is not None and urlsplit(stream).scheme != "https":
-                raise ValueError("Stream candidate must use HTTPS")
+            stream = _public_https_url(raw_stream, "Stream candidate") if raw_stream is not None else None
             license_reference = item.get("license_reference")
             if license_reference is not None:
-                license_reference = normalize_url(license_reference)
-                if len(license_reference) > 4096:
-                    raise ValueError("License URL too long")
-                if urlsplit(license_reference).scheme != "https":
-                    raise ValueError("License reference must use HTTPS")
+                license_reference = _public_https_url(license_reference, "License reference")
             rights_verified = item.get("redistribution_permission_verified", False)
             if type(rights_verified) is not bool:
                 raise ValueError("Invalid rights verification flag")

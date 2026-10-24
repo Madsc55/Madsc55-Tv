@@ -12,6 +12,8 @@ PROTECTED = {"calisanlar.m3u", "yeniler", "yedekler", "hepsi", "favoriler", "epg
 def safe_relative_path(raw: str) -> bool:
     if not isinstance(raw, str) or not raw or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw):
         return False
+    if unicodedata.normalize("NFKC", raw) != raw:
+        return False
     if "\\" in raw:
         return False
     p = Path(raw)

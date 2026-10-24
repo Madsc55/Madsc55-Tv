@@ -17,3 +17,13 @@ No live probing, production playlist writes, workflow dispatch, secrets changes,
 The runner records `GITHUB_SHA`, `GITHUB_RUN_ID`, `GITHUB_RUN_ATTEMPT`, repository and workflow ref as **untrusted context claims** inside the JSON. The SHA-256 sidecar supports independent byte comparison but is not cryptographic identity proof. Real provenance acceptance requires verifying the workflow run and artifact via GitHub's API, matching commit and run attempt, and obtaining/verifying a trusted artifact attestation or signed manifest.
 
 Do not add source entries until their authoritative rights documentation has been manually reviewed. Do not merge or manually dispatch without the project's normal approval and CI process.
+
+## Independent byte-level verification
+
+Run `python -m madsc.k2_artifact_verify reports/k2-daily-evidence.json --trusted-sha256 <digest>` with a digest obtained from a separately trusted channel. This checks file bytes and the internal review-only report. **It does not validate who generated the file.** Do not use a digest downloaded from the same untrusted artifact as independent evidence.
+
+## Rights verification acceptance ledger
+
+For each proposed broadcaster, record its official legal entity and domain, a directly accessible authoritative rights document, territory, exact stream/channel scope, allowed use (personal viewing vs redistribution), expiration/revocation terms, reviewer identity and review date. Verify the document independently against the rights holder. Mark `license_verified` only after a separately reviewed rights ledger has passed; the current automated K2 candidate report deliberately keeps this flag false.
+
+The empty approved registry means **zero actual broadcasters and zero licenses have been verified** in this branch. A scheduled offline scan of this registry cannot create missing legal evidence.

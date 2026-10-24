@@ -78,8 +78,13 @@ def write_core_fixture(root: Path, relative_path: str, payload: bytes, *,
             except FileExistsError:
                 pass
             parent_fd = os.open(parts[0], directory_flags, dir_fd=root_fd)
-        flags = os.O_WRONLY | nofollow | (0 if overwrite
-                                          else os.O_CREAT | os.O_EXCL)
+        # O_NONBLOCK prevents a swapped FIFO from hanging the writer before
+        # fstat can reject its non-regular descriptor.
+        nonblock = getattr(os, "O_NONBLOCK", None)
+        if not isinstance(nonblock, int):
+            raise PermissionError("Nonblocking secure fixture open is unavailable")
+        flags = os.O_WRONLY | nofollow | nonblock | (0 if overwrite
+                                                     else os.O_CREAT | os.O_EXCL)
         descriptor = os.open(parts[-1], flags, 0o600, dir_fd=parent_fd)
         metadata = os.fstat(descriptor)
         if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:

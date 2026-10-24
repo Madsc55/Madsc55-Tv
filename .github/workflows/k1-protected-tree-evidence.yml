@@ -1,0 +1,24 @@
+name: K1 Protected Tree Read-Only Evidence
+on:
+  pull_request:
+    paths:
+      - 'madsc/k1_protected_tree_evidence.py'
+      - 'tests/test_k1_runtime_26_immutability.py'
+      - '.github/workflows/k1-protected-tree-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  readonly-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify 26 sandbox denial cases
+        run: python -B -m unittest -v tests.test_k1_runtime_26_immutability
+      - name: Read-only protected tracked file SHA256 evidence
+        run: python -B -m madsc.k1_protected_tree_evidence

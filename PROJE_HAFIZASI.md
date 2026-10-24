@@ -2853,3 +2853,9 @@ Tarayıcıda generic `*.open` dalı unqualified `open(path, mode)` çağrısın�
 - `472e996a766a202742b7239329490d1cfd560c80`: `-I -B` sabit runpy bootstrap workspace cwd gölgelemesini engelliyor; capability exact ana modül dosyasının descriptor kimliği ve SHA-256'sına bağlı. `a4d4efe7bea084810e41204bd0aebaec68a6f9b5`: bu descriptor salt-okunur disposition oldu.
 - İlk hedefli çalışmadaki eski argv beklentisi 1 error verdi ve düzeltilmeden başarı sayılmadı. Son hedefli 121/121 ile 102/102; tam offline 1542/1542 ve beş izole kapı başarılı. Envanter 113/116/20, guard 116/116.
 - Sayaçlar sabit: süreç etkisi 0/6, runtime 0/26, parity 0/92, görev 0/22, production false. Sonraki yerel iş beklenen/beklenmeyen workspace yan etkilerinin pre/post kimlik ölçümüdür; dış kanıtlar açık kalır.
+
+
+## 24 Ekim 2026 — K1 parity workspace etki ölçümü
+- `58b68ca7586fa03978faeaa0d78b9ae7be9e3ca6`, yalnız opt-in K1/K4/K5 parity child'ı çevresinde bounded pre/post workspace kimlik envanteri uygular. Descriptor-relative `O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_NONBLOCK` yürüyüş symlink takip etmez, özel dosyada bloklanmaz ve içerik okumaz. K1 için sıfır, K4/K5 için yalnız exact tek output create + parent metadata etkisi izinlidir.
+- Create/delete/rewrite-and-restore, symlink retarget ve FIFO negatifleri ile üç gerçek consumer pozitif koşusu doğrulandı. İlk hedefli negatif koşu 2 failure verdi; K1 normal output'un failure halinde yazılması engellenerek son paketler 127/127 ve 111/111 oldu. Exact içerikte tam offline **1550/1550**, beş K kapısı ve audit başarılı; envanter 114/116/22, yeni iki descriptor proven-read-only.
+- Bu mekanizma yalnız repository içi kalıcı etkileri kapatır; dış filesystem veya bağımsız gerçek execution/artifact kökeni kanıtı değildir. Sayaçlar 0/6 süreç etkisi, 0/26 runtime, 0/92 parity, 0/22 görev ve production false. Sonraki adım izinli etki ölçüm receipt'ini başarı snapshot/manifest hash zincirine bağlamaktır.

@@ -22,7 +22,7 @@
 
 ## 1.039 girdilik liste ve kalite alternatifleri
 
-**Mevcut liste içeriği ve 1.039 sayısı bu dalda kaynak dosya üzerinden doğrulanamadı.** Bu nedenle kanal bazında eksik kanal, 720p/1080p/4K alternatif, codec ve gerçek akış sonuçları üretilmedi. Bunlar için yalnız yetkili/izinli envanterin salt okunur kopyası, hak kanıtı ve açık izinli teknik ölçüm gerekir. Bir platformun genel 1080p profili, listedeki tekil kanalın 1080p olduğunu göstermez.
+**Güncel main dalındaki `MADSC55_TV_IBO_CALISANLAR_TEST.m3u8` kaynak dosyasında 1.039 `#EXTINF` kaydı doğrulandı.** Salt okunur sayımda 376 benzersiz tam URL, 663 tekrarlanan URL satırı, 382 benzersiz görünen kanal adı ve 331 boş/eksik `tvg-id` kaydı bulundu. Ayrıntılar `docs/K2_ENVANTER_SALT_OKUNUR_DENETIM_2026-10-24.md` dosyasında. Bu sayımlar gerçek akış erişimi veya yayın hakkı kanıtı değildir. Bu nedenle kanal bazında eksik kanal, 720p/1080p/4K alternatif, codec ve gerçek akış sonuçları üretilmedi. Bunlar için yalnız yetkili/izinli envanterin salt okunur kopyası, hak kanıtı ve açık izinli teknik ölçüm gerekir. Bir platformun genel 1080p profili, listedeki tekil kanalın 1080p olduğunu göstermez.
 
 ## Kabul ve sonraki adım
 1. Korumalı playlist'e dokunmadan, salt okunur envanterin URL hash'leri ve tvg-id'leriyle eşleştirme.

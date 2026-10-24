@@ -136,6 +136,23 @@ class CoreFixtureWriterTests(unittest.TestCase):
             self.assertEqual(target.read_bytes(), b"original")
             self.assertEqual(external.read_bytes(), b"external")
 
+    def test_overwrite_identity_check_uses_open_parent_descriptor(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = write_core_fixture(root, "fixture.txt", b"original")
+            real_stat = os.stat
+            checked = False
+            def track_descriptor_stat(path, *args, **kwargs):
+                nonlocal checked
+                if path == "fixture.txt" and kwargs.get("dir_fd") is not None:
+                    checked = True
+                return real_stat(path, *args, **kwargs)
+            with mock.patch("madsc.core_fixture_writer.os.stat",
+                            side_effect=track_descriptor_stat):
+                write_core_fixture(root, "fixture.txt", b"new", overwrite=True)
+            self.assertTrue(checked)
+            self.assertEqual(target.read_bytes(), b"new")
+
     def test_unknown_protected_and_traversing_paths_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

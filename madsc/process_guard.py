@@ -6,6 +6,7 @@ import stat
 import sys
 import tempfile
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from madsc.write_path_audit import ProtectedWriteRejected
 
@@ -23,6 +24,18 @@ def _safe_argument(value: str) -> bool:
             and not any(ord(char) < 0x20 or ord(char) == 0x7f for char in value))
 
 
+def _safe_https_url(value: str) -> bool:
+    """Reject option-shaped or credential-bearing curl URL arguments."""
+    if not _safe_argument(value) or not value.startswith("https://"):
+        return False
+    try:
+        parsed = urlsplit(value)
+        return (parsed.scheme == "https" and bool(parsed.hostname)
+                and parsed.username is None and parsed.password is None)
+    except ValueError:
+        return False
+
+
 def enforce_dns_resolver_process(command, host: str) -> None:
     """Allow only the fixed isolated resolver child and one safe host argument."""
     expected = [sys.executable, "-I", "-B", "-c", DNS_RESOLVER, host]
@@ -38,7 +51,7 @@ def enforce_reachability_curl_process(command, url: str, resolve: str) -> None:
         "--max-filesize", "65536", "--range", "0-65535",
         "--resolve", resolve, url,
     ]
-    if not _safe_argument(url) or not _safe_argument(resolve) or command != expected:
+    if not _safe_https_url(url) or not _safe_argument(resolve) or command != expected:
         raise ProtectedWriteRejected("Unsafe reachability curl process contract")
 
 
@@ -53,7 +66,7 @@ def enforce_bounded_curl_process(command, url: str, resolve: str,
         "--max-time", "9", "--connect-timeout", "4", "--max-filesize",
         str(byte_limit), "--resolve", resolve, url,
     ]
-    if not _safe_argument(url) or not _safe_argument(resolve) or command != expected:
+    if not _safe_https_url(url) or not _safe_argument(resolve) or command != expected:
         raise ProtectedWriteRejected("Unsafe bounded curl process contract")
 
 

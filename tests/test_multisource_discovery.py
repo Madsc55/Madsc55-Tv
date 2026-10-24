@@ -1,0 +1,108 @@
+import unittest
+
+from madsc.multisource_discovery import evaluate_discovery
+
+
+class MultiSourceDiscoveryTests(unittest.TestCase):
+    def setUp(self):
+        self.item = {"name": "Example Public Channel", "source_kind": "official_broadcaster",
+                     "source_page": "https://example.org/watch",
+                     "stream_url": "https://example.org/live.m3u8"}
+
+    def test_review_only_even_with_claimed_license(self):
+        row = dict(self.item, redistribution_permission_verified=True,
+                   license_reference="https://example.org/rights")
+        report = evaluate_discovery([row])
+        candidate = report["candidates"][0]
+        for flag in ("license_verified", "live_verified", "resolution_verified",
+                     "codec_verified", "production_ready", "auto_add_allowed"):
+            self.assertFalse(candidate[flag])
+        self.assertFalse(report["network_probed"])
+        self.assertFalse(report["production_writes"])
+
+    def test_existing_stream_and_repeated_stream_are_deduplicated(self):
+        rows = [self.item, dict(self.item, name="Mirror")]
+        report = evaluate_discovery(rows)
+        self.assertEqual(len(report["candidates"]), 1)
+        self.assertEqual(len(report["duplicates"]), 1)
+        existing = evaluate_discovery([self.item], {"https://example.org/live.m3u8"})
+        self.assertEqual(len(existing["candidates"]), 0)
+
+    def test_source_categories_and_watch_page_only(self):
+        kinds = ("official_broadcaster", "licensed_m3u", "tv_directory",
+                 "official_youtube", "licensed_free_platform")
+        for kind in kinds:
+            with self.subTest(kind=kind):
+                report = evaluate_discovery([dict(self.item, source_kind=kind,
+                                                   stream_url=None)])
+                self.assertEqual(len(report["candidates"]), 1)
+                self.assertIsNone(report["candidates"][0]["stream_url"])
+
+    def test_invalid_inputs_fail_closed(self):
+        for change in ({"source_kind": "pirated"},
+                       {"source_page": "http://example.org"},
+                       {"stream_url": "file:///etc/passwd"},
+                       {"stream_url": "http://example.org/live.m3u8"},
+                       {"redistribution_permission_verified": "yes"},
+                       {"license_reference": "http://example.org/rights"}):
+            with self.subTest(change=change):
+                report = evaluate_discovery([dict(self.item, **change)])
+                self.assertEqual(len(report["rejected"]), 1)
+                self.assertEqual(len(report["candidates"]), 0)
+
+    def test_malformed_category_and_surrogate_name_are_rejected(self):
+        for change in ({"source_kind": []}, {"source_kind": {}},
+                       {"name": "Unsafe" + chr(0xD800) + "Channel"},
+                       {"name": "Hidden" + chr(0x200B) + "Name"},
+                       {"name": "Broken" + chr(0x2028) + "Name"},
+                       {"name": "Backslash" + chr(92) + "Name"}):
+            with self.subTest(change=repr(change)):
+                result = evaluate_discovery([dict(self.item, **change)])
+                self.assertEqual(result["candidates"], [])
+                self.assertEqual(len(result["rejected"]), 1)
+
+    def test_existing_inventory_rejects_malformed_urls(self):
+        for inventory in ({"file:///tmp/playlist"}, {None}, {123}):
+            with self.subTest(inventory=inventory), self.assertRaises(ValueError):
+                evaluate_discovery([self.item], inventory)
+
+    def test_shared_source_page_preserves_distinct_channel_names(self):
+        first = dict(self.item, stream_url=None, name="Channel One")
+        second = dict(self.item, stream_url=None, name="Channel Two")
+        repeated = dict(self.item, stream_url=None, name="channel one")
+        report = evaluate_discovery([first, second, repeated])
+        self.assertEqual(len(report["candidates"]), 2)
+        self.assertEqual(len(report["duplicates"]), 1)
+
+    def test_overlong_urls_are_rejected(self):
+        long_url = "https://example.org/" + "a" * 4096
+        for field in ("source_page", "stream_url", "license_reference"):
+            with self.subTest(field=field):
+                report = evaluate_discovery([dict(self.item, **{field: long_url})])
+                self.assertEqual(report["candidates"], [])
+                self.assertEqual(len(report["rejected"]), 1)
+
+    def test_overlong_existing_inventory_is_rejected(self):
+        with self.assertRaises(ValueError):
+            evaluate_discovery([self.item], {"https://example.org/" + "a" * 4096})
+
+    def test_local_and_nonpublic_ip_sources_are_rejected(self):
+        blocked = ("https://localhost/live", "https://channel.local/watch",
+                   "https://127.0.0.1/live", "https://10.0.0.2/live",
+                   "https://192.168.1.10/live", "https://[::1]/live",
+                   "https://[fe80::1]/live", "https://169.254.169.254/metadata")
+        for field in ("source_page", "stream_url", "license_reference"):
+            for url in blocked:
+                with self.subTest(field=field, url=url):
+                    report = evaluate_discovery([dict(self.item, **{field: url})])
+                    self.assertEqual(report["candidates"], [])
+                    self.assertEqual(len(report["rejected"]), 1)
+
+    def test_public_ip_literal_is_still_review_only(self):
+        report = evaluate_discovery([dict(self.item, stream_url="https://8.8.8.8/live")])
+        self.assertEqual(len(report["candidates"]), 1)
+        self.assertFalse(report["candidates"][0]["production_ready"])
+
+    def test_bounded_input(self):
+        with self.assertRaises(ValueError):
+            evaluate_discovery([self.item] * 20001)

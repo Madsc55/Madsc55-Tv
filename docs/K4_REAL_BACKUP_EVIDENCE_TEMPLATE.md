@@ -2,6 +2,20 @@
 
 Bu dosya bir **şablondur**, gerçek yedekleme yapıldığını kanıtlamaz. Gizli anahtar, erişim URL'si, parola, kişisel veri veya üretim playlist içeriği buraya konulmaz.
 
+## 24 Ekim 2026 — K4 ilerleme kanıtı ve açık kabul kapıları
+
+**Doğrulanan yalnızca sentetik işlemler:** Drive hedef klasörü ve ayrı fixture alt klasörü oluşturuldu; Google Docs test belgesi yazılıp geri okundu; 106 baytlık sentetik düz metin dosyası Drive'a ham dosya olarak yüklendi ve geri indirildi. Bağımsız indirilen dosya ile kaynak SHA-256 eşleşmesi `af227eef0e2a924f817911442cc0e5c8af865a1a29b5d10199495eb4780e5dce` olarak raporlandı.
+
+**K4-15 açık:** Sentetik dosya nesnesi, üretim kapsamı ve manifesti içeren gerçek yedek makbuzu değildir. Yetkilendirilmiş kaynak envanteri, sağlayıcı tarafı yedek işi, nesne kapsamı, saklama politikası ve onay beklenir.
+
+**K4-16 açık:** Tek sentetik dosyanın geri indirilmesi, gerçek yedekten bağımsız restore ağacı veya negatif test değildir.
+
+**K4-17 açık:** Korunan VOD/arşivlerin salt-okunur kapsam envanteri ve izinli test kopyası bulunmuyor.
+
+**K4-18 açık:** Ayın 1'i/15'i üretim zamanlayıcısı ve gerçek run kanıtı yok. Fixture-only workflow'u üretim verisine bağlamak veya otomatik tetiklemek yasak.
+
+**Operasyonel engel:** ChatGPT Google Drive bağlantısı, GitHub Actions'a otomatik kimlik bilgisi aktarmaz. Kısıtlı OAuth/iş yükü kimliği ve kullanıcıdan açık üretim izni olmadan yedekleyici devreye alınamaz. Mevcut üretim koruma bayrakları false kalır.
+
 ## 24 Ekim 2026 — Sentetik ham dosya Drive yükleme/geri indirme SHA-256 deneyi
 
 - `K4-Fixture-Only` klasöründe Google Docs test içeriği `text/plain` biçiminde dışa aktarıldı, `upload_file` ile yeni bir **ham .txt** Drive nesnesi olarak yüklendi.
@@ -58,11 +72,11 @@ Bu dosya bir **şablondur**, gerçek yedekleme yapıldığını kanıtlamaz. Giz
 6. K4-16 için aynı nesne kimliğinden **bağımsız temiz sandbox** alanına indirme, tam envanter ve hash eşitliği, eksik/bozuk dosya negatif testi ve üretime sıfır yazma kanıtı gerekir.
 7. K4-17 için yetkili VOD/arşiv salt-okunur envanteri olmadan kapsam eşdeğerliği ilan edilmez. K4-18 için saat dilimi (UTC veya Europe/Stockholm), DST davranışı, 1/15 takvimi, başarısızlık uyarısı, tekrar deneme ve çift çalıştırma kilidi onaylanmadan scheduler etkinleştirilmez.
 
-**Mevcut durum:** Google Drive seçildi; bağlantı, klasör yetkisi, gerçek aktarım ve gerçek restore henüz doğrulanmadı. `.github/workflows/madsc-04-yedek.yml` fixture-only kalır. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.
+**Mevcut durum (24 Ekim son güncelleme):** Google Drive bağlantısı, özel klasör, sentetik belge ve ham dosya yazma/geri indirme testi doğrulandı; gerçek üretim yedeği, bağımsız restore ve GitHub Actions kimliği henüz doğrulanmadı. `.github/workflows/madsc-04-yedek.yml` fixture-only kalır. `external_storage_proven=false`, `production_restore_approved=false`, `production_ready=false`.
 
 ## K4-15 — Harici yedek teslimi (BEKLİYOR)
 
-- Sağlayıcı / bağımsız hedef türü: **henüz belirlenmedi**
+- Sağlayıcı / bağımsız hedef türü: **Google Drive seçildi; hedef klasör ve sentetik aktarım doğrulandı, gerçek yedek kapsamı onaysız**
 - Kaynak kapsamı ve salt-okunur envanter kimliği: **kanıt bekleniyor**
 - Başlama / bitiş zamanları, UTC: **kanıt bekleniyor**
 - Gerçek iş kimliği ve sağlayıcı tarafından verilen teslim makbuzu: **kanıt bekleniyor**

@@ -60,6 +60,8 @@ def assess(paths):
                     raise ValueError("Inconsistent successful probe evidence")
             elif row.get("status") == "manifest_only":
                 raise ValueError("Unverified probe marked as manifest-only")
+            if row.get("status") == "unverified" and (row.get("hls_manifest_seen") is not False or type(row.get("https_reachable")) is not bool):
+                raise ValueError("Incomplete unverified probe observations")
             if row.get("https_reachable") is not None and row.get("https_reachable") is not True and row.get("https_reachable") is not False:
                 raise ValueError("Invalid HTTPS observation type")
         snapshots.append((stamp.astimezone(timezone.utc), set(ids), count))

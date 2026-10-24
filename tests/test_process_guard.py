@@ -46,6 +46,28 @@ class ProcessGuardTests(unittest.TestCase):
         with self.assertRaises(ProtectedWriteRejected):
             enforce_bounded_curl_process(command, url, resolve, limit + 1)
 
+    def test_curl_guards_reject_option_shaped_and_non_https_urls(self):
+        resolve = "example.org:443:8.8.8.8"
+        for url in ("-o", "--output", "file:///etc/passwd",
+                    "http://example.org/live.m3u8", "https://",
+                    "https://user:password@example.org/live.m3u8"):
+            with self.subTest(url=url):
+                reachability = [
+                    "curl", "-q", "--silent", "--show-error", "--fail",
+                    "--noproxy", "*", "--proto", "=https", "--max-time", "9",
+                    "--connect-timeout", "4", "--max-filesize", "65536",
+                    "--range", "0-65535", "--resolve", resolve, url,
+                ]
+                bounded = [
+                    "curl", "-q", "-fsS", "--noproxy", "*", "--proto", "=https",
+                    "--max-time", "9", "--connect-timeout", "4",
+                    "--max-filesize", "188", "--resolve", resolve, url,
+                ]
+                with self.assertRaises(ProtectedWriteRejected):
+                    enforce_reachability_curl_process(reachability, url, resolve)
+                with self.assertRaises(ProtectedWriteRejected):
+                    enforce_bounded_curl_process(bounded, url, resolve, 188)
+
     def test_ffprobe_contract_requires_identity_bound_guarded_sample(self):
         with guarded_temporary_directory("madsc-k3-video-") as workspace:
             segment = workspace / "sample.ts"

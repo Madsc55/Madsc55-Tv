@@ -47,7 +47,10 @@ def _snapshot_one(root: Path, rel: str) -> dict:
 
 
 def snapshot(root: str | Path, protected_paths: list[str]) -> dict:
-    root = Path(root).resolve(strict=True)
+    supplied_root = Path(root)
+    if supplied_root.is_symlink():
+        raise ValueError("Root must not be a symlink")
+    root = supplied_root.resolve(strict=True)
     if not root.is_dir() or not isinstance(protected_paths, list) or not protected_paths:
         raise ValueError("Root and nonempty protected file list required")
     if len(protected_paths) > 10000 or len(protected_paths) != len(set(protected_paths)):
@@ -62,7 +65,13 @@ def compare(before: dict, after: dict) -> dict:
     if before.get("root") != after.get("root"):
         raise ValueError("Snapshot root changed")
     a, b = before.get("files"), after.get("files")
-    if not isinstance(a, list) or not isinstance(b, list):
+    if not isinstance(a, list) or not isinstance(b, list) or not a or not b:
+        raise ValueError("Missing protected-file evidence")
+    if any(not isinstance(x, dict) or not isinstance(x.get("path"), str) for x in a + b):
+        raise ValueError("Malformed protected-file evidence")
+    if len({x["path"] for x in a}) != len(a) or len({x["path"] for x in b}) != len(b):
+        raise ValueError("Duplicate protected-file evidence")
+    if False:
         raise ValueError("Invalid snapshot files")
     unchanged = a == b
     return {"unchanged": unchanged, "files_checked": len(a), "before": a,

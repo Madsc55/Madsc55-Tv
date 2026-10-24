@@ -31,7 +31,7 @@ Durum: AÇIK / henüz üretim kabulü yok.
 
 ## Güvenlik sınırları
 - Üretim M3U/XMLTV, favori, logo, yedek, arşiv ve cihaz verilerine dokunma.
-- PR #71'i otomatik birleştirme.
+- K3 taslak PR #10'u otomatik birleştirme.
 - Offline CI'yi canlı yayın kabulü olarak sunma.
 - K3-13 açık kalsın.
 
@@ -54,3 +54,12 @@ Audit dalı değişiklikleri PR olarak incelemeye sunulsun; Actions CI doğrulam
 - Önceki 1.484 testlik çalışmadaki iki hata düzeltildikten sonra offline gate geçti. Bu başarı yalnızca o commit'in offline test kapsamını kanıtlar.
 - Online manifest/video workflow'ları bu oturumda başlatılmadı; gerçek HLS video/ses, Pages/XMLTV, 6 saat süreklilik ve IBO Player Pro doğrulanmış değildir.
 - K3-13 açık kalır; audit dalı PR ile incelemede, main'e birleştirilmedi.
+
+
+## Güncel K3 CI ve kabul durumu (24 Ekim)
+- K3 değişiklikleri taslak PR #10 üzerindedir: https://github.com/Madsc55/Madsc55-Tv/pull/10
+- Offline run 40071744359 (d6d0341e): SUCCESS; sadece offline test kanıtıdır.
+- Offline run 40071899872 (4babb5c7): FAILURE; blocked probe test fixture'ı manifest gözlemi çelişkisi üretti.
+- Fixture, gerçek blocked probe çıktısına uygun olarak manifest gözlem alanı kaldırılarak düzeltildi (b4079a95). Run 40072187564 kontrol sırasında devam ediyordu; başarı iddiası yok.
+- K3-13 AÇIK: gerçek ağda 75 aday, altı saat aralıklı üç bağımsız kanıt, ffprobe video/ses, Pages/XMLTV, logolar ve son IBO Player Pro cihaz kabulü gerekir.
+- Manifest-only raporu decoded video/audio veya tam üretim kabulü kanıtı değildir.

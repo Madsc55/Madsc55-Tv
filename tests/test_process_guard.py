@@ -128,7 +128,7 @@ class ProcessGuardTests(unittest.TestCase):
         capability = authorize_parity_consumer_process(
             command, consumer="k1", root=root, timeout_seconds=30)
         environment = parity_process_environment(capability)
-        for invalid_capability in (None, object(), {}, "forged"):
+        for invalid_capability in (None, object(), {}, "forged", 0):
             with self.subTest(capability=repr(invalid_capability)):
                 with self.assertRaises(ProtectedWriteRejected):
                     validate_parity_process_capability(

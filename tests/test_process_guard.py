@@ -117,6 +117,17 @@ class ProcessGuardTests(unittest.TestCase):
             enforce_parity_consumer_process(k5, consumer="k5", root=root,
                                             run_id="123", commit_sha="A" * 40)
 
+    def test_parity_capability_rejects_nonfinite_timeouts(self):
+        root = Path(__file__).resolve().parents[1]
+        command = [sys.executable, "-m", "src.madsc_guard",
+                   "config/shadow_manifest.json"]
+        for timeout in (float("nan"), float("inf"), float("-inf")):
+            with self.subTest(timeout=repr(timeout)):
+                with self.assertRaises(ProtectedWriteRejected):
+                    authorize_parity_consumer_process(
+                        command, consumer="k1", root=root,
+                        timeout_seconds=timeout)
+
     def test_parity_capability_binds_command_root_identity_and_timeout(self):
         root = Path(__file__).resolve().parents[1]
         command = [sys.executable, "-m", "src.madsc_guard",

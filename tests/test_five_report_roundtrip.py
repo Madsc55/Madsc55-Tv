@@ -1,14 +1,37 @@
 """Actual producer/serialized-file/consumer checks for all five isolated stages."""
 import io
 import json
+import tempfile
 import unittest
 from contextlib import redirect_stdout
+from pathlib import Path
 from unittest.mock import patch
-from madsc.offline_five_gate import assess_report_roundtrip
+from madsc.offline_five_gate import (assess_report_roundtrip,
+                                     create_offline_package)
 from madsc.offline_gate import main
+from madsc.write_path_audit import ProtectedWriteRejected
 
 
 class FiveReportRoundtripTests(unittest.TestCase):
+    def test_offline_package_creator_is_exclusive_and_fixed_name_only(self):
+        with tempfile.TemporaryDirectory(prefix="madsc-offline-") as directory:
+            root = Path(directory)
+            package = create_offline_package(root, "k1")
+            self.assertTrue(package.is_dir())
+            with self.assertRaises(ProtectedWriteRejected):
+                create_offline_package(root, "k1")
+            with self.assertRaises(ProtectedWriteRejected):
+                create_offline_package(root, "k6")
+
+    def test_offline_package_rejects_nested_root_before_descriptor_open(self):
+        with tempfile.TemporaryDirectory(prefix="madsc-offline-") as directory:
+            nested = Path(directory) / "nested"
+            nested.mkdir()
+            with patch("madsc.offline_five_gate.os.open") as descriptor_open:
+                with self.assertRaises(ProtectedWriteRejected):
+                    create_offline_package(nested, "k1")
+            descriptor_open.assert_not_called()
+
     def test_actual_five_producers_are_consumed_without_modifying_bytes(self):
         report = assess_report_roundtrip()
         self.assertTrue(report['passed'])

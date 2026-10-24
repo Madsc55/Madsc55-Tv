@@ -368,6 +368,24 @@ def run_commands():
             "tempfile.TemporaryDirectory [temporary filesystem creation requires review]"
         ])
 
+    def test_offline_package_mutations_have_direct_k1_guard_dominance(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        mutations = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/offline_five_gate.py"
+            and row["scope"] == "create_offline_package"
+        ]
+        self.assertGreaterEqual(len(mutations), 2)
+        self.assertTrue(all(row["guard_control_flow_verified"]
+                            for row in mutations))
+        roundtrip_mutations = [
+            row for row in report["callsite_inventory"]
+            if row["path"] == "madsc/offline_five_gate.py"
+            and row["scope"] == "assess_report_roundtrip"
+        ]
+        self.assertEqual(roundtrip_mutations, [])
+
     def test_legacy_note_atomic_replace_has_direct_k1_guard(self):
         root = Path(__file__).resolve().parents[1]
         report = scan_python_tree(root)
@@ -957,6 +975,76 @@ def mutate(path, fd):
                          ["writer.writeheader", "writer.writerow", "writer.writerows",
                           "path.setxattr", "path.removexattr", "path.utime"])
         self.assertTrue(all(row["review_required"] for row in rows))
+
+    def test_direct_stringio_csv_writer_is_source_bound_non_write(self):
+        source = '''
+import csv
+import io
+def render():
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["a"])
+    writer.writerows([["b"]])
+'''
+        self.assertEqual(scan_python_source(source), [])
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "renderer.py").write_text(source, encoding="utf-8")
+            report = scan_python_tree(root)
+        dispositions = report["non_write_dispositions"]
+        self.assertEqual(len(dispositions), 2)
+        self.assertTrue(all(
+            row["disposition"] == "proven_in_memory_csv_serializer"
+            and row["review_required"] is False
+            for row in dispositions
+        ))
+
+    def test_rebound_csv_module_or_non_stringio_target_stays_open(self):
+        source = '''
+import csv
+import io
+csv = plugin
+def rebound():
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["a"])
+def external(output):
+    writer = csv.writer(output)
+    writer.writerows([["b"]])
+'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows],
+                         ["writer.writerow", "writer.writerows"])
+
+    def test_locally_shadowed_or_globally_rebound_csv_stays_open(self):
+        source = '''
+import csv
+import io
+def shadowed(csv):
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["a"])
+def rebind():
+    global csv
+    csv = plugin
+'''
+        rows = scan_python_source(source)
+        self.assertEqual([row["api"] for row in rows], ["writer.writerow"])
+
+    def test_legacy_retest_csv_serializer_is_dispositioned_in_memory(self):
+        root = Path(__file__).resolve().parents[1]
+        report = scan_python_tree(root)
+        rows = [
+            row for row in report["non_write_dispositions"]
+            if row["path"] == "madsc/legacy_retest_390.py"
+            and row["scope"] == "evaluate_entries"
+        ]
+        self.assertEqual([row["api"] for row in rows],
+                         ["writer.writerow", "writer.writerows"])
+        self.assertTrue(all(
+            row["disposition"] == "proven_in_memory_csv_serializer"
+            for row in rows
+        ))
 
     def test_scan_tree_rejects_source_replaced_by_symlink_during_read(self):
         from contextlib import contextmanager

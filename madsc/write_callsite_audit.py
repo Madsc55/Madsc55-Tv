@@ -22,6 +22,7 @@ _GUARDS = {
     "enforce_local_turkish_tv_test_playlist",
     "enforce_local_evidence_path",
     "enforce_core_fixture_path",
+    "enforce_offline_package_path",
 }
 _MUTATING_METHODS = {
     # File-object writes matter too: an open(..., "w") may be wrapped or
@@ -220,6 +221,54 @@ def _direct_local_flag_bindings(node) -> dict[str, ast.AST]:
     return direct
 
 
+def _direct_module_import_bindings(tree: ast.Module) -> dict[str, str]:
+    """Return module imports that are not rebound anywhere at module scope."""
+    collector = _LocalBindingCollector()
+    for statement in tree.body:
+        collector.visit(statement)
+    if collector.dynamic_scope:
+        return {}
+    imported = {}
+    for statement in tree.body:
+        if isinstance(statement, ast.Import):
+            for alias in statement.names:
+                local = alias.asname or alias.name.split(".", 1)[0]
+                if collector.stores.get(local) == 1:
+                    imported[local] = alias.name
+        elif isinstance(statement, ast.ImportFrom) and statement.module:
+            for alias in statement.names:
+                local = alias.asname or alias.name
+                if collector.stores.get(local) == 1:
+                    imported[local] = f"{statement.module}.{alias.name}"
+    nested_globals = {
+        name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Global)
+        for name in node.names
+    }
+    for name in nested_globals:
+        imported.pop(name, None)
+    return imported
+
+
+def _scope_local_names(node) -> set[str]:
+    """Return names that shadow module imports in one lexical scope."""
+    collector = _LocalBindingCollector()
+    body = [node.body] if isinstance(node, ast.Lambda) else node.body
+    for statement in body:
+        collector.visit(statement)
+    names = set(collector.stores) - collector.external
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+        names.update(arg.arg for arg in (*node.args.posonlyargs,
+                                         *node.args.args,
+                                         *node.args.kwonlyargs))
+        if node.args.vararg:
+            names.add(node.args.vararg.arg)
+        if node.args.kwarg:
+            names.add(node.args.kwarg.arg)
+    return names
+
+
 def _direct_guard_line(statement) -> int | None:
     """Return a guard line only when the statement executes it unconditionally."""
     value = statement.value if isinstance(statement, ast.Expr) else None
@@ -415,9 +464,42 @@ def _is_proven_text_replace(node: ast.Call) -> bool:
     return False
 
 
-def _classify_call(node: ast.Call, flag_bindings=None) -> tuple[str, str]:
+def _import_bound_call_name(node: ast.Call, module_imports) -> str:
+    """Resolve only a direct, non-rebound module import at a callsite."""
+    if isinstance(node.func, ast.Name):
+        return module_imports.get(node.func.id, "")
+    if (isinstance(node.func, ast.Attribute)
+            and isinstance(node.func.value, ast.Name)):
+        module = module_imports.get(node.func.value.id)
+        return f"{module}.{node.func.attr}" if module else ""
+    return ""
+
+
+def _is_proven_in_memory_csv_mutation(node: ast.Call, bindings,
+                                      module_imports) -> bool:
+    """Prove csv writer methods target a direct local io.StringIO buffer."""
+    if (not isinstance(node.func, ast.Attribute)
+            or node.func.attr not in {"writeheader", "writerow", "writerows"}
+            or not isinstance(node.func.value, ast.Name)):
+        return False
+    writer = _resolve_local_expression(node.func.value, bindings)
+    if (not isinstance(writer, ast.Call) or not writer.args
+            or any(keyword.arg is None for keyword in writer.keywords)
+            or _import_bound_call_name(writer, module_imports)
+            not in {"csv.writer", "csv.DictWriter"}):
+        return False
+    buffer = _resolve_local_expression(writer.args[0], bindings)
+    return (isinstance(buffer, ast.Call)
+            and _import_bound_call_name(buffer, module_imports) == "io.StringIO")
+
+
+def _classify_call(node: ast.Call, flag_bindings=None,
+                   module_imports=None) -> tuple[str, str]:
     name = _call_name(node)
     leaf = name.rsplit(".", 1)[-1]
+    if _is_proven_in_memory_csv_mutation(
+            node, flag_bindings or {}, module_imports or {}):
+        return "proven_in_memory_csv_serializer", name
     if leaf == "replace" and _is_proven_text_replace(node):
         return "proven_non_filesystem_text_transform", name
     if leaf in _MUTATING_METHODS:
@@ -544,10 +626,12 @@ class _ScopeCalls(ast.NodeVisitor):
 
 
 class _Scanner(ast.NodeVisitor):
-    def __init__(self, path: str, source: str):
+    def __init__(self, path: str, source: str, module_imports=None):
         self.path = path
         self.source = source
         self.source_file_sha256 = hashlib.sha256(source.encode("utf-8")).hexdigest()
+        self.module_imports = module_imports or {}
+        self.active_module_imports: list[dict[str, str]] = []
         self.scope: list[tuple[str, list[int]]] = []
         self.flag_bindings: list[dict[str, ast.AST]] = []
         self.dominating_guards: list[list[int]] = []
@@ -562,6 +646,13 @@ class _Scanner(ast.NodeVisitor):
         guards = sorted(n.lineno for n in collector.calls
                         if _call_name(n).rsplit(".", 1)[-1] in _GUARDS)
         self.scope.append((name, guards))
+        inherited = (self.active_module_imports[-1]
+                     if self.active_module_imports else self.module_imports)
+        local_names = _scope_local_names(node)
+        self.active_module_imports.append({
+            key: value for key, value in inherited.items()
+            if key not in local_names
+        })
         bindings = (_direct_local_flag_bindings(node)
                     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) else {})
         self.flag_bindings.append(bindings)
@@ -573,6 +664,7 @@ class _Scanner(ast.NodeVisitor):
                 self.dominating_guards[-1].append(guard_line)
         self.dominating_guards.pop()
         self.flag_bindings.pop()
+        self.active_module_imports.pop()
         self.scope.pop()
 
     def _visit_definition_expressions(self, node):
@@ -623,11 +715,19 @@ class _Scanner(ast.NodeVisitor):
         guards = sorted(n.lineno for n in collector.calls
                         if _call_name(n).rsplit(".", 1)[-1] in _GUARDS)
         self.scope.append((f"<lambda@{node.lineno}>", guards))
+        inherited = (self.active_module_imports[-1]
+                     if self.active_module_imports else self.module_imports)
+        local_names = _scope_local_names(node)
+        self.active_module_imports.append({
+            key: value for key, value in inherited.items()
+            if key not in local_names
+        })
         self.flag_bindings.append({})
         self.dominating_guards.append([])
         self.visit(node.body)
         self.dominating_guards.pop()
         self.flag_bindings.pop()
+        self.active_module_imports.pop()
         self.scope.pop()
 
     def visit_Call(self, node):
@@ -650,9 +750,13 @@ class _Scanner(ast.NodeVisitor):
                 "source_segment_sha256": hashlib.sha256(
                     segment.encode("utf-8")).hexdigest(),
             })
-        classification, api = _classify_call(node, bindings)
+        classification, api = _classify_call(
+            node, bindings,
+            self.active_module_imports[-1]
+            if self.active_module_imports else self.module_imports)
         if classification in {"write_candidate", "proven_non_filesystem_text_transform",
-                              "proven_read_only_descriptor"}:
+                              "proven_read_only_descriptor",
+                              "proven_in_memory_csv_serializer"}:
             function, guards = self.scope[-1] if self.scope else ("<module>", [])
             earlier = any(line < node.lineno for line in guards)
             dominating = list(self.dominating_guards[-1]
@@ -730,7 +834,7 @@ def scan_python_source(source: str, path: str = "<memory>") -> list[dict]:
     if not isinstance(source, str):
         raise TypeError("Python source must be text")
     tree = ast.parse(source, filename=path)
-    scanner = _Scanner(path, source)
+    scanner = _Scanner(path, source, _direct_module_import_bindings(tree))
     scanner.visit(tree)
     scanner.attach_direct_local_callers(tree)
     return sorted(scanner.rows, key=lambda row: (row["line"], row["api"]))
@@ -818,7 +922,8 @@ def scan_python_tree(root: Path, *, include_tests: bool = False) -> dict:
             raise ValueError(f"Python source changed during audit: {relative}")
         scanned.append(relative)
         tree = ast.parse(source, filename=relative)
-        scanner = _Scanner(relative, source)
+        scanner = _Scanner(relative, source,
+                           _direct_module_import_bindings(tree))
         scanner.visit(tree)
         scanner.attach_direct_local_callers(tree)
         rows.extend(scanner.rows)

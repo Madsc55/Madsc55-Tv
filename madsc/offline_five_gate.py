@@ -1,7 +1,55 @@
 """Offline isolated five-stage fixture gate; no live acceptance."""
 import json
+import os
+import stat
+import tempfile
+from pathlib import Path
+
 from madsc.core import CATEGORIES, execute
 from madsc.maintenance import verify_fixture_evidence
+from madsc.write_path_audit import ProtectedWriteRejected
+
+
+def enforce_offline_package_path(root: Path, category: str) -> Path:
+    """Allow one absent fixed package below the gate's system temp root."""
+    if category not in CATEGORIES:
+        raise ProtectedWriteRejected("Unknown offline package category")
+    root = Path(root)
+    system_temp = Path(tempfile.gettempdir()).resolve(strict=True)
+    if (not root.is_absolute() or root.is_symlink() or not root.is_dir()
+            or root.resolve(strict=True) != root or root.parent != system_temp
+            or not root.name.startswith("madsc-offline-")):
+        raise ProtectedWriteRejected("Invalid offline package root")
+    destination = root / f"madsc-batch-{category}"
+    if destination.exists() or destination.is_symlink():
+        raise ProtectedWriteRejected("Offline package already exists")
+    return destination
+
+
+def create_offline_package(root: Path, category: str) -> Path:
+    """Create one fixed package with a no-follow root descriptor."""
+    enforce_offline_package_path(root, category)
+    root = Path(root)
+    destination = root / f"madsc-batch-{category}"
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    if not isinstance(nofollow, int) or not isinstance(directory_flag, int):
+        raise PermissionError("Secure offline package creation is unavailable")
+    descriptor = os.open(root, os.O_RDONLY | directory_flag | nofollow)
+    try:
+        opened = os.fstat(descriptor)
+        current = root.lstat()
+        if ((opened.st_dev, opened.st_ino) !=
+                (current.st_dev, current.st_ino)):
+            raise PermissionError("Offline package root changed before creation")
+        os.mkdir(destination.name, mode=0o700, dir_fd=descriptor)
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+    metadata = destination.lstat()
+    if destination.is_symlink() or not stat.S_ISDIR(metadata.st_mode):
+        raise PermissionError("Offline package creation produced an unsafe path")
+    return destination
 
 
 def assess_all(executor=None):
@@ -43,7 +91,6 @@ def assess_report_roundtrip():
     Temporary files are fixture evidence, never independent Actions artifacts.
     """
     import hashlib
-    from pathlib import Path
     from tempfile import TemporaryDirectory
     from madsc.core import run
     from madsc.batch_acceptance import collect
@@ -52,8 +99,7 @@ def assess_report_roundtrip():
         root = Path(directory)
         before = {}
         for category in CATEGORIES:
-            package = root / f"madsc-batch-{category}"
-            package.mkdir()
+            package = create_offline_package(root, category)
             path = package / f"{category}.json"
             run(category, path)
             before[path.relative_to(root).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()

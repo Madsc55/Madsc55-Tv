@@ -54,7 +54,8 @@ class MultiSourceDiscoveryTests(unittest.TestCase):
         for change in ({"source_kind": []}, {"source_kind": {}},
                        {"name": "Unsafe" + chr(0xD800) + "Channel"},
                        {"name": "Hidden" + chr(0x200B) + "Name"},
-                       {"name": "Broken" + chr(0x2028) + "Name"}):
+                       {"name": "Broken" + chr(0x2028) + "Name"},
+                       {"name": "Backslash" + chr(92) + "Name"}):
             with self.subTest(change=repr(change)):
                 result = evaluate_discovery([dict(self.item, **change)])
                 self.assertEqual(result["candidates"], [])

@@ -67,8 +67,12 @@ class ProcessGuardTests(unittest.TestCase):
             write_exclusive_bytes(segment, b"x" * 188, allowed_root=workspace)
             command = ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
                        "-of", "json", str(segment)]
-            enforce_ffprobe_read_process(command, segment, cwd=workspace,
-                                         env=dict(FIXED_TOOL_ENV))
+            # The CI image may not install ffprobe in the fixed trusted PATH.
+            # Isolate executable provenance here; separate tests enforce denial
+            # for untrusted or absent tools without weakening production policy.
+            with patch("madsc.process_guard._trusted_tool", return_value=True):
+                enforce_ffprobe_read_process(command, segment, cwd=workspace,
+                                             env=dict(FIXED_TOOL_ENV))
             with self.assertRaises(ProtectedWriteRejected):
                 enforce_ffprobe_read_process(
                     command[:-2] + ["default=nw=1", str(segment)], segment,
